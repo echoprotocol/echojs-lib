@@ -44,7 +44,7 @@ describe("ECC", function () {
 
 		it("generate private key from seed", function () {
 			var private_key = PrivateKey.fromSeed("1");
-			assert.equal(private_key.toPublicKey().toString(), "GPH8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA", "private key does not match");
+			assert.equal(private_key.toPublicKey().toString(), "ECHO8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA", "private key does not match");
 		})
 
 		it("sign", function () {
@@ -147,7 +147,7 @@ describe("ECC", function () {
 	describe("Derivation", () => {
 
 		let one_time_private = PrivateKey.fromHex("8fdfdde486f696fd7c6313325e14d3ff0c34b6e2c390d1944cbfe150f4457168")
-		let to_public = PublicKey.fromStringOrThrow("GPH7vbxtK1WaZqXsiCHPcjVFBewVj8HFRd5Z5XZDpN6Pvb2dZcMqK")
+		let to_public = PublicKey.fromStringOrThrow("ECHO7vbxtK1WaZqXsiCHPcjVFBewVj8HFRd5Z5XZDpN6Pvb2dZcMqK")
 		let secret = one_time_private.get_shared_secret(to_public)
 		let child = hash.sha256(secret)
 
@@ -160,7 +160,7 @@ describe("ECC", function () {
 		it("child from public", function () {
 			assert.equal(
 				to_public.child(child).toString(),
-				"GPH6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
+				"ECHO6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
 				"derive child public key"
 			);
 		});
@@ -169,7 +169,7 @@ describe("ECC", function () {
 		it("child from private", function () {
 			assert.equal(
 				PrivateKey.fromSeed("alice-brain-key").child(child).toPublicKey().toString(),
-				"GPH6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
+				"ECHO6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
 				"derive child from private key"
 			)
 		})
