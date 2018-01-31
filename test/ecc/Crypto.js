@@ -1,7 +1,7 @@
 import { Aes, PrivateKey, PublicKey, Signature, hash, key } from "../../lib";
 import assert from "assert";
 import { Long } from 'bytebuffer';
-import { ChainConfig } from "../../node_modules/echojs-ws/cjs";
+import { ChainConfig } from "echojs-ws/cjs";
 
 import secureRandom from 'secure-random';
 
