@@ -1,7 +1,6 @@
 import { Aes, PrivateKey, PublicKey, Address } from "../../lib";
 import assert from "assert";
-// import { ChainConfig } from "echojs-ws";
-import { ChainConfig } from "echojs-ws/cjs";
+import { ChainConfig } from "echojs-ws";
 
 
 var test = function (key) {
