@@ -54,21 +54,21 @@ describe("types", function () {
 	})
 
 	before(function () {
-		ChainConfig.setPrefix("TEST");
+		ChainConfig.setPrefix("BTS1");
 	});
 
 	it("public_key sort", function () {
 		let mapType = types.map(types.public_key, types.uint16)
 		let map = mapType.fromObject([//not sorted
-			["TEST6FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
-			["TEST5YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
-			["TEST7AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
+			["BTS16FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
+			["BTS15YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
+			["BTS17AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
 		])
 		let mapObject = mapType.toObject(map)
 		assert.deepEqual(mapObject, [ // sorted (witness_node sorts assending by "address" (not pubkey))
-			["TEST7AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
-			["TEST5YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
-			["TEST6FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
+			["BTS17AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
+			["BTS15YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
+			["BTS16FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
 		])
 	})
 

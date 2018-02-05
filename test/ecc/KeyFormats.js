@@ -17,7 +17,7 @@ var test = function (key) {
 				assert.equal(key.public_key, public_key.toPublicKeyString());
 			});
 
-			it("Create BTS short address", function () {
+			it("Create ECHO short address", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.bts_address, public_key.toAddressString());
 			})
@@ -27,7 +27,7 @@ var test = function (key) {
 				assert.equal(key.blockchain_address, public_key.toBlockchainAddress().toString('hex'));
 			});
 
-			it("BTS public key import / export", function () {
+			it("ECHO public key import / export", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.public_key, public_key.toPublicKeyString());
 			});
@@ -60,25 +60,25 @@ var test = function (key) {
 				assert.equal(key.private_key, d);
 			});
 
-			it("BTS/BTC uncompressed", function () {
+			it("ECHO/BTC uncompressed", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, false, 0);
 				assert.equal(key.Uncompressed_BTC, address.toString());
 			});
 
-			it("BTS/BTC compressed", function () {
+			it("ECHO/BTC compressed", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, true, 0);
 				assert.equal(key.Compressed_BTC, address.toString());
 			});
 
-			it("BTS/PTS uncompressed", function () {
+			it("ECHO/PTS uncompressed", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, false, 56);
 				assert.equal(key.Uncompressed_PTS, address.toString());
 			});
 
-			it("BTS/PTS compressed", function () {
+			it("ECHO/PTS compressed", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, true, 56);
 				assert.equal(key.Compressed_PTS, address.toString());
@@ -97,17 +97,17 @@ var test = function (key) {
 test({
 	// delegate0
 	// sourced from: ./bitshares/programs/utils/bts_create_key
-	public_key: "ECHO7jDPoMwyjVH5obFmqzFNp4Ffp7G2nvC7FKFkrMBpo7Sy4uq5Mj",
+	public_key: "BTS17jDPoMwyjVH5obFmqzFNp4Ffp7G2nvC7FKFkrMBpo7Sy4uq5Mj",
 	private_key: "20991828d456b389d0768ed7fb69bf26b9bb87208dd699ef49f10481c20d3e18",
 	private_key_WIF_format: "5J4eFhjREJA7hKG6KcvHofHMXyGQZCDpQE463PAaKo9xXY6UDPq",
-	bts_address: "ECHO8DvGQqzbgCR5FHiNsFf8kotEXr8VKD3mR",
+	bts_address: "BTS18DvGQqzbgCR5FHiNsFf8kotEXr8VKD3mR",
 	pts_address: "Po3mqkgMzBL4F1VXJArwQxeWf3fWEpxUf3",
 	encrypted_private_key: "5e1ae410919c450dce1c476ae3ed3e5fe779ad248081d85b3dcf2888e698744d0a4b60efb7e854453bec3f6883bcbd1d",
 	blockchain_address: "4f3a560442a05e4fbb257e8dc5859b736306bace",
 	// https://github.com/BitShares/bitshares/blob/2602504998dcd63788e106260895769697f62b07/libraries/wallet/wallet_db.cpp#L103-L108
-	Uncompressed_BTC: "ECHOLAFmEtM8as1mbmjVcj5dphLdPguXquimn",
-	Compressed_BTC: "ECHOANNTSEaUviJgWLzJBersPmyFZBY4jJETY",
-	Uncompressed_PTS: "ECHOEgj7RM6FBwSoccGaESJLC3Mi18785bM3T",
-	Compressed_PTS: "ECHOD5rYtofD6D4UHJH6mo953P5wpBfMhdMEi",
-	null_public_key: "ECHO1111111111111111111111111111111114T1Anm"
+	Uncompressed_BTC: "BTS1LAFmEtM8as1mbmjVcj5dphLdPguXquimn",
+	Compressed_BTC: "BTS1ANNTSEaUviJgWLzJBersPmyFZBY4jJETY",
+	Uncompressed_PTS: "BTS1Egj7RM6FBwSoccGaESJLC3Mi18785bM3T",
+	Compressed_PTS: "BTS1D5rYtofD6D4UHJH6mo953P5wpBfMhdMEi",
+	null_public_key: "BTS11111111111111111111111111111111114T1Anm"
 });
