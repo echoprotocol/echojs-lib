@@ -5,7 +5,8 @@
 	"main": "./dist/index.js",
 	"scripts": {
 		"test": "cross-env BABEL_ENV=test mocha --compilers js:babel-register --recursive",
-		"build": "cross-env BABEL_ENV=cjs babel lib -d dist"
+		"build": "cross-env BABEL_ENV=cjs babel lib -d dist",
+		"postinstall": "npm run-script build"
 	},
 	"repository": {
 		"type": "git",
