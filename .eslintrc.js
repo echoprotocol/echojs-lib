@@ -33,6 +33,7 @@ module.exports = {
 			"error",
 			"always"
 		],
+		"no-console": ["error", { allow: ["warn", "error"] }],
 		"keyword-spacing": ["error", { "before": true }]
 	}
 };
