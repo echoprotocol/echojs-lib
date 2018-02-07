@@ -1,21 +1,21 @@
 import assert from "assert";
-import {Apis} from "echojs-ws";
+import { Apis } from "echojs-ws";
 import { TransactionBuilder } from "../../lib";
 
 
 describe("ChainStore", () => {
-    // Connect once for all tests
-	before(function() {
-        /* use ws://94.130.35.43:6311/ws if no local node is available */
-		return Apis.instance("ws://94.130.35.43:6311/ws", true).init_promise.then(function() {
+	// Connect once for all tests
+	before(function () {
+		/* use ws://94.130.35.43:6311/ws if no local node is available */
+		return Apis.instance("ws://94.130.35.43:6311/ws", true).init_promise.then(function () {
 		});
 	});
 
 	it("Transfer", () => {
 		let tr = new TransactionBuilder();
 
-		assert.doesNotThrow(function() {
-			tr.add_type_operation( "transfer", {
+		assert.doesNotThrow(function () {
+			tr.add_type_operation("transfer", {
 				fee: {
 					amount: 0,
 					asset_id: "1.3.0"
@@ -36,7 +36,7 @@ describe("ChainStore", () => {
 	it("Sets core required fees", () => {
 		return new Promise((resolve, reject) => {
 			let tr = new TransactionBuilder();
-			tr.add_type_operation( "transfer", {
+			tr.add_type_operation("transfer", {
 				fee: {
 					amount: 0,
 					asset_id: "1.3.0"
@@ -63,7 +63,7 @@ describe("ChainStore", () => {
 	it("Sets required fees", () => {
 		return new Promise((resolve, reject) => {
 			let tr = new TransactionBuilder();
-			tr.add_type_operation( "transfer", {
+			tr.add_type_operation("transfer", {
 				fee: {
 					amount: 0,
 					asset_id: "1.3.0"
@@ -125,15 +125,15 @@ describe("ChainStore", () => {
 				"blacklist_markets": [
 
 				],
-				"description": JSON.stringify({main: "", market: ""}),
+				"description": JSON.stringify({ main: "", market: "" }),
 				"extensions": null
 			},
 			"is_prediction_market": false,
 			"extensions": null
 		};
 
-		assert.doesNotThrow(function() {
-			tr.add_type_operation( "asset_create", operationJSON);
+		assert.doesNotThrow(function () {
+			tr.add_type_operation("asset_create", operationJSON);
 		});
 	});
 
@@ -175,7 +175,7 @@ describe("ChainStore", () => {
 				"blacklist_markets": [
 
 				],
-				"description": JSON.stringify({main: "", market: ""}),
+				"description": JSON.stringify({ main: "", market: "" }),
 				"extensions": null
 			},
 			bitasset_opts: {
@@ -190,8 +190,8 @@ describe("ChainStore", () => {
 			"extensions": null
 		};
 
-		assert.doesNotThrow(function() {
-			tr.add_type_operation( "asset_create", operationJSON);
+		assert.doesNotThrow(function () {
+			tr.add_type_operation("asset_create", operationJSON);
 		});
 	});
 });

@@ -6,7 +6,7 @@ describe("operation test", function () {
 	it("templates", function () {
 		for (let op in ops) {
 			switch (op) {
-			case "operation": continue;
+				case "operation": continue;
 			}
 			template(ops[op]);
 		}

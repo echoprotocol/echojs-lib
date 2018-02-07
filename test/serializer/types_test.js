@@ -35,7 +35,9 @@ describe("types", function () {
 		var bool_set = types.set(types.bool);
 		// Note, 1,0 sorts to 0,1
 		assert.equal("020001", Convert(bool_set).toHex([1, 0]));
-		th.error("duplicate (set)", function () { return Convert(bool_set).toHex([1, 1]); });
+		th.error("duplicate (set)", function () {
+			return Convert(bool_set).toHex([1, 1]);
+		});
 
 	});
 
@@ -50,7 +52,9 @@ describe("types", function () {
 		var bool_map = types.map(types.bool, types.bool);
 		// 1,1 0,0   sorts to   0,0  1,1
 		assert.equal("0200000101", Convert(bool_map).toHex([[1, 1], [0, 0]]));
-		th.error("duplicate (map)", function () { return Convert(bool_map).toHex([[1, 1], [1, 1]]); });
+		th.error("duplicate (map)", function () {
+			return Convert(bool_map).toHex([[1, 1], [1, 1]]);
+		});
 	});
 
 	before(function () {
@@ -105,11 +109,21 @@ describe("types", function () {
 		check("1", 0, "1");
 		check("11", 0, "11");
 
-		overflow(function () { return check(".1", 0, ""); });
-		overflow(function () { return check("-.1", 0, ""); });
-		overflow(function () { return check("0.1", 0, ""); });
-		overflow(function () { return check("1.1", 0, ""); });
-		overflow(function () { return check("1.11", 1, ""); });
+		overflow(function () {
+			return check(".1", 0, "");
+		});
+		overflow(function () {
+			return check("-.1", 0, "");
+		});
+		overflow(function () {
+			return check("0.1", 0, "");
+		});
+		overflow(function () {
+			return check("1.1", 0, "");
+		});
+		overflow(function () {
+			return check("1.11", 1, "");
+		});
 
 		check("", 1, "00");
 		check("1", 1, "10");
@@ -149,4 +163,6 @@ describe("types", function () {
 	});
 });
 
-var overflow = function (f) { return th.error("overflow", f); };
+var overflow = function (f) {
+	return th.error("overflow", f);
+};

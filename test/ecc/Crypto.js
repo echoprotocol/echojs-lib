@@ -112,7 +112,9 @@ describe("ECC", function () {
 					"key_checksum too short"
 				);
 				assert.equal(3, key_checksum.split(",").length);
-				if (DEBUG) {console.log("... key_checksum", key_checksum);}
+				if (DEBUG) {
+					console.log("... key_checksum", key_checksum);
+				}
 				return done();
 			});
 		});
@@ -122,7 +124,9 @@ describe("ECC", function () {
 			var key_checksum = min_time_elapsed(function () {
 				return key.aes_checksum("password").checksum;
 			});
-			if (DEBUG) {console.log("... key_checksum",key_checksum);}
+			if (DEBUG) {
+				console.log("... key_checksum", key_checksum);
+			}
 			assert.throws(() =>
 				min_time_elapsed(function () {
 					key.aes_private("bad password", key_checksum);
@@ -140,7 +144,9 @@ describe("ECC", function () {
 				return key.aes_private("password", key_checksum);
 			});
 
-			if (DEBUG) {console.log("... password_aes",password_aes);}
+			if (DEBUG) {
+				console.log("... password_aes", password_aes);
+			}
 			assert(password_aes !== null);
 		});
 
