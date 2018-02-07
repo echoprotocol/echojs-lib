@@ -6,7 +6,10 @@
 	"scripts": {
 		"test": "cross-env BABEL_ENV=test mocha --compilers js:babel-register --recursive",
 		"build": "cross-env BABEL_ENV=cjs babel lib -d dist",
-		"postinstall": "npm run-script build"
+		"postinstall": "npm run-script build",
+		"lint": "eslint .",
+		"lint:debug": "npm run lint -- --debug",
+		"lint:fix": "npm run lint -- --fix"
 	},
 	"repository": {
 		"type": "git",

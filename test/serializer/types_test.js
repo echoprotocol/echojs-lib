@@ -1,9 +1,9 @@
-import Convert from '../../lib/serializer/src/convert';
-import { Long } from 'bytebuffer';
+import Convert from "../../lib/serializer/src/convert";
+import { Long } from "bytebuffer";
 
-import assert from 'assert';
-import p from '../../lib/serializer/src/precision';
-import th from './test_helper';
+import assert from "assert";
+import p from "../../lib/serializer/src/precision";
+import th from "./test_helper";
 
 import { is } from "immutable";
 import { PublicKey, PrivateKey, types } from "../../lib";
@@ -21,9 +21,9 @@ describe("types", function () {
 		var out_of_range = function (id) {
 			try {
 				toHex(id);
-				return assert(false, 'should have been out of range');
+				return assert(false, "should have been out of range");
 			} catch (e) {
-				return assert(e.message.indexOf('out of range') !== -1);
+				return assert(e.message.indexOf("out of range") !== -1);
 			}
 		};
 		out_of_range("0:" + (0xffffff + 1));
@@ -41,9 +41,9 @@ describe("types", function () {
 
 	it("string sort", function () {
 		var setType = types.set(types.string);
-		var set = setType.fromObject(["a", "z", "m"])
-		var setObj = setType.toObject(set)
-		assert.deepEqual(["a", "m", "z"], setObj, "not sorted")
+		var set = setType.fromObject(["a", "z", "m"]);
+		var setObj = setType.toObject(set);
+		assert.deepEqual(["a", "m", "z"], setObj, "not sorted");
 	});
 
 	it("map sort", function () {
@@ -51,34 +51,34 @@ describe("types", function () {
 		// 1,1 0,0   sorts to   0,0  1,1
 		assert.equal("0200000101", Convert(bool_map).toHex([[1, 1], [0, 0]]));
 		th.error("duplicate (map)", function () { return Convert(bool_map).toHex([[1, 1], [1, 1]]); });
-	})
+	});
 
 	before(function () {
 		ChainConfig.setPrefix("GPH");
 	});
 
 	it("public_key sort", function () {
-		let mapType = types.map(types.public_key, types.uint16)
+		let mapType = types.map(types.public_key, types.uint16);
 		let map = mapType.fromObject([//not sorted
 			["GPH6FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
 			["GPH5YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
 			["GPH7AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
-		])
-		let mapObject = mapType.toObject(map)
+		]);
+		let mapObject = mapType.toObject(map);
 		assert.deepEqual(mapObject, [ // sorted (witness_node sorts assending by "address" (not pubkey))
 			["GPH7AGnzGCAGVfFnyvPziN67mfuHx9rx89r2zVoRGW1Aawim1f3Qt", 0],
 			["GPH5YdgWfAejDdSuq55xfguqFTtbRKLi2Jcz1YtTsCzYgdUYXs92c", 0],
 			["GPH6FHYdi17RhcUXJZr5fxZm1wvVCpXPekiHeAEwRHSEBmiR3yceK", 0],
-		])
-	})
+		]);
+	});
 
 
 
 	it("type_id sort", function () {
 		// map (protocol_id_type "account"), (uint16)
 		let t = types.map(types.protocol_id_type("account"), types.uint16);
-		assert.deepEqual(t.fromObject([[1, 1], [0, 0]]), [[0, 0], [1, 1]], 'did not sort')
-		assert.deepEqual(t.fromObject([[0, 0], [1, 1]]), [[0, 0], [1, 1]], 'did not sort')
+		assert.deepEqual(t.fromObject([[1, 1], [0, 0]]), [[0, 0], [1, 1]], "did not sort");
+		assert.deepEqual(t.fromObject([[0, 0], [1, 1]]), [[0, 0], [1, 1]], "did not sort");
 	});
 
 	it("precision number strings", function () {
@@ -133,7 +133,7 @@ describe("types", function () {
 		// Long.MAX_VALUE.toString() +1 9223372036854775808
 		overflow(function () {
 			return p.to_bigint64(
-				'9223372036854775808', _precision = 0
+				"9223372036854775808", _precision = 0
 			);
 		});
 
@@ -142,7 +142,7 @@ describe("types", function () {
 
 		overflow(function () {
 			return p.to_bigint64(
-				'92233720368547758075', _precision = 1
+				"92233720368547758075", _precision = 1
 			);
 		});
 

@@ -1,10 +1,10 @@
-import assert from 'assert';
+import assert from "assert";
 
 module.exports = {
 
 	print_result(tr_object) {
 		if (tr_object) {
-			console.log('print_result', JSON.stringify(tr_object));
+			console.log("print_result", JSON.stringify(tr_object));
 		}
 		try {
 			var tr = signed_transaction_type.fromObject(tr_object);
@@ -18,7 +18,7 @@ module.exports = {
 	},
 
 	print_hex(hex) {
-		console.log('print_hex');
+		console.log("print_hex");
 		ByteBuffer.fromHex(hex).printDebug();
 		try {
 			var tr = signed_transaction_type.fromHex(hex);
@@ -31,9 +31,9 @@ module.exports = {
 
 	log_error(error) {
 		if (error.stack) {
-			return console.log('ERROR', error.stack);
+			return console.log("ERROR", error.stack);
 		} else {
-			return console.log('ERROR', error);
+			return console.log("ERROR", error);
 		}
 	},
 
@@ -51,4 +51,4 @@ module.exports = {
 			throw new Error("expecting " + message_substring);
 		}
 	}
-}
+};

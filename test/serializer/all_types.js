@@ -1,5 +1,5 @@
 import { PrivateKey, PublicKey, Address, Serializer, ops, types } from "../../lib";
-import assert from 'assert';
+import assert from "assert";
 
 var {
 	//varint32,
@@ -11,9 +11,9 @@ var {
 	public_key, address,
 	time_point_sec,
 	optional
-} = types
+} = types;
 
-var { asset, account_name_eq_lit_predicate } = ops
+var { asset, account_name_eq_lit_predicate } = ops;
 
 // Must stay in sync with allTypes below.
 let AllTypes = new Serializer("all_types", {
@@ -30,7 +30,7 @@ let AllTypes = new Serializer("all_types", {
 	time_optional: optional(time_point_sec),
 	time_point_sec1: time_point_sec,
 	time_point_sec2: time_point_sec,
-})
+});
 
 // Must stay in sync with AllTypes above.
 let allTypes = {
@@ -51,58 +51,58 @@ let allTypes = {
 	time_optional: undefined,
 	time_point_sec1: new Date(),
 	time_point_sec2: Math.floor(Date.now() / 1000),
-}
+};
 
 describe("Serializer", function () {
 	describe("all types", function () {
 
-		let { toObject, fromObject, toBuffer, fromBuffer } = AllTypes
+		let { toObject, fromObject, toBuffer, fromBuffer } = AllTypes;
 
-		toObject = toObject.bind(AllTypes)
-		fromObject = fromObject.bind(AllTypes)
-		toBuffer = toBuffer.bind(AllTypes)
-		fromBuffer = fromBuffer.bind(AllTypes)
+		toObject = toObject.bind(AllTypes);
+		fromObject = fromObject.bind(AllTypes);
+		toBuffer = toBuffer.bind(AllTypes);
+		fromBuffer = fromBuffer.bind(AllTypes);
 
 		it("from object", function () {
-			assert(fromObject(allTypes), "serializable")
-			assert(fromObject(fromObject(allTypes)), "non-serializable")
-		})
+			assert(fromObject(allTypes), "serializable");
+			assert(fromObject(fromObject(allTypes)), "non-serializable");
+		});
 
 		it("to object", function () {
-			assert(toObject(allTypes), "serializable")
-			assert.deepEqual(toObject(allTypes), toObject(allTypes), "serializable (single to)")
-			assert.deepEqual(toObject(toObject(allTypes)), toObject(allTypes), "serializable (double to)")
-			assert.deepEqual(toObject(fromObject(allTypes)), toObject(allTypes), "non-serializable")
-			assert.deepEqual(toObject(fromObject(fromObject(allTypes))), toObject(allTypes), "non-serializable (double from)")
-		})
+			assert(toObject(allTypes), "serializable");
+			assert.deepEqual(toObject(allTypes), toObject(allTypes), "serializable (single to)");
+			assert.deepEqual(toObject(toObject(allTypes)), toObject(allTypes), "serializable (double to)");
+			assert.deepEqual(toObject(fromObject(allTypes)), toObject(allTypes), "non-serializable");
+			assert.deepEqual(toObject(fromObject(fromObject(allTypes))), toObject(allTypes), "non-serializable (double from)");
+		});
 
 		it("to buffer", function () {
-			assert(toBuffer(allTypes), "serializable")
-			assert(toBuffer(fromObject(allTypes)), "non-serializable")
+			assert(toBuffer(allTypes), "serializable");
+			assert(toBuffer(fromObject(allTypes)), "non-serializable");
 			assert.equal(
 				toBuffer(allTypes).toString("hex"), // serializable
 				toBuffer(fromObject(allTypes)).toString("hex"), // non-serializable
 				"serializable and non-serializable"
-			)
-		})
+			);
+		});
 
 		it("from buffer", function () {
-			assert.deepEqual(toObject(fromBuffer(toBuffer(allTypes))), toObject(allTypes), "serializable")
-			assert.deepEqual(toObject(fromBuffer(toBuffer(fromObject(allTypes)))), toObject(allTypes), "non-serializable")
-		})
+			assert.deepEqual(toObject(fromBuffer(toBuffer(allTypes))), toObject(allTypes), "serializable");
+			assert.deepEqual(toObject(fromBuffer(toBuffer(fromObject(allTypes)))), toObject(allTypes), "non-serializable");
+		});
 
 		it("template", function () {
-			assert(toObject(allTypes, { use_default: true }))
-			assert(toObject(allTypes, { annotate: true }))
-			assert(toObject({}, { use_default: true }))
-			assert(toObject({}, { use_default: true, annotate: true }))
+			assert(toObject(allTypes, { use_default: true }));
+			assert(toObject(allTypes, { annotate: true }));
+			assert(toObject({}, { use_default: true }));
+			assert(toObject({}, { use_default: true, annotate: true }));
 
-		})
+		});
 
 		// keep last
 		// it("visual check", function() {
 		//     console.log(toObject(fromObject(allTypes)))
 		// })
 
-	})
+	});
 });

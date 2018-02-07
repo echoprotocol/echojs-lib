@@ -20,11 +20,11 @@ var test = function (key) {
 			it("Create ECHO short address", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.bts_address, public_key.toAddressString());
-			})
+			});
 
 			it("Blockchain Address", function () {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
-				assert.equal(key.blockchain_address, public_key.toBlockchainAddress().toString('hex'));
+				assert.equal(key.blockchain_address, public_key.toBlockchainAddress().toString("hex"));
 			});
 
 			it("ECHO public key import / export", function () {
