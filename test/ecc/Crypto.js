@@ -1,10 +1,6 @@
 import { Aes, PrivateKey, PublicKey, Signature, hash, key } from "../../lib";
 import assert from "assert";
-import { Long } from "bytebuffer";
 import { ChainConfig } from "echojs-ws";
-
-import secureRandom from "secure-random";
-
 import dictionary from "./dictionary";
 
 const DEBUG = process.env.DEBUG;
@@ -16,45 +12,40 @@ describe("ECC", function() {
 
 	describe("Crypto", function() {
 
-		var encrypted_key =
+		let encrypted_key =
 			"37fd6a251d262ec4c25343016a024a3aec543b7a43a208bf66bc80640dff" +
 			"8ac8d52ae4ad7500d067c90f26189f9ee6050a13c087d430d24b88e713f1" +
 			"5d32cbd59e61b0e69c75da93f43aabb11039d06f";
 
-		var decrypted_key =
+		let decrypted_key =
 			"ab0cb9a14ecaa3078bfee11ca0420ea2" +
 			"3f5d49d7a7c97f7f45c3a520106491f8" + // 64 hex digits
 			"00000000000000000000000000000000000000000000000000000000" +
 			"00000000";
 
 		it("Decrypt", function() {
-			var aes = Aes.fromSeed("Password01");
-			var d = aes.decryptHex(encrypted_key);
+			let aes = Aes.fromSeed("Password01");
+			let d = aes.decryptHex(encrypted_key);
 			assert.equal(decrypted_key, d, "decrypted key does not match");
 		});
 
 		it("Encrypt", function() {
-			var aes = Aes.fromSeed("Password01");
-			var d = aes.encryptHex(decrypted_key);
+			let aes = Aes.fromSeed("Password01");
+			let d = aes.encryptHex(decrypted_key);
 			assert.equal(encrypted_key, d, "encrypted key does not match");
 		});
 
-        /*it "Computes public key", ->
-            private_key = PrivateKey.fromHex decrypted_key.substring 0, 64
-            public_key = private_key.toPublicKey()
-            console.log public_key.toHex());*/
-
 		it("generate private key from seed", function() {
-			var private_key = PrivateKey.fromSeed("1");
+			let private_key = PrivateKey.fromSeed("1");
 			assert.equal(private_key.toPublicKey().toString(), "GPH8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA", "private key does not match");
 		});
 
 		it("sign", function() {
 			this.timeout(10000);
-			var private_key = PrivateKey.fromSeed("1");
+			let private_key = PrivateKey.fromSeed("1");
 			return (() => {
-				var result = [];
-				for (var i = 0; i < 10; i++) {
+				let result = [];
+				for (let i = 0; i < 10; i++) {
 					result.push(Signature.signBuffer((new Buffer(i)), private_key));
 				}
 				return result;
@@ -62,19 +53,18 @@ describe("ECC", function() {
 		});
 
 		it("binary_encryption", function() {
-			var sender = PrivateKey.fromSeed("1");
-			var receiver = PrivateKey.fromSeed("2");
-			var S = sender.get_shared_secret(receiver.toPublicKey());
-			var nonce = "289662526069530675";
+			let sender = PrivateKey.fromSeed("1");
+			let receiver = PrivateKey.fromSeed("2");
+			let nonce = "289662526069530675";
 
-			var ciphertext = Aes.encrypt_with_checksum(
+			let ciphertext = Aes.encrypt_with_checksum(
 				sender,
 				receiver.toPublicKey(),
 				nonce,
 				new Buffer("\xff\x00", "binary")
 			);
 			//console.log '... ciphertext',ciphertext
-			var plaintext = Aes.decrypt_with_checksum(
+			let plaintext = Aes.decrypt_with_checksum(
 				receiver,
 				sender.toPublicKey(),
 				nonce,
@@ -88,7 +78,7 @@ describe("ECC", function() {
 		it("key_checksum", function() {
 			this.timeout(1500);
 			return min_time_elapsed(function() {
-				var key_checksum = key.aes_checksum("password").checksum;
+				let key_checksum = key.aes_checksum("password").checksum;
 				assert.equal(
 					true,
 					key_checksum.length > 4 + 4 + 2,
@@ -101,9 +91,9 @@ describe("ECC", function() {
 		it("key_checksum with aes_private", function(done) {
 			this.timeout(1500);
 			return min_time_elapsed(function() {
-				var aes_checksum = key.aes_checksum("password");
-				var aes_private = aes_checksum.aes_private;
-				var key_checksum = aes_checksum.checksum;
+				let aes_checksum = key.aes_checksum("password");
+				let aes_private = aes_checksum.aes_private;
+				let key_checksum = aes_checksum.checksum;
 				assert(aes_private !== null);
 				assert(typeof aes_private["decrypt"] === "function");
 				assert.equal(
@@ -121,7 +111,7 @@ describe("ECC", function() {
 
 		it("wrong password", function() {
 			this.timeout(2500);
-			var key_checksum = min_time_elapsed(function() {
+			let key_checksum = min_time_elapsed(function() {
 				return key.aes_checksum("password").checksum;
 			});
 			if (DEBUG) {
@@ -136,11 +126,11 @@ describe("ECC", function() {
 
 		it("password aes_private", function() {
 			this.timeout(2500);
-			var key_checksum = min_time_elapsed(function() {
+			let key_checksum = min_time_elapsed(function() {
 				return key.aes_checksum("password").checksum;
 			});
 
-			var password_aes = min_time_elapsed(function() {
+			let password_aes = min_time_elapsed(function() {
 				return key.aes_private("password", key_checksum);
 			});
 
@@ -186,46 +176,13 @@ describe("ECC", function() {
 			let brainKey = key.suggest_brain_key(dictionary.en);
 			assert.equal(16, brainKey.split(" ").length);
 		});
-
-
-
-		// "many keys" works, not really needed
-		// it("many keys", function() {
-		//
-		//     this.timeout(10 * 1000)
-		//
-		//     for (var i = 0; i < 10; i++) {
-		//         let privkey1 = key.get_random_key()
-		//         let privkey2 = key.get_random_key()
-		//
-		//         let secret1 = one_time_private.get_shared_secret( privkey1.toPublicKey() )
-		//         let child1 = sha256( secret1 )
-		//
-		//         let secret2 = privkey2.get_shared_secret( privkey2.toPublicKey() )
-		//         let child2 = sha256( secret2 )
-		//
-		//         it("child from public", ()=> assert.equal(
-		//             privkey1.toPublicKey().child(child1).toString(),
-		//             privkey2.toPublicKey().child(child2).toString(),
-		//             "derive child public key"
-		//         ))
-		//
-		//         it("child from private", ()=> assert.equal(
-		//             privkey1.child(child1).toString(),
-		//             privkey2.child(child2).toString(),
-		//             "derive child private key"
-		//         ))
-		//     }
-		//
-		// })
-
 	});
 });
 
-var min_time_elapsed = function(f) {
-	var start_t = Date.now();
-	var ret = f();
-	var elapsed = Date.now() - start_t;
+let min_time_elapsed = function(f) {
+	let start_t = Date.now();
+	let ret = f();
+	let elapsed = Date.now() - start_t;
 	assert.equal(
 		// repeat operations may take less time
 		elapsed >= 250 * 0.8, true,

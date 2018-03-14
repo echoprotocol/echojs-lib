@@ -2,7 +2,7 @@ import assert from "assert";
 import { Login as login } from "../../lib";
 import { Login as login2 } from "../../lib";
 
-var auths = {
+let auths = {
 	active: [
 		["GPH5Abm5dCdy3hJ1C5ckXkqUH2Me7dXqi9Y7yjn9ACaiSJ9h8r8mL", 1]
 	]

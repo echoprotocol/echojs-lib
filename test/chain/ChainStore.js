@@ -2,7 +2,7 @@ import assert from "assert";
 import { Apis, ChainConfig } from "echojs-ws";
 import { ChainStore } from "../../lib";
 
-var coreAsset;
+let coreAsset;
 
 describe("ChainStore", () => {
 	// Connect once for all tests

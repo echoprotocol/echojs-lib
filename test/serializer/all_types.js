@@ -1,7 +1,7 @@
 import { PrivateKey, PublicKey, Address, Serializer, ops, types } from "../../lib";
 import assert from "assert";
 
-var {
+let {
 	//varint32,
 	uint8, uint16, uint32, int64, uint64,
 	string, bytes, bool, array, fixed_array,
@@ -13,7 +13,7 @@ var {
 	optional
 } = types;
 
-var { asset, account_name_eq_lit_predicate } = ops;
+let { asset, account_name_eq_lit_predicate } = ops;
 
 // Must stay in sync with allTypes below.
 let AllTypes = new Serializer("all_types", {
