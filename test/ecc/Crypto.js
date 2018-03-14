@@ -9,12 +9,12 @@ import dictionary from "./dictionary";
 
 const DEBUG = process.env.DEBUG;
 
-describe("ECC", function () {
-	before(function () {
+describe("ECC", function() {
+	before(function() {
 		ChainConfig.reset();
 	});
 
-	describe("Crypto", function () {
+	describe("Crypto", function() {
 
 		var encrypted_key =
 			"37fd6a251d262ec4c25343016a024a3aec543b7a43a208bf66bc80640dff" +
@@ -27,13 +27,13 @@ describe("ECC", function () {
 			"00000000000000000000000000000000000000000000000000000000" +
 			"00000000";
 
-		it("Decrypt", function () {
+		it("Decrypt", function() {
 			var aes = Aes.fromSeed("Password01");
 			var d = aes.decryptHex(encrypted_key);
 			assert.equal(decrypted_key, d, "decrypted key does not match");
 		});
 
-		it("Encrypt", function () {
+		it("Encrypt", function() {
 			var aes = Aes.fromSeed("Password01");
 			var d = aes.encryptHex(decrypted_key);
 			assert.equal(encrypted_key, d, "encrypted key does not match");
@@ -44,12 +44,12 @@ describe("ECC", function () {
             public_key = private_key.toPublicKey()
             console.log public_key.toHex());*/
 
-		it("generate private key from seed", function () {
+		it("generate private key from seed", function() {
 			var private_key = PrivateKey.fromSeed("1");
 			assert.equal(private_key.toPublicKey().toString(), "GPH8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA", "private key does not match");
 		});
 
-		it("sign", function () {
+		it("sign", function() {
 			this.timeout(10000);
 			var private_key = PrivateKey.fromSeed("1");
 			return (() => {
@@ -61,7 +61,7 @@ describe("ECC", function () {
 			})();
 		});
 
-		it("binary_encryption", function () {
+		it("binary_encryption", function() {
 			var sender = PrivateKey.fromSeed("1");
 			var receiver = PrivateKey.fromSeed("2");
 			var S = sender.get_shared_secret(receiver.toPublicKey());
@@ -85,9 +85,9 @@ describe("ECC", function () {
 		});
 
 		// time-based, probably want to keep these last
-		it("key_checksum", function () {
+		it("key_checksum", function() {
 			this.timeout(1500);
-			return min_time_elapsed(function () {
+			return min_time_elapsed(function() {
 				var key_checksum = key.aes_checksum("password").checksum;
 				assert.equal(
 					true,
@@ -98,9 +98,9 @@ describe("ECC", function () {
 			});
 		});
 
-		it("key_checksum with aes_private", function (done) {
+		it("key_checksum with aes_private", function(done) {
 			this.timeout(1500);
-			return min_time_elapsed(function () {
+			return min_time_elapsed(function() {
 				var aes_checksum = key.aes_checksum("password");
 				var aes_private = aes_checksum.aes_private;
 				var key_checksum = aes_checksum.checksum;
@@ -119,28 +119,28 @@ describe("ECC", function () {
 			});
 		});
 
-		it("wrong password", function () {
+		it("wrong password", function() {
 			this.timeout(2500);
-			var key_checksum = min_time_elapsed(function () {
+			var key_checksum = min_time_elapsed(function() {
 				return key.aes_checksum("password").checksum;
 			});
 			if (DEBUG) {
 				console.log("... key_checksum", key_checksum);
 			}
 			assert.throws(() =>
-				min_time_elapsed(function () {
+				min_time_elapsed(function() {
 					key.aes_private("bad password", key_checksum);
 				})
 				, "wrong password");
 		});
 
-		it("password aes_private", function () {
+		it("password aes_private", function() {
 			this.timeout(2500);
-			var key_checksum = min_time_elapsed(function () {
+			var key_checksum = min_time_elapsed(function() {
 				return key.aes_checksum("password").checksum;
 			});
 
-			var password_aes = min_time_elapsed(function () {
+			var password_aes = min_time_elapsed(function() {
 				return key.aes_private("password", key_checksum);
 			});
 
@@ -165,7 +165,7 @@ describe("ECC", function () {
 		let nonce = hash.sha256(one_time_private.toBuffer());
 		assert.equal(nonce.toString("hex"), "462f6c19ece033b5a3dba09f1e1d7935a5302e4d1eac0a84489cdc8339233fbf");
 
-		it("child from public", function () {
+		it("child from public", function() {
 			assert.equal(
 				to_public.child(child).toString(),
 				"GPH6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
@@ -174,7 +174,7 @@ describe("ECC", function () {
 		});
 
 		// child = sha256( one_time_private.get_secret( to_public ))
-		it("child from private", function () {
+		it("child from private", function() {
 			assert.equal(
 				PrivateKey.fromSeed("alice-brain-key").child(child).toPublicKey().toString(),
 				"GPH6XA72XARQCain961PCJnXiKYdEMrndNGago2PV5bcUiVyzJ6iL",
@@ -182,7 +182,7 @@ describe("ECC", function () {
 			);
 		});
 
-		it("Suggest brainkey", function () {
+		it("Suggest brainkey", function() {
 			let brainKey = key.suggest_brain_key(dictionary.en);
 			assert.equal(16, brainKey.split(" ").length);
 		});
@@ -222,7 +222,7 @@ describe("ECC", function () {
 	});
 });
 
-var min_time_elapsed = function (f) {
+var min_time_elapsed = function(f) {
 	var start_t = Date.now();
 	var ret = f();
 	var elapsed = Date.now() - start_t;

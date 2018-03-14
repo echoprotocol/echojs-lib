@@ -5,16 +5,16 @@ import { TransactionBuilder } from "../../lib";
 
 describe("ChainStore", () => {
 	// Connect once for all tests
-	before(function () {
+	before(function() {
 		/* use ws://94.130.35.43:6311/ws if no local node is available */
-		return Apis.instance("ws://94.130.35.43:6311/ws", true).init_promise.then(function () {
+		return Apis.instance("ws://94.130.35.43:6311/ws", true).init_promise.then(function() {
 		});
 	});
 
 	it("Transfer", () => {
 		let tr = new TransactionBuilder();
 
-		assert.doesNotThrow(function () {
+		assert.doesNotThrow(function() {
 			tr.add_type_operation("transfer", {
 				fee: {
 					amount: 0,
@@ -132,7 +132,7 @@ describe("ChainStore", () => {
 			"extensions": null
 		};
 
-		assert.doesNotThrow(function () {
+		assert.doesNotThrow(function() {
 			tr.add_type_operation("asset_create", operationJSON);
 		});
 	});
@@ -190,7 +190,7 @@ describe("ChainStore", () => {
 			"extensions": null
 		};
 
-		assert.doesNotThrow(function () {
+		assert.doesNotThrow(function() {
 			tr.add_type_operation("asset_create", operationJSON);
 		});
 	});

@@ -3,88 +3,88 @@ import assert from "assert";
 import { ChainConfig } from "echojs-ws";
 
 
-var test = function (key) {
-	describe("KeyFormats", function () {
-		before(function () {
+var test = function(key) {
+	describe("KeyFormats", function() {
+		before(function() {
 			ChainConfig.reset();
 		});
 
-		describe("Key Formats", function () {
+		describe("Key Formats", function() {
 
-			it("Calculates public key from private key", function () {
+			it("Calculates public key from private key", function() {
 				var private_key = PrivateKey.fromHex(key.private_key);
 				var public_key = private_key.toPublicKey();
 				assert.equal(key.public_key, public_key.toPublicKeyString());
 			});
 
-			it("Create ECHO short address", function () {
+			it("Create ECHO short address", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.bts_address, public_key.toAddressString());
 			});
 
-			it("Blockchain Address", function () {
+			it("Blockchain Address", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.blockchain_address, public_key.toBlockchainAddress().toString("hex"));
 			});
 
-			it("ECHO public key import / export", function () {
+			it("ECHO public key import / export", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				assert.equal(key.public_key, public_key.toPublicKeyString());
 			});
 
-			it("PTS", function () {
+			it("PTS", function() {
 				var private_key = PrivateKey.fromHex(key.private_key);
 				var public_key = private_key.toPublicKey();
 				assert.equal(key.pts_address, public_key.toPtsAddy());
 			});
 
-			it("To WIF", function () {
+			it("To WIF", function() {
 				var private_key = PrivateKey.fromHex(key.private_key);
 				assert.equal(key.private_key_WIF_format, private_key.toWif());
 			});
 
-			it("From WIF", function () {
+			it("From WIF", function() {
 				var private_key = PrivateKey.fromWif(key.private_key_WIF_format);
 				assert.equal(private_key.toHex(), key.private_key);
 			});
 
-			it("Calc public key", function () {
+			it("Calc public key", function() {
 				var private_key = PrivateKey.fromHex(key.private_key);
 				var public_key = private_key.toPublicKey();
 				assert.equal(key.bts_address, public_key.toAddressString());
 			});
 
-			it("Decrypt private key", function () {
+			it("Decrypt private key", function() {
 				var aes = Aes.fromSeed("Password00");
 				var d = aes.decryptHex(key.encrypted_private_key);
 				assert.equal(key.private_key, d);
 			});
 
-			it("ECHO/BTC uncompressed", function () {
+			it("ECHO/BTC uncompressed", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, false, 0);
 				assert.equal(key.Uncompressed_BTC, address.toString());
 			});
 
-			it("ECHO/BTC compressed", function () {
+			it("ECHO/BTC compressed", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, true, 0);
 				assert.equal(key.Compressed_BTC, address.toString());
 			});
 
-			it("ECHO/PTS uncompressed", function () {
+			it("ECHO/PTS uncompressed", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, false, 56);
 				assert.equal(key.Uncompressed_PTS, address.toString());
 			});
 
-			it("ECHO/PTS compressed", function () {
+			it("ECHO/PTS compressed", function() {
 				var public_key = PublicKey.fromPublicKeyString(key.public_key);
 				var address = Address.fromPublic(public_key, true, 56);
 				assert.equal(key.Compressed_PTS, address.toString());
 			});
 
-			it("Null public key to/from buffer", function () {
+			it("Null public key to/from buffer", function() {
 				var public_key = PublicKey.fromStringOrThrow(key.null_public_key);
 				var buffer = public_key.toBuffer();
 				var new_public_key = PublicKey.fromBuffer(buffer);

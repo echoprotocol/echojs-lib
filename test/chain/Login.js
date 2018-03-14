@@ -10,12 +10,12 @@ var auths = {
 
 describe("AccountLogin", () => {
 
-	afterEach(function () {
+	afterEach(function() {
 		login.setRoles(["active", "owner", "memo"]);
 	});
 
-	describe("Instance", function () {
-		it("Instantiates with default roles", function () {
+	describe("Instance", function() {
+		it("Instantiates with default roles", function() {
 			let roles = login.get("roles");
 
 			assert(roles.length);
@@ -24,7 +24,7 @@ describe("AccountLogin", () => {
 			assert(roles[2] === "memo");
 		});
 
-		it("Is singleton", function () {
+		it("Is singleton", function() {
 			login.setRoles(["singleton"]);
 
 			let roles = login2.get("roles");
@@ -33,9 +33,9 @@ describe("AccountLogin", () => {
 		});
 	});
 
-	describe("Methods", function () {
+	describe("Methods", function() {
 
-		it("Set roles", function () {
+		it("Set roles", function() {
 			login.setRoles(["active"]);
 			let roles = login.get("roles");
 
@@ -43,18 +43,18 @@ describe("AccountLogin", () => {
 			assert(roles[0] === "active");
 		});
 
-		it("Requires 12 char password", function () {
+		it("Requires 12 char password", function() {
 			assert.throws(login.generateKeys, Error);
 		});
 
-		it("Generate keys with no role input", function () {
+		it("Generate keys with no role input", function() {
 			let { privKeys, pubKeys } = login.generateKeys("someaccountname", "somereallylongpassword");
 
 			assert(Object.keys(privKeys).length === 3);
 			assert(Object.keys(pubKeys).length === 3);
 		});
 
-		it("Generate keys with role input", function () {
+		it("Generate keys with role input", function() {
 			let { privKeys, pubKeys } = login.generateKeys("someaccountname", "somereallylongpassword", ["active"]);
 
 			assert(privKeys.active);
@@ -62,7 +62,7 @@ describe("AccountLogin", () => {
 			assert(Object.keys(pubKeys).length === 1);
 		});
 
-		it("Check keys", function () {
+		it("Check keys", function() {
 			let success = login.checkKeys({
 				accountName: "someaccountname",
 				password: "somereallylongpassword",

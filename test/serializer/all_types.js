@@ -53,8 +53,8 @@ let allTypes = {
 	time_point_sec2: Math.floor(Date.now() / 1000),
 };
 
-describe("Serializer", function () {
-	describe("all types", function () {
+describe("Serializer", function() {
+	describe("all types", function() {
 
 		let { toObject, fromObject, toBuffer, fromBuffer } = AllTypes;
 
@@ -63,12 +63,12 @@ describe("Serializer", function () {
 		toBuffer = toBuffer.bind(AllTypes);
 		fromBuffer = fromBuffer.bind(AllTypes);
 
-		it("from object", function () {
+		it("from object", function() {
 			assert(fromObject(allTypes), "serializable");
 			assert(fromObject(fromObject(allTypes)), "non-serializable");
 		});
 
-		it("to object", function () {
+		it("to object", function() {
 			assert(toObject(allTypes), "serializable");
 			assert.deepEqual(toObject(allTypes), toObject(allTypes), "serializable (single to)");
 			assert.deepEqual(toObject(toObject(allTypes)), toObject(allTypes), "serializable (double to)");
@@ -76,7 +76,7 @@ describe("Serializer", function () {
 			assert.deepEqual(toObject(fromObject(fromObject(allTypes))), toObject(allTypes), "non-serializable (double from)");
 		});
 
-		it("to buffer", function () {
+		it("to buffer", function() {
 			assert(toBuffer(allTypes), "serializable");
 			assert(toBuffer(fromObject(allTypes)), "non-serializable");
 			assert.equal(
@@ -86,12 +86,12 @@ describe("Serializer", function () {
 			);
 		});
 
-		it("from buffer", function () {
+		it("from buffer", function() {
 			assert.deepEqual(toObject(fromBuffer(toBuffer(allTypes))), toObject(allTypes), "serializable");
 			assert.deepEqual(toObject(fromBuffer(toBuffer(fromObject(allTypes)))), toObject(allTypes), "non-serializable");
 		});
 
-		it("template", function () {
+		it("template", function() {
 			assert(toObject(allTypes, { use_default: true }));
 			assert(toObject(allTypes, { annotate: true }));
 			assert(toObject({}, { use_default: true }));
