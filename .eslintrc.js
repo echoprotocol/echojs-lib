@@ -1,45 +1,45 @@
 module.exports = {
+    "extends": "airbnb",
     "env": {
         "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "node": true,
-        "mocha": true
+        "jest": true
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "ecmaVersion": 2017,
-            "experimentalObjectRestSpread": true,
-            "jsx": true
-        },
-        "sourceType": "module"
-    },
-    "plugins": [],
+    "plugins": [
+        "import"
+    ],
     "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
+        "arrow-parens": [
             "error",
             "always"
         ],
-        "curly": "error",
-        "no-console": ["error", { allow: ["warn", "error"] }],
-        "no-multi-spaces": ["error"],
-        "keyword-spacing": ["error", { "before": true }],
-        "key-spacing": ["error", { "mode": "strict" }],
-        "block-spacing": "error",
-        "object-curly-spacing": ["error", "always"],
-        "space-before-function-paren": ["error", { "anonymous": "never", "named": "never", "asyncArrow": "never" }]
+        "padded-blocks": [
+            "error",
+            {
+                "classes": "always"
+            }
+        ],
+        "class-methods-use-this": 0,
+        "no-param-reassign": 0,
+        "no-tabs": 0,
+        "no-underscore-dangle": 0,
+        "indent": [
+            "error",
+            "tab",
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "no-shadow": [
+            "error",
+            {
+                "allow": [
+                    "resolve",
+                    "reject",
+                    "done",
+                    "cb",
+                    "err"
+                ]
+            }
+        ]
     }
-};
+}

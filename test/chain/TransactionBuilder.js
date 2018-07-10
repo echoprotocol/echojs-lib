@@ -6,8 +6,8 @@ import { TransactionBuilder } from "../../lib";
 describe("ChainStore", () => {
 	// Connect once for all tests
 	before(function() {
-		/* use ws://94.130.35.43:6311/ws if no local node is available */
-		return Apis.instance("ws://94.130.35.43:6311/ws", true).init_promise.then(function() {
+		/* use wss://echo-devnet-node.pixelplex.io/ws if no local node is available */
+		return Apis.instance("wss://echo-devnet-node.pixelplex.io/ws", true).init_promise.then(function() {
 		});
 	});
 
