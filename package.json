@@ -1,52 +1,55 @@
 {
-	"name": "echojs-lib",
-	"version": "0.1.0",
-	"description": "Pure JavaScript ECHO library for node.js and browsers",
-	"main": "./dist/index.js",
-	"scripts": {
-		"test": "cross-env BABEL_ENV=test mocha --compilers js:babel-register --recursive",
-		"build": "cross-env BABEL_ENV=cjs babel lib -d dist",
-		"postinstall": "npm run-script build",
-		"lint": "eslint .",
-		"lint:debug": "npm run lint -- --debug",
-		"lint:fix": "npm run lint -- --fix"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git@gitlab.pixelplex.by:631_echo/echojs/echojs-lib.git"
-	},
-	"author": "PixelPlex",
-	"license": "UNLICENSED",
-	"dependencies": {
-		"babel-cli": "^6.18.0",
-		"babel-plugin-add-module-exports": "^0.2.1",
-		"babel-preset-es2015": "^6.18.0",
-		"babel-preset-stage-1": "^6.16.0",
-		"bigi": "^1.4.2",
-		"bs58": "^4.0.1",
-		"bytebuffer": "^5.0.1",
-		"create-hash": "^1.1.3",
-		"create-hmac": "^1.1.6",
-		"crypto-js": "^3.1.9-1",
-		"deep-equal": "^1.0.1",
-		"echojs-ws": "git+ssh://git@gitlab.pixelplex.by/631_echo/echojs/echojs-ws.git#development",
-		"ecurve": "^1.0.5",
-		"event-emitter": "^0.3.4",
-		"cross-env": "^5.0.1",
-		"immutable": "^3.8.1",
-		"secure-random": "^1.1.1"
-	},
-	"devDependencies": {
-		"assert": "^1.3.0",
-		"babel-core": "^6.21.0",
-		"babel-eslint": "^7.1.1",
-		"browserify": "^13.1.0",
-		"esdoc": "^0.4.3",
-		"eslint": "^3.14.1",
-		"mkdirp": "^0.5.1",
-		"mocha": "^3.2.0",
-		"rimraf": "^2.6.1",
-		"uglify": "^0.1.5",
-		"uglifyjs": "^2.4.10"
-	}
+  "name": "echojs-lib",
+  "version": "0.1.0",
+  "description": "Pure JavaScript ECHO library for node.js and browsers",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "cross-env BABEL_ENV=test mocha --compilers js:babel-register --recursive",
+    "build": "cross-env BABEL_ENV=cjs babel lib -d dist",
+    "postinstall": "npm run-script build",
+    "lint": "eslint .",
+    "lint:debug": "npm run lint -- --debug",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.pixelplex.by:645.echo/echojs/echojs-lib.git"
+  },
+  "author": "PixelPlex",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "bigi": "^1.4.2",
+    "bs58": "^4.0.1",
+    "bytebuffer": "^5.0.1",
+    "create-hash": "^1.1.3",
+    "create-hmac": "^1.1.6",
+    "cross-env": "^5.0.1",
+    "crypto-js": "^3.1.9-1",
+    "deep-equal": "^1.0.1",
+    "ecurve": "^1.0.5",
+    "event-emitter": "^0.3.4",
+    "immutable": "^3.8.1",
+    "secure-random": "^1.1.1"
+  },
+  "devDependencies": {
+    "assert": "^1.3.0",
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "browserify": "^13.1.0",
+    "esdoc": "^0.4.3",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "rimraf": "^2.6.1",
+    "uglify": "^0.1.5",
+    "uglifyjs": "^2.4.10"
+  }
 }

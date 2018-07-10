@@ -1,4 +1,4 @@
-import { PrivateKey, PublicKey, Address, Serializer, ops, types } from "../../lib";
+import { PrivateKey, Address, Serializer, ops, types } from "../../lib";
 import assert from "assert";
 
 let {
@@ -6,7 +6,7 @@ let {
 	uint8, uint16, uint32, int64, uint64,
 	string, bytes, bool, array, fixed_array,
 	protocol_id_type, object_id_type, vote_id,
-	// future_extensions,
+	// futureExtensions,
 	static_variant, map, set,
 	public_key, address,
 	time_point_sec,
