@@ -84,5 +84,18 @@ describe('ChainStore', () => {
 			});
 			assert(ChainStore.getAccount('proxy-to-self') === undefined);
 		})));
+
+
+		it('Block by number', () => new Promise(((resolve) => {
+			ChainStore.getObject('2.1.0');
+			ChainStore.subscribe(() => {
+				const globalObj = ChainStore.getObject('2.1.0');
+				if (globalObj !== undefined) {
+					ChainStore
+						.getBlock(globalObj.get('head_block_number'))
+						.then(() => resolve());
+				}
+			});
+		})));
 	});
 });
