@@ -57,14 +57,14 @@ describe("ECC", function() {
 			let receiver = PrivateKey.fromSeed("2");
 			let nonce = "289662526069530675";
 
-			let ciphertext = Aes.encrypt_with_checksum(
+			let ciphertext = Aes.encryptWithChecksum(
 				sender,
 				receiver.toPublicKey(),
 				nonce,
 				new Buffer("\xff\x00", "binary")
 			);
 			//console.log '... ciphertext',ciphertext
-			let plaintext = Aes.decrypt_with_checksum(
+			let plaintext = Aes.decryptWithChecksum(
 				receiver,
 				sender.toPublicKey(),
 				nonce,
@@ -146,7 +146,7 @@ describe("ECC", function() {
 
 		let one_time_private = PrivateKey.fromHex("8fdfdde486f696fd7c6313325e14d3ff0c34b6e2c390d1944cbfe150f4457168");
 		let to_public = PublicKey.fromStringOrThrow("GPH7vbxtK1WaZqXsiCHPcjVFBewVj8HFRd5Z5XZDpN6Pvb2dZcMqK");
-		let secret = one_time_private.get_shared_secret(to_public);
+		let secret = one_time_private.getSharedSecret(to_public);
 		let child = hash.sha256(secret);
 
 		// Check everything above with `wdump((child));` from the witness_node:

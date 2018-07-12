@@ -1,0 +1,32 @@
+cache:
+  paths:
+  - node_modules/
+
+stages:
+#   - deploy
+  - test
+
+test:
+  stage: test
+  script:
+    - npm install
+    - npm run lint
+    # - npm link echojs-ws
+    # - npm run test
+  tags:
+    - pp-projects
+
+# build_dev:
+#   stage: deploy
+#   script:
+#     - cd /home/devuser/DevProjects/645.echo_web/echojs/echojs-lib
+#     - git pull
+#     - npm install
+#     - npm run build
+#     - npm link
+#   only:
+#     - development
+#   environment:
+#     name: development
+#   tags:
+#     - pp-projects
