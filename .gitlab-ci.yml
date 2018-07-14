@@ -1,0 +1,32 @@
+cache:
+  paths:
+  - node_modules/
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  script:
+    - npm install
+    - npm run lint
+    - npm run test
+  tags:
+    - echo-linux
+  only:
+    - triggers
+    - web
+
+publish:
+  stage: deploy
+  tags:
+    - echo-linux
+  only:
+    - tags
+  script:
+    - npm install
+    - npm run build
+    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+    - npm publish
+    - rm .npmrc
