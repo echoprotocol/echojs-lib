@@ -3,30 +3,30 @@ cache:
   - node_modules/
 
 stages:
-#   - deploy
   - test
+  - deploy
 
 test:
   stage: test
   script:
     - npm install
     - npm run lint
-    # - npm link echojs-ws
-    # - npm run test
+    - npm run test
   tags:
-    - pp-projects
+    - echo-linux
+  only:
+    - triggers
+    - web
 
-# build_dev:
-#   stage: deploy
-#   script:
-#     - cd /home/devuser/DevProjects/645.echo_web/echojs/echojs-lib
-#     - git pull
-#     - npm install
-#     - npm run build
-#     - npm link
-#   only:
-#     - development
-#   environment:
-#     name: development
-#   tags:
-#     - pp-projects
+publish:
+  stage: deploy
+  tags:
+    - echo-linux
+  only:
+    - tags
+  script:
+    - npm install
+    - npm run build
+    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+    - npm publish
+    - rm .npmrc
