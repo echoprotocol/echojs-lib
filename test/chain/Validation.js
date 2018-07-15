@@ -1,5 +1,5 @@
-import { ChainValidation } from "../../lib";
-import assert from "assert";
+const { ChainValidation } = require("../../index");
+const assert = require('assert');
 
 describe("ChainValidation", () => {
 

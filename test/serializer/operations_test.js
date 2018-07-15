@@ -1,5 +1,5 @@
-import assert from "assert";
-import ops from "../../lib/serializer/src/operations";
+const assert = require('assert');
+const ops = require("../../serializer/src/operations");
 
 describe("operation test", function() {
 

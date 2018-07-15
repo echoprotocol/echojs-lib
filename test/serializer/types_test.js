@@ -1,13 +1,11 @@
-import Convert from "../../lib/serializer/src/convert";
-import { Long } from "bytebuffer";
+const Convert = require("../../serializer/src/convert");
+const { Long } = require("bytebuffer");
 
-import assert from "assert";
-import p from "../../lib/serializer/src/precision";
-import th from "./test_helper";
-
-import { is } from "immutable";
-import { PublicKey, PrivateKey, types } from "../../lib";
-import { ChainConfig } from "echojs-ws";
+const assert = require('assert');
+const p = require("../../serializer/src/precision");
+const th = require("./test_helper");
+const { PublicKey, PrivateKey, types } = require("../../index");
+const { ChainConfig } = require("echojs-ws");
 
 describe("types", function() {
 

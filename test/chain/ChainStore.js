@@ -1,17 +1,18 @@
-import assert from 'assert';
-import { Apis, ChainConfig } from 'echojs-ws';
-import { ChainStore } from '../../lib';
+const assert = require('assert');
+const { Apis, ChainConfig } = require('echojs-ws');
+const { ChainStore } = require('../../index');
+
 
 let coreAsset;
-
+process.on('unhandledRejection', (error) => console.error(error));
 describe('ChainStore', () => {
 	// Connect once for all tests
-	before(() =>
-		/* use wss://echo-devnet-node.pixelplex.io/ws if no local node is available */
-		 Apis.instance('wss://echo-devnet-node.pixelplex.io/ws', true).init_promise.then((result) => {
+	before(() => {
+		return Apis.instance('wss://echo-devnet-node.pixelplex.io/ws', true).init_promise.then((result) => {
 			coreAsset = result[0].network.core_asset;
 			return ChainStore.init();
-		}));
+		});
+	});
 
 	// Unsubscribe everything after each test
 	afterEach(() => {
@@ -21,6 +22,7 @@ describe('ChainStore', () => {
 
 	after(() => {
 		ChainConfig.reset();
+		Apis.close();
 	});
 
 	describe('Subscriptions', () => {

@@ -1,5 +1,5 @@
-import { PrivateKey, Address, Serializer, ops, types } from "../../lib";
-import assert from "assert";
+const { PrivateKey, Address, Serializer, ops, types } = require("../../index");
+const assert = require('assert');
 
 let {
 	//varint32,
