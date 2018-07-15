@@ -1,6 +1,6 @@
-import { Aes, PrivateKey, PublicKey, Address } from "../../lib";
-import assert from "assert";
-import { ChainConfig } from "echojs-ws";
+const { Aes, PrivateKey, PublicKey, Address } = require("../../index");
+const assert = require('assert');
+const { ChainConfig } = require("echojs-ws");
 
 
 let test = function(key) {

@@ -1,7 +1,7 @@
-import { Aes, PrivateKey, PublicKey, Signature, hash, key } from "../../lib";
-import assert from "assert";
-import { ChainConfig } from "echojs-ws";
-import dictionary from "./dictionary";
+const { Aes, PrivateKey, PublicKey, Signature, hash, key } = require("../../index");
+const assert = require('assert');
+const { ChainConfig } = require("echojs-ws");
+const dictionary = require("./dictionary");
 
 const DEBUG = process.env.DEBUG;
 

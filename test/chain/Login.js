@@ -1,6 +1,6 @@
-import assert from "assert";
-import { Login as login } from "../../lib";
-import { Login as login2 } from "../../lib";
+const assert = require('assert');
+const login = require('../../index').Login;
+const login2 = require('../../index').Login;
 
 let auths = {
 	active: [

@@ -1,5 +1,5 @@
-import assert from "assert";
-import { NumberUtils } from "../../lib";
+const assert = require('assert');
+const { NumberUtils } = require("../../index");
 
 describe("Number utils", () => {
 

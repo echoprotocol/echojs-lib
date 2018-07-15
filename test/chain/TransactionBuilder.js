@@ -1,6 +1,6 @@
-import assert from "assert";
-import { Apis } from "echojs-ws";
-import { TransactionBuilder } from "../../lib";
+const assert = require('assert');
+const { Apis } = require("echojs-ws");
+const { TransactionBuilder } = require("../../index");
 
 
 describe("ChainStore", () => {
@@ -9,6 +9,10 @@ describe("ChainStore", () => {
 		/* use wss://echo-devnet-node.pixelplex.io/ws if no local node is available */
 		return Apis.instance("wss://echo-devnet-node.pixelplex.io/ws", true).init_promise.then(function() {
 		});
+	});
+
+	after(() => {
+		Apis.close();
 	});
 
 	it("Transfer", () => {
@@ -219,7 +223,7 @@ describe("ChainStore", () => {
 
 	it("Contract Transfer", () => {
 		let tr = new TransactionBuilder();
-		
+
 		assert.doesNotThrow(function() {
 			tr.add_type_operation("contract_transfer", {
 				fee: {
