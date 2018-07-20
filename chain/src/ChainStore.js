@@ -1233,7 +1233,7 @@ const ChainStore = {
 	 *  @return an Immutable constructed = require(object and deep merged with the current state
 	 */
 	_updateObject(object, notifySubscribers = false, emit = true) {
-		let notification;
+		const notification = {};
 		if (!('id' in object)) {
 			// console.log('object with no id:', object);
 			/* Settle order updates look different and need special handling */
