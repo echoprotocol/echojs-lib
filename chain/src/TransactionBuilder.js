@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-syntax */
 

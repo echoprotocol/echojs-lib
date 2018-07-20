@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 const ByteBuffer = require('bytebuffer');
 const BigInteger = require('bigi');
 const { Point, getCurveByName } = require('ecurve');

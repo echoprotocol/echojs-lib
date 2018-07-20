@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 /* eslint-disable consistent-return */
 const Immutable = require('immutable');
 const { Apis } = require('echojs-ws');
@@ -262,7 +260,7 @@ const ChainStore = {
 						ChainStore.objects_by_id.set(obj, null);
 					}
 				} else {
-					ChainStore._updateObject(obj);
+					ChainStore._updateObject(obj, true);
 				}
 			}
 		}
@@ -288,14 +286,14 @@ const ChainStore = {
 		ChainStore.notifySubscribers();
 	},
 
-	notifySubscribers() {
+	notifySubscribers(...args) {
 		// Dispatch at most only once every x milliseconds
 		if (!ChainStore.dispatched) {
 			ChainStore.dispatched = true;
 			ChainStore.timeout = setTimeout(() => {
 				ChainStore.dispatched = false;
 				ChainStore.subscribers.forEach((callback) => {
-					callback();
+					callback(args);
 				});
 			}, ChainStore.dispatchFrequency);
 		}
@@ -1235,7 +1233,7 @@ const ChainStore = {
 	 *  @return an Immutable constructed = require(object and deep merged with the current state
 	 */
 	_updateObject(object, notifySubscribers = false, emit = true) {
-
+		let notification;
 		if (!('id' in object)) {
 			// console.log('object with no id:', object);
 			/* Settle order updates look different and need special handling */
@@ -1304,6 +1302,8 @@ const ChainStore = {
 
 		// DYNAMIC GLOBAL OBJECT
 		if (object.id === '2.1.0') {
+			notification.type = 'global';
+			notification.object = object;
 			object.participation = 100 * (BigInteger(object.recent_slots_filled).bitCount() / 128.0);
 			ChainStore.head_block_time_string = object.time;
 			ChainStore.chain_time_offset.push(Date.now() - timeStringToDate(object.time).getTime());
@@ -1345,6 +1345,8 @@ const ChainStore = {
 			owner = owner.setIn(['balances', object.asset_type], object.id);
 
 			ChainStore.objects_by_id.set(object.owner, owner);
+			notification.type = 'account';
+			notification.object = owner;
 		} else if (object.id.substring(0, accountStatsPrefix.length) === accountStatsPrefix) {
 			// ACCOUNT STATS OBJECT
 			try {
@@ -1352,6 +1354,8 @@ const ChainStore = {
 
 				if (priorMostRecentOp !== object.most_recent_op) {
 					ChainStore.fetchRecentHistory(object.owner);
+					notification.type = 'account';
+					notification.object = object.owner;
 				}
 			} catch (err) {
 				// console.log('prior error:', 'object:', object, 'prior', prior, 'err:', err);
@@ -1383,6 +1387,9 @@ const ChainStore = {
 			current = current.set('blacklisted_accounts', Immutable.fromJS(object.blacklisted_accounts));
 			ChainStore.objects_by_id.set(object.id, current);
 			ChainStore.accounts_by_name.set(object.name, object.id);
+			notification.type = 'account';
+			notification.object = current;
+
 		} else if (object.id.substring(0, assetPrefix.length) === assetPrefix) {
 			// ASSET OBJECT
 			ChainStore.assets_by_symbol.set(object.symbol, object.id);
@@ -1416,6 +1423,8 @@ const ChainStore = {
 				current = current.set('bitasset', bad);
 				ChainStore.objects_by_id.set(object.id, current);
 			}
+			notification.type = 'asset';
+			notification.object = current;
 		} else if (object.id.substring(0, assetDynamicDataPrefix.length) === assetDynamicDataPrefix) {
 			// ASSET DYNAMIC DATA OBJECT
 			// let asset_id = assetPrefix + object.id.substring( assetDynamicDataPrefix.length )
@@ -1426,6 +1435,8 @@ const ChainStore = {
 					assetObj = assetObj.set('dynamic', current);
 					ChainStore.objects_by_id.set(assetId, assetObj);
 				}
+				notification.type = 'asset_dynamic';
+				notification.object = current;
 			}
 
 		} else if (object.id.substring(0, workerPrefix.length) === workerPrefix) {
@@ -1442,6 +1453,8 @@ const ChainStore = {
 					emitter.emit('bitasset-update', asset);
 					ChainStore.objects_by_id.set(assetId, asset);
 				}
+				notification.type = 'bitasset';
+				notification.object = asset;
 			}
 		} else if (object.id.substring(0, callOrderPrefix.length) === callOrderPrefix) {
 			// CALL ORDER OBJECT
@@ -1462,6 +1475,8 @@ const ChainStore = {
 					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the witness node by calling get_objects
 				}
 			}
+			notification.type = 'callOrder';
+			notification.object = object;
 		} else if (object.id.substring(0, orderPrefix.length) === orderPrefix) {
 			// LIMIT ORDER OBJECT
 			let account = ChainStore.objects_by_id.get(object.seller);
@@ -1476,15 +1491,19 @@ const ChainStore = {
 					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the witness node by calling get_objects
 				}
 			}
-			// POROPOSAL OBJECT
+			notification.type = 'limitOrder';
+			notification.object = object;
 		} else if (object.id.substring(0, proposalPrefix.length) === proposalPrefix) {
+			// PROPOSAL OBJECT
 			ChainStore.addProposalData(object.required_active_approvals, object.id);
 			ChainStore.addProposalData(object.required_owner_approvals, object.id);
+			notification.type = 'proposal';
+			notification.object = object;
 		}
 
 
 		if (notifySubscribers) {
-			ChainStore.notifySubscribers();
+			ChainStore.notifySubscribers(notification);
 		}
 
 		return current;

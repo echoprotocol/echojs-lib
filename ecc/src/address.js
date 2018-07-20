@@ -1,6 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
-
 const assert = require('assert');
 const { ChainConfig } = require('echojs-ws');
 const { encode, decode } = require('bs58');
