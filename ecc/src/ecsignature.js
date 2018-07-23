@@ -72,7 +72,7 @@ ECSignature.prototype.toCompact = function toCompact(i, compressed) {
 		i += 4;
 	}
 	i += 27;
-	const buffer = Buffer.from(65);
+	const buffer = Buffer.alloc(65);
 	buffer.writeUInt8(i, 0);
 	this.r.toBuffer(32).copy(buffer, 1);
 	this.s.toBuffer(32).copy(buffer, 33);
@@ -95,7 +95,7 @@ ECSignature.prototype.toDER = function toDER() {
 };
 
 ECSignature.prototype.toScriptSignature = function toScriptSignature(hashType) {
-	const hashTypeBuffer = Buffer.from(1);
+	const hashTypeBuffer = Buffer.alloc(1);
 	hashTypeBuffer.writeUInt8(hashType, 0);
 	return Buffer.concat([this.toDER(), hashTypeBuffer]);
 };

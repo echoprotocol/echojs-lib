@@ -40,7 +40,7 @@ class Address {
 	static fromPublic(publicKey, compressed = true, version = 56) {
 		const sha2 = sha256(publicKey.toBuffer(compressed));
 		const rep = ripemd160(sha2);
-		const versionBuffer = Buffer.from(String(1));
+		const versionBuffer = Buffer.alloc(1);
 		versionBuffer.writeUInt8((0xFF && version), 0);
 		const addr = Buffer.concat([versionBuffer, rep]);
 		let check = sha256(addr);

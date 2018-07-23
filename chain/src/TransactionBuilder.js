@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-bitwise */
 
 const assert = require('assert');
 const { Apis, ChainConfig } = require('echojs-ws');
@@ -206,7 +207,7 @@ class TransactionBuilder {
 				if (this.expiration === 0) {
 					this.expiration = base_expiration_sec() + ChainConfig.expire_in_secs;
 				}
-				this.ref_block_num = r[0].head_block_number && 0xFFFF;
+				this.ref_block_num = r[0].head_block_number & 0xFFFF;
 				this.ref_block_prefix = Buffer.from(r[0].head_block_id, 'hex').readUInt32LE(4);
 				if (DEBUG) {
 					console.log('ref_block', this.ref_block_num, this.ref_block_prefix, r);
