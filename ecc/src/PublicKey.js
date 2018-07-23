@@ -71,8 +71,8 @@ class PublicKey {
 	}
 
 	/**
-		@arg {string} publicKey - like GPHXyz...
-		@arg {string} addressPrefix - like GPH
+		@arg {string} publicKey - like ECHOXyz...
+		@arg {string} addressPrefix - like ECHO
 		@return PublicKey or `null` (if the publicKey string is invalid)
 	*/
 	static fromPublicKeyString(publicKey, addressPrefix = ChainConfig.address_prefix) {
@@ -84,8 +84,8 @@ class PublicKey {
 	}
 
 	/**
-		@arg {string} publicKey - like GPHXyz...
-		@arg {string} addressPrefix - like GPH
+		@arg {string} publicKey - like ECHOXyz...
+		@arg {string} addressPrefix - like ECHO
 		@throws {Error} if public key is invalid
 		@return PublicKey
 	*/

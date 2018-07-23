@@ -117,7 +117,7 @@ class TransactionBuilder {
 
         @arg {ConfidentialWallet} cwallet - must be unlocked, used to gather signing keys
 
-        @arg {array<string>} [signer_pubkeys = null] - Optional ["GPH1Abc9Def0...", ...].
+        @arg {array<string>} [signer_pubkeys = null] - Optional ["ECHO1Abc9Def0...", ...].
 		These are additional signing keys.
 		Some balance claims require propritary address formats,
 		the witness node can't tell us which ones are needed so they must be passed in.
@@ -431,7 +431,7 @@ class TransactionBuilder {
 
 
 		if (asset_id !== '1.3.0') {
-			// This handles the fallback to paying fees in GPH if the fee pool is empty.
+			// This handles the fallback to paying fees in ECHO if the fee pool is empty.
 			promises.push(Apis.instance().dbApi().exec('get_required_fees', [operations, '1.3.0']));
 			promises.push(Apis.instance().dbApi().exec('get_objects', [[asset_id]]));
 		}
