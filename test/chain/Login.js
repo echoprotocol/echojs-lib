@@ -4,7 +4,7 @@ const login2 = require('../../index').Login;
 
 let auths = {
 	active: [
-		["GPH5Abm5dCdy3hJ1C5ckXkqUH2Me7dXqi9Y7yjn9ACaiSJ9h8r8mL", 1]
+		["ECHO5Abm5dCdy3hJ1C5ckXkqUH2Me7dXqi9Y7yjn9ACaiSJ9h8r8mL", 1]
 	]
 };
 

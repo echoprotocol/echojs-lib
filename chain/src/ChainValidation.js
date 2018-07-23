@@ -10,6 +10,10 @@ const idRegex = /\b\d+\.\d+\.(\d+)\b/;
 
 const chainValidation = {
 	is_account_name: (value, allowShort = false) => {
+		if (typeof value !== 'string') {
+			return false;
+		}
+
 		if (chainValidation.is_empty(value)) {
 			return false;
 		}

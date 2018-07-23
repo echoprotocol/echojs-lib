@@ -28,8 +28,8 @@ describe("ChainStore", () => {
 				to: "1.2.2",
 				amount: { amount: 50000, asset_id: "1.3.0" },
 				memo: {
-					from: "GPH1111111111111111111111111111111114T1Anm",
-					to: "GPH1111111111111111111111111111111114T1Anm",
+					from: "ECHO1111111111111111111111111111111114T1Anm",
+					to: "ECHO1111111111111111111111111111111114T1Anm",
 					nonce: 0,
 					message: ""
 				}
@@ -49,8 +49,8 @@ describe("ChainStore", () => {
 				to: "1.2.2",
 				amount: { amount: 50000, asset_id: "1.3.0" },
 				memo: {
-					from: "GPH1111111111111111111111111111111114T1Anm",
-					to: "GPH1111111111111111111111111111111114T1Anm",
+					from: "ECHO1111111111111111111111111111111114T1Anm",
+					to: "ECHO1111111111111111111111111111111114T1Anm",
 					nonce: 0,
 					message: ""
 				}
@@ -76,8 +76,8 @@ describe("ChainStore", () => {
 				to: "1.2.2",
 				amount: { amount: 50000, asset_id: "1.3.0" },
 				memo: {
-					from: "GPH1111111111111111111111111111111114T1Anm",
-					to: "GPH1111111111111111111111111111111114T1Anm",
+					from: "ECHO1111111111111111111111111111111114T1Anm",
+					to: "ECHO1111111111111111111111111111111114T1Anm",
 					nonce: 0,
 					message: ""
 				}

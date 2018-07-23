@@ -1,7 +1,6 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-bitwise */
 
 const assert = require('assert');
 const { Apis, ChainConfig } = require('echojs-ws');
@@ -118,7 +117,7 @@ class TransactionBuilder {
 
         @arg {ConfidentialWallet} cwallet - must be unlocked, used to gather signing keys
 
-        @arg {array<string>} [signer_pubkeys = null] - Optional ["GPH1Abc9Def0...", ...].
+        @arg {array<string>} [signer_pubkeys = null] - Optional ["ECHO1Abc9Def0...", ...].
 		These are additional signing keys.
 		Some balance claims require propritary address formats,
 		the witness node can't tell us which ones are needed so they must be passed in.
@@ -208,7 +207,7 @@ class TransactionBuilder {
 				if (this.expiration === 0) {
 					this.expiration = base_expiration_sec() + ChainConfig.expire_in_secs;
 				}
-				this.ref_block_num = r[0].head_block_number && 0xFFFF;
+				this.ref_block_num = r[0].head_block_number & 0xFFFF;
 				this.ref_block_prefix = Buffer.from(r[0].head_block_id, 'hex').readUInt32LE(4);
 				if (DEBUG) {
 					console.log('ref_block', this.ref_block_num, this.ref_block_prefix, r);
@@ -432,7 +431,7 @@ class TransactionBuilder {
 
 
 		if (asset_id !== '1.3.0') {
-			// This handles the fallback to paying fees in GPH if the fee pool is empty.
+			// This handles the fallback to paying fees in ECHO if the fee pool is empty.
 			promises.push(Apis.instance().dbApi().exec('get_required_fees', [operations, '1.3.0']));
 			promises.push(Apis.instance().dbApi().exec('get_objects', [[asset_id]]));
 		}

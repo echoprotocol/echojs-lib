@@ -1,6 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
-
 const secureRandom = require('secure-random');
 const { ChainConfig } = require('echojs-ws');
 const PrivateKey = require('./PrivateKey');

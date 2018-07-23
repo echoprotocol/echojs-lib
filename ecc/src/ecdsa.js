@@ -12,13 +12,13 @@ function deterministicGenerateK(curve, hash, d, checkSig, nonce) {
 	enforceType('Buffer', hash);
 	enforceType(BigInteger, d);
 	if (nonce) {
-		hash = sha256(Buffer.concat([hash, Buffer.from(String(nonce))]));
+		hash = sha256(Buffer.concat([hash, Buffer.alloc(nonce)]));
 	}
 	// sanity check
 	assert.equal(hash.length, 32, 'Hash must be 256 bit');
 	const x = d.toBuffer(32);
-	let k = Buffer.from(String(32));
-	let v = Buffer.from(String(32));
+	let k = Buffer.alloc(32);
+	let v = Buffer.alloc(32);
 	// Step B
 	v.fill(1);
 	// Step C
