@@ -72,7 +72,7 @@ const chainValidation = {
 		for (let i = 0; i < ref.length; i += 1) {
 			const label = ref[i];
 			if (!/^[~a-z]/.test(label)) {
-				return `${suffix} start with a letter.`;
+				return `${suffix} start with a latin letter.`;
 			}
 			if (!/^[~a-z0-9-]*$/.test(label)) {
 				return `${suffix} have only letters, digits, or dashes.`;
