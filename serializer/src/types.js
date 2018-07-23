@@ -1,6 +1,4 @@
 /* eslint-disable no-bitwise */
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 const { ChainConfig } = require('echojs-ws');
 
 // Low-level types that make up operations

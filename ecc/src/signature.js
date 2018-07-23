@@ -32,7 +32,7 @@ class Signature {
 	}
 
 	toBuffer() {
-		const buf = Buffer.from(65);
+		const buf = Buffer.alloc(65);
 		buf.writeUInt8(this.i, 0);
 		this.r.toBuffer(32).copy(buf, 1);
 		this.s.toBuffer(32).copy(buf, 33);

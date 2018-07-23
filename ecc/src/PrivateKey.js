@@ -120,7 +120,7 @@ class PrivateKey {
 		byte(s) is zero.  Pad it back to the full 32-bytes
 		*/
 		if (!legacy && S.length < 32) {
-			const pad = Buffer.from(32 - S.length).fill(0);
+			const pad = Buffer.alloc(32 - S.length).fill(0);
 			S = Buffer.concat([pad, S]);
 		}
 

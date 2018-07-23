@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
 /* eslint-disable consistent-return */
 const Immutable = require('immutable');
 const { Apis } = require('echojs-ws');
@@ -1235,7 +1233,6 @@ const ChainStore = {
 	 *  @return an Immutable constructed = require(object and deep merged with the current state
 	 */
 	_updateObject(object, notifySubscribers = false, emit = true) {
-
 		if (!('id' in object)) {
 			// console.log('object with no id:', object);
 			/* Settle order updates look different and need special handling */
@@ -1476,8 +1473,8 @@ const ChainStore = {
 					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the witness node by calling get_objects
 				}
 			}
-			// POROPOSAL OBJECT
 		} else if (object.id.substring(0, proposalPrefix.length) === proposalPrefix) {
+			// PROPOSAL OBJECT
 			ChainStore.addProposalData(object.required_active_approvals, object.id);
 			ChainStore.addProposalData(object.required_owner_approvals, object.id);
 		}
