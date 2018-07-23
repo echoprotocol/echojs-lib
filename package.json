@@ -24,7 +24,7 @@
     "cross-env": "^5.0.1",
     "crypto-js": "^3.1.9-1",
     "deep-equal": "^1.0.1",
-    "echojs-ws": "git+ssh://git@gitlab.pixelplex.by/645.echo_web/echojs/echojs-ws.git",
+    "echojs-ws": "git+ssh://git@gitlab.pixelplex.by/645.echo/echojs/echojs-ws.git",
     "ecurve": "^1.0.5",
     "event-emitter": "^0.3.4",
     "immutable": "^3.8.1",
