@@ -260,7 +260,7 @@ const ChainStore = {
 						ChainStore.objects_by_id.set(obj, null);
 					}
 				} else {
-					ChainStore._updateObject(obj, true);
+					ChainStore._updateObject(obj);
 				}
 			}
 		}
