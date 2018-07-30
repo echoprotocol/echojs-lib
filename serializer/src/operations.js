@@ -1199,8 +1199,10 @@ operation.st_operations = [
 	Operations.transfer_from_blind,
 	Operations.asset_settle_cancel,
 	Operations.asset_claim_fees,
-	Operations.contract,
+	{},
 	Operations.contract_transfer,
+	{},
+	Operations.contract,
 ];
 
 Operations.transaction = new Serializer(
