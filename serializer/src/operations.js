@@ -1201,6 +1201,8 @@ operation.st_operations = [
 	Operations.asset_claim_fees,
 	Operations.contract,
 	Operations.contract_transfer,
+	{},
+	Operations.contract,
 ];
 
 Operations.transaction = new Serializer(
