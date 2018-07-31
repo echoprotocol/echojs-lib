@@ -1,5 +1,4 @@
 
-
 /**
     Account names may contain one or more names separated by a dot.
     Each name needs to start with a letter and may contain
@@ -79,13 +78,13 @@ const chainValidation = {
 				return `${suffix} start with a latin letter.`;
 			}
 			if (!/^[~a-z0-9-]*$/.test(label)) {
-				return `${suffix} have only letters, digits, or dashes.`;
+				return `${suffix} have only latin letters, digits, or dashes.`;
 			}
 			if (/--/.test(label)) {
 				return `${suffix} have only one dash in a row.`;
 			}
 			if (!/[a-z0-9]$/.test(label)) {
-				return `${suffix} end with a letter or digit.`;
+				return `${suffix} end with a latin letter or digit.`;
 			}
 			if (!(label.length >= 3)) {
 				return `${suffix} be longer.`;
