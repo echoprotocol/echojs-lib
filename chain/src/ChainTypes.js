@@ -94,8 +94,11 @@ ChainTypes.operations = {
 	transfer_from_blind: 41,
 	asset_settle_cancel: 42,
 	asset_claim_fees: 43,
-	contract_transfer: 45,
+	fba_distribute: 44,
+    bid_collateral: 45,
+    execute_bid: 46,
 	contract: 47,
+	contract_transfer: 48,
 };
 
 module.exports = ChainTypes;
