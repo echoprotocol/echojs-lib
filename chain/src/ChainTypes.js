@@ -95,8 +95,8 @@ ChainTypes.operations = {
 	asset_settle_cancel: 42,
 	asset_claim_fees: 43,
 	fba_distribute: 44,
-    bid_collateral: 45,
-    execute_bid: 46,
+	bid_collateral: 45,
+	execute_bid: 46,
 	contract: 47,
 	contract_transfer: 48,
 };
