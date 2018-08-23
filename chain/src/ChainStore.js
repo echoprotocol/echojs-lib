@@ -1378,12 +1378,6 @@ const ChainStore = {
 			current = current.set('whitelisted_accounts', Immutable.fromJS(object.whitelisted_accounts));
 			current = current.set('blacklisted_accounts', Immutable.fromJS(object.blacklisted_accounts));
 
-			console.log(
-				object,
-				ChainStore.objects_by_id.get(object.id),
-				ChainStore.accounts_by_name.get(object.name),
-			);
-
 			if (ChainStore.objects_by_id.get(object.id)) {
 				ChainStore.objects_by_id.set(object.id, current);
 			}
