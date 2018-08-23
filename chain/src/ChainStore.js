@@ -962,7 +962,6 @@ const ChainStore = {
 						account.referrer_name = referrerName;
 						account.lifetime_referrer_name = lifetimeReferrerName;
 						account.registrar_name = registrarName;
-						account.balances = {};
 						account.orders = new Immutable.Set();
 						account.vesting_balances = new Immutable.Set();
 						account.balances = new Immutable.Map();
@@ -1378,8 +1377,15 @@ const ChainStore = {
 			current = current.set('blacklisting_accounts', Immutable.fromJS(object.blacklisting_accounts));
 			current = current.set('whitelisted_accounts', Immutable.fromJS(object.whitelisted_accounts));
 			current = current.set('blacklisted_accounts', Immutable.fromJS(object.blacklisted_accounts));
-			ChainStore.objects_by_id.set(object.id, current);
-			ChainStore.accounts_by_name.set(object.name, object.id);
+
+			if (ChainStore.objects_by_id.get(object.id)) {
+				ChainStore.objects_by_id.set(object.id, current);
+			}
+
+			if (ChainStore.accounts_by_name.get(object.name)) {
+				ChainStore.accounts_by_name.set(object.name, object.id);
+			}
+
 		} else if (object.id.substring(0, assetPrefix.length) === assetPrefix) {
 			// ASSET OBJECT
 			ChainStore.assets_by_symbol.set(object.symbol, object.id);
