@@ -1,6 +1,6 @@
 {
   "name": "echojs-lib",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Pure JavaScript ECHO library for node.js",
   "main": "./index.js",
   "scripts": {
