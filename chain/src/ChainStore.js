@@ -99,7 +99,7 @@ const ChainStore = {
 		ChainStore.subError = null;
 		ChainStore.clearCache();
 		ChainStore.head_block_time_string = null;
-		return ChainStore.init();
+		// return ChainStore.init();
 		// .catch((err) => {
 		// 	console.log('resetCache init error:', err);
 		// });
