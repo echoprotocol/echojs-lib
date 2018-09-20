@@ -63,7 +63,7 @@ const chainValidation = {
 		}
 
 		if (value.length > 63) {
-			return `${suffix} be shorter.`;
+			return `${suffix} be shorter then 63 symbols.`;
 		}
 
 		if (/\./.test(value)) {
