@@ -75,8 +75,12 @@ To fetch objects you can use `ChainStore`:
 ```javascript
 import { ChainStore } from 'echojs-lib';
 
-// method = 'getAsset', key = assetId
-const result = await ChainStore.FetchChain(method, key);
+try {
+    const result = await ChainStore.FetchChain('getAsset', '1.3.0');
+    console.log(result);
+} catch (e) {
+    console.warn(e);
+}
 ```
 > New or updated object you can get through a ChainStore.subscribe(() => {});
 
