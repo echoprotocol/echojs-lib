@@ -75,14 +75,8 @@ To fetch objects you can use `ChainStore`:
 ```javascript
 import { ChainStore } from 'echojs-lib';
 
-const result = ChainStore.fetchObject('1.3.0');
-if(result) {
-	console.log('object exist and is in our cache');
-} else if(result === null) {
-	console.log('object object does not exist');
-} else if(result === undefined) {
-	console.log('object might exist but is not in cache');
-}
+// method = 'getAsset', key = assetId
+const result = await ChainStore.FetchChain(method, key);
 ```
 > New or updated object you can get through a ChainStore.subscribe(() => {});
 
