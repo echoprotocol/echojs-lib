@@ -113,6 +113,28 @@ buildAndSendTransaction(operation, options, privateKey)
 	.catch(() => console.log('transaction wasn\'t completed'))
 ```
 
+#### Contracts
+
+You can deploy and call contracts using echojs-lib. For example:
+
+```javascript
+const { ContractFrame, PrivateKey } = require('echojs-lib');
+
+const contractFrame = new ContractFrame();
+const privateKey = PrivateKey.fromWif('5JMontd8b8iPWrAU36PRYhWBwPhhv1RQGNTxjtrSLodoioqHA7k');
+
+const call = await contractFrame.callContract({
+    accountId: '1.2.1',
+    contractId: '1.16.1',
+    bytecode: 'a9059cbb000000000000000000000000000000000000000000000000000000000000005d0000000000000000000000000000000000000000000000000000000000000001',
+}, privateKey);
+
+const result = await contractFrame.getContractResult('1.17.1');
+
+const constant = await contractFrame.getContractConstant('1.16.1', '1.2.1', '1.3.0', '95d89b41');
+
+```
+
 
 #### Validation
 Handily to use standard validation method instead write own, a few examples:
@@ -176,4 +198,3 @@ const memo = { from: '1.2.1', to: '1.2.2', nonce, message };
 ```
 
 This `memo` may be included at `options` when transfer assets.
-
