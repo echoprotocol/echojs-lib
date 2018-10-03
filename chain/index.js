@@ -7,6 +7,7 @@ const TransactionHelper = require('./src/TransactionHelper');
 const ChainValidation = require('./src/ChainValidation');
 // const EmitterInstance = require('./src/EmitterInstance');
 const Login = require('./src/AccountLogin');
+const ContractFrame = require('./src/ContractFrame');
 
 const { FetchChainObjects, FetchChain } = ChainStore;
 
@@ -21,4 +22,5 @@ module.exports = {
 	ChainValidation,
 	FetchChain,
 	Login,
+	ContractFrame,
 };
