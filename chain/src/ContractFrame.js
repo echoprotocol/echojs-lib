@@ -63,7 +63,7 @@ class ContractFrame {
 			gasPrice: gasPrice || 0,
 			gas: gas || 4700000,
 		};
-		console.log(options);
+
 		const tr = new TransactionBuilder();
 		tr.add_type_operation('contract', options);
 
