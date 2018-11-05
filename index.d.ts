@@ -15,8 +15,17 @@ declare module 'echojs-lib' {
 		FetchChain(method: 'getAccountRefsOfKey', arg: string): Promise<{ toJS(): [string] }>;
 		FetchChain(method: 'getAsset', arg: '2.1.0'): Promise<{ toJS(): { head_block_number: number } }>
 		init(): Promise<void>;
+        resetCache(): void;
+        unsubscribe(callback: () => any): any;
 	}
+
 	export const ChainStore: ChainStore_interface;
+
+    export interface ChainValidation_interface {
+        is_object_id(key: any): boolean;
+    }
+
+	export const ChainValidation: ChainValidation_interface;
 
 	export class ContractFrame {
 		deployContract(params: { accountId: string, gas: number, bytecode: string }, privateKey: PrivateKey): Promise<[{
