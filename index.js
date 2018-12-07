@@ -1,6 +1,6 @@
 /* Chain */
-import EchoStore from './chain/';
+import Echo from './src/chain/';
 
-export default {
-	echoStore: new EchoStore(),
-};
+export { Echo };
+
+export default new Echo();
