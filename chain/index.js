@@ -1,26 +1,35 @@
-const ChainStore = require('./src/ChainStore');
-const TransactionBuilder = require('./src/TransactionBuilder');
-const ChainTypes = require('./src/ChainTypes');
-const ObjectId = require('./src/ObjectId');
-const NumberUtils = require('./src/NumberUtils');
-const TransactionHelper = require('./src/TransactionHelper');
-const ChainValidation = require('./src/ChainValidation');
-// const EmitterInstance = require('./src/EmitterInstance');
-const Login = require('./src/AccountLogin');
-const ContractFrame = require('./src/ContractFrame');
+import WS from '../ws';
+import WSAPI from '../ws/api';
 
-const { FetchChainObjects, FetchChain } = ChainStore;
+import Cache from './cache';
+import API from './api';
+import Subscriber from './subscriber';
 
-module.exports = {
-	ChainStore,
-	TransactionBuilder,
-	FetchChainObjects,
-	ChainTypes,
-	ObjectId,
-	NumberUtils,
-	TransactionHelper,
-	ChainValidation,
-	FetchChain,
-	Login,
-	ContractFrame,
-};
+const ws = new WS();
+const wsApi = new WSAPI(ws);
+
+class EchoStore {
+
+	connect({
+		address, wsOptions, cbOptions, cacheOptions,
+	}) {
+		ws.connect(address, wsOptions);
+
+		this.cache = new Cache(cacheOptions);
+		this.api = new API(this.cache, wsApi, cbOptions);
+		this.subscriber = new Subscriber(this.cache, wsApi);
+	}
+
+	reconnect(address, options) {
+		ws.reconnect(address, options);
+	}
+
+	disconnect() {
+		this.api.reset();
+		this.subscriber.reset();
+		ws.close();
+	}
+
+}
+
+export default EchoStore;
