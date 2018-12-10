@@ -24,17 +24,10 @@ class ChainWebSocket {
 	connect(url, options = { connectionTimeout: 5000 }) {
 		this.url = url;
 
-		this.connect_promise = new Promise((resolve, reject) => {
-			try {
-				this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
-			} catch (error) {
-				this.ws = null;
-				return reject(error);
-			}
+		try {
+			this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
 
-			this.ws.addEventListener('open', () => {
-				resolve();
-			});
+			this.ws.addEventListener('open', () => Promise.resolve());
 
 			this.ws.addEventListener('error', () => {});
 
@@ -48,8 +41,16 @@ class ChainWebSocket {
 					this.cbs[cbId].reject(err);
 				}
 			});
-		});
 
+		} catch (error) {
+			this.ws = null;
+			Promise.reject(error);
+		}
+	}
+
+	reconnect() {
+		if (!this.ws) return;
+		this.ws.reconnect();
 	}
 
 	setDebugOption(option) {
