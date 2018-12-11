@@ -4,6 +4,7 @@
   "description": "Pure JavaScript ECHO library for node.js",
   "main": "./index.js",
   "scripts": {
+    "test": "mocha --compilers js:babel-core/register test/**/*.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"
@@ -15,6 +16,7 @@
   "author": "PixelPlex",
   "license": "UNLICENSED",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "echojs-ws": "^0.1.9",
     "immutable": "^3.8.1",
     "reconnecting-websocket": "^4.1.10",
@@ -25,6 +27,8 @@
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.7.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.8"
   }
 }

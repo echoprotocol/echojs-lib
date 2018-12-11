@@ -14,6 +14,9 @@ class ChainWebSocket {
 	constructor() {
 		this.socketDebug = false;
 
+		this.onOpen = null;
+		this.onClose = null;
+		this.onError = null;
 		this.cbId = 0;
 		this.responseCbId = 0;
 		this.cbs = {};
@@ -21,31 +24,60 @@ class ChainWebSocket {
 		this.unsub = {};
 	}
 
-	connect(url, options = { connectionTimeout: 5000 }) {
+	async connect(
+		url,
+		options = { connectionTimeout: 5000, maxRetries: 0 },
+	) {
+
+		this.socketDebug = options.socketDebug;
 		this.url = url;
 
-		try {
-			this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
+		return new Promise((resolve, reject) => {
+			let timeoutId = null;
+			if (options.maxRetries === 0) {
+				const connectionTimeout = options.connectionTimeout || 4000;
 
-			this.ws.addEventListener('open', () => Promise.resolve());
+				timeoutId = setTimeout(() => {
+					reject(new Error(`Connection attempt timed out after ${connectionTimeout / 1000}s`));
+					this.close();
+				}, connectionTimeout);
+			}
 
-			this.ws.addEventListener('error', () => {});
+			try {
+				this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
+				console.log(this.ws)
+			} catch (error) {
+				this.ws = null;
+				reject(error);
+			}
 
-			this.ws.addEventListener('message', (message) => {
+			this.ws.onopen = () => {
+				if (timeoutId) {
+					clearTimeout(timeoutId);
+					timeoutId = null;
+				}
+
+				if (this.onOpen) this.onOpen();
+				resolve();
+
+			};
+
+			this.ws.onerror = (error) => {
+				if (this.onError) this.onError(error);
+			};
+
+			this.ws.onmessage = (message) => {
 				this.listener(JSON.parse(message.data));
-			});
+			};
 
-			this.ws.addEventListener('close', () => {
+			this.ws.onclose = () => {
+				if (this.onClose) this.onClose();
 				const err = new Error('connection closed');
 				for (let cbId = this.responseCbId + 1; cbId <= this.cbId; cbId += 1) {
 					this.cbs[cbId].reject(err);
 				}
-			});
-
-		} catch (error) {
-			this.ws = null;
-			Promise.reject(error);
-		}
+			};
+		});
 	}
 
 	reconnect() {
@@ -158,14 +190,12 @@ class ChainWebSocket {
 	}
 
 	login(user, password) {
-		return this.connect_promise.then(() => this.call([1, 'login', [user, password]]));
+		return this.call([1, 'login', [user, password]]);
 	}
 
 	close() {
 		return new Promise((resolve) => {
-			this.ws.addEventListener('close', () => {
-				resolve();
-			});
+			this.ws.onclose = () => resolve();
 			this.ws.close();
 		});
 	}
