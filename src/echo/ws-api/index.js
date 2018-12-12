@@ -1,4 +1,4 @@
-import DatabaseAPI from './db-api';
+import DatabaseAPI from './database-api';
 import AssetAPI from './asset-api';
 import NetworkAPI from './network-api';
 import HistoryAPI from './history-api';
