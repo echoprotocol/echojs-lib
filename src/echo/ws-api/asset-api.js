@@ -27,7 +27,7 @@ class AssetAPI {
 	}
 
 	/**
-	 *  @method getAssetHoldersCount
+	 *  @method getAllAssetHolders
 	 *  Array of all asset IDs with the number of holders.
 	 *
 	 */
