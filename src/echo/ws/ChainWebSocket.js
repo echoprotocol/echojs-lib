@@ -33,33 +33,21 @@ class ChainWebSocket {
 		this.url = url;
 
 		return new Promise((resolve, reject) => {
-			let timeoutId = null;
-			if (options.maxRetries === 0) {
-				const connectionTimeout = options.connectionTimeout || 4000;
-
-				timeoutId = setTimeout(() => {
-					reject(new Error(`Connection attempt timed out after ${connectionTimeout / 1000}s`));
-					this.close();
-				}, connectionTimeout);
-			}
-
+			let isFirstConnection = true;
 			try {
 				this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
-				console.log(this.ws)
 			} catch (error) {
+				console.log(error)
 				this.ws = null;
 				reject(error);
 			}
 
 			this.ws.onopen = () => {
-				if (timeoutId) {
-					clearTimeout(timeoutId);
-					timeoutId = null;
-				}
-
 				if (this.onOpen) this.onOpen();
-				resolve();
-
+				if (isFirstConnection) {
+					isFirstConnection = false;
+					resolve();
+				}
 			};
 
 			this.ws.onerror = (error) => {
@@ -71,11 +59,17 @@ class ChainWebSocket {
 			};
 
 			this.ws.onclose = () => {
+				if (isFirstConnection) {
+					isFirstConnection = false;
+					reject(new Error('connection closed'));
+				}
+
 				if (this.onClose) this.onClose();
 				const err = new Error('connection closed');
 				for (let cbId = this.responseCbId + 1; cbId <= this.cbId; cbId += 1) {
 					this.cbs[cbId].reject(err);
 				}
+
 			};
 		});
 	}
