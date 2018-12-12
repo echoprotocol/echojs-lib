@@ -172,8 +172,8 @@ class DatabaseAPI {
 		return this.db.exec('get_witness_count', []);
 	}
 
-	getCommitteeMembers(сommitteeMemberIds) {
-		return this.db.exec('get_committee_members', [сommitteeMemberIds]);
+	getCommitteeMembers(committeeMemberIds) {
+		return this.db.exec('get_committee_members', [committeeMemberIds]);
 	}
 
 	getCommitteeMemberByAccount(accountId) {
