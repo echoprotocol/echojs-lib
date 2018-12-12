@@ -24,6 +24,12 @@ class ChainWebSocket {
 		this.unsub = {};
 	}
 
+	/**
+	 *
+     * @param url
+     * @param options
+     * @returns {Promise}
+     */
 	async connect(
 		url,
 		options = { connectionTimeout: 5000, maxRetries: 0 },
@@ -35,54 +41,77 @@ class ChainWebSocket {
 		return new Promise((resolve, reject) => {
 			let isFirstConnection = true;
 			try {
-				this.ws = new RWS(this.url, [], { ...options, WebSocket: WebSocketClient });
+				this.ws = new RWS(this.url, [], { maxRetries: 5, WebSocket: WebSocketClient });
 			} catch (error) {
-				console.log(error)
 				this.ws = null;
 				reject(error);
 			}
 
-			this.ws.onopen = () => {
-				if (this.onOpen) this.onOpen();
-				if (isFirstConnection) {
-					isFirstConnection = false;
-					resolve();
-				}
-			};
+			this.ws.addEventListener('open', () => {
 
-			this.ws.onerror = (error) => {
-				if (this.onError) this.onError(error);
-			};
+                if (this.onOpen) this.onOpen();
+                if (isFirstConnection) {
+                    isFirstConnection = false;
+                    resolve();
+                }
 
-			this.ws.onmessage = (message) => {
-				this.listener(JSON.parse(message.data));
-			};
+                if (this.onOpen) this.onOpen();
+				console.log('open event addEventListener');
+			});
 
-			this.ws.onclose = () => {
-				if (isFirstConnection) {
-					isFirstConnection = false;
-					reject(new Error('connection closed'));
-				}
+			this.ws.addEventListener('message', (message) => {
+				console.log('message event addEventListener');
 
-				if (this.onClose) this.onClose();
-				const err = new Error('connection closed');
-				for (let cbId = this.responseCbId + 1; cbId <= this.cbId; cbId += 1) {
-					this.cbs[cbId].reject(err);
-				}
+                this.listener(JSON.parse(message.data));
 
-			};
+
+            });
+
+			this.ws.addEventListener('close', () => {
+                if (isFirstConnection) {
+                    isFirstConnection = false;
+                    if (options.maxRetries === 0) reject(new Error('connection closed'));
+                }
+
+                if (this.onClose) this.onClose();
+                const err = new Error('connection closed');
+                for (let cbId = this.responseCbId + 1; cbId <= this.cbId; cbId += 1) {
+                    this.cbs[cbId].reject(err);
+                }
+				console.log('close event addEventListener');
+			})
+			this.ws.addEventListener('error', (error) => {
+
+                if (this.onError) this.onError(error);
+
+				console.log('error event addEventListener');
+			})
+
+
 		});
 	}
 
+	/**
+	 *
+     */
 	reconnect() {
 		if (!this.ws) return;
 		this.ws.reconnect();
 	}
 
+	/**
+	 *
+     * @param option
+     */
 	setDebugOption(option) {
 		this.socketDebug = Boolean(option);
 	}
 
+	/**
+	 *
+     * @param params
+     * @returns {Promise}
+     */
 	call(params) {
 		if (this.ws.readyState !== 1) {
 			return Promise.reject(new Error(`websocket state error:${this.ws.readyState}`));
@@ -137,6 +166,10 @@ class ChainWebSocket {
 
 	}
 
+	/**
+	 *
+     * @param response
+     */
 	listener(response) {
 		if (this.socketDebug) {
 			console.log('[ChainWebSocket] <---- reply ----<', JSON.stringify(response));
@@ -183,10 +216,20 @@ class ChainWebSocket {
 		}
 	}
 
+	/**
+	 *
+     * @param user
+     * @param password
+     * @returns {Promise}
+     */
 	login(user, password) {
 		return this.call([1, 'login', [user, password]]);
 	}
 
+	/**
+	 *
+     * @returns {Promise}
+     */
 	close() {
 		return new Promise((resolve) => {
 			this.ws.onclose = () => resolve();

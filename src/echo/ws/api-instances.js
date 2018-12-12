@@ -1,5 +1,6 @@
-import ChainWebSocket from './ChainWebSocket';
-import GrapheneApi from './GrapheneApi';
+import ChainWebSocket from './chain-web-socket';
+import GrapheneApi from './graphene-api';
+import { validateUrl } from '../../utils/validator';
 
 class ApisInstance {
 
@@ -11,10 +12,11 @@ class ApisInstance {
 		this.onErrorCb = null;
 	}
 
-	async onOpen() {
+	/**
+     * On open callback
+     */
+	onOpen() {
 		if (!this._ws_rpc) return;
-
-		await this._ws_rpc.login('', '');
 
 		const initPromises = [
 			this._db.init(),
@@ -24,21 +26,46 @@ class ApisInstance {
 			// this._asset.init(),
 		];
 
-		await Promise.all(initPromises);
+		this._ws_rpc.login('', '')
+			.then(() => {
+			console.log('login')
+			return Promise.all(initPromises);
+			})
+			.then(() => {
+			console.log('promise all')
+				if (this.onOpenCb) this.onOpenCb('open');
 
-		if (this.onOpenCb) this.onOpenCb('open');
+			});
+
 	}
 
-	async onClose() {
-		await this.close();
-		if (this.onCloseCb) this.onCloseCb('close');
+	/**
+	 * On close callback
+     */
+	onClose() {
+		this.close()
+			.then(() => {
+				if (this.onCloseCb) this.onCloseCb('close');
+			});
 	}
 
+	/**
+	 * On error callback
+     * @param error
+     */
 	onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
 	}
 
+	/**
+	 * connect to chain
+     * @param url
+     * @param options
+     * @returns {Promise}
+     */
 	async connect(url, options) {
+		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
+
 		if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:' && url.indexOf('wss://') < 0) {
 			throw new Error('Secure domains require wss connection');
 		}
@@ -52,8 +79,8 @@ class ApisInstance {
 			if (options.onError && typeof options.onError === 'function') this.onErrorCb = options.onError;
 		}
 
-		this._ws_rpc.onOpen = async () => { await this.onOpen(); };
-		this._ws_rpc.onClose = async () => { await this.onClose(); };
+		this._ws_rpc.onOpen = () => { this.onOpen(); };
+		this._ws_rpc.onClose = () => { this.onClose(); };
 		this._ws_rpc.onError = () => { this.onError(); };
 
 		this._db = new GrapheneApi(this._ws_rpc, 'database');
@@ -63,48 +90,77 @@ class ApisInstance {
 		this._asset = new GrapheneApi(this._ws_rpc, 'asset');
 
 		try {
-			return await this._ws_rpc.connect(url, options);
+			await this._ws_rpc.connect(url, options);
 		} catch (err) {
 			console.error(url, 'Failed to initialize with error', err && err.message);
 			await this.close();
-			return Promise.reject(err);
+			throw err;
 		}
-
 	}
 
+	/**
+	 * Reconnect to chain, can't be used after close
+     */
 	reconnect() {
 		if (!this._ws_rpc) return;
 		this._ws_rpc.reconnect();
 	}
 
+	/**
+	 * Close socket, delete subscribers
+     * @returns {Promise}
+     */
 	async close() {
 		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === 1) {
 			await this._ws_rpc.close();
 		}
 		this._ws_rpc = null;
-		return Promise.resolve();
 	}
 
+	/**
+	 * Set debug option
+     * @param status
+     */
 	setDebugOption(status) {
 		this._ws_rpc.setDebugOption(status);
 	}
 
+	/**
+	 * database API
+     * @returns {GrapheneApi}
+     */
 	dbApi() {
 		return this._db;
 	}
 
+	/**
+	 * network API
+     * @returns {GrapheneApi}
+     */
 	networkApi() {
 		return this._net;
 	}
 
+	/**
+	 * history API
+     * @returns {GrapheneApi}
+     */
 	historyApi() {
 		return this._hist;
 	}
 
+	/**
+	 * registration API
+     * @returns {GrapheneApi}
+     */
 	registrationApi() {
 		return this._reg;
 	}
 
+	/**
+	 * asset API
+     * @returns {GrapheneApi}
+     */
 	assetApi() {
 		return this._asset;
 	}

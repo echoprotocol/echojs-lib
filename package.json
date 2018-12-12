@@ -19,6 +19,7 @@
     "babel-polyfill": "^6.26.0",
     "echojs-ws": "^0.1.9",
     "immutable": "^3.8.1",
+    "parseuri": "0.0.5",
     "reconnecting-websocket": "^4.1.10",
     "ws": "^6.1.2"
   },
