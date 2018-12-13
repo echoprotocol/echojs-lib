@@ -21,22 +21,22 @@ class ChainWebSocket {
 
 	/**
      * init params and connect to chain
-     * @param url string - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-     * @param options object - connection params.
-     * @param options.connectionTimeout number - delay in ms between reconnection requests, default call delay before reject it.
-     * @param options.maxRetries number - max count retries before close socket.
-     * @param options.pingTimeout number - delay time in ms between ping request and socket disconnect.
-     * @param options.pingInterval number - interval in ms between ping requests.
-     * @param options.debug bool - debug mode status.
+     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+     * @param {Object} options - connection params.
+     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+     * @param {Number} options.maxRetries - max count retries before close socket.
+     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+     * @param {Number} options.pingInterval - interval in ms between ping requests.
+     * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
      */
 	connect(
-	    url,
+		url,
 		options = {
 			connectionTimeout: 5 * 1000,
 			maxRetries: 0,
-			pingTimeout: 15 * 1000,
-			pingInterval: 15 * 1000,
+			pingTimeout: 13 * 1000,
+			pingInterval: 20 * 1000,
 			debug: false,
 		},
 	) {
@@ -51,6 +51,7 @@ class ChainWebSocket {
 		this.url = url;
 		this._isFirstConnection = true;
 		this._isForceClose = false;
+		this._currentRetry = 0;
 
 		return this._connect();
 	}
@@ -60,8 +61,8 @@ class ChainWebSocket {
      * @returns {Promise}
      */
 	_connect() {
-	    this._currentRetry += 1;
-	    return new Promise((resolve, reject) => {
+		this._currentRetry += 1;
+		return new Promise((resolve, reject) => {
 			try {
 				this.ws = new WebSocket(this.url);
 			} catch (error) {
@@ -84,19 +85,17 @@ class ChainWebSocket {
 
 				if (this.onOpen) this.onOpen();
 
+				this._clearPingInterval();
+
 				this._pingIntervalId = setInterval(() => { this._loginPing(); }, this._options.pingInterval);
 
-				if (this._options.debug) {
-					console.log('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
-				}
+				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
 			};
 
 			this.ws.onmessage = (message) => {
 				this._listener(JSON.parse(message.data));
 
-				if (this._options.debug) {
-					console.log('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
-				}
+				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 			};
 
 			this.ws.onclose = () => {
@@ -110,25 +109,20 @@ class ChainWebSocket {
 					this._cbs[cbId].reject(err);
 				}
 
-				if (this._pingIntervalId) {
-					clearInterval(this._pingIntervalId);
-					this._pingIntervalId = null;
-				}
+				this._clearPingInterval();
 
 				if (this.onClose) this.onClose();
 
-				if (this._options.debug) {
-					console.log('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
-				}
+				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 
 				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
 					this._isForceClose = true;
-				    this.ws.close();
-				    return;
+					this.ws.close();
+					return;
 				}
 
 				setTimeout(() => {
-				    this._connect().then(() => {}).catch(() => {});
+					this._connect().then(() => {}).catch(() => {});
 				}, this._options.connectionTimeout);
 
 			};
@@ -137,9 +131,7 @@ class ChainWebSocket {
 
 				if (this.onError) this.onError(error);
 
-				if (this._options.debug) {
-					console.log('[ReconnectionWebSocket] >---- event ----->  ONERROR');
-				}
+				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONERROR');
 			};
 
 
@@ -148,15 +140,17 @@ class ChainWebSocket {
 
 	/**
      * connect to socket, can't be used after close
+     * @returns {Promise}
      */
 	reconnect() {
-		if (!this.ws) return;
-		this._connect();
+		if (!this.ws) return Promise.reject(new Error('Socket not exist.'));
+		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
+		return this.connect(this.url, this._options);
 	}
 
 	/**
      * set debug option
-     * @param option
+     * @param {Boolean} status
      */
 	setDebugOption(status) {
 		this._options.debug = Boolean(status);
@@ -164,7 +158,8 @@ class ChainWebSocket {
 
 	/**
      * call a method with params via RPC
-     * @param params
+     * @param {Array<any>} params
+     * @param {Number} timeout - timeout before reject
      * @returns {Promise}
      */
 	call(params, timeout = this._options.connectionTimeout) {
@@ -172,9 +167,7 @@ class ChainWebSocket {
 			return Promise.reject(new Error(`websocket state error:${this.ws.readyState}`));
 		}
 		const method = params[1];
-		if (this._options.debug) {
-			console.log(`[ReconnectionWebSocket] >---- call ----->  "id":${this._cbId + 1}`, JSON.stringify(params));
-		}
+		this._debugLog(`[ReconnectionWebSocket] >---- call ----->  "id":${this._cbId + 1}`, JSON.stringify(params));
 
 		this._cbId += 1;
 
@@ -212,9 +205,9 @@ class ChainWebSocket {
 
 		return new Promise((resolve, reject) => {
 
-		    const timeoutId = setTimeout(() => {
-		        reject(new Error(`RPC call time is over Id: ${this._cbId}`));
-		        if (this._cbs[this._cbId]) this._cbs[this._cbId].timeoutId = null;
+			const timeoutId = setTimeout(() => {
+				reject(new Error(`RPC call time is over Id: ${this._cbId}`));
+				if (this._cbs[this._cbId]) this._cbs[this._cbId].timeoutId = null;
 			}, timeout);
 
 			this._cbs[this._cbId] = {
@@ -233,9 +226,7 @@ class ChainWebSocket {
      * @param response
      */
 	_listener(response) {
-		if (this._options.debug) {
-			console.log('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
-		}
+		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
 		let sub = false;
 		let callback = null;
@@ -282,8 +273,9 @@ class ChainWebSocket {
 
 	/**
      * get access to chain
-     * @param user
-     * @param password
+     * @param {String} user
+     * @param {String} password
+     * @param {Number} timeout - timeout before reject
      * @returns {Promise}
      */
 	login(user, password, timeout = this._options.connectionTimeout) {
@@ -291,12 +283,35 @@ class ChainWebSocket {
 	}
 
 	/**
+	 * clear ping interval
+     * @private
+     */
+	_clearPingInterval() {
+		if (this._pingIntervalId) {
+			clearInterval(this._pingIntervalId);
+			this._pingIntervalId = null;
+		}
+	}
+
+	/**
      * make call for check connection
      */
 	_loginPing() {
-	    this.login('', '', this._options.pingTimeout)
+		this.login('', '', this._options.pingTimeout)
 			.then(() => {})
-			.catch(() => { this.ws.close(); });
+			.catch(() => {
+				if (this.ws.readyState === 0 || this.ws.readyState === 1) return;
+				this.ws.close();
+			});
+	}
+
+	/**
+	 * show debug logs
+     * @private
+     */
+	_debugLog(...messages) {
+		if (!this._options.debug) return;
+		console.log(...messages);
 	}
 
 
@@ -309,6 +324,7 @@ class ChainWebSocket {
 			this.ws.onclose = () => {
 				resolve();
 				if (this.onClose) this.onClose();
+				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 			};
 			this._isForceClose = true;
 			this.ws.close();

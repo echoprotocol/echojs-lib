@@ -1,5 +1,5 @@
 /* Chain */
-import Echo from './src/echo';
+import Echo from './src/echo/';
 
 export { Echo };
 

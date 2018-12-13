@@ -1,4 +1,4 @@
-let ws = null;
+const ws = null;
 let wsApi = null;
 
 class API {

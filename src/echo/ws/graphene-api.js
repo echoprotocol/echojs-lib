@@ -18,9 +18,9 @@ class GrapheneApi {
 	}
 
 	/**
-	 *
-     * @param method
-     * @param params
+	 * execute API method with params
+     * @param {String} method name
+     * @param {Array<any>} params
      * @returns {Promise}
      */
 	exec(method, params) {

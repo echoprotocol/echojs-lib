@@ -1,5 +1,5 @@
 import WS from './ws';
-import WSAPI from './ws/api';
+import WSAPI from './ws-api';
 
 import Cache from './cache';
 import API from './api';
@@ -9,11 +9,7 @@ class Echo {
 
 	constructor() {
 		this._ws = new WS();
-		this._wsApi = new WSAPI(this._ws);
-
-		this.cache = new Cache();
-		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi);
+		this._isInitModules = false;
 	}
 
 	async connect(address, options) {
@@ -27,14 +23,26 @@ class Echo {
 
 		try {
 			await this._ws.connect(address, options);
+			if (this._isInitModules) return;
+			this._initModules();
 		} catch (e) {
 			throw e;
 		}
 
 	}
 
-	reconnect(address, options) {
-		this._ws.reconnect(address, options);
+	_initModules() {
+		this._isInitModules = true;
+
+		this._wsApi = new WSAPI(this._ws);
+
+		this.cache = new Cache();
+		this.api = new API(this.cache, this._wsApi);
+		this.subscriber = new Subscriber(this.cache, this._wsApi);
+	}
+
+	reconnect() {
+		this._ws.reconnect();
 	}
 
 	disconnect() {
