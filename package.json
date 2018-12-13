@@ -15,7 +15,12 @@
   "author": "PixelPlex",
   "license": "UNLICENSED",
   "dependencies": {
+    "assert": "^1.4.1",
+    "bigi": "^1.4.2",
+    "bs58": "^4.0.1",
+    "deep-equal": "^1.0.1",
     "echojs-ws": "^0.1.9",
+    "ecurve": "^1.0.6",
     "immutable": "^3.8.1"
   },
   "devDependencies": {
