@@ -1,4 +1,4 @@
-import ChainWebSocket from './chain-web-socket';
+import ChainWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl } from '../../utils/validator';
 
@@ -27,14 +27,9 @@ class ApisInstance {
 		];
 
 		this._ws_rpc.login('', '')
+			.then(() => Promise.all(initPromises))
 			.then(() => {
-			console.log('login')
-			return Promise.all(initPromises);
-			})
-			.then(() => {
-			console.log('promise all')
 				if (this.onOpenCb) this.onOpenCb('open');
-
 			});
 
 	}
@@ -43,10 +38,7 @@ class ApisInstance {
 	 * On close callback
      */
 	onClose() {
-		this.close()
-			.then(() => {
-				if (this.onCloseCb) this.onCloseCb('close');
-			});
+		if (this.onCloseCb) this.onCloseCb('close');
 	}
 
 	/**
@@ -71,6 +63,19 @@ class ApisInstance {
 		}
 
 		this.url = url;
+		this.options = {
+			connectionTimeout: Number.isInteger(Number(options.connectionTimeout)) ?
+				Number(options.connectionTimeout) : undefined,
+			maxRetries: Number.isInteger(Number(options.maxRetries)) ?
+				Number(options.maxRetries) : undefined,
+			pingTimeout: Number.isInteger(Number(options.pingTimeout)) ?
+				Number(options.pingTimeout) : undefined,
+			pingInterval: Number.isInteger(Number(options.pingInterval)) ?
+				Number(options.pingInterval) : undefined,
+			debug: options.debug ?
+				Boolean(options.debug) : undefined,
+		};
+
 		this.options = options;
 
 		if (options && typeof options === 'object') {
@@ -89,8 +94,9 @@ class ApisInstance {
 		this._reg = new GrapheneApi(this._ws_rpc, 'registration');
 		this._asset = new GrapheneApi(this._ws_rpc, 'asset');
 
+
 		try {
-			await this._ws_rpc.connect(url, options);
+			await this._ws_rpc.connect(url, this.options);
 		} catch (err) {
 			console.error(url, 'Failed to initialize with error', err && err.message);
 			await this.close();

@@ -24,9 +24,7 @@ class GrapheneApi {
      * @returns {Promise}
      */
 	exec(method, params) {
-		return this.ws_rpc.call([this.api_id, method, params]).catch((error) => {
-			throw error;
-		});
+		return this.ws_rpc.call([this.api_id, method, params]);
 	}
 
 }
