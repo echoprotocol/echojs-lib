@@ -1,4 +1,4 @@
-import DatabaseAPI from './db-api';
+import DatabaseAPI from './database-api';
 import AssetAPI from './asset-api';
 import NetworkAPI from './network-api';
 import HistoryAPI from './history-api';
@@ -8,15 +8,20 @@ import LoginAPI from './login-api';
 
 class WSAPI {
 
+	/**
+	 *  @constructor
+	 *
+	 *  @param {WS} ws
+	 */
 	constructor(ws) {
 		this.ws = ws;
 
-		this.database = new DatabaseAPI(this.ws.Apis.instance().dbApi());
-		this.asset = new AssetAPI(this.ws.Apis.instance().assetApi());
-		this.network = new NetworkAPI(this.ws.Apis.instance().networkApi());
-		this.history = new HistoryAPI(this.ws.Apis.instance().historyApi());
-		this.registration = new RegistrationAPI(this.ws.Apis.instance().registrationApi());
-		this.login = new LoginAPI(this.ws.Apis.instance().loginApi());
+		this.database = new DatabaseAPI(this.ws.dbApi());
+		this.asset = new AssetAPI(this.ws.assetApi());
+		this.network = new NetworkAPI(this.ws.networkApi());
+		this.history = new HistoryAPI(this.ws.historyApi());
+		this.registration = new RegistrationAPI(this.ws.registrationApi());
+		this.login = new LoginAPI(this.ws.loginApi());
 	}
 
 }
