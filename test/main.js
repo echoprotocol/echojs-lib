@@ -9,7 +9,7 @@ describe('instance', () => {
             try {
                 await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
                     connectionTimeout: 5000,
-                    maxRetries: 0,
+                    maxRetries: 3,
                     debug: true,
                     // onOpen: () => { console.log('open') },
                     // onClose: () => { console.log('close') },

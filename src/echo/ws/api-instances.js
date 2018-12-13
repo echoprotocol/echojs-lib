@@ -30,7 +30,8 @@ class ApisInstance {
 			.then(() => Promise.all(initPromises))
 			.then(() => {
 				if (this.onOpenCb) this.onOpenCb('open');
-			});
+			})
+			.catch(() => {});
 
 	}
 
@@ -61,9 +62,8 @@ class ApisInstance {
 		if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:' && url.indexOf('wss://') < 0) {
 			throw new Error('Secure domains require wss connection');
 		}
-
 		this.url = url;
-		this.options = {
+        this.options = {
 			connectionTimeout: Number.isInteger(Number(options.connectionTimeout)) ?
 				Number(options.connectionTimeout) : undefined,
 			maxRetries: Number.isInteger(Number(options.maxRetries)) ?
@@ -75,11 +75,8 @@ class ApisInstance {
 			debug: options.debug ?
 				Boolean(options.debug) : undefined,
 		};
-
-		this.options = options;
-
 		if (options && typeof options === 'object') {
-			if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
+            if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
 			if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;
 			if (options.onError && typeof options.onError === 'function') this.onErrorCb = options.onError;
 		}

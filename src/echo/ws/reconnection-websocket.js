@@ -1,67 +1,73 @@
+/* eslint-disable max-len */
 import WebSocket from 'isomorphic-ws';
 
 class ChainWebSocket {
 
 	constructor() {
-		this.debug = false;
-
 		this.onOpen = null;
 		this.onClose = null;
 		this.onError = null;
 
-		this.currentRetry = 0;
-		this.pingIntervalId = null;
-		this.options = {};
+		this._currentRetry = 0;
+		this._pingIntervalId = null;
+		this._options = {};
 
-		this.cbId = 0;
-		this.responseCbId = 0;
-		this.cbs = {};
-		this.subs = [];
-		this.unsub = {};
+		this._cbId = 0;
+		this._responseCbId = 0;
+		this._cbs = {};
+		this._subs = [];
+		this._unsub = {};
 	}
 
 	/**
-     *
-     * @param url
-     * @param options
+     * init params and connect to chain
+     * @param url string - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+     * @param options object - connection params.
+     * @param options.connectionTimeout number - delay in ms between reconnection requests, default call delay before reject it.
+     * @param options.maxRetries number - max count retries before close socket.
+     * @param options.pingTimeout number - delay time in ms between ping request and socket disconnect.
+     * @param options.pingInterval number - interval in ms between ping requests.
+     * @param options.debug bool - debug mode status.
      * @returns {Promise}
      */
-	connect(url, options = {
-	    connectionTimeout: 5 * 1000,
-		maxRetries: 0,
-		pingTimeout: 15 * 1000,
-		pingInterval: 15 * 1000,
-		debug: false,
-	}) {
-	    this.options = {
+	connect(
+	    url,
+		options = {
+			connectionTimeout: 5 * 1000,
+			maxRetries: 0,
+			pingTimeout: 15 * 1000,
+			pingInterval: 15 * 1000,
+			debug: false,
+		},
+	) {
+		this._options = {
 			connectionTimeout: options.connectionTimeout === undefined ? 5000 : options.connectionTimeout,
-			maxRetries: options.maxRetries === undefined ? options.maxRetries : 0,
-			pingTimeout: options.pingTimeout === undefined ? options.pingTimeout : 15 * 1000,
-			pingInterval: options.pingInterval === undefined ? options.pingInterval : 15 * 1000,
+			maxRetries: options.maxRetries === undefined ? 0 : options.maxRetries,
+			pingTimeout: options.pingTimeout === undefined ? 15 * 1000 : options.pingTimeout,
+			pingInterval: options.pingInterval === undefined ? 15 * 1000 : options.pingInterval,
 			debug: options.debug === undefined ? false : options.debug,
 		};
 
 		this.url = url;
-		this.options = options;
-		this.isFirstConnection = true;
+		this._isFirstConnection = true;
+		this._isForceClose = false;
 
 		return this._connect();
 	}
 
 	/**
      * inner connection method
-     * @param url
-     * @param options
      * @returns {Promise}
      */
 	_connect() {
+	    this._currentRetry += 1;
 	    return new Promise((resolve, reject) => {
 			try {
 				this.ws = new WebSocket(this.url);
 			} catch (error) {
 				this.ws = null;
-				if (this.isFirstConnection) {
-					this.isFirstConnection = false;
+				if (this._isFirstConnection) {
+					this._isFirstConnection = false;
 					reject(error);
 					return;
 				}
@@ -69,57 +75,61 @@ class ChainWebSocket {
 
 			this.ws.onopen = () => {
 
-				this.currentRetry = 0;
+				this._currentRetry = 0;
 
-				if (this.isFirstConnection) {
-					this.isFirstConnection = false;
+				if (this._isFirstConnection) {
+					this._isFirstConnection = false;
 					resolve();
 				}
 
 				if (this.onOpen) this.onOpen();
 
-				this.pingIntervalId = setInterval(() => { this.loginPing(); }, this.options.pingInterval);
+				this._pingIntervalId = setInterval(() => { this._loginPing(); }, this._options.pingInterval);
 
-				if (this.options.debug) {
+				if (this._options.debug) {
 					console.log('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
 				}
 			};
 
 			this.ws.onmessage = (message) => {
-				this.listener(JSON.parse(message.data));
+				this._listener(JSON.parse(message.data));
 
-				if (this.options.debug) {
+				if (this._options.debug) {
 					console.log('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 				}
 			};
 
 			this.ws.onclose = () => {
-				if (this.isFirstConnection) {
-					this.isFirstConnection = false;
-					if (this.options.maxRetries === 0) reject(new Error('connection closed'));
+				if (this._isFirstConnection) {
+					this._isFirstConnection = false;
+					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
 				const err = new Error('connection closed');
-				for (let cbId = this.responseCbId + 1; cbId <= this.cbId; cbId += 1) {
-					this.cbs[cbId].reject(err);
+				for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
+					this._cbs[cbId].reject(err);
 				}
 
-				if (this.pingIntervalId) {
-					clearInterval(this.pingIntervalId);
-					this.pingIntervalId = null;
+				if (this._pingIntervalId) {
+					clearInterval(this._pingIntervalId);
+					this._pingIntervalId = null;
 				}
 
 				if (this.onClose) this.onClose();
 
-				if (this.options.debug) {
+				if (this._options.debug) {
 					console.log('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 				}
 
-				if (this.currentRetry > this.options.maxRetries) return;
+				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
+					this._isForceClose = true;
+				    this.ws.close();
+				    return;
+				}
 
 				setTimeout(() => {
 				    this._connect().then(() => {}).catch(() => {});
-				}, this.options.connectionTimeout);
+				}, this._options.connectionTimeout);
 
 			};
 
@@ -127,7 +137,7 @@ class ChainWebSocket {
 
 				if (this.onError) this.onError(error);
 
-				if (this.options.debug) {
+				if (this._options.debug) {
 					console.log('[ReconnectionWebSocket] >---- event ----->  ONERROR');
 				}
 			};
@@ -149,7 +159,7 @@ class ChainWebSocket {
      * @param option
      */
 	setDebugOption(status) {
-		this.options.debug = Boolean(status);
+		this._options.debug = Boolean(status);
 	}
 
 	/**
@@ -157,27 +167,27 @@ class ChainWebSocket {
      * @param params
      * @returns {Promise}
      */
-	call(params, timeout = this.options.connectionTimeout) {
+	call(params, timeout = this._options.connectionTimeout) {
 		if (this.ws.readyState !== 1) {
 			return Promise.reject(new Error(`websocket state error:${this.ws.readyState}`));
 		}
 		const method = params[1];
-		if (this.options.debug) {
-			console.log(`[ReconnectionWebSocket] >---- call ----->  "id":${this.cbId + 1}`, JSON.stringify(params));
+		if (this._options.debug) {
+			console.log(`[ReconnectionWebSocket] >---- call ----->  "id":${this._cbId + 1}`, JSON.stringify(params));
 		}
 
-		this.cbId += 1;
+		this._cbId += 1;
 
 		if (method === 'set_subscribe_callback' || method === 'subscribe_to_market' ||
             method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback'
 		) {
 			// Store callback in subs map
-			this.subs[this.cbId] = {
+			this._subs[this._cbId] = {
 				callback: params[2][0],
 			};
 
 			// Replace callback with the callback id
-			params[2][0] = this.cbId;
+			params[2][0] = this._cbId;
 		}
 
 		if (method === 'unsubscribe_from_market' || method === 'unsubscribe_from_accounts') {
@@ -187,9 +197,9 @@ class ChainWebSocket {
 
 			const unSubCb = params[2].splice(0, 1)[0];
 
-			this.subs.forEach((id) => {
+			this._subs.forEach((id) => {
 				if (id.callback === unSubCb) {
-					this.unsub[this.cbId] = id;
+					this._unsub[this._cbId] = id;
 				}
 			});
 		}
@@ -198,16 +208,16 @@ class ChainWebSocket {
 			method: 'call',
 			params,
 		};
-		request.id = this.cbId;
+		request.id = this._cbId;
 
 		return new Promise((resolve, reject) => {
 
 		    const timeoutId = setTimeout(() => {
-		        reject(new Error(`RPC call time is over Id: ${this.cbId}`));
-		        if (this.cbs[this.cbId]) this.cbs[this.cbId].timeoutId = null;
+		        reject(new Error(`RPC call time is over Id: ${this._cbId}`));
+		        if (this._cbs[this._cbId]) this._cbs[this._cbId].timeoutId = null;
 			}, timeout);
 
-			this.cbs[this.cbId] = {
+			this._cbs[this._cbId] = {
 				time: new Date(),
 				resolve,
 				reject,
@@ -222,8 +232,8 @@ class ChainWebSocket {
      * message handler
      * @param response
      */
-	listener(response) {
-		if (this.options.debug) {
+	_listener(response) {
+		if (this._options.debug) {
 			console.log('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 		}
 
@@ -239,13 +249,13 @@ class ChainWebSocket {
 		}
 
 		if (!sub) {
-			callback = this.cbs[response.id];
-			this.responseCbId = response.id;
-		} else if (this.subs[response.id].callback instanceof Array) {
-			[callback] = this.subs[response.id].callback;
-		} else if (typeof this.subs[response.id].callback === 'function') {
+			callback = this._cbs[response.id];
+			this._responseCbId = response.id;
+		} else if (this._subs[response.id].callback instanceof Array) {
+			[callback] = this._subs[response.id].callback;
+		} else if (typeof this._subs[response.id].callback === 'function') {
 			// eslint-disable-next-line prefer-destructuring
-			callback = this.subs[response.id].callback;
+			callback = this._subs[response.id].callback;
 		}
 
 		if (callback && !sub) {
@@ -256,11 +266,11 @@ class ChainWebSocket {
 			} else {
 				callback.resolve(response.result);
 			}
-			delete this.cbs[response.id];
+			delete this._cbs[response.id];
 
-			if (this.unsub[response.id]) {
-				delete this.subs[this.unsub[response.id]];
-				delete this.unsub[response.id];
+			if (this._unsub[response.id]) {
+				delete this._subs[this._unsub[response.id]];
+				delete this._unsub[response.id];
 			}
 
 		} else if (callback && sub) {
@@ -276,15 +286,15 @@ class ChainWebSocket {
      * @param password
      * @returns {Promise}
      */
-	login(user, password, timeout = this.options.connectionTimeout) {
+	login(user, password, timeout = this._options.connectionTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
 	/**
      * make call for check connection
      */
-	loginPing() {
-	    this.login('', '', this.options.pingTimeout)
+	_loginPing() {
+	    this.login('', '', this._options.pingTimeout)
 			.then(() => {})
 			.catch(() => { this.ws.close(); });
 	}
@@ -296,7 +306,11 @@ class ChainWebSocket {
      */
 	close() {
 		return new Promise((resolve) => {
-			this.ws.onclose = () => resolve();
+			this.ws.onclose = () => {
+				resolve();
+				if (this.onClose) this.onClose();
+			};
+			this._isForceClose = true;
 			this.ws.close();
 		});
 	}
