@@ -8,6 +8,11 @@ import LoginAPI from './login-api';
 
 class WSAPI {
 
+	/**
+	 *  @constructor
+	 *
+	 *  @param {WS} ws
+	 */
 	constructor(ws) {
 		this.ws = ws;
 
