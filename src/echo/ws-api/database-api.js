@@ -1,5 +1,10 @@
 class DatabaseAPI {
 
+	/**
+	 *  @constructor
+	 *
+	 *  @param {GrapheneAPI} db
+	 */
 	constructor(db) {
 		this.db = db;
 	}
