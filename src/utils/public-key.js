@@ -278,4 +278,4 @@ class PublicKey {
 }
 
 
-module.exports = PublicKey;
+export default PublicKey;
