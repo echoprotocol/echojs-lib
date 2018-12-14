@@ -1,12 +1,12 @@
-const ByteBuffer = require('bytebuffer');
-const BigInteger = require('bigi');
-const { Point, getCurveByName } = require('ecurve');
-const { encode, decode } = require('bs58');
-const { ChainConfig } = require('echojs-ws');
-const assert = require('assert');
-const deepEqual = require('deep-equal');
+import ByteBuffer from 'bytebuffer';
+import BigInteger from 'bigi';
+import { Point, getCurveByName } from 'ecurve';
+import { encode, decode } from 'bs58';
+import { ChainConfig } from 'echojs-ws';
+import assert from 'assert';
+import deepEqual from 'deep-equal';
 
-const { sha256, sha512, ripemd160 } = require('./hash');
+import { sha256, sha512, ripemd160 } from './hash';
 
 const secp256k1 = getCurveByName('secp256k1');
 
