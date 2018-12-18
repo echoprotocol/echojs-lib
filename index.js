@@ -1,6 +1,9 @@
 /* Chain */
 import Echo from './src/echo/';
 
-export { Echo };
+import constants from './src/constants';
+import crypto from './src/crypto';
+
+export { Echo, constants, crypto };
 
 export default new Echo();
