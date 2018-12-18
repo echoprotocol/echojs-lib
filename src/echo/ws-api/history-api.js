@@ -1,4 +1,4 @@
-import { OPERATION_ID } from '../../constants';
+import { START_OPERATION_ID } from '../../constants';
 
 class HistoryAPI {
 
@@ -21,7 +21,7 @@ class HistoryAPI {
 	 *
 	 *  @return {Promise}
 	 */
-	getAccountHistory(accountId, stop = OPERATION_ID, limit = 100, start = OPERATION_ID) {
+	getAccountHistory(accountId, stop = START_OPERATION_ID, limit = 100, start = START_OPERATION_ID) {
 		return this.db.exec('get_account_history', [accountId, stop, limit, start]);
 	}
 
@@ -55,7 +55,7 @@ class HistoryAPI {
 	 */
 	getAccountHistoryOperations(
 		accountId, operationId,
-		start = OPERATION_ID, stop = OPERATION_ID, limit = 100,
+		start = START_OPERATION_ID, stop = START_OPERATION_ID, limit = 100,
 	) {
 		return this.db.exec('get_account_history_operations', [accountId, operationId, start, stop, limit]);
 	}
@@ -71,7 +71,10 @@ class HistoryAPI {
 	 *
 	 *  @return {Promise}
 	 */
-	getContractHistory(contractId, stop = OPERATION_ID, limit = 100, start = OPERATION_ID) {
+	getContractHistory(
+		contractId,
+		stop = START_OPERATION_ID, limit = 100, start = START_OPERATION_ID,
+	) {
 		return this.db.exec('get_contract_history', [contractId, stop, limit, start]);
 	}
 
