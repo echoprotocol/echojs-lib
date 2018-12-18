@@ -1,12 +1,12 @@
-const ByteBuffer = require('bytebuffer');
-const BigInteger = require('bigi');
-const { Point, getCurveByName } = require('ecurve');
-const { encode, decode } = require('bs58');
-const assert = require('assert');
-const deepEqual = require('deep-equal');
+import ByteBuffer from 'bytebuffer';
+import BigInteger from 'bigi';
+import { Point, getCurveByName } from 'ecurve';
+import { encode, decode } from 'bs58';
+import assert from 'assert';
+import deepEqual from 'deep-equal';
 
-const { CHAIN_CONFIG } = require('./constants');
-const { sha256, sha512, ripemd160 } = require('./hash');
+import { CHAIN_CONFIG } from './constants';
+import { sha256, sha512, ripemd160 } from './hash';
 
 const secp256k1 = getCurveByName('secp256k1');
 
@@ -278,4 +278,4 @@ class PublicKey {
 }
 
 
-module.exports = PublicKey;
+export default PublicKey;
