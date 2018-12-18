@@ -1,5 +1,5 @@
 import WS from './ws';
-import WSAPI from './ws/api';
+import WSAPI from './ws-api';
 
 import Cache from './cache';
 import API from './api';
