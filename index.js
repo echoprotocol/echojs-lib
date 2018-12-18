@@ -2,8 +2,8 @@
 import Echo from './src/echo/';
 
 import constants from './src/constants';
-import utils from './src/utils';
+import crypto from './src/crypto';
 
-export { Echo, constants, utils };
+export { Echo, constants, crypto };
 
 export default new Echo();
