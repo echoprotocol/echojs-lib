@@ -1,4 +1,4 @@
-import { START_OPERATION_ID } from '../../utils/constants';
+import { START_OPERATION_ID } from '../../constants';
 
 class HistoryAPI {
 
