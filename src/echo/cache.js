@@ -16,19 +16,20 @@ class Cache {
 		this.objectsById = new Map();
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
-		this.asMapsBySymbol = new Map();
-		this.accountIdsByKey = Map();
-		this.accountIdsByAccount = Map();
+		this.accountIdByKey = Map();
 
 		this.assetByAssetId = new Map();
+		this.assetBySymbol = new Map();
+
+        this.contractBalanceByContractId = new Map();
 
 		this.blockHeadersByBlockNumber = Map();
 
-		this.balanceObjectsByBalanceId = new Map();
-		this.getAccountRefsOfKeysCalls = new Map();
-		this.getAccountRefsOfAccountsCalls = new Map();
-		this.accountHistoryRequests = new Map();
-		this.witnessByAccountId = new Map();
+        this.witnessByAccountId = new Map();
+        this.balanceObjectsByBalanceId = new Map();
+        this.getAccountRefsOfKeysCalls = new Map();
+        this.getAccountRefsOfAccountsCalls = new Map();
+        this.accountHistoryRequests = new Map();
 		this.committeeByAccountId = new Map();
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();

@@ -7,6 +7,8 @@ const idRegex = /\b\d+\.\d+\.(\d+)\b/;
 const accountIdRegex = /1\.2\.(\d+)\b/;
 const assetIdRegex = /1\.3\.(\d+)\b/;
 const balanceIdRegex = /2\.5\.(\d+)\b/;
+const contractIdRegex = /1\.16\.(\d+)\b/;
+const hexRegex = /[0-9a-fA-F]+/;
 
 export const isArray = (v) => Array.isArray(v) && v.length !== undefined;
 
@@ -30,7 +32,11 @@ export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
 
-export const isValidAssetName = (v) =>
+export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
+
+export const isHex = (v) => isString(v) && hexRegex.test(v);
+
+export const isAssetName = (v) =>
     !isEmpty(v) &&
     (v.split('.').length <= 2) &&
     (v.length >= 3) &&
