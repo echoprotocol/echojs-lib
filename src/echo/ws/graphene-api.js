@@ -9,12 +9,14 @@ class GrapheneApi {
 	 *
      * @returns {Promise}
      */
-	init() {
+	async init() {
 		const self = this;
-		return this.ws_rpc.call([1, this.api_name, []]).then((response) => {
-			self.api_id = response;
+		try {
+			self.api_id = await this.ws_rpc.call([1, this.api_name, []]);
 			return self;
-		});
+		} catch (e) {
+			throw e;
+		}
 	}
 
 	/**
@@ -24,6 +26,7 @@ class GrapheneApi {
      * @returns {Promise}
      */
 	exec(method, params) {
+		if (!this.api_id) return Promise.reject(new Error(`Access to ${this.api_name} API does't exist`));
 		return this.ws_rpc.call([this.api_id, method, params]);
 	}
 

@@ -14,13 +14,6 @@ describe('instance', () => {
                     debug: true,
                 });
 
-                await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
-                    connectionTimeout: 5000,
-                    maxRetries: 5,
-                    debug: true,
-                });
-
-                await ws.reconnect();
                 const api = new WSAPI(ws);
 
                 await new Promise((res) => {

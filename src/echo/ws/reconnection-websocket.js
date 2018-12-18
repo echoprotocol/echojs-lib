@@ -1,7 +1,15 @@
 /* eslint-disable max-len */
 import WebSocket from 'isomorphic-ws';
 
-class ChainWebSocket {
+import {
+    connectionTimeout,
+    maxRetries,
+    pingTimeout,
+    pingInterval,
+    debug,
+} from '../../constants/ws-constants'
+
+class ReconnectionWebSocket {
 
 	constructor() {
 		this.onOpen = null;
@@ -32,20 +40,14 @@ class ChainWebSocket {
      */
 	connect(
 		url,
-		options = {
-			connectionTimeout: 5 * 1000,
-			maxRetries: 0,
-			pingTimeout: 13 * 1000,
-			pingInterval: 20 * 1000,
-			debug: false,
-		},
+		options = {},
 	) {
 		this._options = {
-			connectionTimeout: options.connectionTimeout === undefined ? 5000 : options.connectionTimeout,
-			maxRetries: options.maxRetries === undefined ? 0 : options.maxRetries,
-			pingTimeout: options.pingTimeout === undefined ? 15 * 1000 : options.pingTimeout,
-			pingInterval: options.pingInterval === undefined ? 15 * 1000 : options.pingInterval,
-			debug: options.debug === undefined ? false : options.debug,
+			connectionTimeout: options.connectionTimeout === undefined ? connectionTimeout : options.connectionTimeout,
+			maxRetries: options.maxRetries === undefined ? maxRetries : options.maxRetries,
+			pingTimeout: options.pingTimeout === undefined ? pingTimeout : options.pingTimeout,
+			pingInterval: options.pingInterval === undefined ? pingInterval : options.pingInterval,
+			debug: options.debug === undefined ? debug : options.debug,
 		};
 
 		this.url = url;
@@ -87,7 +89,7 @@ class ChainWebSocket {
 
 				this._clearPingInterval();
 
-				this._pingIntervalId = setInterval(() => { this._loginPing(); }, this._options.pingInterval);
+				this._pingIntervalId = setInterval(() => this._loginPing(), this._options.pingInterval);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
 			};
@@ -121,8 +123,10 @@ class ChainWebSocket {
 					return;
 				}
 
-				setTimeout(() => {
-					this._connect().then(() => {}).catch(() => {});
+				setTimeout(async () => {
+					try {
+                       await this._connect();
+                    } catch (_) {}
 				}, this._options.connectionTimeout);
 
 			};
@@ -206,8 +210,8 @@ class ChainWebSocket {
 		return new Promise((resolve, reject) => {
 
 			const timeoutId = setTimeout(() => {
-				reject(new Error(`RPC call time is over Id: ${this._cbId}`));
-				if (this._cbs[this._cbId]) this._cbs[this._cbId].timeoutId = null;
+				reject(new Error(`RPC call time is over Id: ${request.id}`));
+				if (this._cbs[request.id]) this._cbs[request.id].timeoutId = null;
 			}, timeout);
 
 			this._cbs[this._cbId] = {
@@ -296,13 +300,14 @@ class ChainWebSocket {
 	/**
      * make call for check connection
      */
-	_loginPing() {
-		this.login('', '', this._options.pingTimeout)
-			.then(() => {})
-			.catch(() => {
-				if (this.ws.readyState === 0 || this.ws.readyState === 1) return;
-				this.ws.close();
-			});
+	async _loginPing() {
+		try {
+			await this.login('', '', this._options.pingTimeout);
+		} catch(_) {
+			console.log('error', this.ws.readyState)
+            if (this.ws.readyState !== 1) return;
+            this.ws.close();
+		}
 	}
 
 	/**
@@ -333,4 +338,4 @@ class ChainWebSocket {
 
 }
 
-export default ChainWebSocket;
+export default ReconnectionWebSocket;
