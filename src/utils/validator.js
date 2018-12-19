@@ -53,7 +53,7 @@ export const isTransaction = (v) => {
     return isObjectId(v);
 };
 
-export const isOperation = (v) =>
+export const isOperation = (v) => // TODO fix in contract
     isArray(v) &&
     isNonNegativeInteger(v[0]) && // operation
     isObject(v[1]) && // operation body
@@ -68,7 +68,7 @@ export const isOperation = (v) =>
     isAccountId(v[1].to); // to id
 
 
-export const isSignetTransaction = (v) =>
+export const isSignetTransaction = (v) => // TODO fix in contract
     isObject(v) &&
     isNonNegativeInteger(v.ref_block_num) &&
     isNonNegativeInteger(v.ref_block_prefix) &&
