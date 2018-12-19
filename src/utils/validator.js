@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { CHAIN_APIS } from '../constants/ws-constants';
 
 const pattern = new RegExp(
 	'^(https|http|wss|ws):\\/\\/' + // protocol
@@ -12,4 +13,25 @@ const pattern = new RegExp(
 );
 
 export const validateUrl = (url) => pattern.test(String(url));
+
+export const validateOptionsError = (options) => {
+    if (!options || typeof options !== 'object') return 'Options should be an object';
+
+    let errorParameter;
+    if (!(Number.isInteger(options.connectionTimeout) || typeof options.connectionTimeout === 'undefined')) {
+        errorParameter = 'connectionTimeout';
+    } else if (!(Number.isInteger(options.maxRetries) || typeof options.maxRetries === 'undefined')) {
+        errorParameter = 'maxRetries';
+    } else if (!(Number.isInteger(options.pingTimeout) || typeof options.pingTimeout === 'undefined')) {
+        errorParameter = 'pingTimeout';
+    } else if (!(Number.isInteger(options.pingInterval) || typeof options.pingInterval === 'undefined')) {
+        errorParameter = 'pingInterval';
+    } else if (!(typeof options.debug === 'boolean' || typeof options.debug === 'undefined')) {
+        errorParameter = 'debug';
+    } else if (!((Array.isArray(options.apis) && options.apis.every((api) => CHAIN_APIS.includes(api))) || typeof options.apis === 'undefined')) {
+        errorParameter = 'apis';
+    }
+
+    if (errorParameter) return `Parameter ${errorParameter} is invalid`;
+};
 

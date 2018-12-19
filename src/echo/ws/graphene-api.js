@@ -1,5 +1,10 @@
 class GrapheneApi {
 
+    /**
+	 *
+     * @param {ReconnectionWebsocket} wsRpc
+     * @param {String} apiName
+     */
 	constructor(wsRpc, apiName) {
 		this.ws_rpc = wsRpc;
 		this.api_name = apiName;
@@ -10,10 +15,9 @@ class GrapheneApi {
      * @returns {Promise}
      */
 	async init() {
-		const self = this;
 		try {
-			self.api_id = await this.ws_rpc.call([1, this.api_name, []]);
-			return self;
+			this.api_id = await this.ws_rpc.call([1, this.api_name, []]);
+			return this;
 		} catch (e) {
 			throw e;
 		}

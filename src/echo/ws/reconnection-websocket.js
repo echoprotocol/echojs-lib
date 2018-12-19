@@ -65,6 +65,12 @@ class ReconnectionWebSocket {
         this._forceClosePromise = null;
         this._reconnectionTimeoutId = null;
 
+        this._cbId = 0;
+        this._responseCbId = 0;
+        this._cbs = {};
+        this._subs = [];
+        this._unsub = {};
+
 		return this._connect();
 	}
 
@@ -189,7 +195,8 @@ class ReconnectionWebSocket {
 		this._cbId += 1;
 
 		if (method === 'set_subscribe_callback' || method === 'subscribe_to_market' ||
-            method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback'
+            method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
+			method === 'set_block_applied_callback'
 		) {
 			// Store callback in subs map
 			this._subs[this._cbId] = {
@@ -224,7 +231,10 @@ class ReconnectionWebSocket {
 
 			const timeoutId = setTimeout(() => {
 				reject(new Error(`RPC call time is over Id: ${request.id}`));
-				if (this._cbs[request.id]) this._cbs[request.id].timeoutId = null;
+
+				delete this._cbs[request.id];
+				delete this._subs[request.id];
+				delete this._unsub[request.id];
 			}, timeout);
 
 			this._cbs[this._cbId] = {
@@ -360,8 +370,6 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	close() {
-
-        // const prom = new Promise((res) => {  })
         if (this.ws.readyState === 2 || this.ws.readyState === 3) return Promise.reject(new Error('Socket already close'));
 
         return new Promise((resolve) => {

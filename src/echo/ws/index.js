@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
-import { validateUrl } from '../../utils/validator';
+import { validateUrl, validateOptionsError } from '../../utils/validator';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
 class ApisInstance {
@@ -14,6 +14,13 @@ class ApisInstance {
 		this.onOpenCb = null;
 		this.onCloseCb = null;
 		this.onErrorCb = null;
+
+        this._database = null;
+        this._network_broadcast = null;
+        this._history = null;
+        this._registration = null;
+        this._asset = null;
+        this._login = null;
 	}
 
 	/**
@@ -22,31 +29,14 @@ class ApisInstance {
 	async _onOpen() {
 		if (!this._ws_rpc) return;
 
-
 		const initPromises = [];
 
 		this.apis.forEach((api) => {
-			switch (api) {
-				case 'database':
-					initPromises.push(this._db.init());
-					break;
-                case 'login':
-                    this._login.api_id = 1;
-                    break;
-                case 'network_broadcast':
-                    initPromises.push(this._net.init());
-                    break;
-                case 'history':
-                    initPromises.push(this._hist.init());
-                    break;
-                case 'registration':
-                    initPromises.push(this._reg.init());
-                    break;
-                case 'asset':
-                    initPromises.push(this._asset.init());
-                    break;
+			if (api === 'login') {
+				return initPromises.push((this._login.api_id = 1));
 			}
-		})
+            initPromises.push(this[`_${api}`].init());
+		});
 
 		try {
             await this._ws_rpc.login('', '');
@@ -92,27 +82,12 @@ class ApisInstance {
 			throw new Error('Secure domains require wss connection');
 		}
 
-		if (!options || typeof options !== 'object') throw new Error('Options should be an object');
+        const optionError = validateOptionsError(options);
 
-		let errorParameter;
-		if (!(Number.isInteger(options.connectionTimeout) || typeof options.connectionTimeout === 'undefined')) {
-			errorParameter = 'connectionTimeout';
-		} else if (!(Number.isInteger(options.maxRetries) || typeof options.maxRetries === 'undefined')) {
-            errorParameter = 'maxRetries';
-        } else if (!(Number.isInteger(options.pingTimeout) || typeof options.pingTimeout === 'undefined')) {
-            errorParameter = 'pingTimeout';
-        } else if (!(Number.isInteger(options.pingInterval) || typeof options.pingInterval === 'undefined')) {
-            errorParameter = 'pingInterval';
-        } else if (!(typeof options.debug === 'boolean' || typeof options.debug === 'undefined')) {
-            errorParameter = 'debug';
-        } else if (!((Array.isArray(options.apis) && options.apis.every((api) => CHAIN_APIS.includes(api))) || typeof options.apis === 'undefined')) {
-            errorParameter = 'apis';
-        }
-
-		if (errorParameter) throw new Error(`Parameter ${errorParameter} is invalid`);
+		if (optionError) throw new Error(optionError);
 
 		this.url = url;
-		
+
 		this.options = {
 			connectionTimeout: options.connectionTimeout,
 			maxRetries: options.maxRetries,
@@ -133,12 +108,7 @@ class ApisInstance {
 		this._ws_rpc.onClose = () => this._onClose();
 		this._ws_rpc.onError = () => this._onError();
 
-		this._db = new GrapheneApi(this._ws_rpc, 'database');
-		this._net = new GrapheneApi(this._ws_rpc, 'network_broadcast');
-		this._hist = new GrapheneApi(this._ws_rpc, 'history');
-		this._reg = new GrapheneApi(this._ws_rpc, 'registration');
-		this._asset = new GrapheneApi(this._ws_rpc, 'asset');
-		this._login = new GrapheneApi(this._ws_rpc, 'login');
+		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new GrapheneApi(this._ws_rpc, api) });
 
 		try {
 			await this._ws_rpc.connect(url, this.options);
@@ -182,7 +152,7 @@ class ApisInstance {
      * @returns {GrapheneApi}
      */
 	dbApi() {
-		return this._db;
+		return this._database;
 	}
 
 	/**
@@ -190,7 +160,7 @@ class ApisInstance {
      * @returns {GrapheneApi}
      */
 	networkApi() {
-		return this._net;
+		return this._network_broadcast;
 	}
 
 	/**
@@ -198,7 +168,7 @@ class ApisInstance {
      * @returns {GrapheneApi}
      */
 	historyApi() {
-		return this._hist;
+		return this._history;
 	}
 
 	/**
@@ -206,7 +176,7 @@ class ApisInstance {
      * @returns {GrapheneApi}
      */
 	registrationApi() {
-		return this._reg;
+		return this._registration;
 	}
 
 	/**
