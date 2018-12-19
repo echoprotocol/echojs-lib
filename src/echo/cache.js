@@ -22,6 +22,8 @@ class Cache {
 		this.assetBySymbol = new Map();
 
         this.contractBalanceByContractId = new Map();
+        this.contractByContractId = new Map();
+        this.contractResultByContractResultId = new Map();
 
 		this.blockHeadersByBlockNumber = Map();
 

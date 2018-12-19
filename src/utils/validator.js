@@ -8,7 +8,10 @@ const accountIdRegex = /1\.2\.(\d+)\b/;
 const assetIdRegex = /1\.3\.(\d+)\b/;
 const balanceIdRegex = /2\.5\.(\d+)\b/;
 const contractIdRegex = /1\.16\.(\d+)\b/;
+const contractResultIdRegex = /1\.17\.(\d+)\b/;
 const hexRegex = /[0-9a-fA-F]+/;
+const bytecodeRegex = /[0-9a-fA-F]*/;
+const voteIdTypeRegex = /[0-3]{1}:[0-9]+/;
 
 export const isArray = (v) => Array.isArray(v) && v.length !== undefined;
 
@@ -24,6 +27,8 @@ export const isFunction = (v) => typeof v === 'function';
 
 export const isBoolean = (v) => typeof v === 'boolean';
 
+export const isObject = (v) => typeof v === 'object';
+
 export const isStringSymbol = (v) => isString(v) && v.length === 1;
 
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
@@ -34,7 +39,46 @@ export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
 
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 
+export const isVoteIdType = (v) => isString(v) && voteIdTypeRegex.test(v);
+
+export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
+
 export const isHex = (v) => isString(v) && hexRegex.test(v);
+
+export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v) && v.length%2 === 0;
+
+export const isRipemd160 = (v) => isHex(v) && v.length === 40;
+
+export const isTransaction = (v) => {
+    return isObjectId(v);
+};
+
+export const isOperation = (v) =>
+    isArray(v) &&
+    isNonNegativeInteger(v[0]) && // operation
+    isObject(v[1]) && // operation body
+    isObject(v[1].fee) && // fee object
+    isString(v[1].fee.amount) && // fee amount
+    isAssetId(v[1].fee.asset_id) && // fee asset
+    isObject(v[1].amount) && // amount object
+    isString(v[1].amount.amount) && // amount sum
+    isAssetId(v[1].amount.asset_id) && // amount asset
+    isArray(v[1].extensions) && // extension
+    isAccountId(v[1].from) && // from id
+    isAccountId(v[1].to); // to id
+
+
+export const isSignetTransaction = (v) =>
+    isObject(v) &&
+    isNonNegativeInteger(v.ref_block_num) &&
+    isNonNegativeInteger(v.ref_block_prefix) &&
+    isString(v.expiration) && // date
+    isArray(v.operations) &&
+    v.operations.every((op) => isOperation(op)) &&
+    isArray(v.extensions) &&
+    isArray(v.signatures);
+
+
 
 export const isAssetName = (v) =>
     !isEmpty(v) &&

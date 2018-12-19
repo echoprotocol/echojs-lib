@@ -6,11 +6,18 @@ import {
     isAccountId,
     isNonNegativeInteger,
     isAccountName,
-	isString,
+    isString,
     isAssetId,
     isBalanceId,
     isContractId,
-    isHex
+    isContractResultId,
+    isBytecode,
+    isRipemd160,
+    isTransaction,
+    isSignetTransaction,
+    isPublicKey,
+    isVoteIdType,
+    isOperation
 } from '../utils/validator';
 
 class API {
@@ -728,7 +735,11 @@ class API {
      *  @return {Promise}
      */
 	lookupVoteIds(votes) {
-		this.wsApi.database.lookupVoteIds(votes);
+        if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
+        if (votes.some((id) => !isVoteIdType(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
+
+
+		return this.wsApi.database.lookupVoteIds(votes);
 	}
 
 	/**
@@ -739,6 +750,8 @@ class API {
      *  @return {Promise}
      */
 	getTransactionHex(transaction) {
+        if (!isSignetTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+
 		// transaction is signed
 		return this.wsApi.database.getTransactionHex(transaction);
 	}
@@ -752,6 +765,10 @@ class API {
      *  @return {Promise}
      */
 	getRequiredSignatures(transaction, availableKeys) {
+        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+        if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
+        if (availableKeys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
+
 		this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
 	}
 
@@ -763,6 +780,8 @@ class API {
      *  @return {Promise}
      */
 	getPotentialSignatures(transaction) {
+        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+
 		return this.wsApi.database.getPotentialSignatures(transaction);
 	}
 
@@ -774,6 +793,8 @@ class API {
      *  @return {Promise}
      */
 	verifyAuthority(transaction) {
+        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+
 		return this.wsApi.database.verifyAuthority(transaction);
 	}
 
@@ -786,8 +807,11 @@ class API {
      *  @return {Promise}
      */
 	verifyAccountAuthority(accountNameOrId, signers) {
-		// signers - set of public keys
-		this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
+        if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId)) ) return Promise.reject(new Error('Account name or id is invalid'));
+        if (!isArray(signers)) return Promise.reject(new Error('Signers ids should be an array'));
+        if (signers.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Signers should contain valid public keys'));
+
+		return this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
 	}
 
 	/**
@@ -810,8 +834,12 @@ class API {
      *
      *  @return {Promise}
      */
-	getRequiredFees(operations, assetId) {
-		this.wsApi.database.getRequiredFees(operations, assetId);
+	getRequiredFees(operations, assetId = '1.3.0') {
+        if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
+        if (operations.some((op) => !isOperation(op))) return Promise.reject(new Error('Operations should contain valid operations'));
+        if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
+
+		return this.wsApi.database.getRequiredFees(operations, assetId);
 	}
 
 	/**
@@ -862,7 +890,9 @@ class API {
      *  @return {Promise}
      */
 	getContractResult(resultContractId) {
-		this.wsApi.database.getContractResult(resultContractId);
+        if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
+
+        return this._getSingleData(resultContractId, 'contractResultByContractResultId', 'getContractResult');
 	}
 
 	/**
@@ -873,7 +903,9 @@ class API {
      *  @return {Promise}
      */
 	getContract(contractId) {
-		this.wsApi.database.getContract(contractId);
+        if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
+
+        return this._getSingleData(contractId, 'contractByContractId', 'getContract');
 	}
 
 	/**
@@ -890,7 +922,7 @@ class API {
         if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
         if (!isAccountId(accountId)) return Promise.reject(new Error('AccountId is invalid'));
         if (!isAssetId(assetId)) return Promise.reject(new Error('AssetId is invalid'));
-        if (!isHex(bytecode) || bytecode.length%2 !== 0) return Promise.reject(new Error('Bytecode is invalid'));
+        if (!isBytecode(bytecode)) return Promise.reject(new Error('Bytecode is invalid'));
 
 		return this.wsApi.database.callContractNoChangingState(contractId, accountId, assetId, bytecode);
 	}
@@ -930,7 +962,9 @@ class API {
      *  @return {Promise}
      */
 	getRecentTransactionById(transactionId) {
-		this.wsApi.database.getRecentTransactionById(transactionId);
+        if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
+
+		return this.wsApi.database.getRecentTransactionById(transactionId);
 	}
 
 	reset() {
