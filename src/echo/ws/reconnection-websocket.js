@@ -2,11 +2,11 @@
 import WebSocket from 'isomorphic-ws';
 
 import {
-    connectionTimeout,
-    maxRetries,
-    pingTimeout,
-    pingInterval,
-    debug,
+    CONNECTION_TIMEOUT,
+    MAX_RETRIES,
+    PING_TIMEOUT,
+    PING_INTERVAL,
+    DEBUG,
 } from '../../constants/ws-constants'
 
 class ReconnectionWebSocket {
@@ -38,22 +38,32 @@ class ReconnectionWebSocket {
      * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
      */
-	connect(
+	async connect(
 		url,
 		options = {},
 	) {
-		this._options = {
-			connectionTimeout: options.connectionTimeout === undefined ? connectionTimeout : options.connectionTimeout,
-			maxRetries: options.maxRetries === undefined ? maxRetries : options.maxRetries,
-			pingTimeout: options.pingTimeout === undefined ? pingTimeout : options.pingTimeout,
-			pingInterval: options.pingInterval === undefined ? pingInterval : options.pingInterval,
-			debug: options.debug === undefined ? debug : options.debug,
-		};
+		if (this.ws && this.ws.readyState === 1) {
+            try {
+                await this.close();
+			} catch (error) {
+            	throw error;
+			}
+		}
 
-		this.url = url;
-		this._isFirstConnection = true;
-		this._isForceClose = false;
-		this._currentRetry = 0;
+        this._options = {
+            connectionTimeout: typeof options.connectionTimeout === 'undefined' ? CONNECTION_TIMEOUT : options.connectionTimeout,
+            maxRetries: typeof options.maxRetries === 'undefined' ? MAX_RETRIES : options.maxRetries,
+            pingTimeout: typeof options.pingTimeout === 'undefined' ? PING_TIMEOUT : options.pingTimeout,
+            pingInterval: typeof options.pingInterval === 'undefined' ? PING_INTERVAL : options.pingInterval,
+            debug: typeof options.debug === 'undefined' ? DEBUG : options.debug,
+        };
+
+        this.url = url;
+        this._isFirstConnection = true;
+        this._isForceClose = false;
+        this._currentRetry = 0;
+        this._forceClosePromise = null;
+        this._reconnectionTimeoutId = null;
 
 		return this._connect();
 	}
@@ -95,7 +105,7 @@ class ReconnectionWebSocket {
 			};
 
 			this.ws.onmessage = (message) => {
-				this._listener(JSON.parse(message.data));
+				this._responseHandler(JSON.parse(message.data));
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 			};
@@ -106,16 +116,19 @@ class ReconnectionWebSocket {
 					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
-				const err = new Error('connection closed');
-				for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
-					this._cbs[cbId].reject(err);
-				}
-
+				this._clearWaitingCallPromises();
 				this._clearPingInterval();
+                this._clearReconnectionTimeout();
 
 				if (this.onClose) this.onClose();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
+
+                if (this._forceClosePromise) {
+                    this._forceClosePromise();
+                    this._forceClosePromise = null;
+                    return;
+                }
 
 				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
 					this._isForceClose = true;
@@ -123,7 +136,7 @@ class ReconnectionWebSocket {
 					return;
 				}
 
-				setTimeout(async () => {
+				this._reconnectionTimeoutId = setTimeout(async () => {
 					try {
                        await this._connect();
                     } catch (_) {}
@@ -168,7 +181,7 @@ class ReconnectionWebSocket {
      */
 	call(params, timeout = this._options.connectionTimeout) {
 		if (this.ws.readyState !== 1) {
-			return Promise.reject(new Error(`websocket state error:${this.ws.readyState}`));
+			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
 		}
 		const method = params[1];
 		this._debugLog(`[ReconnectionWebSocket] >---- call ----->  "id":${this._cbId + 1}`, JSON.stringify(params));
@@ -229,7 +242,7 @@ class ReconnectionWebSocket {
      * message handler
      * @param response
      */
-	_listener(response) {
+	_responseHandler(response) {
 		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
 		let sub = false;
@@ -271,7 +284,7 @@ class ReconnectionWebSocket {
 		} else if (callback && sub) {
 			callback(response.params[1]);
 		} else {
-			console.log('Warning: unknown websocket response: ', response);
+            console.log('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
 		}
 	}
 
@@ -298,13 +311,35 @@ class ReconnectionWebSocket {
 	}
 
 	/**
+	 * clear reconnection timeout
+     * @private
+     */
+	_clearReconnectionTimeout() {
+		if (this._reconnectionTimeoutId) {
+			clearTimeout(this._reconnectionTimeoutId);
+			this._reconnectionTimeoutId = null;
+		}
+	}
+
+
+    /**
+	 * clear waiting calls
+     * @private
+     */
+	_clearWaitingCallPromises() {
+		const err = new Error('connection closed');
+		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
+			this._cbs[cbId].reject(err);
+		}
+	}
+
+	/**
      * make call for check connection
      */
 	async _loginPing() {
 		try {
 			await this.login('', '', this._options.pingTimeout);
 		} catch(_) {
-			console.log('error', this.ws.readyState)
             if (this.ws.readyState !== 1) return;
             this.ws.close();
 		}
@@ -325,12 +360,12 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	close() {
-		return new Promise((resolve) => {
-			this.ws.onclose = () => {
-				resolve();
-				if (this.onClose) this.onClose();
-				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
-			};
+
+        // const prom = new Promise((res) => {  })
+        if (this.ws.readyState === 2 || this.ws.readyState === 3) return Promise.reject(new Error('Socket already close'));
+
+        return new Promise((resolve) => {
+            this._forceClosePromise = resolve;
 			this._isForceClose = true;
 			this.ws.close();
 		});

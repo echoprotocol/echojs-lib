@@ -2,6 +2,7 @@
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl } from '../../utils/validator';
+import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
 class ApisInstance {
 
@@ -21,14 +22,31 @@ class ApisInstance {
 	async _onOpen() {
 		if (!this._ws_rpc) return;
 
-		const initPromises = [
-            this._login.api_id = 1,
-            this._db.init(),
-            this._net.init(),
-            this._hist.init(),
-			// this._reg.init(),
-			// this._asset.init(),
-		];
+
+		const initPromises = [];
+
+		this.apis.forEach((api) => {
+			switch (api) {
+				case 'database':
+					initPromises.push(this._db.init());
+					break;
+                case 'login':
+                    this._login.api_id = 1;
+                    break;
+                case 'network_broadcast':
+                    initPromises.push(this._net.init());
+                    break;
+                case 'history':
+                    initPromises.push(this._hist.init());
+                    break;
+                case 'registration':
+                    initPromises.push(this._reg.init());
+                    break;
+                case 'asset':
+                    initPromises.push(this._asset.init());
+                    break;
+			}
+		})
 
 		try {
             await this._ws_rpc.login('', '');
@@ -67,7 +85,7 @@ class ApisInstance {
      * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
      */
-	async connect(url, options) {
+	async connect(url, options = {}) {
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
 		if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:' && url.indexOf('wss://') < 0) {
@@ -87,6 +105,8 @@ class ApisInstance {
             errorParameter = 'pingInterval';
         } else if (!(typeof options.debug === 'boolean' || typeof options.debug === 'undefined')) {
             errorParameter = 'debug';
+        } else if (!((Array.isArray(options.apis) && options.apis.every((api) => CHAIN_APIS.includes(api))) || typeof options.apis === 'undefined')) {
+            errorParameter = 'apis';
         }
 
 		if (errorParameter) throw new Error(`Parameter ${errorParameter} is invalid`);
@@ -100,6 +120,8 @@ class ApisInstance {
 			pingInterval: options.pingInterval,
 			debug: options.debug,
 		};
+
+		this.apis = options.apis || DEFAULT_CHAIN_APIS;
 
 		if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
 		if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;

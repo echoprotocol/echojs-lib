@@ -12,7 +12,17 @@ describe('instance', () => {
                     connectionTimeout: 5000,
                     maxRetries: 5,
                     debug: true,
+                    apis: ['database']
                 });
+                // await ws.close();
+                // await new Promise((res) => {
+                //     setTimeout(() => { res(); }, 1000)
+                // });
+                // await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
+                //     connectionTimeout: 5000,
+                //     maxRetries: 5,
+                //     debug: true,
+                // });
 
                 const api = new WSAPI(ws);
 
