@@ -86,8 +86,7 @@ export const isOperation = (v) => // TODO fix in contract
     isAccountId(v[1].from) && // from id
     isAccountId(v[1].to); // to id
 
-
-export const isSignetTransaction = (v) => // TODO fix in contract
+export const isSignedTransaction = (v) => // TODO fix in contract
 	isObject(v) &&
     isNonNegativeInteger(v.ref_block_num) &&
     isNonNegativeInteger(v.ref_block_prefix) &&

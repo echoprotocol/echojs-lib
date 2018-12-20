@@ -1,3 +1,4 @@
+/* eslint-disable no-continue,max-len */
 import {
 	isArray,
 	isObjectId,
@@ -14,7 +15,7 @@ import {
 	isBytecode,
 	isRipemd160,
 	isTransaction,
-	isSignetTransaction,
+	isSignedTransaction,
 	isPublicKey,
 	isVoteIdType,
 	isOperation,
@@ -97,12 +98,11 @@ class API {
 		}
 
 		for (let i = 0; i < length; i += 1) {
-			if (!resultArray[i]) {
-				const key = requestedObjectsKeys.shift();
-				const requestedObject = requestedObjects.shift();
+			if (resultArray[i]) continue;
+			const key = requestedObjectsKeys.shift();
+			const requestedObject = requestedObjects.shift();
 
-				resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
-			}
+			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
 		}
 
 		return resultArray;
@@ -309,13 +309,12 @@ class API {
      *  @return {Promise}
      */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
-	    // TODO allow user to subscribe or not
 		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
-		if (!accountIds.every((key) => isAccountId(key) || isAccountName(key))) return Promise.reject(new Error('Accounts should contain valid account ids or names'));
+		if (!accountNamesOrIds.every((key) => isAccountId(key) || isAccountName(key))) return Promise.reject(new Error('Accounts should contain valid account ids or names'));
 		if (!isBoolean(subscribe)) return Promise.reject(new Error('Subscribe should be a boolean'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const length = accountNamesOrIds.length;
+		const { length } = accountNamesOrIds;
 
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
@@ -332,7 +331,7 @@ class API {
 			}
 
 			if (cacheValue) resultArray[i] = cacheValue;
-			else requestedObjects.push(id);
+			else requestedObjects.push(key);
 		}
 
 		try {
@@ -470,7 +469,7 @@ class API {
 		if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
 		if (balanceIds.some((id) => !isBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
 
-		return this.wsApi.database.getVestedBalances(objectIds);
+		return this.wsApi.database.getVestedBalances(balanceIds);
 	}
 
 	/**
@@ -528,7 +527,7 @@ class API {
 		if (!symbolsOrIds.every((key) => isAssetId(key) || isAccountName(key))) throw new Error('Symbols or ids should contain valid asset ids or symbol');
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const length = symbolsOrIds.length;
+		const { length } = symbolsOrIds;
 
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
@@ -586,7 +585,7 @@ class API {
 		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
 		if (!isNonNegativeInteger(depth) || depth > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
 
-		return this.wsApi.database.getOrderBook(baseAssetId, quoteAssetId, depth);
+		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
 
 	/**
@@ -833,7 +832,7 @@ class API {
      *  @return {Promise}
      */
 	getTransactionHex(transaction) {
-		if (!isSignetTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!isSignedTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// transaction is signed
 		return this.wsApi.database.getTransactionHex(transaction);
@@ -905,7 +904,8 @@ class API {
      *  @return {Promise}
      */
 	validateTransaction(transaction) {
-	    // TODO
+		if (!isSignedTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+
 		// signed transaction
 		return this.wsApi.database.validateTransaction(transaction);
 	}
