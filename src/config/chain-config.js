@@ -1,3 +1,3 @@
 export default {
-    ADDRESS_PREFIX:  'ECHO'
+	ADDRESS_PREFIX: 'ECHO',
 };

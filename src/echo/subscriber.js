@@ -1,6 +1,6 @@
 import {
-    isFunction,
-    isBoolean,
+	isFunction,
+	isBoolean,
 } from '../utils/validator';
 
 class Subscriber {
@@ -14,52 +14,52 @@ class Subscriber {
 		// TODO reset subscribers
 	}
 
-    /**
+	/**
      *  @method setSubscribeCallback
      *  @param  {Function} callback
      *  @param  {Boolean} notifyRemoveCreate
      *
      *  @return {Promise}
      */
-    setSubscribeCallback(callback, notifyRemoveCreate) {
-        if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-        if (!isBoolean(notifyRemoveCreate)) return Promise.reject(new Error('notifyRemoveCreate should be a boolean'));
+	setSubscribeCallback(callback, notifyRemoveCreate) {
+		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
+		if (!isBoolean(notifyRemoveCreate)) return Promise.reject(new Error('notifyRemoveCreate should be a boolean'));
 
-        return this.wsApi.database.setSubscribeCallback(callback, notifyRemoveCreate);
-    }
+		return this.wsApi.database.setSubscribeCallback(callback, notifyRemoveCreate);
+	}
 
-    /**
+	/**
      *  @method setPendingTransactionCallback
      *  @param  {Function} callback
      *
      *  @return {Promise}
      */
-    setPendingTransactionCallback(callback) {
-        if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-        return this.wsApi.database.setPendingTransactionCallback(callback);
-    }
+	setPendingTransactionCallback(callback) {
+		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
+		return this.wsApi.database.setPendingTransactionCallback(callback);
+	}
 
-    /**
+	/**
      *  @method setBlockAppliedCallback
      *  @param  {Function} callback
      *
      *  @return {Promise}
      */
-    setBlockAppliedCallback(callback) {
-        if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-        return this.wsApi.database.setBlockAppliedCallback(callback);
-    }
+	setBlockAppliedCallback(callback) {
+		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
+		return this.wsApi.database.setBlockAppliedCallback(callback);
+	}
 
-    /**
+	/**
      *  @method cancelAllSubscriptions
      *
      *  @return {Promise}
      */
-    cancelAllSubscriptions() {
-        return this.wsApi.database.cancelAllSubscriptions();
-    }
+	cancelAllSubscriptions() {
+		return this.wsApi.database.cancelAllSubscriptions();
+	}
 
-    /**
+	/**
      *  @method subscribeToMarket
      *  @param  {Function} callback
      *  @param  {String} baseAssetId
@@ -67,12 +67,12 @@ class Subscriber {
      *
      *  @return {Promise}
      */
-    subscribeToMarket(callback, baseAssetId, quoteAssetId) {
-        if (!isFunction(callback)) return Promise.reject(new Error('Callback parameter should be a function'));
-        this.wsApi.database.subscribeToMarket(callback, baseAssetId, quoteAssetId);
-    }
+	subscribeToMarket(callback, baseAssetId, quoteAssetId) {
+		if (!isFunction(callback)) return Promise.reject(new Error('Callback parameter should be a function'));
+		this.wsApi.database.subscribeToMarket(callback, baseAssetId, quoteAssetId);
+	}
 
-    /**
+	/**
      *  @method unsubscribeFromMarket
      *
      *  @param  {String} baseAssetName
@@ -80,11 +80,11 @@ class Subscriber {
      *
      *  @return {Promise}
      */
-    unsubscribeFromMarket(baseAssetName, quoteAssetName) {
-        this.wsApi.database.unsubscribeFromMarket(baseAssetName, quoteAssetName);
-    }
+	unsubscribeFromMarket(baseAssetName, quoteAssetName) {
+		this.wsApi.database.unsubscribeFromMarket(baseAssetName, quoteAssetName);
+	}
 
-    /**
+	/**
      *  @method subscribeContractLogs
      *
      *  @param  {Function} callback
@@ -94,9 +94,9 @@ class Subscriber {
      *
      *  @return {Promise}
      */
-    subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
-        this.wsApi.database.subscribeContractLogs(callback, contractId, fromBlock, toBlock);
-    }
+	subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
+		this.wsApi.database.subscribeContractLogs(callback, contractId, fromBlock, toBlock);
+	}
 
 }
 

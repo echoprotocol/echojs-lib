@@ -1,136 +1,180 @@
 import {
-    isArray,
-    isObjectId,
-    isBoolean,
-    isAssetName,
-    isAccountId,
-    isNonNegativeInteger,
-    isAccountName,
-    isString,
-    isAssetId,
-    isBalanceId,
-    isContractId,
-    isContractResultId,
-    isBytecode,
-    isRipemd160,
-    isTransaction,
-    isSignetTransaction,
-    isPublicKey,
-    isVoteIdType,
-    isOperation
+	isArray,
+	isObjectId,
+	isBoolean,
+	isAssetName,
+	isAccountId,
+	isNonNegativeInteger,
+	isAccountName,
+	isString,
+	isAssetId,
+	isBalanceId,
+	isContractId,
+	isContractResultId,
+	isBytecode,
+	isRipemd160,
+	isTransaction,
+	isSignetTransaction,
+	isPublicKey,
+	isVoteIdType,
+	isOperation,
 } from '../utils/validator';
 
 class API {
 
-	constructor(cache, wsApi, options) {
+	/**
+     *
+     * @param {Cache} cache
+     * @param {WSAPI} wsApi
+     */
+	constructor(cache, wsApi) {
 		this.cache = cache;
 		this.wsApi = wsApi;
-		this.options = options;
 	}
 
-    /**
+	/**
 	 *
      * @param {String} cacheName
      * @param {String} methodName
+     * @param {Boolean} force
+     *
      * @returns {Promise.<*>}
      * @private
      */
-	async _getConfigurations(cacheName, methodName) {
-        const cacheValue = this.cache[cacheName];
+	async _getConfigurations(cacheName, methodName, force = false) {
+		if (!force) {
+			const cacheValue = this.cache[cacheName];
 
-        if (cacheValue) return cacheValue;
+			if (cacheValue) return cacheValue;
+		}
 
-        try {
-            const requestedObject = await this.wsApi.database[methodName]();
+		try {
+			const requestedObject = await this.wsApi.database[methodName]();
 
-            this.cache[cacheName] = requestedObject;
-
-            return requestedObject;
-        } catch (error) {
-            throw error;
-        }
+			return this.cache.set(cacheName, requestedObject);
+		} catch (error) {
+			throw error;
+		}
 	}
 
-    /**
+	/**
 	 *
      * @param {Array} array
      * @param {String} cacheName
      * @param {String} methodName
+     * @param {Boolean} force
+     *
      * @returns {Promise.<Array.<*>>}
      * @private
      */
-	async _getArrayData(array, cacheName, methodName) {
-        const length = array.length;
+	async _getArrayData(array, cacheName, methodName, force = false) {
+		const { length } = array;
 
-        const resultArray = new Array(length).fill(null);
-        let requestedObjectsKeys = [];
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
 
-        for (let i = 0; i < length; i += 1) {
-            const key = array[i];
-            const cacheValue = this.cache[cacheName].get(key);
+		for (let i = 0; i < length; i += 1) {
+			const key = array[i];
 
-            if (cacheValue) resultArray[i] = cacheValue;
-            else requestedObjectsKeys.push(key);
-        }
+			if (!force) {
+				const cacheValue = this.cache[cacheName].get(key);
 
-        let requestedObjects;
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
 
-        try {
-            requestedObjects = await Promise.all(this.wsApi.database[methodName](requestedObjectsKeys));
-        } catch (error) {
-            throw error;
-        }
+			requestedObjectsKeys.push(key);
+		}
 
-        for (let i = 0; i < length; i += 1) {
-            if(resultArray[i]) continue;
+		let requestedObjects;
 
-            const requestedObject = requestedObjects.shift();
-            const key = requestedObjects.shift();
+		try {
+			requestedObjects = await Promise.all(this.wsApi.database[methodName](requestedObjectsKeys));
+		} catch (error) {
+			throw error;
+		}
 
-            this.cache[cacheName] = this.cache[cacheName].set(key, requestedObject);
+		for (let i = 0; i < length; i += 1) {
+			if (!resultArray[i]) {
+				const key = requestedObjectsKeys.shift();
+				const requestedObject = requestedObjects.shift();
 
-            resultArray[i] = requestedObject;
-        }
+				resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
+			}
+		}
 
-        return resultArray;
-	};
+		return resultArray;
+	}
 
-    /**
+	/**
 	 *
      * @param {*} value
      * @param {String} cacheName
      * @param {String} methodName
+     * @param {Boolean} force
+     *
      * @returns {Promise.<*>}
      * @private
      */
-	async _getSingleData(value, cacheName, methodName) {
-        const cacheValue = this.cache[cacheName].get(value);
+	async _getSingleData(key, cacheName, methodName, force = false) {
+		if (!force) {
+			const cacheValue = this.cache[cacheName].get(key);
 
-        if (cacheValue) return cacheValue;
+			if (cacheValue) return cacheValue;
+		}
 
-        try {
-            const requestedObject = await this.wsApi.database[methodName](value);
+		try {
+			const requestedObject = await this.wsApi.database[methodName](key);
 
-            this.cache[cacheName] = this.cache[cacheName].set(value, requestedObject);
+			return this.cache.setInMap(cacheName, key, requestedObject);
+		} catch (error) {
+			throw error;
+		}
+	}
 
-            return requestedObject;
-        } catch (error) {
-            throw error;
-        }
+	/**
+     *
+     * @param {String} key
+     * @param {String} cacheName
+     * @param {String} methodName
+     * @param {Boolean} force
+     * @param {...Array} params
+     *
+     * @returns {Promise.<*>}
+     * @private
+     */
+	async _getSingleDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
+		if (!force) {
+			const cacheValue = this.cache[cacheName].get(key);
+
+			if (cacheValue) return cacheValue;
+		}
+
+		try {
+			const value = await this.wsApi.database[methodName](...params);
+
+			return this.cache.setInMap(cacheName, key, value);
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	/**
      *  @method getObjects
      *  @param  {Array<String>} objectIds
+     *  @param {Boolean} force
+     *
      *  @return {Promise}
      */
-	getObjects(objectIds) {
+	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
 		if (objectIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(objectIds, 'objectsById', 'getObjects')
+		return this._getArrayData(objectIds, 'objectsById', 'getObjects', force);
 	}
-
 
 	/**
      *  @method getBlockHeader
@@ -141,7 +185,7 @@ class API {
 	getBlockHeader(blockNum) {
 		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
-        return this._getSingleData(blockNum, 'blockHeadersByBlockNumber', 'getBlockHeader');
+		return this._getSingleData(blockNum, 'blockHeadersByBlockNumber', 'getBlockHeader');
 	}
 
 	/**
@@ -151,9 +195,9 @@ class API {
      *  @return {Promise}
      */
 	getBlock(blockNum) {
-        if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
-        return this._getSingleData(blockNum, 'blocks', 'getBlock');
+		return this._getSingleData(blockNum, 'blocks', 'getBlock');
 	}
 
 	/**
@@ -163,21 +207,25 @@ class API {
      *
      *  @return {Promise}
      */
-	async getTransaction(blockNum, transactionIndex) {
-        if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
-        if (!isNonNegativeInteger(transactionIndex)) return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
-		// TODO save it to cache or not
-        // which structure (MAP { MAP }?)
-		return this.wsApi.database.getTransaction(blockNum, transactionIndex);
+	getTransaction(blockNum, transactionIndex) {
+		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isNonNegativeInteger(transactionIndex)) return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
+
+		const key = `${blockNum}:${transactionIndex}`;
+
+		return this._getSingleDataByCompositeParams(key, 'transactionsByBlockAndIndex', 'getTransaction', false, blockNum, transactionIndex);
 	}
 
 	/**
      *  @method getChainProperties
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getChainProperties() {
-        return this._getConfigurations('chainProperties', 'getChainProperties');
+	getChainProperties(force = false) {
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this._getConfigurations('chainProperties', 'getChainProperties', force);
 	}
 
 	/**
@@ -186,25 +234,31 @@ class API {
      *  @return {Promise}
      */
 	getGlobalProperties() {
-        return this._getConfigurations('globalProperties', 'getGlobalProperties');
+		return this.wsApi.database.getGlobalProperties();
 	}
 
 	/**
      *  @method getConfig
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	async getConfig() {
-        return this._getConfigurations('config', 'getConfig');
+	async getConfig(force = false) {
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this._getConfigurations('config', 'getConfig', force);
 	}
 
 	/**
      *  @method getChainId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	async getChainId() {
-        return this._getConfigurations('chainId', 'getChainId');
+	async getChainId(force = false) {
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this._getConfigurations('chainId', 'getChainId', force);
 	}
 
 	/**
@@ -213,128 +267,140 @@ class API {
      *  @return {Promise}
      */
 	async getDynamicGlobalProperties() {
-        return this._getConfigurations('dynamicGlobalProperties', 'getDynamicGlobalProperties');
+		return this.wsApi.database.getDynamicGlobalProperties();
 	}
 
 	/**
      *  @method getKeyReferences
      *  @param  {Array<String>} keys [public keys]
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getKeyReferences(keys) {
-        if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
-        if (keys.some((key) => !isPublicKey(id))) return Promise.reject(new Error('Keys should contain valid public keys'));
+	getKeyReferences(keys, force = false) {
+		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
+		if (keys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Keys should contain valid public keys'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(keys, 'accountIdByKey', 'getKeyReferences')
+		return this._getArrayData(keys, 'accountIdByKey', 'getKeyReferences', force);
 	}
 
 	/**
      *  @method getAccounts
      *  @param  {Array<String>} accountIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getAccounts(accountIds) {
-        if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
-        if (accountIds.some((id) => !isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
+	getAccounts(accountIds, force = false) {
+		if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
+		if (accountIds.some((id) => !isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(accountIds, 'accountsById', 'getKeyReferences')
+		return this._getArrayData(accountIds, 'accountsById', 'getKeyReferences', force);
 	}
 
 	/**
      *  @method getFullAccounts
      *  @param  {Array<String>} accountNamesOrIds
      *  @param  {Boolean} subscribe
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	async getFullAccounts(accountNamesOrIds, subscribe = true) {
+	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 	    // TODO allow user to subscribe or not
-        if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
-        if (!accountIds.every((key) => isAccountId(key) || isAccountName(key))) return Promise.reject(new Error('Accounts should contain valid account ids or names'));
-        if (!isBoolean(subscribe)) return Promise.reject(new Error('Subscribe should be a boolean'));
+		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
+		if (!accountIds.every((key) => isAccountId(key) || isAccountName(key))) return Promise.reject(new Error('Accounts should contain valid account ids or names'));
+		if (!isBoolean(subscribe)) return Promise.reject(new Error('Subscribe should be a boolean'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        const length = accountNamesOrIds.length;
+		const length = accountNamesOrIds.length;
 
-        const resultArray = new Array(length).fill(null);
-        let requestedObjects = [];
+		const resultArray = new Array(length).fill(null);
+		let requestedObjects = [];
 
-        for (let i = 0; i < length; i += 1) {
+		for (let i = 0; i < length; i += 1) {
 
-            const key = accountNamesOrIds[i];
-            let cacheValue = null;
+			const key = accountNamesOrIds[i];
+			let cacheValue = null;
 
-            if (isAccountId(key)) {
-                cacheValue = this.cache.objectsById.get(key)
+			if (isAccountId(key)) {
+				cacheValue = this.cache.objectsById.get(key);
 			} else {
-                cacheValue = this.cache.accountsByName.get(key)
+				cacheValue = this.cache.accountsByName.get(key);
 			}
 
-            if (cacheValue) resultArray[i] = cacheValue;
-            else requestedObjects.push(id);
-        }
+			if (cacheValue) resultArray[i] = cacheValue;
+			else requestedObjects.push(id);
+		}
 
-        try {
-            requestedObjects = await Promise.all(this.wsApi.database.getFullAccounts(requestedObjects, subscribe));
-        } catch (error) {
-            throw error;
-        }
+		try {
+			requestedObjects = await Promise.all(this.wsApi.database.getFullAccounts(requestedObjects, true));
+		} catch (error) {
+			throw error;
+		}
 
-        for (let i = 0; i < length; i += 1) {
-            if(resultArray[i]) continue;
+		for (let i = 0; i < length; i += 1) {
+			if (resultArray[i]) continue;
 
-            const requestedObject = requestedObjects.shift();
+			const requestedObject = requestedObjects.shift();
 
-            const key = accountNamesOrIds[i];
+			const key = accountNamesOrIds[i];
 
-            if (isAccountId(key)) {
-                this.cache.objectsById = this.cache.objectsById.set(key, requestedObject);
-            } else {
-                this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
-            }
+			if (isAccountId(key)) {
+				this.cache.objectsById = this.cache.objectsById.set(key, requestedObject);
+			} else {
+				this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
+			}
 
-            resultArray[i] = requestedObject;
-        }
+			resultArray[i] = requestedObject;
+		}
 
-        return resultArray;
+		return resultArray;
 	}
 
 	/**
      *  @method getAccountByName
      *  @param  {String} accountName
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getAccountByName(accountName) {
+	getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(accountName, 'accountsByName', 'getAccountByName');
+		return this._getSingleData(accountName, 'accountsByName', 'getAccountByName', force);
 	}
 
 	/**
      *  @method getAccountReferences
      *  @param  {String} accountId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getAccountReferences(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
-		// TODO save it to cache or not
+	getAccountReferences(accountId, force = false) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
 		return this.wsApi.database.getAccountReferences(accountId);
 	}
 
 	/**
      *  @method lookupAccountNames
      *  @param  {Array<String>} accountNames
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	lookupAccountNames(accountNames) {
-        if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
-        if (accountNames.some((id) => !isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
+	lookupAccountNames(accountNames, force = false) {
+		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
+		if (accountNames.some((id) => !isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(accountNames, 'accountsByName', 'lookupAccountNames')
+		return this._getArrayData(accountNames, 'accountsByName', 'lookupAccountNames');
 	}
 
 	/**
@@ -345,8 +411,8 @@ class API {
      *  @return {Promise}
      */
 	lookupAccounts(lowerBoundName, limit = 1000) {
-        if (!isString(lowerBoundName)) return Promise.reject(new Error('Lower bound name should be a string'));
-        if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be a integer and must not exceed 1000'));
+		if (!isString(lowerBoundName)) return Promise.reject(new Error('Lower bound name should be a string'));
+		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be a integer and must not exceed 1000'));
 
 		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
@@ -364,28 +430,32 @@ class API {
      *  @method getAccountBalances
      *  @param  {String} accountId
      *  @param  {Array<String>} assetIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getAccountBalances(accountId, assetIds) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
-        if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-        if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
-        // TODO save it to cache or not
-        return this.wsApi.database.getAccountBalances(accountId, assetIds);
+	getAccountBalances(accountId, assetIds, force = false) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
+		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		// TODO save it to cache or not
+		return this.wsApi.database.getAccountBalances(accountId, assetIds);
 	}
 
 	/**
      *  @method getNamedAccountBalances
      *  @param  {String} accountName
      *  @param  {Array<String>} assetIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getNamedAccountBalances(accountName, assetIds) {
-        if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
-        if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-        if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids should contain valid asset ids'));
+	getNamedAccountBalances(accountName, assetIds, force = false) {
+		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
+		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
+		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids should contain valid asset ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this.wsApi.database.getNamedAccountBalances(accountName, assetIds);
 	}
@@ -397,8 +467,8 @@ class API {
      *  @return {Promise}
      */
 	getVestedBalances(balanceIds) {
-        if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
-        if (balanceIds.some((id) => !isBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
+		if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
+		if (balanceIds.some((id) => !isBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
 
 		return this.wsApi.database.getVestedBalances(objectIds);
 	}
@@ -410,7 +480,7 @@ class API {
      *  @return {Promise}
      */
 	getVestingBalances(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		return this.wsApi.database.getVestingBalances(accountId);
 	}
@@ -418,14 +488,16 @@ class API {
 	/**
      *  @method getAssets
      *  @param  {Array<String>} assetIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getAssets(assetIds) {
-        if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-        if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
+	getAssets(assetIds, force = false) {
+		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
+		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(assetIds, 'assetByAssetId', 'getAssets')
+		return this._getArrayData(assetIds, 'assetByAssetId', 'getAssets');
 	}
 
 	/**
@@ -436,8 +508,8 @@ class API {
      *  @return {Promise}
      */
 	listAssets(lowerBoundSymbol, limit = 100) {
-        if (!isAssetName(lowerBoundSymbol)) return Promise.reject(new Error('Lower bound symbol is invalid'));
-        if (!isNonNegativeInteger(limit) || limit > 100) return Promise.reject(new Error('Limit should be a integer and must not exceed 100'));
+		if (!isAssetName(lowerBoundSymbol)) return Promise.reject(new Error('Lower bound symbol is invalid'));
+		if (!isNonNegativeInteger(limit) || limit > 100) return Promise.reject(new Error('Limit should be a integer and must not exceed 100'));
 
 		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
@@ -445,59 +517,61 @@ class API {
 	/**
      *  @method lookupAssetSymbols
      *  @param  {Array<String>} symbolsOrIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	async lookupAssetSymbols(symbolsOrIds) {
+	async lookupAssetSymbols(symbolsOrIds, force = false) {
 
-        if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
+		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
 
-        if (!symbolsOrIds.every((key) => isAssetId(key) || isAccountName(key))) return Promise.reject(new Error('Symbols or ids should contain valid asset ids or symbol'));
+		if (!symbolsOrIds.every((key) => isAssetId(key) || isAccountName(key))) throw new Error('Symbols or ids should contain valid asset ids or symbol');
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        const length = symbolsOrIds.length;
+		const length = symbolsOrIds.length;
 
-        const resultArray = new Array(length).fill(null);
-        let requestedObjects = [];
+		const resultArray = new Array(length).fill(null);
+		let requestedObjects = [];
 
-        for (let i = 0; i < length; i += 1) {
+		for (let i = 0; i < length; i += 1) {
 
-            const key = symbolsOrIds[i];
-            let cacheValue = null;
+			const key = symbolsOrIds[i];
+			let cacheValue = null;
 
-            if (isAssetId(key)) {
-                cacheValue = this.cache.assetByAssetId.get(key)
-            } else {
-                cacheValue = this.cache.assetBySymbol.get(key)
-            }
+			if (isAssetId(key)) {
+				cacheValue = this.cache.assetByAssetId.get(key);
+			} else {
+				cacheValue = this.cache.assetBySymbol.get(key);
+			}
 
-            if (cacheValue) resultArray[i] = cacheValue;
-            else requestedObjects.push(key);
-        }
+			if (cacheValue) resultArray[i] = cacheValue;
+			else requestedObjects.push(key);
+		}
 
-        try {
-            requestedObjects = await Promise.all(this.wsApi.database.lookupAssetSymbols(requestedObjects));
-        } catch (error) {
-            throw error;
-        }
+		try {
+			requestedObjects = await Promise.all(this.wsApi.database.lookupAssetSymbols(requestedObjects));
+		} catch (error) {
+			throw error;
+		}
 
-        for (let i = 0; i < length; i += 1) {
-            if(resultArray[i]) continue;
+		for (let i = 0; i < length; i += 1) {
+			if (resultArray[i]) continue;
 
-            const requestedObject = requestedObjects.shift();
+			const requestedObject = requestedObjects.shift();
 
-            const key = symbolsOrIds[i];
+			const key = symbolsOrIds[i];
 
-            if (isAssetId(key)) {
-                this.cache.objectsById = this.cache.assetByAssetId.set(key, requestedObject);
-            } else {
-                this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
-            }
+			if (isAssetId(key)) {
+				this.cache.objectsById = this.cache.assetByAssetId.set(key, requestedObject);
+			} else {
+				this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
+			}
 
-            resultArray[i] = requestedObject;
-        }
+			resultArray[i] = requestedObject;
+		}
 
-        return resultArray;
-    }
+		return resultArray;
+	}
 
 	/**
      *  @method getOrderBook
@@ -508,11 +582,11 @@ class API {
      *  @return {Promise}
      */
 	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
-        if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
-        if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
-        if (!isNonNegativeInteger(depth) || limit > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
+		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
+		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
+		if (!isNonNegativeInteger(depth) || depth > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
 
-        return this.wsApi.database.getOrderBook(baseAssetId, quoteAssetId, depth);
+		return this.wsApi.database.getOrderBook(baseAssetId, quoteAssetId, depth);
 	}
 
 	/**
@@ -524,9 +598,9 @@ class API {
      *  @return {Promise}
      */
 	getLimitOrders(baseAssetId, quoteAssetId, limit) {
-        if (!isAssetId(baseAssetId)) return Promise.reject(new Error('Base asset id is invalid'));
-        if (!isAssetId(quoteAssetId)) return Promise.reject(new Error('Quote asset id is invalid'));
-        if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isAssetId(baseAssetId)) return Promise.reject(new Error('Base asset id is invalid'));
+		if (!isAssetId(quoteAssetId)) return Promise.reject(new Error('Quote asset id is invalid'));
+		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
 		return this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
 	}
@@ -539,8 +613,8 @@ class API {
      *  @return {Promise}
      */
 	getCallOrders(assetId, limit) {
-        if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
-        if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
+		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
 		return this.wsApi.database.getCallOrders(assetId, limit);
 	}
@@ -553,10 +627,10 @@ class API {
      *  @return {Promise}
      */
 	getSettleOrders(assetId, limit) {
-        if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
-        if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
+		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
-        return this.wsApi.database.getSettleOrders(assetId, limit);
+		return this.wsApi.database.getSettleOrders(assetId, limit);
 	}
 
 	/**
@@ -566,7 +640,7 @@ class API {
      *  @return {Promise}
      */
 	getMarginPositions(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		return this.wsApi.database.getMarginPositions(accountId);
 	}
@@ -580,8 +654,8 @@ class API {
      *  @return {Promise}
      */
 	getTicker(baseAssetName, quoteAssetName) {
-        if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
-        if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
+		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
+		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
 
 		return this.wsApi.database.getTicker(baseAssetName, quoteAssetName);
 	}
@@ -595,8 +669,8 @@ class API {
      *  @return {Promise}
      */
 	get24Volume(baseAssetName, quoteAssetName) {
-        if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
-        if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
+		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
+		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
 
 		return this.wsApi.database.get24Volume(baseAssetName, quoteAssetName);
 	}
@@ -613,11 +687,11 @@ class API {
      *  @return {Promise}
      */
 	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = 100) {
-        if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
-        if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
-        if (!isNonNegativeInteger(start)) return Promise.reject(new Error('Start should be UNIX timestamp'));
-        if (!isNonNegativeInteger(stop)) return Promise.reject(new Error('Stop should be UNIX timestamp'));
-        if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be capped at 100'));
+		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
+		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
+		if (!isNonNegativeInteger(start)) return Promise.reject(new Error('Start should be UNIX timestamp'));
+		if (!isNonNegativeInteger(stop)) return Promise.reject(new Error('Stop should be UNIX timestamp'));
+		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be capped at 100'));
 
 		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
@@ -626,27 +700,31 @@ class API {
      *  @method getWitnesses
      *
      *  @param  {Array<String>} witnessIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getWitnesses(witnessIds) {
-        if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
-        if (witnessIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('Witness ids should contain valid object ids'));
+	getWitnesses(witnessIds, force = false) {
+		if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
+		if (witnessIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('Witness ids should contain valid object ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(witnessIds, 'witnessByAccountId', 'getWitnesses');
+		return this._getArrayData(witnessIds, 'witnessByAccountId', 'getWitnesses', force);
 	}
 
 	/**
      *  @method getWitnessByAccount
      *
      *  @param  {String} accountId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getWitnessByAccount(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+	getWitnessByAccount(accountId, force = false) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(accountId, 'witnessByAccountId', 'getWitnessByAccount');
+		return this._getSingleData(accountId, 'witnessByAccountId', 'getWitnessByAccount', force);
 	}
 
 	/**
@@ -658,8 +736,8 @@ class API {
      *  @return {Promise}
      */
 	lookupWitnessAccounts(lowerBoundName, limit = 1000) {
-        if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-        if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
+		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
+		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
 
 		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
 	}
@@ -677,27 +755,31 @@ class API {
      *  @method getCommitteeMembers
      *
      *  @param  {Array<String>} committeeMemberIds
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getCommitteeMembers(committeeMemberIds) {
-        if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
-        if (committeeMemberIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('CommitteeMemberIds should contain valid object ids'));
+	getCommitteeMembers(committeeMemberIds, force = false) {
+		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
+		if (committeeMemberIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('CommitteeMemberIds should contain valid object ids'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getArrayData(committeeMemberIds, 'committeeByAccountId', 'getCommitteeMembers');
+		return this._getArrayData(committeeMemberIds, 'committeeByAccountId', 'getCommitteeMembers', force);
 	}
 
 	/**
      *  @method getCommitteeMemberByAccount
      *
      *  @param  {String} accountId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getCommitteeMemberByAccount(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+	getCommitteeMemberByAccount(accountId, force = false) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(accountId, 'committeeByAccountId', 'getCommitteeMemberByAccount');
+		return this._getSingleData(accountId, 'committeeByAccountId', 'getCommitteeMemberByAccount', force);
 	}
 
 	/**
@@ -709,10 +791,10 @@ class API {
      *  @return {Promise}
      */
 	lookupCommitteeMemberAccounts(lowerBoundName, limit) {
-        if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-        if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
+		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
+		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
 
-        return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
+		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
 
 	/**
@@ -723,7 +805,8 @@ class API {
      *  @return {Promise}
      */
 	getWorkersByAccount(accountId) {
-        if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
 		return this.wsApi.database.getWorkersByAccount(accountId);
 	}
 
@@ -735,8 +818,8 @@ class API {
      *  @return {Promise}
      */
 	lookupVoteIds(votes) {
-        if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
-        if (votes.some((id) => !isVoteIdType(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
+		if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
+		if (votes.some((id) => !isVoteIdType(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
 
 
 		return this.wsApi.database.lookupVoteIds(votes);
@@ -750,7 +833,7 @@ class API {
      *  @return {Promise}
      */
 	getTransactionHex(transaction) {
-        if (!isSignetTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!isSignetTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// transaction is signed
 		return this.wsApi.database.getTransactionHex(transaction);
@@ -765,11 +848,11 @@ class API {
      *  @return {Promise}
      */
 	getRequiredSignatures(transaction, availableKeys) {
-        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-        if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
-        if (availableKeys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
+		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
+		if (availableKeys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
 
-		this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
+		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
 	}
 
 	/**
@@ -780,7 +863,7 @@ class API {
      *  @return {Promise}
      */
 	getPotentialSignatures(transaction) {
-        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.getPotentialSignatures(transaction);
 	}
@@ -793,7 +876,7 @@ class API {
      *  @return {Promise}
      */
 	verifyAuthority(transaction) {
-        if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.verifyAuthority(transaction);
 	}
@@ -807,9 +890,9 @@ class API {
      *  @return {Promise}
      */
 	verifyAccountAuthority(accountNameOrId, signers) {
-        if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId)) ) return Promise.reject(new Error('Account name or id is invalid'));
-        if (!isArray(signers)) return Promise.reject(new Error('Signers ids should be an array'));
-        if (signers.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Signers should contain valid public keys'));
+		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isArray(signers)) return Promise.reject(new Error('Signers ids should be an array'));
+		if (signers.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Signers should contain valid public keys'));
 
 		return this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
 	}
@@ -822,6 +905,7 @@ class API {
      *  @return {Promise}
      */
 	validateTransaction(transaction) {
+	    // TODO
 		// signed transaction
 		return this.wsApi.database.validateTransaction(transaction);
 	}
@@ -835,9 +919,9 @@ class API {
      *  @return {Promise}
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
-        if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-        if (operations.some((op) => !isOperation(op))) return Promise.reject(new Error('Operations should contain valid operations'));
-        if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
+		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
+		if (operations.some((op) => !isOperation(op))) return Promise.reject(new Error('Operations should contain valid operations'));
+		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
 
 		return this.wsApi.database.getRequiredFees(operations, assetId);
 	}
@@ -850,7 +934,7 @@ class API {
      *  @return {Promise}
      */
 	getProposedTransactions(accountNameOrId) {
-        if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) return Promise.reject(new Error('AccountNameOrId is invalid'));
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) return Promise.reject(new Error('AccountNameOrId is invalid'));
 
 		return this.wsApi.database.getProposedTransactions(accountNameOrId);
 	}
@@ -874,10 +958,10 @@ class API {
      *  @return {Promise}
      */
 	getContractLogs(contractId, fromBlock, toBlock) {
-        if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
-        if (!isNonNegativeInteger(fromBlock)) return Promise.reject(new Error('FromBlock should be a non negative integer'));
-        if (!isNonNegativeInteger(toBlock)) return Promise.reject(new Error('ToBlock should be a non negative integer'));
-        if (fromBlock > toBlock) return Promise.reject(new Error('FromBlock should be less then toBlock'));
+		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
+		if (!isNonNegativeInteger(fromBlock)) return Promise.reject(new Error('FromBlock should be a non negative integer'));
+		if (!isNonNegativeInteger(toBlock)) return Promise.reject(new Error('ToBlock should be a non negative integer'));
+		if (fromBlock > toBlock) return Promise.reject(new Error('FromBlock should be less then toBlock'));
 
 		return this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
 	}
@@ -886,26 +970,30 @@ class API {
      *  @method getContractResult
      *
      *  @param  {String} resultContractId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getContractResult(resultContractId) {
-        if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
+	getContractResult(resultContractId, force = false) {
+		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(resultContractId, 'contractResultByContractResultId', 'getContractResult');
+		return this._getSingleData(resultContractId, 'contractResultByContractResultId', 'getContractResult', force);
 	}
 
 	/**
      *  @method getContract
      *
      *  @param  {String} contractId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getContract(contractId) {
-        if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
+	getContract(contractId, force = false) {
+		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(contractId, 'contractByContractId', 'getContract');
+		return this._getSingleData(contractId, 'contractByContractId', 'getContract', force);
 	}
 
 	/**
@@ -919,10 +1007,10 @@ class API {
      *  @return {Promise}
      */
 	callContractNoChangingState(contractId, accountId, assetId, bytecode) {
-        if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
-        if (!isAccountId(accountId)) return Promise.reject(new Error('AccountId is invalid'));
-        if (!isAssetId(assetId)) return Promise.reject(new Error('AssetId is invalid'));
-        if (!isBytecode(bytecode)) return Promise.reject(new Error('Bytecode is invalid'));
+		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
+		if (!isAccountId(accountId)) return Promise.reject(new Error('AccountId is invalid'));
+		if (!isAssetId(assetId)) return Promise.reject(new Error('AssetId is invalid'));
+		if (!isBytecode(bytecode)) return Promise.reject(new Error('Bytecode is invalid'));
 
 		return this.wsApi.database.callContractNoChangingState(contractId, accountId, assetId, bytecode);
 	}
@@ -935,8 +1023,8 @@ class API {
      *  @return {Promise}
      */
 	getContracts(contractIds) {
-        if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
-        if (contractIds.some((id) => !isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
+		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
+		if (contractIds.some((id) => !isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
 
 		return this.wsApi.database.getContracts(contractIds);
 	}
@@ -945,13 +1033,15 @@ class API {
      *  @method getContractBalances
      *
      *  @param  {String} contractId
+     *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getContractBalances(contractId) {
-        if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
+	getContractBalances(contractId, force = false) {
+		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-        return this._getSingleData(contractId, 'contractBalanceByContractId', 'getContractBalances');
+		return this._getSingleData(contractId, 'contractBalanceByContractId', 'getContractBalances', force);
 	}
 
 	/**
@@ -962,13 +1052,9 @@ class API {
      *  @return {Promise}
      */
 	getRecentTransactionById(transactionId) {
-        if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
+		if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
 
 		return this.wsApi.database.getRecentTransactionById(transactionId);
-	}
-
-	reset() {
-		// TODO reset
 	}
 
 }
