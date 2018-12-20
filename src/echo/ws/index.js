@@ -2,7 +2,7 @@
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
-import { CHAIN_APIS, DEFAULT_CHAIN_APIS, SOCKET_STATUS } from '../../constants/ws-constants';
+import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
 class WS {
 
@@ -133,7 +133,7 @@ class WS {
      * @returns {Promise}
      */
 	async close() {
-		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === SOCKET_STATUS.OPEN) {
+		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === this._ws_rpc.ws.OPEN) {
 			await this._ws_rpc.close();
 			this._ws_rpc = null;
 		}

@@ -6,8 +6,7 @@ import {
     MAX_RETRIES,
     PING_TIMEOUT,
     PING_INTERVAL,
-    DEBUG,
-    SOCKET_STATUS
+    DEBUG
 } from '../../constants/ws-constants'
 
 class ReconnectionWebSocket {
@@ -43,7 +42,7 @@ class ReconnectionWebSocket {
 		url,
 		options = {},
 	) {
-		if (this.ws && this.ws.readyState === SOCKET_STATUS.OPEN) {
+		if (this.ws && this.ws.readyState === this.ws.OPEN) {
             try {
                 await this.close();
 			} catch (error) {
@@ -94,7 +93,10 @@ class ReconnectionWebSocket {
 			}
 
 			this.ws.onopen = () => {
-
+				console.log(this.ws.CONNECTING)
+				console.log(this.ws.OPEN)
+				console.log(this.ws.CLOSING)
+				console.log(this.ws.CLOSED)
 				this._currentRetry = 0;
 
 				if (this._isFirstConnection) {
@@ -187,7 +189,7 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	call(params, timeout = this._options.connectionTimeout) {
-		if (this.ws.readyState !== SOCKET_STATUS.OPEN) {
+		if (this.ws.readyState !== this.ws.OPEN) {
 			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
 		}
 		const method = params[1];
@@ -345,7 +347,7 @@ class ReconnectionWebSocket {
 		try {
 			await this.login('', '', this._options.pingTimeout);
 		} catch(_) {
-            if (this.ws.readyState !== SOCKET_STATUS.OPEN) return;
+            if (this.ws.readyState !== this.ws.OPEN) return;
             this.ws.close();
 		}
 	}
@@ -388,7 +390,7 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	close() {
-        if (this.ws.readyState === SOCKET_STATUS.CLOSING || this.ws.readyState === SOCKET_STATUS.CLOSED) return Promise.reject(new Error('Socket already close'));
+        if (this.ws.readyState === this.ws.CLOSING || this.ws.readyState === this.ws.CLOSED) return Promise.reject(new Error('Socket already close'));
 
         return new Promise((resolve) => {
             this._forceClosePromise = resolve;
