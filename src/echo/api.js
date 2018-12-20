@@ -1,11 +1,11 @@
-let ws = null;
+const ws = null;
 let wsApi = null;
 
 class API {
 
 	constructor(cache, api, options) {
 		wsApi = api;
-		({ ws }) = wsApi;
+		// ({ ws }) = wsApi;
 		this.options = options;
 
 		console.log('API constructor', ws);
