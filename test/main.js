@@ -11,27 +11,27 @@ describe('instance', () => {
                 await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
                     connectionTimeout: 5000,
                     maxRetries: 5,
+                    pingTimeout: 3000,
+                    pingInterval: 3000,
                     debug: true
                 });
-                // await ws.close();
-                // await new Promise((res) => {
-                //     setTimeout(() => { res(); }, 1000)
-                // });
+                await new Promise((res) => {
+                    setTimeout(() => { res(); }, 8000)
+                });
                 // await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
                 //     connectionTimeout: 5000,
                 //     maxRetries: 5,
                 //     debug: true,
                 // });
-
+                // await ws.close();
                 const api = new WSAPI(ws);
 
                 // await new Promise((res) => {
                 //     setTimeout(() => { res(); api.database.getBlock(200).then(() => console.log('ws')).catch(console.log) }, 10000)
                 // });
 
-                console.log('ready subs')
                 await new Promise((res) => {
-                    setTimeout(() => { res(); api.database.setBlockAppliedCallback(() => { console.log('new block') }).then(() => console.log('ws')).catch(console.log) }, 10000)
+                    setTimeout(() => { res(); api.database.setBlockAppliedCallback(() => { console.log('new block') }).then(() => console.log('ws')).catch(console.log) }, 13000)
                 });
                 // console.log(ws._ws_rpc._cbs);
                 // console.log(ws._ws_rpc._subs);

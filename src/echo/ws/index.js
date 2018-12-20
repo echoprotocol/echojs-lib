@@ -133,8 +133,12 @@ class WS {
      * @returns {Promise}
      */
 	async close() {
-		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === this._ws_rpc.ws.OPEN) {
-			await this._ws_rpc.close();
+		if (this._ws_rpc && this._ws_rpc.ws) {
+			try {
+                await this._ws_rpc.close();
+			} catch (error) {
+				throw error;
+			}
 			this._ws_rpc = null;
 		}
 	}

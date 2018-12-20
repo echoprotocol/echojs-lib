@@ -42,7 +42,7 @@ class ReconnectionWebSocket {
 		url,
 		options = {},
 	) {
-		if (this.ws && this.ws.readyState === this.ws.OPEN) {
+		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
             try {
                 await this.close();
 			} catch (error) {
@@ -185,7 +185,7 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	call(params, timeout = this._options.connectionTimeout) {
-		if (this.ws.readyState !== this.ws.OPEN) {
+		if (this.ws.readyState !== WebSocket.OPEN) {
 			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
 		}
 		const method = params[1];
@@ -331,8 +331,9 @@ class ReconnectionWebSocket {
      */
 	_clearWaitingCallPromises() {
 		const err = new Error('connection closed');
+
 		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
-			this._cbs[cbId].reject(err);
+			if (this._cbs[cbId]) this._cbs[cbId].reject(err)
 		}
 	}
 
@@ -343,7 +344,7 @@ class ReconnectionWebSocket {
 		try {
 			await this.login('', '', this._options.pingTimeout);
 		} catch(_) {
-            if (this.ws.readyState !== this.ws.OPEN) return;
+            if (this.ws.readyState !== WebSocket.OPEN) return;
             this.ws.close();
 		}
 	}
@@ -386,7 +387,7 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	close() {
-        if (this.ws.readyState === this.ws.CLOSING || this.ws.readyState === this.ws.CLOSED) return Promise.reject(new Error('Socket already close'));
+        if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) return Promise.reject(new Error('Socket already close'));
 
         return new Promise((resolve) => {
             this._forceClosePromise = resolve;
