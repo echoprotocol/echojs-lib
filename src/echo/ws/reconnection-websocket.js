@@ -93,10 +93,6 @@ class ReconnectionWebSocket {
 			}
 
 			this.ws.onopen = () => {
-				console.log(this.ws.CONNECTING)
-				console.log(this.ws.OPEN)
-				console.log(this.ws.CLOSING)
-				console.log(this.ws.CLOSED)
 				this._currentRetry = 0;
 
 				if (this._isFirstConnection) {
