@@ -1,7 +1,7 @@
 import { decode } from 'bs58';
 
-import { ripemd160 } from '../crypto/hash'
-import ChainConfig from '../config/chain-config'
+import { ripemd160 } from '../crypto/hash';
+import { CHAIN_CONFIG } from '../constants';
 
 const idRegex = /\b\d+\.\d+\.(\d+)\b/;
 const accountIdRegex = /1\.2\.(\d+)\b/;
@@ -31,13 +31,13 @@ export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
 
 export const isValidAssetName = (v) =>
-    !isEmpty(v) &&
-    (v.split('.').length <= 2) &&
-    (v.length >= 3) &&
-    (v.length <= 16) &&
-    (/^[A-Z]/.test(v)) &&
-    (/[A-Z]$/.test(v)) &&
-    (!/^[A-Z0-9.]$/.test(v));
+	!isEmpty(v) &&
+	(v.split('.').length <= 2) &&
+	(v.length >= 3) &&
+	(v.length <= 16) &&
+	(/^[A-Z]/.test(v)) &&
+	(/[A-Z]$/.test(v)) &&
+	(!/^[A-Z0-9.]$/.test(v));
 
 export const isObjectId = (v) => {
 	if (!isString(v)) return false;
@@ -47,49 +47,47 @@ export const isObjectId = (v) => {
 
 };
 
-export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
+export const isPublicKey = (publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) => {
 
-    if (!isString(v) || v.length !== (44 + addressPrefix.length)) return false;
+	if (!isString(publicKey) || publicKey.length !== (44 + addressPrefix.length)) return false;
 
-    const prefix = publicKey.slice(0, addressPrefix.length);
+	const prefix = publicKey.slice(0, addressPrefix.length);
 
-    if(addressPrefix !== prefix) return false;
+	if (addressPrefix !== prefix) return false;
 
-    publicKey = publicKey.slice(addressPrefix.length);
+	publicKey = publicKey.slice(addressPrefix.length);
 
-    publicKey = Buffer.from(decode(publicKey), 'binary');
-    const checksum = publicKey.slice(-4);
-    publicKey = publicKey.slice(0, -4);
-    let newChecksum = ripemd160(publicKey);
-    newChecksum = newChecksum.slice(0, 4).toString('hex');
-    return checksum === newChecksum;
+	publicKey = Buffer.from(decode(publicKey), 'binary');
+	const checksum = publicKey.slice(-4);
+	publicKey = publicKey.slice(0, -4);
+	let newChecksum = ripemd160(publicKey);
+	newChecksum = newChecksum.slice(0, 4).toString('hex');
+	return checksum === newChecksum;
 };
 
 export const isAccountName = (v) => {
-    if (!isString(v)) return false;
+	if (!isString(v)) return false;
 
-    if (chainValidation.is_empty(v)) {
-        return false;
-    }
+	if (isEmpty(v)) {
+		return false;
+	}
 
-    const { length } = v;
+	const { length } = v;
 
-    if (length < 3 || length > 63) {
-        return false;
-    }
+	if (length < 3 || length > 63) {
+		return false;
+	}
 
-    const ref = v.split('.');
+	const ref = v.split('.');
 
-    for (let i = 0; i < ref.length; i += 1) {
+	for (let i = 0; i < ref.length; i += 1) {
 
-        const label = ref[i];
+		const label = ref[i];
 
-        if (!(/^[a-z][a-z0-9-]*$/.test(label) && !/--/.test(label) && /[a-z0-9]$/.test(label))) {
-            return false;
-        }
+		if (!(/^[a-z][a-z0-9-]*$/.test(label) && !/--/.test(label) && /[a-z0-9]$/.test(label))) {
+			return false;
+		}
 
-    }
-    return true;
+	}
+	return true;
 };
-
-
