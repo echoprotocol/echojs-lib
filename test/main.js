@@ -15,9 +15,7 @@ describe('instance', () => {
                     pingInterval: 3000,
                     debug: true
                 });
-                await new Promise((res) => {
-                    setTimeout(() => { res(); }, 8000)
-                });
+
                 // await ws.connect('wss://echo-devnet-node.pixelplex.io/ws', {
                 //     connectionTimeout: 5000,
                 //     maxRetries: 5,
