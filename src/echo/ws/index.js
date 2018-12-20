@@ -10,6 +10,7 @@ class WS {
 		this._ws_rpc = new ReconnectionWebSocket();
 
 		this._connected = false;
+		this._isFirstTime = true;
 
 		this.onOpenCb = null;
 		this.onCloseCb = null;
@@ -24,11 +25,10 @@ class WS {
 	}
 
 	/**
-     * On open callback
+	 *
+     * @private
      */
-	async _onOpen() {
-		if (!this._ws_rpc) return;
-
+	async _initGrapheneApi() {
 		const initPromises = [];
 
 		this.apis.forEach((api) => {
@@ -47,9 +47,23 @@ class WS {
 	}
 
 	/**
+     * On open callback
+     */
+	async _onOpen() {
+		if (!this._ws_rpc) return;
+		if (this._isFirstTime) {
+			this._isFirstTime = false;
+			return;
+		}
+
+		await this._initGrapheneApi();
+	}
+
+	/**
      * On close callback
      */
 	_onClose() {
+		if (this._isFirstTime) this._isFirstTime = false;
 		this._connected = false;
 		if (this.onCloseCb) this.onCloseCb('close');
 	}
@@ -95,6 +109,8 @@ class WS {
 		};
 
 		this.apis = options.apis || DEFAULT_CHAIN_APIS;
+		this._connected = false;
+		this._isFirstTime = true;
 
 		if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
 		if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;
@@ -110,6 +126,7 @@ class WS {
 
 		try {
 			await this._ws_rpc.connect(url, this.options);
+			await this._initGrapheneApi();
 		} catch (err) {
 			console.error(url, 'Failed to initialize with error', err && err.message);
 			await this.close();
