@@ -1,13 +1,6 @@
 {
 	"presets": [
-		"env",
-		"stage-1"
-	],
-	"env": {
-		"cjs": {
-			"plugins": [
-				"add-module-exports"
-			]
-		}
-	}
+		"stage-3",
+		"latest"
+	]
 }
