@@ -7,6 +7,7 @@ import {
     PING_TIMEOUT,
     PING_INTERVAL,
     DEBUG,
+    SOCKET_STATUS
 } from '../../constants/ws-constants'
 
 class ReconnectionWebSocket {
@@ -42,7 +43,7 @@ class ReconnectionWebSocket {
 		url,
 		options = {},
 	) {
-		if (this.ws && this.ws.readyState === 1) {
+		if (this.ws && this.ws.readyState === SOCKET_STATUS.OPEN) {
             try {
                 await this.close();
 			} catch (error) {
@@ -186,7 +187,7 @@ class ReconnectionWebSocket {
      * @returns {Promise}
      */
 	call(params, timeout = this._options.connectionTimeout) {
-		if (this.ws.readyState !== 1) {
+		if (this.ws.readyState !== SOCKET_STATUS.OPEN) {
 			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
 		}
 		const method = params[1];
@@ -232,9 +233,7 @@ class ReconnectionWebSocket {
 			const timeoutId = setTimeout(() => {
 				reject(new Error(`RPC call time is over Id: ${request.id}`));
 
-				delete this._cbs[request.id];
-				delete this._subs[request.id];
-				delete this._unsub[request.id];
+				this._removePendingRequest(request.id);
 			}, timeout);
 
 			this._cbs[this._cbId] = {
@@ -284,12 +283,8 @@ class ReconnectionWebSocket {
 			} else {
 				callback.resolve(response.result);
 			}
-			delete this._cbs[response.id];
 
-			if (this._unsub[response.id]) {
-				delete this._subs[this._unsub[response.id]];
-				delete this._unsub[response.id];
-			}
+			this._removeSuccessfulRequest(response.id);
 
 		} else if (callback && sub) {
 			callback(response.params[1]);
@@ -350,7 +345,7 @@ class ReconnectionWebSocket {
 		try {
 			await this.login('', '', this._options.pingTimeout);
 		} catch(_) {
-            if (this.ws.readyState !== 1) return;
+            if (this.ws.readyState !== SOCKET_STATUS.OPEN) return;
             this.ws.close();
 		}
 	}
@@ -364,13 +359,36 @@ class ReconnectionWebSocket {
 		console.log(...messages);
 	}
 
+    /**
+     * remove pending request from map
+     * @private
+     */
+    _removePendingRequest(id) {
+        delete this._cbs[id];
+        delete this._subs[id];
+        delete this._unsub[id];
+    }
+
+    /**
+     * remove successful request from map
+     * @private
+     */
+    _removeSuccessfulRequest(id) {
+        delete this._cbs[id];
+
+        if (this._unsub[id]) {
+            delete this._subs[this._unsub[id]];
+            delete this._unsub[id];
+        }
+    }
+
 
 	/**
      *
      * @returns {Promise}
      */
 	close() {
-        if (this.ws.readyState === 2 || this.ws.readyState === 3) return Promise.reject(new Error('Socket already close'));
+        if (this.ws.readyState === SOCKET_STATUS.CLOSING || this.ws.readyState === SOCKET_STATUS.CLOSED) return Promise.reject(new Error('Socket already close'));
 
         return new Promise((resolve) => {
             this._forceClosePromise = resolve;

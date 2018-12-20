@@ -2,7 +2,7 @@ class GrapheneApi {
 
     /**
 	 *
-     * @param {ReconnectionWebsocket} wsRpc
+     * @param {ReconnectionWebSocket} wsRpc
      * @param {String} apiName
      */
 	constructor(wsRpc, apiName) {

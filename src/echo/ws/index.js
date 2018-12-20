@@ -2,9 +2,9 @@
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
-import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
+import { CHAIN_APIS, DEFAULT_CHAIN_APIS, SOCKET_STATUS } from '../../constants/ws-constants';
 
-class ApisInstance {
+class WS {
 
 	constructor() {
 		this._ws_rpc = new ReconnectionWebSocket();
@@ -44,7 +44,7 @@ class ApisInstance {
             this._connected = true;
             if (this.onOpenCb) this.onOpenCb('open');
 		} catch (e) {
-			console.error('[ApisInstance] >---- error ----->  ONOPEN', e)
+			console.error('[WS] >---- error ----->  ONOPEN', e)
 		}
 	}
 
@@ -133,7 +133,7 @@ class ApisInstance {
      * @returns {Promise}
      */
 	async close() {
-		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === 1) {
+		if (this._ws_rpc && this._ws_rpc.ws && this._ws_rpc.ws.readyState === SOCKET_STATUS.OPEN) {
 			await this._ws_rpc.close();
 			this._ws_rpc = null;
 		}
@@ -197,4 +197,4 @@ class ApisInstance {
 
 }
 
-export default ApisInstance;
+export default WS;
