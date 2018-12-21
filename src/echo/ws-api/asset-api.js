@@ -14,11 +14,11 @@ class AssetAPI {
 	 *  Retreive the information about the holders of the specified asset.
 	 *
 	 *  @param {String} assetId   [asset id to retreive]
-	 *  @param {Number} accountId [acount id to start retreiving from]
+	 *  @param {Number} start [account id to start retreiving from]
 	 *  @param {Number} limit     [count accounts (max 100)]
 	 */
-	getAssetHolders(assetId, accountId, limit) {
-		return this.db.exec('get_asset_holders', [assetId, accountId, limit]);
+	getAssetHolders(assetId, start, limit) {
+		return this.db.exec('get_asset_holders', [assetId, start, limit]);
 	}
 
 	/**

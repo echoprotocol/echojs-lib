@@ -3,7 +3,7 @@ import {
 	isObjectId,
 	isBoolean,
 	isValidAssetName,
-	// isNumber,
+	isNumber,
 	isAccountId,
 	isNonNegativeInteger,
 	isAccountName,
@@ -936,6 +936,53 @@ class API {
 		}
 
 		return this.wsApi.network.broadcastBlock(block);
+	}
+
+	/**
+	 *  @method getAssetHolders
+	 *  Retreive the information about the holders of the specified asset.
+	 *
+	 *  @param {String} assetId   [asset id to retreive]
+	 *  @param {Number} start [account id to start retreiving from]
+	 *  @param {Number} limit     [count accounts (max 100)]
+	 */
+	getAssetHolders(assetId, start, limit = 100) {
+		if (!isAssetId(assetId)) {
+			return Promise.reject(new Error('Invalid Asset ID'));
+		}
+
+		if (!isNumber(start)) {
+			return Promise.reject(new Error('Invalid start account number'));
+		}
+
+		if (!isNumber(limit)) {
+			return Promise.reject(new Error('Invalid limit accounts number'));
+		}
+
+		return this.wsApi.asset.getAssetHolders(assetId, start, limit);
+	}
+
+	/**
+	 *  @method getAssetHoldersCount
+	 *  Retreive the number of holders of the provided asset.
+	 *
+	 *  @param {String} assetId   [asset id to retreive]
+	 */
+	getAssetHoldersCount(assetId) {
+		if (!isAssetId(assetId)) {
+			return Promise.reject(new Error('Invalid Asset ID'));
+		}
+
+		return this.wsApi.asset.getAssetHoldersCount(assetId);
+	}
+
+	/**
+	 *  @method getAllAssetHolders
+	 *  Array of all asset IDs with the number of holders.
+	 *
+	 */
+	getAllAssetHolders() {
+		return this.wsApi.asset.getAllAssetHolders();
 	}
 
 }
