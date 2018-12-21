@@ -19,6 +19,7 @@
     "assert": "^1.4.1",
     "babel-polyfill": "^6.26.0",
     "bigi": "^1.4.2",
+    "bignumber.js": "^8.0.1",
     "bs58": "^4.0.1",
     "buffer": "^5.2.1",
     "bytebuffer": "^5.0.1",

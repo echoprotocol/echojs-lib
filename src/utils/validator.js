@@ -1,4 +1,5 @@
 import { decode } from 'bs58';
+import BN from 'bignumber.js';
 
 import { ripemd160 } from '../crypto/hash';
 import ChainConfig from '../config/chain-config';
@@ -20,21 +21,61 @@ const assetIdRegex = /1\.3\.(\d+)\b/;
 const balanceIdRegex = /2\.5\.(\d+)\b/;
 const contractIdRegex = /1\.16\.(\d+)\b/;
 const contractResultIdRegex = /1\.17\.(\d+)\b/;
+const witnessIdRegex = /1\.6\.(\d+)\b/;
+const proposalIdRegex = /1\.10\.(\d+)\b/;
+
 const hexRegex = /[0-9a-fA-F]+/;
 const bytecodeRegex = /[0-9a-fA-F]*/;
 const voteIdTypeRegex = /[0-3]{1}:[0-9]+/;
 
-export const validateUrl = (url) => urlRegex.test(String(url));
+const MAX_UINTX_VALUES = {
+	64: new BN(2).pow(64).minus(1),
+	32: new BN(2).pow(32).minus(1),
+	16: new BN(2).pow(16).minus(1),
+	8: new BN(2).pow(8).minus(1),
+};
 
-export const isArray = (v) => Array.isArray(v) && v.length !== undefined;
+const MAX_INTX_VALUES = {
+	64: new BN(2).pow(63).minus(1),
+	32: new BN(2).pow(31).minus(1),
+	16: new BN(2).pow(15).minus(1),
+	8: new BN(2).pow(7).minus(1),
+};
+
+
+export const validateUrl = (url) => urlRegex.test(String(url));
 
 export const isString = (v) => typeof v === 'string';
 
-export const isEmpty = (v) => v === null || v.length === 0;
+export const isEmpty = (v) => v === null || typeof v === 'undefined' || (typeof v.length !== 'undefined' && v.length === 0);
+
+export const isVoid = (v) => v === null || typeof v === 'undefined';
+
+export const isArray = (v) => Array.isArray(v) && !isEmpty(v.length);
 
 export const isNumber = (v) => v && typeof v === 'number';
 
-export const isNonNegativeInteger = (v) => Number.isInteger(v) && v >= 0;
+const isUInt = (v, x) => {
+	if (isNumber(v) && v > Number.MAX_SAFE_INTEGER) return false;
+	const bn = new BN(v);
+	return bn.isInteger() && bn.gte(0) && bn.lte(MAX_UINTX_VALUES[x]);
+};
+
+const isInt = (v, x) => {
+	if (isNumber(v) && (v > Number.MAX_SAFE_INTEGER || v < Number.MIN_SAFE_INTEGER)) return false;
+	const bn = new BN(v);
+	return bn.isInteger() && bn.abs().lte(MAX_INTX_VALUES[x]);
+};
+
+export const isUInt64 = (v) => isUInt(v, 64);
+
+export const isUInt32 = (v) => isUInt(v, 32);
+
+export const isUInt16 = (v) => isUInt(v, 16);
+
+export const isUInt8 = (v) => isUInt(v, 8);
+
+export const isInt64 = (v) => isInt(v, 64);
 
 export const isFunction = (v) => typeof v === 'function';
 
@@ -52,9 +93,13 @@ export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
 
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 
-export const isVoteIdType = (v) => isString(v) && voteIdTypeRegex.test(v);
+export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
 
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
+
+export const isWitnessId = (v) => isString(v) && witnessIdRegex.test(v);
+
+export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
 
 export const isObjectId = (v) => {
 	if (!isString(v)) return false;
@@ -66,6 +111,9 @@ export const isObjectId = (v) => {
 
 export const isHex = (v) => isString(v) && hexRegex.test(v);
 
+export const isBytes = (v, length) => isHex(v) && v.length === length;
+
+
 export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v) && v.length % 2 === 0;
 
 export const isRipemd160 = (v) => isHex(v) && v.length === 40;
@@ -74,7 +122,7 @@ export const isTransaction = (v) => isObjectId(v);
 
 export const isOperation = (v) => // TODO fix in contract
 	isArray(v) &&
-    isNonNegativeInteger(v[0]) && // operation
+    isUInt64(v[0]) && // operation
     isObject(v[1]) && // operation body
     isObject(v[1].fee) && // fee object
     isString(v[1].fee.amount) && // fee amount
@@ -88,8 +136,8 @@ export const isOperation = (v) => // TODO fix in contract
 
 export const isSignedTransaction = (v) => // TODO fix in contract
 	isObject(v) &&
-    isNonNegativeInteger(v.ref_block_num) &&
-    isNonNegativeInteger(v.ref_block_prefix) &&
+    isUInt64(v.ref_block_num) &&
+    isUInt64(v.ref_block_prefix) &&
     isString(v.expiration) && // date
     isArray(v.operations) &&
     v.operations.every((op) => isOperation(op)) &&

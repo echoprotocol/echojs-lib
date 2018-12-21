@@ -5,7 +5,7 @@ import {
 	isBoolean,
 	isAssetName,
 	isAccountId,
-	isNonNegativeInteger,
+	isUInt64,
 	isAccountName,
 	isString,
 	isAssetId,
@@ -17,7 +17,7 @@ import {
 	isTransaction,
 	isSignedTransaction,
 	isPublicKey,
-	isVoteIdType,
+	isVoteId,
 	isOperation,
 } from '../utils/validator';
 
@@ -183,7 +183,7 @@ class API {
      *  @return {Promise}
      */
 	getBlockHeader(blockNum) {
-		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
 		return this._getSingleData(blockNum, 'blockHeadersByBlockNumber', 'getBlockHeader');
 	}
@@ -195,7 +195,7 @@ class API {
      *  @return {Promise}
      */
 	getBlock(blockNum) {
-		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
 		return this._getSingleData(blockNum, 'blocks', 'getBlock');
 	}
@@ -208,8 +208,8 @@ class API {
      *  @return {Promise}
      */
 	getTransaction(blockNum, transactionIndex) {
-		if (!isNonNegativeInteger(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
-		if (!isNonNegativeInteger(transactionIndex)) return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
+		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isUInt64(transactionIndex)) return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
 
 		const key = `${blockNum}:${transactionIndex}`;
 
@@ -411,7 +411,7 @@ class API {
      */
 	lookupAccounts(lowerBoundName, limit = 1000) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('Lower bound name should be a string'));
-		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be a integer and must not exceed 1000'));
+		if (!isUInt64(limit) || limit > 1000) return Promise.reject(new Error('Limit should be a integer and must not exceed 1000'));
 
 		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
@@ -508,7 +508,7 @@ class API {
      */
 	listAssets(lowerBoundSymbol, limit = 100) {
 		if (!isAssetName(lowerBoundSymbol)) return Promise.reject(new Error('Lower bound symbol is invalid'));
-		if (!isNonNegativeInteger(limit) || limit > 100) return Promise.reject(new Error('Limit should be a integer and must not exceed 100'));
+		if (!isUInt64(limit) || limit > 100) return Promise.reject(new Error('Limit should be a integer and must not exceed 100'));
 
 		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
@@ -583,7 +583,7 @@ class API {
 	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
 		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
-		if (!isNonNegativeInteger(depth) || depth > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
+		if (!isUInt64(depth) || depth > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
 
 		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
@@ -599,7 +599,7 @@ class API {
 	getLimitOrders(baseAssetId, quoteAssetId, limit) {
 		if (!isAssetId(baseAssetId)) return Promise.reject(new Error('Base asset id is invalid'));
 		if (!isAssetId(quoteAssetId)) return Promise.reject(new Error('Quote asset id is invalid'));
-		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isUInt64(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
 		return this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
 	}
@@ -613,7 +613,7 @@ class API {
      */
 	getCallOrders(assetId, limit) {
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
-		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isUInt64(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
 		return this.wsApi.database.getCallOrders(assetId, limit);
 	}
@@ -627,7 +627,7 @@ class API {
      */
 	getSettleOrders(assetId, limit) {
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
-		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be a integer'));
+		if (!isUInt64(limit)) return Promise.reject(new Error('Limit should be a integer'));
 
 		return this.wsApi.database.getSettleOrders(assetId, limit);
 	}
@@ -688,9 +688,9 @@ class API {
 	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = 100) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
 		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
-		if (!isNonNegativeInteger(start)) return Promise.reject(new Error('Start should be UNIX timestamp'));
-		if (!isNonNegativeInteger(stop)) return Promise.reject(new Error('Stop should be UNIX timestamp'));
-		if (!isNonNegativeInteger(limit)) return Promise.reject(new Error('Limit should be capped at 100'));
+		if (!isUInt64(start)) return Promise.reject(new Error('Start should be UNIX timestamp'));
+		if (!isUInt64(stop)) return Promise.reject(new Error('Stop should be UNIX timestamp'));
+		if (!isUInt64(limit)) return Promise.reject(new Error('Limit should be capped at 100'));
 
 		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
@@ -736,7 +736,7 @@ class API {
      */
 	lookupWitnessAccounts(lowerBoundName, limit = 1000) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
+		if (!isUInt64(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
 
 		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
 	}
@@ -791,7 +791,7 @@ class API {
      */
 	lookupCommitteeMemberAccounts(lowerBoundName, limit) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-		if (!isNonNegativeInteger(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
+		if (!isUInt64(limit) || limit > 1000) return Promise.reject(new Error('Limit should be capped at 1000'));
 
 		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
@@ -818,7 +818,7 @@ class API {
      */
 	lookupVoteIds(votes) {
 		if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
-		if (votes.some((id) => !isVoteIdType(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
+		if (votes.some((id) => !isVoteId(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
 
 
 		return this.wsApi.database.lookupVoteIds(votes);
@@ -959,8 +959,8 @@ class API {
      */
 	getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
-		if (!isNonNegativeInteger(fromBlock)) return Promise.reject(new Error('FromBlock should be a non negative integer'));
-		if (!isNonNegativeInteger(toBlock)) return Promise.reject(new Error('ToBlock should be a non negative integer'));
+		if (!isUInt64(fromBlock)) return Promise.reject(new Error('FromBlock should be a non negative integer'));
+		if (!isUInt64(toBlock)) return Promise.reject(new Error('ToBlock should be a non negative integer'));
 		if (fromBlock > toBlock) return Promise.reject(new Error('FromBlock should be less then toBlock'));
 
 		return this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
