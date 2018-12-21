@@ -16,12 +16,12 @@ import {
 	isBalanceId,
 	isContractId,
 	isVoteId,
-    isWitnessId,
-    isProposalId,
+	isWitnessId,
+	isProposalId,
 	isObject,
 	isObjectId,
 	isVoid,
-    isBytes,
+	isBytes,
 } from '../utils/validator';
 
 export const uint64 = new Type(isUInt64);
@@ -38,6 +38,8 @@ export const balanceId = new Type(isBalanceId);
 export const contractId = new Type(isContractId);
 export const objectId = new Type(isObjectId);
 export const voteId = new Type(isVoteId);
+export const witnessId = new Type(isWitnessId);
+export const proposalId = new Type(isProposalId);
 export const empty = new Type(isVoid);
 export const object = new Type(isObject);
 export const publicPey = new Type(isPublicKey);

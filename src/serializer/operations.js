@@ -2,7 +2,7 @@ import Operation from './operation';
 
 import {
 	int64, uint64, uint32, uint16, uint8, string, hex, bool, bytes,
-	accountId, assetId, balanceId, contractId, voteId, objectId,
+	accountId, assetId, balanceId, contractId, voteId, objectId, proposalId, witnessId,
 	array, operation, asset, memoData, optional, object,
 	publicPey,
 	custom,
@@ -323,7 +323,7 @@ Operations.witness_update = new Operation(
 	'witness_update',
 	{
 		fee: Operations.asset,
-		witness: protocol_id_type('witness'),
+		witness: witnessId,
 		witness_account: accountId,
 		new_url: optional(string),
 		new_signing_key: optional(publicPey),
@@ -340,7 +340,7 @@ Operations.proposal_create = new Operation(
 	{
 		fee: Operations.asset,
 		fee_paying_account: accountId,
-		expiration_time: time_point_sec,
+		expiration_time: uint64, // time_point_sec
 		proposed_ops: array(Operations.op_wrapper),
 		review_period_seconds: optional(uint32),
 		extensions: optional(object),
@@ -352,7 +352,7 @@ Operations.proposal_update = new Operation(
 	{
 		fee: Operations.asset,
 		fee_paying_account: accountId,
-		proposal: protocol_id_type('proposal'),
+		proposal: proposalId,
 		active_approvals_to_add: set(accountId),
 		active_approvals_to_remove: set(accountId),
 		owner_approvals_to_add: set(accountId),
@@ -369,7 +369,7 @@ Operations.proposal_delete = new Operation(
 		fee: Operations.asset,
 		fee_paying_account: accountId,
 		using_owner_authority: bool,
-		proposal: protocol_id_type('proposal'),
+		proposal: proposalId,
 		extensions: optional(object),
 	},
 );
@@ -383,7 +383,7 @@ Operations.withdraw_permission_create = new Operation(
 		withdrawal_limit: Operations.asset,
 		withdrawal_period_sec: uint32,
 		periods_until_expiration: uint32,
-		period_start_time: time_point_sec,
+		period_start_time: uint64, // time_point_sec
 	},
 );
 
@@ -396,7 +396,7 @@ Operations.withdraw_permission_update = new Operation(
 		permission_to_update: protocol_id_type('withdraw_permission'),
 		withdrawal_limit: Operations.asset,
 		withdrawal_period_sec: uint32,
-		period_start_time: time_point_sec,
+		period_start_time: uint64, // time_point_sec
 		periods_until_expiration: uint32,
 	},
 );
@@ -488,7 +488,7 @@ Operations.committee_member_update_global_parameters = new Operation(
 Operations.linear_vesting_policy_initializer = new Operation(
 	'linear_vesting_policy_initializer',
 	{
-		begin_timestamp: time_point_sec,
+		begin_timestamp: uint64, // time_point_sec
 		vesting_cliff_seconds: uint32,
 		vesting_duration_seconds: uint32,
 	},
@@ -497,7 +497,7 @@ Operations.linear_vesting_policy_initializer = new Operation(
 Operations.cdd_vesting_policy_initializer = new Operation(
 	'cdd_vesting_policy_initializer',
 	{
-		start_claim: time_point_sec,
+		start_claim: uint64, // time_point_sec
 		vesting_seconds: uint32,
 	},
 );
@@ -548,8 +548,8 @@ Operations.worker_create = new Operation(
 	{
 		fee: Operations.asset,
 		owner: accountId,
-		work_begin_date: time_point_sec,
-		work_end_date: time_point_sec,
+		work_begin_date: uint64, // time_point_sec
+		work_end_date: uint64, // time_point_sec
 		daily_pay: int64,
 		name: string,
 		url: string,
