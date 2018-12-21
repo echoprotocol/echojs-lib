@@ -26,6 +26,8 @@ class API {
 		// TODO reset
 	}
 
+	setOptions() {}
+
 	/**
 	 *
 	 * @param {String} cacheName
@@ -889,7 +891,6 @@ class API {
 	 *
 	 *  @return {Promise}
 	 */
-
 	broadcastTransaction(tr) {
 		if (!tr) {
 			return Promise.reject(new Error('Transaction is required'));
@@ -900,6 +901,41 @@ class API {
 		}
 
 		return this.wsApi.network.broadcastTransaction(tr);
+	}
+
+	/**
+	 *  @method broadcastBlock
+	 * 	Broadcast a block to the network.
+	 *
+	 *  @param  {Object} block
+	 *  	block: {
+	 *  		previous: previous-block-id,
+	 *  		timestamp: block-timestamp,
+	 *  		witness: "witness-id",
+	 *  		transaction_merkle_root: "merkle-root",
+	 *  		state_root_hash: "hash",
+	 *  		result_root_hash: "result-hash",
+	 *  		witness_signature: "sig",
+	 *  		ed_signature: "eddsa signature",
+	 *  		verifications: [{witness-id, witness-signature}],
+	 *  		round: round-id,
+	 *  		rand: rand,
+	 *  		cert: "certificate",
+	 *  		transactions: [{ref_block_num, ref_block_prefix, operations, signatures}],
+	 *  	}
+	 *
+	 *  @return {Promise}
+	 */
+	broadcastBlock(block) {
+		if (!block) {
+			return Promise.reject(new Error('Block is required'));
+		}
+
+		if (!block.previous || !block.timestamp || !block.witness) {
+			return Promise.reject(new Error('Invalid block'));
+		}
+
+		return this.wsApi.network.broadcastBlock(block);
 	}
 
 }

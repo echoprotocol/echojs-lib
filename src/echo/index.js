@@ -17,14 +17,14 @@ class Echo {
 			throw new Error('Connected');
 		}
 
-		this.cache.setOptions(options);
-		this.api.setOptions(options);
-		this.subscriber.setOptions(options);
-
 		try {
 			await this._ws.connect(address, options);
 			if (this._isInitModules) return;
 			this._initModules();
+
+			this.cache.setOptions(options);
+			this.api.setOptions(options);
+			this.subscriber.setOptions(options);
 		} catch (e) {
 			throw e;
 		}

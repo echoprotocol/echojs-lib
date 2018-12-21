@@ -1,4 +1,4 @@
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 
 class Cache {
 
@@ -11,7 +11,7 @@ class Cache {
 		this.subbedAccounts = new Map();
 		this.subbedWitnesses = new Map();
 		this.subbedCommittee = new Map();
-        this.getFullAccountsSubscriptions = new Map();
+		this.getFullAccountsSubscriptions = new Map();
 
 		this.objectsById = new Map();
 		this.accountsByName = new Map();
@@ -40,6 +40,8 @@ class Cache {
 		this.chainId = null;
 		this.dynamicGlobalProperties = null;
 	}
+
+	setOptions() {}
 
 }
 
