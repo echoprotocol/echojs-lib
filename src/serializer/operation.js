@@ -7,7 +7,7 @@ class Operation {
 		this.options = options;
 	}
 
-	verify(operationObject = {}) {
+    validate(operationObject = {}) {
 	    if (!isObject(operationObject)) return false;
 
 		if (operationObject.operationName !== this.operationName) return false;

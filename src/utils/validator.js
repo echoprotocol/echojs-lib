@@ -65,6 +65,8 @@ export const isVoid = (v) => v === null || typeof v === 'undefined';
 
 export const isArray = (v) => Array.isArray(v) && !isEmpty(v.length);
 
+export const isEmptyArray = (v) => Array.isArray(v) && v.length === 0;
+
 export const isNumber = (v) => v && typeof v === 'number';
 
 const isUInt = (v, x) => {
@@ -95,8 +97,7 @@ export const isBoolean = (v) => typeof v === 'boolean';
 
 export const isObject = (v) => typeof v === 'object';
 
-export const isStringSymbol = (v) => isString(v) && v.length === 1;
-
+export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
@@ -130,7 +131,7 @@ export const isObjectId = (v) => {
 
 export const isHex = (v) => isString(v) && hexRegex.test(v);
 
-export const isBytes = (v, length) => isHex(v) && v.length === length;
+export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
 
 
 export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v) && v.length % 2 === 0;

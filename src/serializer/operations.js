@@ -1,11 +1,14 @@
+/* eslint-disable max-len */
 import Operation from './operation';
+import Type from './type';
 
 import {
 	int64, uint64, uint32, uint16, uint8, string, bool, bytes,
 	protocolIdType, objectId, publicKey,
-	authority, accountOptions, price, assetOptions,
-	array, set, map, operation, asset, memoData, optional, object,
-	custom,
+	authority, accountOptions, price, assetOptions, bitassetOptions,
+	blindInput, priceFeed, asset, vestingPolicyInitializer,
+	workerInitializer, predicate, blindOutput,
+	array, set, operation, memoData, optional, emptyArray,
 } from './types';
 
 const Operations = {};
@@ -18,7 +21,7 @@ Operations.transfer = new Operation( // OK
 		to: protocolIdType('account'),
 		amount: asset,
 		memo: optional(memoData),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -31,7 +34,7 @@ Operations.limitOrderCreate = new Operation( // OK
 		min_to_receive: asset,
 		expiration: uint64, // time_point_sec
 		fill_or_kill: bool,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -41,7 +44,7 @@ Operations.limitOrderCancel = new Operation( // OK
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
 		order: protocolIdType('limit_order'),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -52,18 +55,18 @@ Operations.callOrderUpdate = new Operation( // OK
 		funding_account: protocolIdType('account'),
 		delta_collateral: asset,
 		delta_debt: asset,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
-Operations.fillOrder = new Operation( // OK
-	'fill_order',
+Operations.bidCollateral = new Operation( // OK
+	'bid_collateral',
 	{
 		fee: asset,
-		order_id: objectId,
-		account_id: protocolIdType('account'),
-		pays: asset,
-		receives: asset,
+		bidder: protocolIdType('account'),
+		additional_collateral: asset,
+		debt_covered: asset,
+		extensions: emptyArray,
 	},
 );
 
@@ -78,7 +81,7 @@ Operations.accountCreate = new Operation( // OK
 		owner: authority,
 		active: authority,
 		options: accountOptions,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -90,7 +93,7 @@ Operations.accountUpdate = new Operation( // OK
 		owner: optional(authority),
 		active: optional(authority),
 		new_options: optional(accountOptions),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -101,7 +104,7 @@ Operations.accountWhitelist = new Operation( // OK
 		authorizing_account: protocolIdType('account'),
 		account_to_list: protocolIdType('account'),
 		new_listing: uint8,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -111,7 +114,7 @@ Operations.accountUpgrade = new Operation( // OK
 		fee: asset,
 		account_to_upgrade: protocolIdType('account'),
 		upgrade_to_lifetime_member: bool,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -121,20 +124,7 @@ Operations.accountTransfer = new Operation( // OK
 		fee: asset,
 		account_id: protocolIdType('account'),
 		new_owner: protocolIdType('account'),
-		extensions: optional(object),
-	},
-);
-
-Operations.bitassetOptions = new Operation(
-	'bitasset_options',
-	{
-		feed_lifetime_sec: uint32,
-		minimum_feeds: uint8,
-		force_settlement_delay_sec: uint32,
-		force_settlement_offset_percent: uint16,
-		maximum_force_settlement_volume: uint16,
-		short_backing_asset: protocolIdType('asset'),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -146,9 +136,9 @@ Operations.assetCreate = new Operation( // OK
 		symbol: string,
 		precision: uint8,
 		common_options: assetOptions,
-		bitasset_opts: optional(Operations.bitasset_options),
+		bitasset_opts: optional(bitassetOptions),
 		is_prediction_market: bool,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -160,7 +150,7 @@ Operations.assetUpdate = new Operation( // OK
 		asset_to_update: protocolIdType('asset'),
 		new_issuer: optional(protocolIdType('account')),
 		new_options: assetOptions,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -170,8 +160,8 @@ Operations.assetUpdate_bitasset = new Operation( // OK
 		fee: asset,
 		issuer: protocolIdType('account'),
 		asset_to_update: protocolIdType('asset'),
-		new_options: Operations.bitasset_options,
-		extensions: optional(object),
+		new_options: bitassetOptions,
+		extensions: emptyArray,
 	},
 );
 
@@ -182,7 +172,7 @@ Operations.assetUpdateFeedProducers = new Operation( // OK
 		issuer: protocolIdType('account'),
 		asset_to_update: protocolIdType('asset'),
 		new_feed_producers: set(protocolIdType('account')),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -193,8 +183,8 @@ Operations.assetIssue = new Operation( // OK
 		issuer: protocolIdType('account'),
 		asset_to_issue: asset,
 		issue_to_account: protocolIdType('account'),
-		memo: optional(Operations.memo_data),
-		extensions: optional(object),
+		memo: optional(memoData),
+		extensions: emptyArray,
 	},
 );
 
@@ -204,7 +194,7 @@ Operations.assetReserve = new Operation( // OK
 		fee: asset,
 		payer: protocolIdType('account'),
 		amount_to_reserve: asset,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -215,7 +205,7 @@ Operations.assetFundFeePool = new Operation( // OK
 		from_account: protocolIdType('account'),
 		asset_id: protocolIdType('asset'),
 		amount: int64,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -225,7 +215,7 @@ Operations.assetSettle = new Operation( // OK
 		fee: asset,
 		account: protocolIdType('account'),
 		amount: asset,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -236,17 +226,7 @@ Operations.assetGlobalSettle = new Operation( // OK
 		issuer: protocolIdType('account'),
 		asset_to_settle: protocolIdType('asset'),
 		settle_price: price,
-		extensions: optional(object),
-	},
-);
-
-Operations.priceFeed = new Operation(
-	'price_feed',
-	{
-		settlement_price: Operations.price,
-		maintenance_collateral_ratio: uint16,
-		maximum_short_squeeze_ratio: uint16,
-		core_exchange_rate: Operations.price,
+		extensions: emptyArray,
 	},
 );
 
@@ -256,8 +236,8 @@ Operations.assetPublishFeed = new Operation( // OK
 		fee: asset,
 		publisher: protocolIdType('account'),
 		asset_id: protocolIdType('asset'),
-		feed: Operations.price_feed,
-		extensions: optional(object),
+		feed: priceFeed,
+		extensions: emptyArray,
 	},
 );
 
@@ -282,20 +262,15 @@ Operations.witnessUpdate = new Operation( // OK
 	},
 );
 
-Operations.opWrapper = new Operation(
-	'op_wrapper',
-	{ op: operation },
-);
-
 Operations.proposalCreate = new Operation( // OK
 	'proposal_create',
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
 		expiration_time: uint64, // time_point_sec
-		proposed_ops: array(Operations.op_wrapper),
+		proposed_ops: array(new Type((op) => Object.values(Operations).some((opType) => opType.validate(op)))),
 		review_period_seconds: optional(uint32),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -311,7 +286,7 @@ Operations.proposalUpdate = new Operation( // OK
 		owner_approvals_to_remove: set(protocolIdType('account')),
 		key_approvals_to_add: set(publicKey),
 		key_approvals_to_remove: set(publicKey),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -322,7 +297,7 @@ Operations.proposalDelete = new Operation( // OK
 		fee_paying_account: protocolIdType('account'),
 		using_owner_authority: bool,
 		proposal: protocolIdType('proposal'),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -361,7 +336,7 @@ Operations.withdrawPermissionClaim = new Operation( // OK
 		withdraw_from_account: protocolIdType('account'),
 		withdraw_to_account: protocolIdType('account'),
 		amount_to_withdraw: asset,
-		memo: optional(Operations.memo_data),
+		memo: optional(memoData),
 	},
 );
 
@@ -375,55 +350,6 @@ Operations.withdrawPermissionDelete = new Operation( // OK
 	},
 );
 
-Operations.committeeMemberCreate = new Operation(
-	'committee_member_create',
-	{
-		fee: asset,
-		committee_member_account: protocolIdType('account'),
-		url: string,
-	},
-);
-
-Operations.committeeMemberUpdate = new Operation(
-	'committee_member_update',
-	{
-		fee: asset,
-		committee_member: protocolIdType('committee_member'),
-		committee_member_account: protocolIdType('account'),
-		new_url: optional(string),
-	},
-);
-
-Operations.committeeMemberUpdateGlobalParameters = new Operation(
-	'committee_member_update_global_parameters',
-	{
-		fee: asset,
-		new_parameters: Operations.chain_parameters,
-	},
-);
-
-Operations.linearVestingPolicyInitializer = new Operation(
-	'linear_vesting_policy_initializer',
-	{
-		begin_timestamp: uint64, // time_point_sec
-		vesting_cliff_seconds: uint32,
-		vesting_duration_seconds: uint32,
-	},
-);
-
-Operations.cddVestingPolicyInitializer = new Operation(
-	'cdd_vesting_policy_initializer',
-	{
-		start_claim: uint64, // time_point_sec
-		vesting_seconds: uint32,
-	},
-);
-
-const vestingPolicyInitializer = static_variant([
-	Operations.linear_vesting_policy_initializer,
-	Operations.cdd_vesting_policy_initializer,
-]);
-
 Operations.vestingBalanceCreate = new Operation( // OK
 	'vesting_balance_create',
 	{
@@ -431,7 +357,7 @@ Operations.vestingBalanceCreate = new Operation( // OK
 		creator: protocolIdType('account'),
 		owner: protocolIdType('account'),
 		amount: asset,
-		policy: vesting_policy_initializer,
+		policy: vestingPolicyInitializer,
 	},
 );
 
@@ -445,21 +371,6 @@ Operations.vestingBalanceWithdraw = new Operation( // OK
 	},
 );
 
-Operations.refund_worker_initializer = new Operation('refund_worker_initializer');
-
-Operations.vestingBalanceWorkerInitializer = new Operation(
-	'vesting_balance_worker_initializer',
-	{ pay_vesting_period_days: uint16 },
-);
-
-Operations.burn_worker_initializer = new Operation('burn_worker_initializer');
-
-const workerInitializer = static_variant([
-	Operations.refund_worker_initializer,
-	Operations.vesting_balance_worker_initializer,
-	Operations.burn_worker_initializer,
-]);
-
 Operations.workerCreate = new Operation( // OK
 	'worker_create',
 	{
@@ -470,7 +381,7 @@ Operations.workerCreate = new Operation( // OK
 		daily_pay: int64,
 		name: string,
 		url: string,
-		initializer: worker_initializer,
+		initializer: workerInitializer,
 	},
 );
 
@@ -485,33 +396,6 @@ Operations.custom = new Operation( // OK
 	},
 );
 
-Operations.account_name_eq_lit_predicate = new Operation(
-	'account_name_eq_lit_predicate',
-	{
-		account_id: protocolIdType('account'),
-		name: string,
-	},
-);
-
-Operations.asset_symbol_eq_lit_predicate = new Operation(
-	'asset_symbol_eq_lit_predicate',
-	{
-		asset_id: protocolIdType('asset'),
-		symbol: string,
-	},
-);
-
-Operations.block_id_predicate = new Operation(
-	'block_id_predicate',
-	{ id: bytes(20) },
-);
-
-const predicate = static_variant([
-	Operations.account_name_eq_lit_predicate,
-	Operations.asset_symbol_eq_lit_predicate,
-	Operations.block_id_predicate,
-]);
-
 Operations.assert = new Operation( // OK
 	'assert',
 	{
@@ -519,7 +403,7 @@ Operations.assert = new Operation( // OK
 		fee_paying_account: protocolIdType('account'),
 		predicates: array(predicate),
 		required_auths: set(protocolIdType('account')),
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
@@ -534,6 +418,33 @@ Operations.balanceClaim = new Operation( // OK
 	},
 );
 
+Operations.committeeMemberCreate = new Operation( // OK
+	'committee_member_create',
+	{
+		fee: asset,
+		committee_member_account: protocolIdType('account'),
+		url: string,
+	},
+);
+
+Operations.committeeMemberUpdate = new Operation( // OK
+	'committee_member_update',
+	{
+		fee: asset,
+		committee_member: protocolIdType('committee_member'),
+		committee_member_account: protocolIdType('account'),
+		new_url: optional(string),
+	},
+);
+
+Operations.committeeMemberUpdateGlobalParameters = new Operation( // OK
+	'committee_member_update_global_parameters',
+	{
+		fee: asset,
+		new_parameters: Operations.chainParameters,
+	},
+);
+
 Operations.overrideTransfer = new Operation( // OK
 	'override_transfer',
 	{
@@ -542,27 +453,8 @@ Operations.overrideTransfer = new Operation( // OK
 		from: protocolIdType('account'),
 		to: protocolIdType('account'),
 		amount: asset,
-		memo: optional(Operations.memo_data),
-		extensions: optional(object),
-	},
-);
-
-Operations.stealthConfirmation = new Operation(
-	'stealth_confirmation',
-	{
-		one_time_key: publicKey,
-		to: optional(publicKey),
-		encrypted_memo: bytes(),
-	},
-);
-
-Operations.blindOutput = new Operation(
-	'blind_output',
-	{
-		commitment: bytes(33),
-		range_proof: bytes(),
-		owner: authority,
-		stealth_memo: optional(Operations.stealth_confirmation),
+		memo: optional(memoData),
+		extensions: emptyArray,
 	},
 );
 
@@ -573,15 +465,7 @@ Operations.transferToBlind = new Operation( // OK
 		amount: asset,
 		from: protocolIdType('account'),
 		blinding_factor: bytes(32),
-		outputs: array(Operations.blind_output),
-	},
-);
-
-Operations.blindInput = new Operation(
-	'blind_input',
-	{
-		commitment: bytes(33),
-		owner: authority,
+		outputs: array(blindOutput),
 	},
 );
 
@@ -589,8 +473,8 @@ Operations.blindTransfer = new Operation( // OK
 	'blind_transfer',
 	{
 		fee: asset,
-		inputs: array(Operations.blind_input),
-		outputs: array(Operations.blind_output),
+		inputs: array(blindInput),
+		outputs: array(blindOutput),
 	},
 );
 
@@ -601,18 +485,7 @@ Operations.transferFromBlind = new Operation( // OK
 		amount: asset,
 		to: protocolIdType('account'),
 		blinding_factor: bytes(32),
-		inputs: array(Operations.blind_input),
-	},
-);
-
-Operations.assetSettleCancel = new Operation( // OK
-	'asset_settle_cancel',
-	{
-		fee: asset,
-		settlement: protocolIdType('force_settlement'),
-		account: protocolIdType('account'),
-		amount: asset,
-		extensions: optional(object),
+		inputs: array(blindInput),
 	},
 );
 
@@ -622,11 +495,11 @@ Operations.assetClaimFees = new Operation( // OK
 		fee: asset,
 		issuer: protocolIdType('account'),
 		amount_to_claim: asset,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
-Operations.contract = new Operation( // OK
+Operations.contract = new Operation(
 	'contract',
 	{
 		fee: asset,
@@ -640,14 +513,15 @@ Operations.contract = new Operation( // OK
 	},
 );
 
-Operations.contractTransfer = new Operation( // OK
+Operations.contractTransfer = new Operation(
 	'contract_transfer',
 	{
 		fee: asset,
 		from: protocolIdType('contract'),
 		to: protocolIdType('contract'),
 		amount: asset,
-		extensions: optional(object),
+		extensions: emptyArray,
 	},
 );
 
+export default Operations;
