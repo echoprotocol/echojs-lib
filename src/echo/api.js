@@ -9,7 +9,7 @@ import {
 	isAccountName,
 	isString,
 	isAssetId,
-	isBalanceId,
+	isAccountBalanceId,
 	isContractId,
 	isContractResultId,
 	isBytecode,
@@ -467,7 +467,7 @@ class API {
      */
 	getVestedBalances(balanceIds) {
 		if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
-		if (balanceIds.some((id) => !isBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
+		if (balanceIds.some((id) => !isAccountBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
 
 		return this.wsApi.database.getVestedBalances(balanceIds);
 	}

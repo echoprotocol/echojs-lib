@@ -16,13 +16,25 @@ const urlRegex = new RegExp(
 	, 'i',
 );
 const idRegex = /\b\d+\.\d+\.(\d+)\b/;
+
 const accountIdRegex = /1\.2\.(\d+)\b/;
 const assetIdRegex = /1\.3\.(\d+)\b/;
-const balanceIdRegex = /2\.5\.(\d+)\b/;
+const forceSettlementIdRegex = /1\.4\.(\d+)\b/;
+const committeeMemberIdRegex = /1\.5\.(\d+)\b/;
+const witnessIdRegex = /1\.6\.(\d+)\b/;
+const limitOrderIdRegex = /1\.7\.(\d+)\b/;
+const callOrderIdRegex = /1\.8\.(\d+)\b/;
+const customIdRegex = /1\.9\.(\d+)\b/;
+const proposalIdRegex = /1\.10\.(\d+)\b/;
+const operationHistoryIdRegex = /1\.11\.(\d+)\b/;
+const withdrawPermissionIdRegex = /1\.12\.(\d+)\b/;
+const vestingBalanceIdRegex = /1\.13\.(\d+)\b/;
+const workerIdRegex = /1\.14\.(\d+)\b/;
+const balanceIdRegex = /1\.15\.(\d+)\b/;
 const contractIdRegex = /1\.16\.(\d+)\b/;
 const contractResultIdRegex = /1\.17\.(\d+)\b/;
-const witnessIdRegex = /1\.6\.(\d+)\b/;
-const proposalIdRegex = /1\.10\.(\d+)\b/;
+
+const accountBalanceIdRegex = /2\.5\.(\d+)\b/;
 
 const hexRegex = /[0-9a-fA-F]+/;
 const bytecodeRegex = /[0-9a-fA-F]*/;
@@ -85,21 +97,28 @@ export const isObject = (v) => typeof v === 'object';
 
 export const isStringSymbol = (v) => isString(v) && v.length === 1;
 
-export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 
+export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 
+export const isForceSettlementId = (v) => isString(v) && forceSettlementIdRegex.test(v);
+export const isCommitteeMemberId = (v) => isString(v) && committeeMemberIdRegex.test(v);
+export const isWitnessId = (v) => isString(v) && witnessIdRegex.test(v);
+export const isLimitOrderId = (v) => isString(v) && limitOrderIdRegex.test(v);
+export const isCallOrderId = (v) => isString(v) && callOrderIdRegex.test(v);
+export const isCustomId = (v) => isString(v) && customIdRegex.test(v);
+export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
+export const isOperationHistoryId = (v) => isString(v) && operationHistoryIdRegex.test(v);
+export const isWithdrawPermissionId = (v) => isString(v) && withdrawPermissionIdRegex.test(v);
+export const isVestingBalanceId = (v) => isString(v) && vestingBalanceIdRegex.test(v);
+export const isWorkerId = (v) => isString(v) && workerIdRegex.test(v);
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
-
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
-
-export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
-
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 
-export const isWitnessId = (v) => isString(v) && witnessIdRegex.test(v);
+export const isAccountBalanceId = (v) => isString(v) && accountBalanceIdRegex.test(v);
 
-export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
+export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
 
 export const isObjectId = (v) => {
 	if (!isString(v)) return false;
@@ -156,7 +175,7 @@ export const isAssetName = (v) =>
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
-	if (!isString(v) || v.length !== (44 + addressPrefix.length)) return false;
+	if (!isString(v) || v.length !== (50 + addressPrefix.length)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
