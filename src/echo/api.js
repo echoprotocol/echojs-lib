@@ -940,9 +940,9 @@ class API {
 
 	/**
 	 *  @method getAssetHolders
-	 *  Retreive the information about the holders of the specified asset.
+	 *  Retrieve the information about the holders of the specified asset.
 	 *
-	 *  @param {String} assetId   [asset id to retreive]
+	 *  @param {String} assetId   [asset id to retrieve]
 	 *  @param {Number} start [account id to start retreiving from]
 	 *  @param {Number} limit     [count accounts (max 100)]
 	 */
@@ -964,9 +964,9 @@ class API {
 
 	/**
 	 *  @method getAssetHoldersCount
-	 *  Retreive the number of holders of the provided asset.
+	 *  Retrieve the number of holders of the provided asset.
 	 *
-	 *  @param {String} assetId   [asset id to retreive]
+	 *  @param {String} assetId   [asset id to retrieve]
 	 */
 	getAssetHoldersCount(assetId) {
 		if (!isAssetId(assetId)) {
