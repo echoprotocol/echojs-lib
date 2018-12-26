@@ -882,12 +882,10 @@ class API {
 	 * 	Broadcast a transaction to the network.
 	 *
 	 * 	@param  {Object} tr
-	 *  	transaction: {
-	 *  		ref_block_num,
-	 *  		ref_block_prefix,
-	 *  		operations,
-	 *  		signatures,
-	 *  	}
+	 *  @param  {Number} tr.ref_block_num
+	 *  @param  {Number} tr.ref_block_prefix
+	 *  @param  {Array} tr.operations
+	 *  @param  {Array} tr.signatures
 	 *
 	 *  @return {Promise}
 	 */
@@ -908,21 +906,19 @@ class API {
 	 * 	Broadcast a block to the network.
 	 *
 	 *  @param  {Object} block
-	 *  	block: {
-	 *  		previous: previous-block-id,
-	 *  		timestamp: block-timestamp,
-	 *  		witness: "witness-id",
-	 *  		transaction_merkle_root: "merkle-root",
-	 *  		state_root_hash: "hash",
-	 *  		result_root_hash: "result-hash",
-	 *  		witness_signature: "sig",
-	 *  		ed_signature: "eddsa signature",
-	 *  		verifications: [{witness-id, witness-signature}],
-	 *  		round: round-id,
-	 *  		rand: rand,
-	 *  		cert: "certificate",
-	 *  		transactions: [{ref_block_num, ref_block_prefix, operations, signatures}],
-	 *  	}
+	 *  @param  {Number} block.previous  [previous block id]
+	 *  @param  {Number} block.timestamp  [block timestamp]
+	 *  @param  {String} block.witness  [witness id]
+	 *  @param  {String} block.transaction_merkle_root  [merkle root]
+	 *  @param  {String} block.state_root_hash  [hash]
+	 *  @param  {String} block.result_root_hash  [result hash]
+	 *  @param  {String} block.witness_signature  [witness signature]
+	 *  @param  {String} block.ed_signature  [eddsa signature]
+	 *  @param  {Array} block.verifications  [{witness-id, witness-signature}]
+	 *  @param  {Number} block.round  [round id]
+	 *  @param  {Number} block.rand  [rand]
+	 *  @param  {String} block.cert  [certificate]
+	 *  @param  {Array} block.transactions
 	 *
 	 *  @return {Promise}
 	 */
