@@ -5,6 +5,8 @@ class Cache {
 		this.store = {};
 	}
 
+	setOptions() {}
+
 }
 
 export default Cache;

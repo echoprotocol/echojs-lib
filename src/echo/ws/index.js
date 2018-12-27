@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* global window */
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
@@ -80,9 +80,11 @@ class WS {
      * init params and connect to chain
      * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
      * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
+     * 		default call delay before reject it.
      * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+     * @param {Number} options.pingTimeout - delay time in ms between ping request
+     * 		and socket disconnect.
      * @param {Number} options.pingInterval - interval in ms between ping requests.
      * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
@@ -212,6 +214,14 @@ class WS {
      */
 	loginApi() {
 		return this._login;
+	}
+
+	/**
+     * network node API
+     * @returns {GrapheneApi}
+     */
+	networkNodeApi() {
+		return this._network_node;
 	}
 
 }

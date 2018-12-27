@@ -2,12 +2,12 @@
 import WebSocket from 'isomorphic-ws';
 
 import {
-    CONNECTION_TIMEOUT,
-    MAX_RETRIES,
-    PING_TIMEOUT,
-    PING_INTERVAL,
-    DEBUG
-} from '../../constants/ws-constants'
+	CONNECTION_TIMEOUT,
+	MAX_RETRIES,
+	PING_TIMEOUT,
+	PING_INTERVAL,
+	DEBUG,
+} from '../../constants/ws-constants';
 
 class ReconnectionWebSocket {
 
@@ -28,56 +28,56 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * init params and connect to chain
-     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-     * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
-     * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
-     * @param {Number} options.pingInterval - interval in ms between ping requests.
-     * @param {Boolean} options.debug - debug mode status.
-     * @returns {Promise}
-     */
+	 * init params and connect to chain
+	 * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+	 * @param {Object} options - connection params.
+	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+	 * @param {Number} options.maxRetries - max count retries before close socket.
+	 * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+	 * @param {Number} options.pingInterval - interval in ms between ping requests.
+	 * @param {Boolean} options.debug - debug mode status.
+	 * @returns {Promise}
+	 */
 	async connect(
 		url,
 		options = {},
 	) {
 		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            try {
-                await this.close();
+			try {
+				await this.close();
 			} catch (error) {
-            	throw error;
+				throw error;
 			}
 		}
 
-        this._options = {
-            connectionTimeout: typeof options.connectionTimeout === 'undefined' ? CONNECTION_TIMEOUT : options.connectionTimeout,
-            maxRetries: typeof options.maxRetries === 'undefined' ? MAX_RETRIES : options.maxRetries,
-            pingTimeout: typeof options.pingTimeout === 'undefined' ? PING_TIMEOUT : options.pingTimeout,
-            pingInterval: typeof options.pingInterval === 'undefined' ? PING_INTERVAL : options.pingInterval,
-            debug: typeof options.debug === 'undefined' ? DEBUG : options.debug,
-        };
+		this._options = {
+			connectionTimeout: typeof options.connectionTimeout === 'undefined' ? CONNECTION_TIMEOUT : options.connectionTimeout,
+			maxRetries: typeof options.maxRetries === 'undefined' ? MAX_RETRIES : options.maxRetries,
+			pingTimeout: typeof options.pingTimeout === 'undefined' ? PING_TIMEOUT : options.pingTimeout,
+			pingInterval: typeof options.pingInterval === 'undefined' ? PING_INTERVAL : options.pingInterval,
+			debug: typeof options.debug === 'undefined' ? DEBUG : options.debug,
+		};
 
-        this.url = url;
-        this._isFirstConnection = true;
-        this._isForceClose = false;
-        this._currentRetry = 0;
-        this._forceClosePromise = null;
-        this._reconnectionTimeoutId = null;
+		this.url = url;
+		this._isFirstConnection = true;
+		this._isForceClose = false;
+		this._currentRetry = 0;
+		this._forceClosePromise = null;
+		this._reconnectionTimeoutId = null;
 
-        this._cbId = 0;
-        this._responseCbId = 0;
-        this._cbs = {};
-        this._subs = [];
-        this._unsub = {};
+		this._cbId = 0;
+		this._responseCbId = 0;
+		this._cbs = {};
+		this._subs = [];
+		this._unsub = {};
 
 		return this._connect();
 	}
 
 	/**
-     * inner connection method
-     * @returns {Promise}
-     */
+	 * inner connection method
+	 * @returns {Promise}
+	 */
 	_connect() {
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
@@ -123,17 +123,17 @@ class ReconnectionWebSocket {
 
 				this._clearWaitingCallPromises();
 				this._clearPingInterval();
-                this._clearReconnectionTimeout();
+				this._clearReconnectionTimeout();
 
 				if (this.onClose) this.onClose();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 
-                if (this._forceClosePromise) {
-                    this._forceClosePromise();
-                    this._forceClosePromise = null;
-                    return;
-                }
+				if (this._forceClosePromise) {
+					this._forceClosePromise();
+					this._forceClosePromise = null;
+					return;
+				}
 
 				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
 					this._isForceClose = true;
@@ -143,8 +143,10 @@ class ReconnectionWebSocket {
 
 				this._reconnectionTimeoutId = setTimeout(async () => {
 					try {
-                       await this._connect();
-                    } catch (_) {}
+						await this._connect();
+					} catch (_) {
+						//
+					}
 				}, this._options.connectionTimeout);
 
 			};
@@ -161,9 +163,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * connect to socket, can't be used after close
-     * @returns {Promise}
-     */
+	 * connect to socket, can't be used after close
+	 * @returns {Promise}
+	 */
 	reconnect() {
 		if (!this.ws) return Promise.reject(new Error('Socket not exist.'));
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
@@ -171,19 +173,19 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * set debug option
-     * @param {Boolean} status
-     */
+	 * set debug option
+	 * @param {Boolean} status
+	 */
 	setDebugOption(status) {
 		this._options.debug = Boolean(status);
 	}
 
 	/**
-     * call a method with params via RPC
-     * @param {Array<any>} params
-     * @param {Number} timeout - timeout before reject
-     * @returns {Promise}
-     */
+	 * call a method with params via RPC
+	 * @param {Array<any>} params
+	 * @param {Number} timeout - timeout before reject
+	 * @returns {Promise}
+	 */
 	call(params, timeout = this._options.connectionTimeout) {
 		if (this.ws.readyState !== WebSocket.OPEN) {
 			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
@@ -194,8 +196,8 @@ class ReconnectionWebSocket {
 		this._cbId += 1;
 
 		if (method === 'set_subscribe_callback' || method === 'subscribe_to_market' ||
-            method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
-			method === 'set_block_applied_callback'
+			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
+			method === 'set_block_applied_callback' || method === 'set_consensus_message_callback'
 		) {
 			// Store callback in subs map
 			this._subs[this._cbId] = {
@@ -240,15 +242,16 @@ class ReconnectionWebSocket {
 				reject,
 				timeoutId,
 			};
+
 			this.ws.send(JSON.stringify(request));
 		});
 
 	}
 
 	/**
-     * message handler
-     * @param response
-     */
+	 * message handler
+	 * @param response
+	 */
 	_responseHandler(response) {
 		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
@@ -287,25 +290,25 @@ class ReconnectionWebSocket {
 		} else if (callback && sub) {
 			callback(response.params[1]);
 		} else {
-            console.log('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
+			console.log('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
 		}
 	}
 
 	/**
-     * get access to chain
-     * @param {String} user
-     * @param {String} password
-     * @param {Number} timeout - timeout before reject
-     * @returns {Promise}
-     */
+	 * get access to chain
+	 * @param {String} user
+	 * @param {String} password
+	 * @param {Number} timeout - timeout before reject
+	 * @returns {Promise}
+	 */
 	login(user, password, timeout = this._options.connectionTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
 	/**
 	 * clear ping interval
-     * @private
-     */
+	 * @private
+	 */
 	_clearPingInterval() {
 		if (this._pingIntervalId) {
 			clearInterval(this._pingIntervalId);
@@ -315,8 +318,8 @@ class ReconnectionWebSocket {
 
 	/**
 	 * clear reconnection timeout
-     * @private
-     */
+	 * @private
+	 */
 	_clearReconnectionTimeout() {
 		if (this._reconnectionTimeoutId) {
 			clearTimeout(this._reconnectionTimeoutId);
@@ -325,72 +328,72 @@ class ReconnectionWebSocket {
 	}
 
 
-    /**
+	/**
 	 * clear waiting calls
-     * @private
-     */
+	 * @private
+	 */
 	_clearWaitingCallPromises() {
 		const err = new Error('connection closed');
 
 		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
-			if (this._cbs[cbId]) this._cbs[cbId].reject(err)
+			if (this._cbs[cbId]) this._cbs[cbId].reject(err);
 		}
 	}
 
 	/**
-     * make call for check connection
-     */
+	 * make call for check connection
+	 */
 	async _loginPing() {
 		try {
 			await this.login('', '', this._options.pingTimeout);
-		} catch(_) {
-            if (this.ws.readyState !== WebSocket.OPEN) return;
-            this.ws.close();
+		} catch (_) {
+			if (this.ws.readyState !== WebSocket.OPEN) return;
+			this.ws.close();
 		}
 	}
 
 	/**
 	 * show debug logs
-     * @private
-     */
+	 * @private
+	 */
 	_debugLog(...messages) {
 		if (!this._options.debug) return;
 		console.log(...messages);
 	}
 
-    /**
-     * remove pending request from map
-     * @private
-     */
-    _removePendingRequest(id) {
-        delete this._cbs[id];
-        delete this._subs[id];
-        delete this._unsub[id];
-    }
+	/**
+	 * remove pending request from map
+	 * @private
+	 */
+	_removePendingRequest(id) {
+		delete this._cbs[id];
+		delete this._subs[id];
+		delete this._unsub[id];
+	}
 
-    /**
-     * remove successful request from map
-     * @private
-     */
-    _removeSuccessfulRequest(id) {
-        delete this._cbs[id];
+	/**
+	 * remove successful request from map
+	 * @private
+	 */
+	_removeSuccessfulRequest(id) {
+		delete this._cbs[id];
 
-        if (this._unsub[id]) {
-            delete this._subs[this._unsub[id]];
-            delete this._unsub[id];
-        }
-    }
+		if (this._unsub[id]) {
+			delete this._subs[this._unsub[id]];
+			delete this._unsub[id];
+		}
+	}
 
 
 	/**
-     *
-     * @returns {Promise}
-     */
+	 *
+	 * @returns {Promise}
+	 */
 	close() {
-        if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) return Promise.reject(new Error('Socket already close'));
+		if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) return Promise.reject(new Error('Socket already close'));
 
-        return new Promise((resolve) => {
-            this._forceClosePromise = resolve;
+		return new Promise((resolve) => {
+			this._forceClosePromise = resolve;
 			this._isForceClose = true;
 			this.ws.close();
 		});
