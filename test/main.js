@@ -45,4 +45,22 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
+    describe('#getAccounts()', () => {
+        it('should get accounts and save it to cache', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+                const accountId1 = '1.2.60';
+                const accountId2 = '1.2.61';
+                const accounts = await api.getAccounts([accountId1, accountId2]);
+                // console.log(accounts)
+                expect(accounts).to.be.an('array');
+                expect(accounts).to.deep.include(cache.accountsById.get(accountId1));
+                expect(accounts).to.deep.include(cache.accountsById.get(accountId2));
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
 });

@@ -91,7 +91,7 @@ class API {
 		let requestedObjects;
 
 		try {
-			requestedObjects = await Promise.all(this.wsApi.database[methodName](requestedObjectsKeys));
+			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
 		} catch (error) {
 			throw error;
 		}
@@ -296,7 +296,7 @@ class API {
 		if (accountIds.some((id) => !isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(accountIds, 'accountsById', 'getKeyReferences', force);
+		return this._getArrayData(accountIds, 'accountsById', 'getAccounts', force);
 	}
 
 	/**
