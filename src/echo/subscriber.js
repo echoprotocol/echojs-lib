@@ -101,7 +101,7 @@ class Subscriber {
 		const index = this.subscribers.echorand.push(callback) - 1;
 
 		if (!this.subscriptions.echorand) {
-			await this._wsApi.networkNode.setСonsensusMessageCallback(this._echorandUpdate.bind(this));
+			await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
 			this.subscriptions.echorand = true;
 		}
 

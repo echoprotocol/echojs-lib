@@ -10,13 +10,13 @@ class NetworkNodeAPI {
 	}
 
 	/**
-	 *  @method setСonsensusMessageCallback
+	 *  @method setConsensusMessageCallback
 	 *
 	 *  @param  {Function} callback
 	 *
 	 *  @return {Promise.<null>}
 	 */
-	setСonsensusMessageCallback(callback) {
+	setConsensusMessageCallback(callback) {
 		return this.db.exec('set_consensus_message_callback', [callback]);
 	}
 
