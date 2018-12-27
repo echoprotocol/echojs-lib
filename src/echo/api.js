@@ -45,7 +45,9 @@ class API {
 		if (!force) {
 			const cacheValue = this.cache[cacheName];
 
-			if (cacheValue) return cacheValue;
+			if (cacheValue) {
+				return cacheValue;
+			}
 		}
 
 		try {
@@ -232,8 +234,10 @@ class API {
      *
      *  @return {Promise}
      */
-	getGlobalProperties() {
-		return this.wsApi.database.getGlobalProperties();
+	getGlobalProperties(force = false) {
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this._getConfigurations('globalProperties', 'getGlobalProperties', force);
 	}
 
 	/**
@@ -265,8 +269,10 @@ class API {
      *
      *  @return {Promise}
      */
-	async getDynamicGlobalProperties() {
-		return this.wsApi.database.getDynamicGlobalProperties();
+	async getDynamicGlobalProperties(force = false) {
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this._getConfigurations('dynamicGlobalProperties', 'getDynamicGlobalProperties', force);
 	}
 
 	/**
@@ -418,7 +424,7 @@ class API {
 	/**
      *  @method getAccountCount
      *
-     *  @return {Promise}
+     *  @return {Promise<Number>}
      */
 	getAccountCount() {
 		return this.wsApi.database.getAccountCount();
@@ -437,7 +443,7 @@ class API {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
 		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-		// TODO save it to cache or not
+
 		return this.wsApi.database.getAccountBalances(accountId, assetIds);
 	}
 
@@ -1016,7 +1022,7 @@ class API {
      *  @param  {String} assetId
      *  @param  {String} bytecode
      *
-     *  @return {Promise}
+     *  @return {Promise<string>}
      */
 	callContractNoChangingState(contractId, accountId, assetId, bytecode) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));

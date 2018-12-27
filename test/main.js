@@ -65,4 +65,34 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
+    describe('#getAccountCount()', () => {
+        it('should get account count', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const accountCount = await api.getAccountCount();
+
+                expect(accountCount).to.be.an('number');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getChainId()', () => {
+        it('should get account count', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const chainId = await api.getChainId();
+console.log(chainId)
+                // expect(accountCount).to.be.an('number');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
 });

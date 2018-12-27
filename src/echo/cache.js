@@ -15,6 +15,7 @@ class Cache {
 		this.getFullAccountsSubscriptions = new Map();
 
 		this.objectsById = new Map();
+
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
 		this.accountIdByKey = Map();
@@ -40,6 +41,7 @@ class Cache {
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
+		// this.config = new Map();
 		this.chainProperties = null;
 		this.globalProperties = null;
 		this.config = null;
