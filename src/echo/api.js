@@ -867,6 +867,19 @@ class API {
 	}
 
 	/**
+     *  @method getPotentialAddressSignatures
+     *
+     *  @param  {Object} transaction
+     *
+     *  @return {Promise}
+     */
+	getPotentialAddressSignatures(transaction) {
+		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+
+		return this.wsApi.database.getPotentialAddressSignatures(transaction);
+	}
+
+	/**
      *  @method verifyAuthority
      *
      *  @param  {Object} transaction
@@ -919,7 +932,7 @@ class API {
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		if (operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
+		if (!operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
 
 		return this.wsApi.database.getRequiredFees(operations, assetId);

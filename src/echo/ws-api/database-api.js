@@ -542,6 +542,17 @@ class DatabaseAPI {
 	}
 
 	/**
+     *  @method getPotentialAddressSignatures
+     *
+     *  @param  {Object} transaction
+     *
+     *  @return {Promise}
+     */
+	getPotentialAddressSignatures(transaction) {
+		return this.db.exec('get_potential_address_signatures', [transaction]);
+	}
+
+	/**
 	 *  @method verifyAuthority
 	 *
 	 *  @param  {Object} transaction
