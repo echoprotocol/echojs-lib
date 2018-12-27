@@ -24,6 +24,7 @@ describe('API', () => {
                 const api = new API(cache, wsApi);
                 const blockNumber = 200;
                 const block =  await api.getBlock(blockNumber);
+
                 expect(block).to.deep.equal(cache.blocks.get(blockNumber));
             } catch (e) {
                 throw e;
@@ -38,7 +39,8 @@ describe('API', () => {
                 const api = new API(cache, wsApi);
                 const blockNumber = 572118;
                 const transactionIndex = 0;
-                const transaction = await api.getTransaction(blockNumber, transactionIndex)
+                const transaction = await api.getTransaction(blockNumber, transactionIndex);
+
                 expect(transaction).to.deep.equal(cache.transactionsByBlockAndIndex.get(`${blockNumber}:${transactionIndex}`));
             } catch (e) {
                 throw e;
@@ -54,7 +56,7 @@ describe('API', () => {
                 const accountId1 = '1.2.60';
                 const accountId2 = '1.2.61';
                 const accounts = await api.getAccounts([accountId1, accountId2]);
-                // console.log(accounts)
+
                 expect(accounts).to.be.an('array');
                 expect(accounts).to.deep.include(cache.accountsById.get(accountId1));
                 expect(accounts).to.deep.include(cache.accountsById.get(accountId2));
