@@ -943,8 +943,11 @@ class API {
 	 *  Retrieve the information about the holders of the specified asset.
 	 *
 	 *  @param {String} assetId   [asset id to retrieve]
-	 *  @param {Number} start [account id to start retreiving from]
+	 *  @param {Number} start [account id to start retrieving from]
 	 *  @param {Number} limit     [count accounts (max 100)]
+	 *
+	 *  @return {Promise.<Array.<{name: String, account_id:String, amount: String}>>}
+	 *  [ { name: 'init0', account_id: '1.2.6', amount: '100000039900000' } ]
 	 */
 	getAssetHolders(assetId, start, limit = 100) {
 		if (!isAssetId(assetId)) {
@@ -967,6 +970,8 @@ class API {
 	 *  Retrieve the number of holders of the provided asset.
 	 *
 	 *  @param {String} assetId   [asset id to retrieve]
+	 *
+	 *  @return {Promise.<Number>} result - 8
 	 */
 	getAssetHoldersCount(assetId) {
 		if (!isAssetId(assetId)) {
@@ -980,6 +985,8 @@ class API {
 	 *  @method getAllAssetHolders
 	 *  Array of all asset IDs with the number of holders.
 	 *
+	 * 	@return {Promise.<Array.<{asset_id: String, count: Number}>>}
+	 * 	[ { asset_id: '1.3.0', count: 8 } ]
 	 */
 	getAllAssetHolders() {
 		return this.wsApi.asset.getAllAssetHolders();
