@@ -15,30 +15,30 @@ const urlRegex = new RegExp(
     '(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
-const idRegex = /\b\d+\.\d+\.(\d+)\b/;
+const idRegex = /^\d+\.\d+\.(\d+)$/;
 
-const accountIdRegex = /1\.2\.(\d+)\b/;
-const assetIdRegex = /1\.3\.(\d+)\b/;
-const forceSettlementIdRegex = /1\.4\.(\d+)\b/;
-const committeeMemberIdRegex = /1\.5\.(\d+)\b/;
-const witnessIdRegex = /1\.6\.(\d+)\b/;
-const limitOrderIdRegex = /1\.7\.(\d+)\b/;
-const callOrderIdRegex = /1\.8\.(\d+)\b/;
-const customIdRegex = /1\.9\.(\d+)\b/;
-const proposalIdRegex = /1\.10\.(\d+)\b/;
-const operationHistoryIdRegex = /1\.11\.(\d+)\b/;
-const withdrawPermissionIdRegex = /1\.12\.(\d+)\b/;
-const vestingBalanceIdRegex = /1\.13\.(\d+)\b/;
-const workerIdRegex = /1\.14\.(\d+)\b/;
-const balanceIdRegex = /1\.15\.(\d+)\b/;
-const contractIdRegex = /1\.16\.(\d+)\b/;
-const contractResultIdRegex = /1\.17\.(\d+)\b/;
+const accountIdRegex = /^1\.2\.[1-9]\d*$/;
+const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
+const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
+const committeeMemberIdRegex = /^1\.5\.[1-9]\d*$/;
+const witnessIdRegex = /^1\.6\.[1-9]\d*$/;
+const limitOrderIdRegex = /^1\.7\.[1-9]\d*$/;
+const callOrderIdRegex = /^1\.8\.[1-9]\d*$/;
+const customIdRegex = /^1\.9\.[1-9]\d*$/;
+const proposalIdRegex = /^1\.10\.[1-9]\d*$/;
+const operationHistoryIdRegex = /^1\.11\.[1-9]\d*$/;
+const withdrawPermissionIdRegex = /^1\.12\.[1-9]\d*$/;
+const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
+const workerIdRegex = /^1\.14\.[1-9]\d*$/;
+const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
+const contractIdRegex = /^1\.16\.[1-9]\d*$/;
+const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
 
-const accountBalanceIdRegex = /2\.5\.(\d+)\b/;
+const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;
 
-const hexRegex = /[0-9a-fA-F]+/;
-const bytecodeRegex = /[0-9a-fA-F]*/;
-const voteIdTypeRegex = /[0-3]{1}:[0-9]+/;
+const hexRegex = /^[0-9a-fA-F]+/;
+const bytecodeRegex = /^[\da-fA-F]{8}([\da-fA-F]{64})*$/;
+const voteIdTypeRegex = /^[0-3]{1}:[0-9]+/;
 
 const MAX_UINTX_VALUES = {
 	64: new BN(2).pow(64).minus(1),

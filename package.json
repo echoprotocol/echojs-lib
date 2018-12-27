@@ -36,6 +36,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
+    "chai": "^4.2.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.9.0",

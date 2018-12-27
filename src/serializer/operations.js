@@ -2,7 +2,7 @@
 import Operation from './operation';
 
 import {
-	int64, uint64, uint32, uint16, uint8, string, bool, bytes,
+	int64, uint64, uint32, uint16, uint8, string, bool, bytes, hex,
 	protocolIdType, publicKey, chainParameters, timePointSec,
 	authority, accountOptions, price, assetOptions, bitassetOptions,
 	blindInput, priceFeed, asset, vestingPolicyInitializer,
@@ -10,7 +10,8 @@ import {
 	array, set, operation, memoData, optional, emptyArray,
 } from './types';
 
-const Operations = {};
+export const Operations = {};
+export const Transactions = {};
 
 Operations.transfer = new Operation(
 	'transfer',
@@ -523,4 +524,25 @@ Operations.contractTransfer = new Operation(
 	},
 );
 
-export default Operations;
+Transactions.transaction = new Operation(
+	'transaction',
+	{
+		ref_block_num: uint16,
+		ref_block_prefix: uint32,
+		expiration: timePointSec,
+		operations: array(operation(Operations)),
+		extensions: emptyArray,
+	},
+);
+
+Transactions.signedTransaction = new Operation(
+	'signed_transaction',
+	{
+		ref_block_num: uint16,
+		ref_block_prefix: uint32,
+		expiration: timePointSec,
+		operations: array(operation(Operations)),
+		extensions: emptyArray,
+		signatures: array(hex),
+	},
+);

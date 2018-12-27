@@ -14,12 +14,11 @@ import {
 	isContractResultId,
 	isBytecode,
 	isRipemd160,
-	isTransaction,
-	isSignedTransaction,
 	isPublicKey,
 	isVoteId,
-	isOperation,
 } from '../utils/validator';
+
+import { Transactions, Operations } from '../serializer/operations';
 
 class API {
 
@@ -832,7 +831,7 @@ class API {
      *  @return {Promise}
      */
 	getTransactionHex(transaction) {
-		if (!isSignedTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// transaction is signed
 		return this.wsApi.database.getTransactionHex(transaction);
@@ -847,7 +846,7 @@ class API {
      *  @return {Promise}
      */
 	getRequiredSignatures(transaction, availableKeys) {
-		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 		if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
 		if (availableKeys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
 
@@ -862,7 +861,7 @@ class API {
      *  @return {Promise}
      */
 	getPotentialSignatures(transaction) {
-		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.getPotentialSignatures(transaction);
 	}
@@ -875,7 +874,7 @@ class API {
      *  @return {Promise}
      */
 	verifyAuthority(transaction) {
-		if (!isTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.verifyAuthority(transaction);
 	}
@@ -904,7 +903,7 @@ class API {
      *  @return {Promise}
      */
 	validateTransaction(transaction) {
-		if (!isSignedTransaction(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.signedTransaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// signed transaction
 		return this.wsApi.database.validateTransaction(transaction);
@@ -920,7 +919,7 @@ class API {
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		if (operations.some((op) => !isOperation(op))) return Promise.reject(new Error('Operations should contain valid operations'));
+		if (operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
 
 		return this.wsApi.database.getRequiredFees(operations, assetId);
