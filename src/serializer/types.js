@@ -4,7 +4,7 @@ import {
 	isUInt64, isUInt32, isUInt16, isUInt8, isInt64, isString, isHex, isBoolean, isArray, isVoid, isBytes,
 	isAccountId, isAssetId, isForceSettlementId, isCommitteeMemberId, isWitnessId, isLimitOrderId, isCallOrderId, isCustomId,
 	isProposalId, isOperationHistoryId, isWithdrawPermissionId, isVestingBalanceId, isWorkerId, isBalanceId, isContractId, isVoteId,
-	isObjectId, isPublicKey,
+	isPublicKey, isTimePointSec,
 	isObject, isEmptyObject, isEmptyArray,
 } from '../utils/validator';
 
@@ -16,10 +16,11 @@ export const int64 = new Type(isInt64);
 export const string = new Type(isString);
 export const hex = new Type(isHex);
 export const bool = new Type(isBoolean);
-export const objectId = new Type(isObjectId);
 
 export const object = new Type(isObject);
 export const publicKey = new Type(isPublicKey);
+
+export const timePointSec = new Type(isTimePointSec);
 
 export const array = (type) => new Type((v) => isArray(v) && v.every((e) => type.validation(e)));
 export const set = (type) => new Type((v) => isArray(v) && v.every((e) => type.validation(e) && new Set(v).size === v.length));
@@ -178,239 +179,335 @@ const blockIdPredicate = new Type((v) =>
     isObject(v[1]) &&
     isBytes(v[1].id, 20));
 
-const transfer_operation_fee_parameters = new Type((v) =>
+const transferOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 0 &&
+	isObject(v[1]) &&
+    isUInt64(v[1].fee) &&
+    isUInt32(v[1].price_per_kbyte));
+
+const limitOrderCreateOperationFeeParameters = new Type((v) =>
+    isArray(v) &&
+    v[0] === 1 &&
+    isObject(v[1]) &&
+    isUInt64(v[1].fee));
+
+const limitOrderCancelOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 2 &&
+	isObject(v[1]) &&
+    isUInt64(v[1].fee));
+
+const callOrderUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 3 &&
+	isObject(v[1]) &&
+    isUInt64(v[1].fee));
+
+const fillOrderOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+    v[0] === 4 &&
+    isEmptyObject(v[1]));
+
+const accountCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 5 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const accountUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 6 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const accountWhitelistOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 7 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const accountUpgradeOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 8 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].membership_annual_fee) &&
+    isUInt64(v[1].membership_lifetime_fee));
+
+const accountTransferOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 9 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 10 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].symbol3) &&
+	isUInt64(v[1].symbol4) &&
+	isUInt64(v[1].long_symbol) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const assetUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 11 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const assetUpdateBitassetOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 12 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetUpdateFeedProducersOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 13 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetIssueOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 14 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const assetReserveOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 15 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetFundFeePoolOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 16 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetSettleOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 17 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetGlobalSettleOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 18 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetPublishFeedOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 19 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const witnessCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 20 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const witnessUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 21 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const proposalCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 22 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const proposalUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 23 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const proposalDeleteOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 24 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const withdrawPermissionCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 25 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const withdrawPermissionUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 26 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const withdrawPermissionClaimOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 27 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const withdrawPermissionDeleteOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 28 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const committeeMemberCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 29 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const committeeMemberUpdateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 30 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const committeeMemberUpdateGlobalParametersOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 31 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const vestingBalanceCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 32 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const vestingBalanceWithdrawOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 33 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const workerCreateOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 34 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const customOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 35 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const assertOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 36 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const balanceClaimOperationFeeParameters = new Type((v) => 'balance_claimOperationFeeParameters');
+
+const overrideTransferOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 37 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const transferToBlindOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 38 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const blindTransferOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 39 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee) &&
+	isUInt32(v[1].price_per_kbyte));
+
+const transferFromBlindOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 40 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const assetsettleCancelOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+    v[0] === 41 &&
+    isEmptyObject(v[1]));
+
+const assetclaimFeesOperationFeeParameters = new Type((v) =>
+	isArray(v) &&
+	v[0] === 42 &&
+	isObject(v[1]) &&
+	isUInt64(v[1].fee));
+
+const echorandConfig = new Type((v) =>
 	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const limit_order_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const limit_order_cancel_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const call_order_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const fill_order_operation_fee_parameters = new Type((v) => 'fill_order_operation_fee_parameters');
-
-const account_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const account_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const account_whitelist_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const account_upgrade_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.membership_annual_fee) &&
-    isUInt64(v.membership_lifetime_fee));
-
-const account_transfer_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.symbol3) &&
-    isUInt64(v.symbol4) &&
-    isUInt64(v.long_symbol) &&
-    isUInt32(v.price_per_kbyte));
-
-const asset_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const asset_update_bitasset_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_update_feed_producers_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_issue_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const asset_reserve_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_fund_fee_pool_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_settle_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_global_settle_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const asset_publish_feed_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const witness_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const witness_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const proposal_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const proposal_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const proposal_delete_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const withdraw_permission_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const withdraw_permission_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const withdraw_permission_claim_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const withdraw_permission_delete_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const committee_member_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const committee_member_update_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const committee_member_update_global_parameters_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const vesting_balance_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const vesting_balance_withdraw_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const worker_create_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const custom_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const assert_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee));
-
-const balance_claim_operation_fee_parameters = new Type((v) => 'balance_claim_operation_fee_parameters');
-
-const override_transfer_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_kbyte));
-
-const transfer_to_blind_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-    isUInt64(v.fee) &&
-    isUInt32(v.price_per_output));
-
-const blind_transfer_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-	isUInt64(v.fee) &&
-	isUInt32(v.price_per_output));
-
-const transfer_from_blind_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-	isUInt64(v.fee));
-
-const asset_settle_cancel_operation_fee_parameters = new Type((v) => 'asset_settle_cancel_operation_fee_parameters');
-
-const asset_claim_fees_operation_fee_parameters = new Type((v) =>
-	isObject(v) &&
-	isUInt64(v.fee));
-
+    isUInt64(v._time_net_1mb) &&
+    isUInt64(v._time_net_256b) &&
+    isUInt64(v._creator_count) &&
+    isUInt64(v._verifier_count) &&
+    isUInt64(v._ok_threshold) &&
+    isUInt64(v._max_bba_steps) &&
+    isUInt64(v._gc1_delay));
 
 const feeParameters = custom([
-	transfer_operation_fee_parameters,
-	limit_order_create_operation_fee_parameters,
-	limit_order_cancel_operation_fee_parameters,
-	call_order_update_operation_fee_parameters,
-	fill_order_operation_fee_parameters,
-	account_create_operation_fee_parameters,
-	account_update_operation_fee_parameters,
-	account_whitelist_operation_fee_parameters,
-	account_upgrade_operation_fee_parameters,
-	account_transfer_operation_fee_parameters,
-	asset_create_operation_fee_parameters,
-	asset_update_operation_fee_parameters,
-	asset_update_bitasset_operation_fee_parameters,
-	asset_update_feed_producers_operation_fee_parameters,
-	asset_issue_operation_fee_parameters,
-	asset_reserve_operation_fee_parameters,
-	asset_fund_fee_pool_operation_fee_parameters,
-	asset_settle_operation_fee_parameters,
-	asset_global_settle_operation_fee_parameters,
-	asset_publish_feed_operation_fee_parameters,
-	witness_create_operation_fee_parameters,
-	witness_update_operation_fee_parameters,
-	proposal_create_operation_fee_parameters,
-	proposal_update_operation_fee_parameters,
-	proposal_delete_operation_fee_parameters,
-	withdraw_permission_create_operation_fee_parameters,
-	withdraw_permission_update_operation_fee_parameters,
-	withdraw_permission_claim_operation_fee_parameters,
-	withdraw_permission_delete_operation_fee_parameters,
-	committee_member_create_operation_fee_parameters,
-	committee_member_update_operation_fee_parameters,
-	committee_member_update_global_parameters_operation_fee_parameters,
-	vesting_balance_create_operation_fee_parameters,
-	vesting_balance_withdraw_operation_fee_parameters,
-	worker_create_operation_fee_parameters,
-	custom_operation_fee_parameters,
-	assert_operation_fee_parameters,
-	balance_claim_operation_fee_parameters,
-	override_transfer_operation_fee_parameters,
-	transfer_to_blind_operation_fee_parameters,
-	blind_transfer_operation_fee_parameters,
-	transfer_from_blind_operation_fee_parameters,
-	asset_settle_cancel_operation_fee_parameters,
-	asset_claim_fees_operation_fee_parameters,
-
+	transferOperationFeeParameters,
+	limitOrderCreateOperationFeeParameters,
+	limitOrderCancelOperationFeeParameters,
+	callOrderUpdateOperationFeeParameters,
+	fillOrderOperationFeeParameters,
+	accountCreateOperationFeeParameters,
+	accountUpdateOperationFeeParameters,
+	accountWhitelistOperationFeeParameters,
+	accountUpgradeOperationFeeParameters,
+	accountTransferOperationFeeParameters,
+	assetCreateOperationFeeParameters,
+	assetUpdateOperationFeeParameters,
+	assetUpdateBitassetOperationFeeParameters,
+	assetUpdateFeedProducersOperationFeeParameters,
+	assetIssueOperationFeeParameters,
+	assetReserveOperationFeeParameters,
+	assetFundFeePoolOperationFeeParameters,
+	assetSettleOperationFeeParameters,
+	assetGlobalSettleOperationFeeParameters,
+	assetPublishFeedOperationFeeParameters,
+	witnessCreateOperationFeeParameters,
+	witnessUpdateOperationFeeParameters,
+	proposalCreateOperationFeeParameters,
+	proposalUpdateOperationFeeParameters,
+	proposalDeleteOperationFeeParameters,
+	withdrawPermissionCreateOperationFeeParameters,
+	withdrawPermissionUpdateOperationFeeParameters,
+	withdrawPermissionClaimOperationFeeParameters,
+	withdrawPermissionDeleteOperationFeeParameters,
+	committeeMemberCreateOperationFeeParameters,
+	committeeMemberUpdateOperationFeeParameters,
+	committeeMemberUpdateGlobalParametersOperationFeeParameters,
+	vestingBalanceCreateOperationFeeParameters,
+	vestingBalanceWithdrawOperationFeeParameters,
+	workerCreateOperationFeeParameters,
+	customOperationFeeParameters,
+	assertOperationFeeParameters,
+	balanceClaimOperationFeeParameters,
+	overrideTransferOperationFeeParameters,
+	transferToBlindOperationFeeParameters,
+	blindTransferOperationFeeParameters,
+	transferFromBlindOperationFeeParameters,
+	assetsettleCancelOperationFeeParameters,
+	assetclaimFeesOperationFeeParameters,
 ]);
 
 const feeSchedule = new Type((v) =>
@@ -479,5 +576,6 @@ export const chainParameters = new Type((v) =>
     isUInt16(v.accounts_per_fee_scale) &&
     isUInt8(v.account_fee_scale_bitshifts) &&
     isUInt8(v.max_authority_depth) &&
-	isEmptyArray(max_authority_depth));
+    echorandConfig.validate(v.echorand_config) &&
+	isEmptyArray(v.extensions));
 

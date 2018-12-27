@@ -1,10 +1,9 @@
 /* eslint-disable max-len */
 import Operation from './operation';
-import Type from './type';
 
 import {
 	int64, uint64, uint32, uint16, uint8, string, bool, bytes,
-	protocolIdType, objectId, publicKey,
+	protocolIdType, publicKey, chainParameters, timePointSec,
 	authority, accountOptions, price, assetOptions, bitassetOptions,
 	blindInput, priceFeed, asset, vestingPolicyInitializer,
 	workerInitializer, predicate, blindOutput,
@@ -13,7 +12,7 @@ import {
 
 const Operations = {};
 
-Operations.transfer = new Operation( // OK
+Operations.transfer = new Operation(
 	'transfer',
 	{
 		fee: asset,
@@ -25,20 +24,20 @@ Operations.transfer = new Operation( // OK
 	},
 );
 
-Operations.limitOrderCreate = new Operation( // OK
+Operations.limitOrderCreate = new Operation(
 	'limit_order_create',
 	{
 		fee: asset,
 		seller: protocolIdType('account'),
 		amount_to_sell: asset,
 		min_to_receive: asset,
-		expiration: uint64, // time_point_sec
+		expiration: timePointSec, // time_point_sec
 		fill_or_kill: bool,
 		extensions: emptyArray,
 	},
 );
 
-Operations.limitOrderCancel = new Operation( // OK
+Operations.limitOrderCancel = new Operation(
 	'limit_order_cancel',
 	{
 		fee: asset,
@@ -48,7 +47,7 @@ Operations.limitOrderCancel = new Operation( // OK
 	},
 );
 
-Operations.callOrderUpdate = new Operation( // OK
+Operations.callOrderUpdate = new Operation(
 	'call_order_update',
 	{
 		fee: asset,
@@ -59,7 +58,7 @@ Operations.callOrderUpdate = new Operation( // OK
 	},
 );
 
-Operations.bidCollateral = new Operation( // OK
+Operations.bidCollateral = new Operation(
 	'bid_collateral',
 	{
 		fee: asset,
@@ -70,7 +69,7 @@ Operations.bidCollateral = new Operation( // OK
 	},
 );
 
-Operations.accountCreate = new Operation( // OK
+Operations.accountCreate = new Operation(
 	'account_create',
 	{
 		fee: asset,
@@ -85,7 +84,7 @@ Operations.accountCreate = new Operation( // OK
 	},
 );
 
-Operations.accountUpdate = new Operation( // OK
+Operations.accountUpdate = new Operation(
 	'account_update',
 	{
 		fee: asset,
@@ -97,7 +96,7 @@ Operations.accountUpdate = new Operation( // OK
 	},
 );
 
-Operations.accountWhitelist = new Operation( // OK
+Operations.accountWhitelist = new Operation(
 	'account_whitelist',
 	{
 		fee: asset,
@@ -108,7 +107,7 @@ Operations.accountWhitelist = new Operation( // OK
 	},
 );
 
-Operations.accountUpgrade = new Operation( // OK
+Operations.accountUpgrade = new Operation(
 	'account_upgrade',
 	{
 		fee: asset,
@@ -118,7 +117,7 @@ Operations.accountUpgrade = new Operation( // OK
 	},
 );
 
-Operations.accountTransfer = new Operation( // OK
+Operations.accountTransfer = new Operation(
 	'account_transfer',
 	{
 		fee: asset,
@@ -128,7 +127,7 @@ Operations.accountTransfer = new Operation( // OK
 	},
 );
 
-Operations.assetCreate = new Operation( // OK
+Operations.assetCreate = new Operation(
 	'asset_create',
 	{
 		fee: asset,
@@ -142,7 +141,7 @@ Operations.assetCreate = new Operation( // OK
 	},
 );
 
-Operations.assetUpdate = new Operation( // OK
+Operations.assetUpdate = new Operation(
 	'asset_update',
 	{
 		fee: asset,
@@ -154,7 +153,7 @@ Operations.assetUpdate = new Operation( // OK
 	},
 );
 
-Operations.assetUpdate_bitasset = new Operation( // OK
+Operations.assetUpdate_bitasset = new Operation(
 	'asset_update_bitasset',
 	{
 		fee: asset,
@@ -165,7 +164,7 @@ Operations.assetUpdate_bitasset = new Operation( // OK
 	},
 );
 
-Operations.assetUpdateFeedProducers = new Operation( // OK
+Operations.assetUpdateFeedProducers = new Operation(
 	'asset_update_feed_producers',
 	{
 		fee: asset,
@@ -176,7 +175,7 @@ Operations.assetUpdateFeedProducers = new Operation( // OK
 	},
 );
 
-Operations.assetIssue = new Operation( // OK
+Operations.assetIssue = new Operation(
 	'asset_issue',
 	{
 		fee: asset,
@@ -188,7 +187,7 @@ Operations.assetIssue = new Operation( // OK
 	},
 );
 
-Operations.assetReserve = new Operation( // OK
+Operations.assetReserve = new Operation(
 	'asset_reserve',
 	{
 		fee: asset,
@@ -198,7 +197,7 @@ Operations.assetReserve = new Operation( // OK
 	},
 );
 
-Operations.assetFundFeePool = new Operation( // OK
+Operations.assetFundFeePool = new Operation(
 	'asset_fund_fee_pool',
 	{
 		fee: asset,
@@ -209,7 +208,7 @@ Operations.assetFundFeePool = new Operation( // OK
 	},
 );
 
-Operations.assetSettle = new Operation( // OK
+Operations.assetSettle = new Operation(
 	'asset_settle',
 	{
 		fee: asset,
@@ -219,7 +218,7 @@ Operations.assetSettle = new Operation( // OK
 	},
 );
 
-Operations.assetGlobalSettle = new Operation( // OK
+Operations.assetGlobalSettle = new Operation(
 	'asset_global_settle',
 	{
 		fee: asset,
@@ -230,7 +229,7 @@ Operations.assetGlobalSettle = new Operation( // OK
 	},
 );
 
-Operations.assetPublishFeed = new Operation( // OK
+Operations.assetPublishFeed = new Operation(
 	'asset_publish_feed',
 	{
 		fee: asset,
@@ -241,7 +240,7 @@ Operations.assetPublishFeed = new Operation( // OK
 	},
 );
 
-Operations.witnessCreate = new Operation( // OK
+Operations.witnessCreate = new Operation(
 	'witness_create',
 	{
 		fee: asset,
@@ -251,7 +250,7 @@ Operations.witnessCreate = new Operation( // OK
 	},
 );
 
-Operations.witnessUpdate = new Operation( // OK
+Operations.witnessUpdate = new Operation(
 	'witness_update',
 	{
 		fee: asset,
@@ -262,19 +261,19 @@ Operations.witnessUpdate = new Operation( // OK
 	},
 );
 
-Operations.proposalCreate = new Operation( // OK
+Operations.proposalCreate = new Operation(
 	'proposal_create',
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
-		expiration_time: uint64, // time_point_sec
-		proposed_ops: array(new Type((op) => Object.values(Operations).some((opType) => opType.validate(op)))),
+		expiration_time: timePointSec, // time_point_sec
+		proposed_ops: array(operation(Operations)),
 		review_period_seconds: optional(uint32),
 		extensions: emptyArray,
 	},
 );
 
-Operations.proposalUpdate = new Operation( // OK
+Operations.proposalUpdate = new Operation(
 	'proposal_update',
 	{
 		fee: asset,
@@ -290,7 +289,7 @@ Operations.proposalUpdate = new Operation( // OK
 	},
 );
 
-Operations.proposalDelete = new Operation( // OK
+Operations.proposalDelete = new Operation(
 	'proposal_delete',
 	{
 		fee: asset,
@@ -301,7 +300,7 @@ Operations.proposalDelete = new Operation( // OK
 	},
 );
 
-Operations.withdrawPermission_create = new Operation( // OK
+Operations.withdrawPermission_create = new Operation(
 	'withdraw_permission_create',
 	{
 		fee: asset,
@@ -310,11 +309,11 @@ Operations.withdrawPermission_create = new Operation( // OK
 		withdrawal_limit: asset,
 		withdrawal_period_sec: uint32,
 		periods_until_expiration: uint32,
-		period_start_time: uint64, // time_point_sec
+		period_start_time: timePointSec, // time_point_sec
 	},
 );
 
-Operations.withdrawPermissionUpdate = new Operation( // OK
+Operations.withdrawPermissionUpdate = new Operation(
 	'withdraw_permission_update',
 	{
 		fee: asset,
@@ -323,12 +322,12 @@ Operations.withdrawPermissionUpdate = new Operation( // OK
 		permission_to_update: protocolIdType('withdraw_permission'),
 		withdrawal_limit: asset,
 		withdrawal_period_sec: uint32,
-		period_start_time: uint64, // time_point_sec
+		period_start_time: timePointSec, // time_point_sec
 		periods_until_expiration: uint32,
 	},
 );
 
-Operations.withdrawPermissionClaim = new Operation( // OK
+Operations.withdrawPermissionClaim = new Operation(
 	'withdraw_permission_claim',
 	{
 		fee: asset,
@@ -340,7 +339,7 @@ Operations.withdrawPermissionClaim = new Operation( // OK
 	},
 );
 
-Operations.withdrawPermissionDelete = new Operation( // OK
+Operations.withdrawPermissionDelete = new Operation(
 	'withdraw_permission_delete',
 	{
 		fee: asset,
@@ -350,7 +349,7 @@ Operations.withdrawPermissionDelete = new Operation( // OK
 	},
 );
 
-Operations.vestingBalanceCreate = new Operation( // OK
+Operations.vestingBalanceCreate = new Operation(
 	'vesting_balance_create',
 	{
 		fee: asset,
@@ -361,7 +360,7 @@ Operations.vestingBalanceCreate = new Operation( // OK
 	},
 );
 
-Operations.vestingBalanceWithdraw = new Operation( // OK
+Operations.vestingBalanceWithdraw = new Operation(
 	'vesting_balance_withdraw',
 	{
 		fee: asset,
@@ -371,13 +370,13 @@ Operations.vestingBalanceWithdraw = new Operation( // OK
 	},
 );
 
-Operations.workerCreate = new Operation( // OK
+Operations.workerCreate = new Operation(
 	'worker_create',
 	{
 		fee: asset,
 		owner: protocolIdType('account'),
-		work_begin_date: uint64, // time_point_sec
-		work_end_date: uint64, // time_point_sec
+		work_begin_date: timePointSec, // time_point_sec
+		work_end_date: timePointSec, // time_point_sec
 		daily_pay: int64,
 		name: string,
 		url: string,
@@ -385,7 +384,7 @@ Operations.workerCreate = new Operation( // OK
 	},
 );
 
-Operations.custom = new Operation( // OK
+Operations.custom = new Operation(
 	'custom',
 	{
 		fee: asset,
@@ -396,7 +395,7 @@ Operations.custom = new Operation( // OK
 	},
 );
 
-Operations.assert = new Operation( // OK
+Operations.assert = new Operation(
 	'assert',
 	{
 		fee: asset,
@@ -407,7 +406,7 @@ Operations.assert = new Operation( // OK
 	},
 );
 
-Operations.balanceClaim = new Operation( // OK
+Operations.balanceClaim = new Operation(
 	'balance_claim',
 	{
 		fee: asset,
@@ -418,7 +417,7 @@ Operations.balanceClaim = new Operation( // OK
 	},
 );
 
-Operations.committeeMemberCreate = new Operation( // OK
+Operations.committeeMemberCreate = new Operation(
 	'committee_member_create',
 	{
 		fee: asset,
@@ -427,7 +426,7 @@ Operations.committeeMemberCreate = new Operation( // OK
 	},
 );
 
-Operations.committeeMemberUpdate = new Operation( // OK
+Operations.committeeMemberUpdate = new Operation(
 	'committee_member_update',
 	{
 		fee: asset,
@@ -437,15 +436,15 @@ Operations.committeeMemberUpdate = new Operation( // OK
 	},
 );
 
-Operations.committeeMemberUpdateGlobalParameters = new Operation( // OK
+Operations.committeeMemberUpdateGlobalParameters = new Operation(
 	'committee_member_update_global_parameters',
 	{
 		fee: asset,
-		new_parameters: Operations.chainParameters,
+		new_parameters: chainParameters,
 	},
 );
 
-Operations.overrideTransfer = new Operation( // OK
+Operations.overrideTransfer = new Operation(
 	'override_transfer',
 	{
 		fee: asset,
@@ -458,7 +457,7 @@ Operations.overrideTransfer = new Operation( // OK
 	},
 );
 
-Operations.transferToBlind = new Operation( // OK
+Operations.transferToBlind = new Operation(
 	'transfer_to_blind',
 	{
 		fee: asset,
@@ -469,7 +468,7 @@ Operations.transferToBlind = new Operation( // OK
 	},
 );
 
-Operations.blindTransfer = new Operation( // OK
+Operations.blindTransfer = new Operation(
 	'blind_transfer',
 	{
 		fee: asset,
@@ -478,7 +477,7 @@ Operations.blindTransfer = new Operation( // OK
 	},
 );
 
-Operations.transferFromBlind = new Operation( // OK
+Operations.transferFromBlind = new Operation(
 	'transfer_from_blind',
 	{
 		fee: asset,
@@ -489,7 +488,7 @@ Operations.transferFromBlind = new Operation( // OK
 	},
 );
 
-Operations.assetClaimFees = new Operation( // OK
+Operations.assetClaimFees = new Operation(
 	'asset_claim_fees',
 	{
 		fee: asset,

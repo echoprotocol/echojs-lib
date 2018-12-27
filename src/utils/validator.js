@@ -239,3 +239,13 @@ export const validateOptionsError = (options) => {
 
 	return errorParameter ? `Parameter ${errorParameter} is invalid` : false;
 };
+
+export const isTimePointSec = (v) => {
+	if (!isString(v)) return false;
+
+	try {
+		return new Date(v).toISOString();
+	} catch (error) {
+		return false;
+	}
+};
