@@ -95,7 +95,7 @@ export const isFunction = (v) => typeof v === 'function';
 
 export const isBoolean = (v) => typeof v === 'boolean';
 
-export const isObject = (v) => typeof v === 'object';
+export const isObject = (v) => typeof v === 'object' && v !== null;
 
 export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 

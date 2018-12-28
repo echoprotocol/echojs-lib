@@ -10,6 +10,7 @@ import {
 	array, set, operation, memoData, optional, emptyArray,
 } from './types';
 
+/** @type {{[name:string]:Operation}} */
 export const Operations = {};
 export const Transactions = {};
 

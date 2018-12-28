@@ -43,7 +43,7 @@ const map = (keyType, valueType) => new Type((v) => {
 
 export const bytes = (length) => new Type((v) => isBytes(v, length));
 export const operation = (operations) => new Type((v) => operations.some((op) => op.verify(v)));
-export const asset = new Type((v) => isObject(v) && isInt64(v.amount) && isAssetId((v.asset_id)));
+export const asset = new Type((v) => isObject(v) && isInt64(v.amount) && isAssetId((v.assetId)));
 export const memoData = new Type((v) => isObject(v) && isPublicKey(v.from) && isPublicKey(v.to) && isUInt64(v.nonce) && isHex(v.memo));
 
 export const custom = (types) => new Type((v) => types.some((type) => type.validate(v)));
@@ -170,7 +170,7 @@ const assetSymbolEqLitPredicate = new Type((v) =>
 	isArray(v) &&
     v[0] === 1 &&
     isObject(v[1]) &&
-    protocolIdType('asset').validate(v[1].asset_id) &&
+    protocolIdType('asset').validate(v[1].assetId) &&
     isString(v[1].symbol));
 
 const blockIdPredicate = new Type((v) =>

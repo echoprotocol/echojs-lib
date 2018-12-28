@@ -4,7 +4,7 @@
   "description": "Pure JavaScript ECHO library for node.js",
   "main": "./index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register test/**/*.js",
+    "test": "mocha --require babel-core/register --require babel-polyfill test/**/*.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"
@@ -30,6 +30,7 @@
     "ecurve": "^1.0.6",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
+    "lodash": "^4.17.11",
     "ws": "^6.1.2"
   },
   "devDependencies": {
