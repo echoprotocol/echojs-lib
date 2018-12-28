@@ -21,6 +21,8 @@ import {
 
 import { Transactions, Operations } from '../serializer/operations';
 
+/** @typedef {import("bignumber.js").default} BigNumber */
+
 class API {
 
 	/**
@@ -1028,7 +1030,7 @@ class API {
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		if (!operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
+		// if (!operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
 
 		return this.wsApi.database.getRequiredFees(operations, assetId);
@@ -1163,6 +1165,18 @@ class API {
 		if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
 
 		return this.wsApi.database.getRecentTransactionById(transactionId);
+	}
+
+	/**
+	 * @param {string} assetId
+	 * @returns {Promise<BigNumber>}
+	 */
+	async getFeePool(assetId) {
+		if (!isAssetId(assetId)) throw new Error('invalid assetId format');
+		const [asset] = await this.getObjects([assetId], true);
+		if (!asset) throw new Error(`asset ${assetId} not found`);
+		const [assetDynamicData] = await this.getObjects([asset.dynamic_asset_data_id]);
+		return assetDynamicData.fee_pool;
 	}
 
 }

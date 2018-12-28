@@ -2,9 +2,12 @@ import 'mocha';
 import { expect } from 'chai';
 import echo from '../../';
 import Transaction from '../../src/echo/transaction';
-import { strictEqual, notStrictEqual, deepStrictEqual } from 'assert';
+import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 
 describe('Transaction', () => {
+
+	before(() => echo.connect('wss://echo-dev.io/ws'));
+
 	describe('initialization', () => {
 		it('echo is not instance of Echo', () => {
 			expect(() => new Transaction('not_a_Echo_instance')).to.throw(Error, 'value is not instance of Echo');
@@ -51,11 +54,55 @@ describe('Transaction', () => {
 				};
 				const transactionWithOperation = transaction.addOperation('transfer', operationProps);
 				strictEqual(transaction, transactionWithOperation);
+				deepStrictEqual(transaction.operations, [[0, operationProps]]);
+			});
+			// TODO: test with excess fields
+		});
+	});
+
+	describe('setRequiredFees', () => {
+		describe('failure', () => {
+			it('no operations', async () => {
+				const transaction = new Transaction(echo);
+				try {
+					await transaction.setRequiredFees();
+				} catch (error) {
+					strictEqual(error.message, 'no operations');
+					return;
+				}
+				fail('should throws');
+			});
+		});
+		describe('successful', () => {
+			it('default asset', async () => {
+				const operationProps = {
+					from: '1.2.1',
+					to: '1.2.2',
+					amount: { amount: 123, assetId: '1.3.0' },
+					extensions: [],
+				};
+				const transaction = new Transaction(echo).addOperation('transfer', operationProps);
+				await transaction.setRequiredFees();
 				deepStrictEqual(transaction.operations, [[0, {
 					...operationProps,
-					fee: { amount: 0, assetId: '1.3.0' },
+					fee: { assetId: '1.3.0', amount: 20 },
 				}]]);
 			});
+			it('custom asset', async () => {
+				const operationProps = {
+					from: '1.2.1',
+					to: '1.2.2',
+					amount: { amount: 123, assetId: '1.3.0' },
+					fee: { assetId: '1.3.1' },
+					extensions: [],
+				};
+				const transaction = new Transaction(echo).addOperation('transfer', operationProps);
+				await transaction.setRequiredFees();
+				const { fee } = transaction.operations[0][1];
+				strictEqual(fee.assetId, '1.3.1');
+				ok(fee.amount > 0);
+			});
+
 		});
 	});
 });
