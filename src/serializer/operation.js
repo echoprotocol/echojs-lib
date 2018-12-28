@@ -1,22 +1,23 @@
-import { isObject } from '../utils/validator';
+/* eslint-disable guard-for-in,no-restricted-syntax */
+import { isObject, isArray } from '../utils/validator';
 
 class Operation {
 
-	constructor(operationName, options) {
-		this.operationName = operationName;
+	constructor(operationId, options) {
+		this.operationId = operationId;
 		this.options = options;
 	}
 
-    validate(operationObject = {}) {
-	    if (!isObject(operationObject)) return false;
+	validate(operation = []) {
+		if (!isArray(operation)) return false;
 
-		if (operationObject.operationName !== this.operationName) return false;
-		if (!isObject(operationObject.options)) return false;
+		if (operation[0] !== this.operationId) return false;
+		if (!isObject(operation[1])) return false;
 
 		const optionsEntries = Object.entries(this.options);
 
 		for (const [key, validator] in optionsEntries) {
-			const value = operationObject.options[key];
+			const value = operation[1][key];
 			if (!value) return false;
 			if (!validator.validate(value)) return false;
 		}

@@ -134,36 +134,9 @@ export const isHex = (v) => isString(v) && hexRegex.test(v);
 export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
 
 
-export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v) && v.length % 2 === 0;
+export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v);
 
 export const isRipemd160 = (v) => isHex(v) && v.length === 40;
-
-export const isTransaction = (v) => isObjectId(v);
-
-export const isOperation = (v) => // TODO fix in contract
-	isArray(v) &&
-    isUInt64(v[0]) && // operation
-    isObject(v[1]) && // operation body
-    isObject(v[1].fee) && // fee object
-    isString(v[1].fee.amount) && // fee amount
-    isAssetId(v[1].fee.asset_id) && // fee asset
-    isObject(v[1].amount) && // amount object
-    isString(v[1].amount.amount) && // amount sum
-    isAssetId(v[1].amount.asset_id) && // amount asset
-    isArray(v[1].extensions) && // extension
-    isAccountId(v[1].from) && // from id
-    isAccountId(v[1].to); // to id
-
-export const isSignedTransaction = (v) => // TODO fix in contract
-	isObject(v) &&
-    isUInt64(v.ref_block_num) &&
-    isUInt64(v.ref_block_prefix) &&
-    isString(v.expiration) && // date
-    isArray(v.operations) &&
-    v.operations.every((op) => isOperation(op)) &&
-    isArray(v.extensions) &&
-    isArray(v.signatures);
-
 
 export const isAssetName = (v) =>
 	!isEmpty(v) &&
@@ -180,16 +153,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
 	const prefix = v.slice(0, addressPrefix.length);
 
-	if (addressPrefix !== prefix) return false;
-
-	v = v.slice(addressPrefix.length);
-
-	v = Buffer.from(decode(v), 'binary');
-	const checksum = v.slice(-4);
-	v = v.slice(0, -4);
-	let newChecksum = ripemd160(v);
-	newChecksum = newChecksum.slice(0, 4).toString('hex');
-	return checksum === newChecksum;
+	return addressPrefix !== prefix;
 };
 
 export const isAccountName = (v) => {

@@ -1,4 +1,5 @@
 /* eslint-disable no-continue,max-len */
+
 import {
 	isArray,
 	isObjectId,
@@ -9,7 +10,7 @@ import {
 	isAccountName,
 	isString,
 	isAssetId,
-	isAccountBalanceId,
+	isBalanceId,
 	isContractId,
 	isContractResultId,
 	isBytecode,
@@ -69,7 +70,7 @@ class API {
      * @returns {Promise.<Array.<*>>}
      * @private
      */
-	async _getArrayData(array, cacheName, methodName, force = false) {
+	async _getArrayData(array, cacheName, methodName, force = false, dupicateToObjectById = false) {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
@@ -104,6 +105,61 @@ class API {
 			const requestedObject = requestedObjects.shift();
 
 			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
+			if (dupicateToObjectById) {
+				this.cache.setInMap('objectsById', key, requestedObject);
+			}
+		}
+
+		return resultArray;
+	}
+
+	/**
+     *
+     * @param {Array} array
+     * @param {String} cacheName
+     * @param {String} methodName
+     * @param {Boolean} force
+     * @param {Object} cacheParams
+     *
+     * @returns {Promise.<Array.<*>>}
+     * @private
+     */
+	async _getArrayDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams) {
+		const { length } = array;
+
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
+
+		for (let i = 0; i < length; i += 1) {
+			const key = array[i];
+
+			if (!force) {
+				const cacheValue = this.cache[cacheName].get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjectsKeys.push(key);
+		}
+
+		let requestedObjects;
+
+		try {
+			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
+		} catch (error) {
+			throw error;
+		}
+
+		for (let i = 0; i < length; i += 1) {
+			if (resultArray[i]) continue;
+			const key = requestedObjectsKeys.shift();
+			const requestedObject = requestedObjects.shift();
+
+			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
+			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
 		}
 
 		return resultArray;
@@ -119,15 +175,21 @@ class API {
      * @returns {Promise.<*>}
      * @private
      */
-	async _getSingleData(key, cacheName, methodName, force = false) {
+	async _getSingleData(key, cacheName, methodName, force = false, dupicateToObjectById = false) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
 
-			if (cacheValue) return cacheValue;
+			if (cacheValue) {
+				return cacheValue;
+			}
 		}
 
 		try {
 			const requestedObject = await this.wsApi.database[methodName](key);
+
+			if (dupicateToObjectById) {
+				this.cache.setInMap('objectsById', key, requestedObject);
+			}
 
 			return this.cache.setInMap(cacheName, key, requestedObject);
 		} catch (error) {
@@ -150,7 +212,9 @@ class API {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
 
-			if (cacheValue) return cacheValue;
+			if (cacheValue) {
+				return cacheValue;
+			}
 		}
 
 		try {
@@ -169,9 +233,9 @@ class API {
      *
      *  @return {Promise}
      */
-	getObjects(objectIds, force = false) {
+	getObjects(objectIds, force = false) { // TODO save to categorical maps
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
-		if (objectIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
+		if (!objectIds.every((id) => isObjectId(id))) return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this._getArrayData(objectIds, 'objectsById', 'getObjects', force);
@@ -284,10 +348,10 @@ class API {
      */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
-		if (keys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Keys should contain valid public keys'));
+		if (!keys.every((key) => isPublicKey(key))) return Promise.reject(new Error('Keys should contain valid public keys'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(keys, 'accountIdByKey', 'getKeyReferences', force);
+		return this._getArrayData(keys, 'accountsIdByKey', 'getKeyReferences', force);
 	}
 
 	/**
@@ -297,12 +361,14 @@ class API {
      *
      *  @return {Promise}
      */
-	getAccounts(accountIds, force = false) {
+	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
-		if (accountIds.some((id) => !isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
+		if (!accountIds.every((id) => isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(accountIds, 'accountsById', 'getAccounts', force);
+		const cacheParams = [{ param: 'name', cache: 'accountsByName' }, { param: 'id', cache: 'objectsById' }];
+
+		return this._getArrayDataWithMultiSave(accountIds, 'accountsById', 'getAccounts', force, cacheParams);
 	}
 
 	/**
@@ -330,17 +396,20 @@ class API {
 			let cacheValue = null;
 
 			if (isAccountId(key)) {
-				cacheValue = this.cache.objectsById.get(key);
+				cacheValue = this.cache.accountsById.get(key);
 			} else {
 				cacheValue = this.cache.accountsByName.get(key);
 			}
 
-			if (cacheValue) resultArray[i] = cacheValue;
-			else requestedObjects.push(key);
+			if (cacheValue) {
+				resultArray[i] = cacheValue;
+			} else {
+				requestedObjects.push(key);
+			}
 		}
 
 		try {
-			requestedObjects = await Promise.all(this.wsApi.database.getFullAccounts(requestedObjects, true));
+			requestedObjects = await this.wsApi.database.getFullAccounts(requestedObjects, true);
 		} catch (error) {
 			throw error;
 		}
@@ -350,13 +419,12 @@ class API {
 
 			const requestedObject = requestedObjects.shift();
 
-			const key = accountNamesOrIds[i];
+			const nameKey = requestedObject.name;
+			const idKey = requestedObject.id;
 
-			if (isAccountId(key)) {
-				this.cache.objectsById = this.cache.objectsById.set(key, requestedObject);
-			} else {
-				this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
-			}
+			this.cache.setInMap('accountsById', idKey, requestedObject);
+			this.cache.setInMap('objectsById', idKey, requestedObject);
+			this.cache.setInMap('accountsByName', nameKey, requestedObject);
 
 			resultArray[i] = requestedObject;
 		}
@@ -371,11 +439,29 @@ class API {
      *
      *  @return {Promise}
      */
-	getAccountByName(accountName, force = false) {
+	async getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleData(accountName, 'accountsByName', 'getAccountByName', force);
+		if (!force) {
+			const cacheValue = this.cache.accountsByName.get(accountName);
+
+			if (cacheValue) {
+				return cacheValue;
+			}
+		}
+
+		try {
+			const requestedObject = await this.wsApi.database.getAccountByName(accountName);
+
+			const idKey = requestedObject.id;
+
+			this.cache.setInMap('accountsById', idKey, requestedObject);
+			this.cache.setInMap('objectsById', idKey, requestedObject);
+			return this.cache.setInMap('accountsByName', accountName, requestedObject);
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	/**
@@ -389,7 +475,7 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.wsApi.database.getAccountReferences(accountId);
+		return this._getSingleData(accountId, 'accountReferencesByAccountId', 'getAccountReferences', force);
 	}
 
 	/**
@@ -399,12 +485,14 @@ class API {
      *
      *  @return {Promise}
      */
-	lookupAccountNames(accountNames, force = false) {
+	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
-		if (accountNames.some((id) => !isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
+		if (!accountNames.every((id) => isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(accountNames, 'accountsByName', 'lookupAccountNames');
+		const cacheParams = [{ param: 'id', cache: 'accountsById' }, { param: 'id', cache: 'objectsById' }];
+
+		return this._getArrayDataWithMultiSave(accountNames, 'accountsByName', 'lookupAccountNames', force, cacheParams);
 	}
 
 	/**
@@ -441,10 +529,10 @@ class API {
 	getAccountBalances(accountId, assetIds, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
+		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.wsApi.database.getAccountBalances(accountId, assetIds);
+		return this._getSingleDataByCompositeParams(accountId, 'accountsBalanceByAccountId', 'getAccountBalances', force, accountId, assetIds);
 	}
 
 	/**
@@ -458,10 +546,10 @@ class API {
 	getNamedAccountBalances(accountName, assetIds, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Asset ids should contain valid asset ids'));
+		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Asset ids should contain valid asset ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.wsApi.database.getNamedAccountBalances(accountName, assetIds);
+		return this._getSingleDataByCompositeParams(accountName, 'accountsBalanceByAccountName', 'getNamedAccountBalances', force, accountName, assetIds);
 	}
 
 	/**
@@ -472,7 +560,7 @@ class API {
      */
 	getVestedBalances(balanceIds) {
 		if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
-		if (balanceIds.some((id) => !isAccountBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
+		if (!balanceIds.every((id) => isBalanceId(id))) return Promise.reject(new Error('Balance ids should contain valid balance ids'));
 
 		return this.wsApi.database.getVestedBalances(balanceIds);
 	}
@@ -496,12 +584,14 @@ class API {
      *
      *  @return {Promise}
      */
-	getAssets(assetIds, force = false) {
+	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (assetIds.some((id) => !isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
+		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(assetIds, 'assetByAssetId', 'getAssets');
+		const cacheParams = [{ param: 'symbol', cache: 'assetBySymbol' }, { param: 'id', cache: 'objectsById' }];
+
+		return this._getArrayDataWithMultiSave(assetIds, 'assetByAssetId', 'getAssets', force, cacheParams);
 	}
 
 	/**
@@ -526,10 +616,8 @@ class API {
      *  @return {Promise}
      */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
-
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
-
-		if (!symbolsOrIds.every((key) => isAssetId(key) || isAccountName(key))) throw new Error('Symbols or ids should contain valid asset ids or symbol');
+		if (!symbolsOrIds.every((key) => isAssetId(key) || isAssetName(key))) throw new Error('Symbols or ids should contain valid asset ids or symbol');
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		const { length } = symbolsOrIds;
@@ -548,12 +636,15 @@ class API {
 				cacheValue = this.cache.assetBySymbol.get(key);
 			}
 
-			if (cacheValue) resultArray[i] = cacheValue;
-			else requestedObjects.push(key);
+			if (cacheValue) {
+				resultArray[i] = cacheValue;
+			} else {
+				requestedObjects.push(key);
+			}
 		}
 
 		try {
-			requestedObjects = await Promise.all(this.wsApi.database.lookupAssetSymbols(requestedObjects));
+			requestedObjects = await this.wsApi.database.lookupAssetSymbols(requestedObjects);
 		} catch (error) {
 			throw error;
 		}
@@ -563,13 +654,12 @@ class API {
 
 			const requestedObject = requestedObjects.shift();
 
-			const key = symbolsOrIds[i];
+			const idKey = requestedObject.id;
+			const nameKey = requestedObject.symbol;
 
-			if (isAssetId(key)) {
-				this.cache.objectsById = this.cache.assetByAssetId.set(key, requestedObject);
-			} else {
-				this.cache.accountsByName = this.cache.accountsByName.set(key, requestedObject);
-			}
+			this.cache.setInMap('assetByAssetId', idKey, requestedObject);
+			this.cache.setInMap('objectsById', idKey, requestedObject);
+			this.cache.setInMap('assetBySymbol', nameKey, requestedObject);
 
 			resultArray[i] = requestedObject;
 		}
@@ -710,10 +800,10 @@ class API {
      */
 	getWitnesses(witnessIds, force = false) {
 		if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
-		if (witnessIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('Witness ids should contain valid object ids'));
+		if (!witnessIds.every((id) => isObjectId(id))) return Promise.reject(new Error('Witness ids should contain valid object ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(witnessIds, 'witnessByAccountId', 'getWitnesses', force);
+		return this._getArrayData(witnessIds, 'witnessByWitnessId', 'getWitnesses', force, true);
 	}
 
 	/**
@@ -765,10 +855,10 @@ class API {
      */
 	getCommitteeMembers(committeeMemberIds, force = false) {
 		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
-		if (committeeMemberIds.some((id) => !isObjectId(id))) return Promise.reject(new Error('CommitteeMemberIds should contain valid object ids'));
+		if (!committeeMemberIds.every((id) => isObjectId(id))) return Promise.reject(new Error('CommitteeMemberIds should contain valid object ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(committeeMemberIds, 'committeeByAccountId', 'getCommitteeMembers', force);
+		return this._getArrayData(committeeMemberIds, 'committeeMembersByCommitteeMemberId', 'getCommitteeMembers', force, true);
 	}
 
 	/**
@@ -783,7 +873,7 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleData(accountId, 'committeeByAccountId', 'getCommitteeMemberByAccount', force);
+		return this._getSingleData(accountId, 'committeeMembersByAccount', 'getCommitteeMemberByAccount', force);
 	}
 
 	/**
@@ -823,7 +913,7 @@ class API {
      */
 	lookupVoteIds(votes) {
 		if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
-		if (votes.some((id) => !isVoteId(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
+		if (!votes.every((id) => isVoteId(id))) return Promise.reject(new Error('Votes should contain valid vote_id_type ids'));
 
 
 		return this.wsApi.database.lookupVoteIds(votes);
@@ -854,7 +944,7 @@ class API {
 	getRequiredSignatures(transaction, availableKeys) {
 		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 		if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
-		if (availableKeys.some((key) => !isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
+		if (!availableKeys.every((key) => isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
 
 		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
 	}
@@ -909,7 +999,7 @@ class API {
 	verifyAccountAuthority(accountNameOrId, signers) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isArray(signers)) return Promise.reject(new Error('Signers ids should be an array'));
-		if (signers.some((key) => !isPublicKey(key))) return Promise.reject(new Error('Signers should contain valid public keys'));
+		if (!signers.every((key) => isPublicKey(key))) return Promise.reject(new Error('Signers should contain valid public keys'));
 
 		return this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
 	}
@@ -996,7 +1086,7 @@ class API {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleData(resultContractId, 'contractResultByContractResultId', 'getContractResult', force);
+		return this._getSingleData(resultContractId, 'contractResultsByContractResultId', 'getContractResult', force);
 	}
 
 	/**
@@ -1011,7 +1101,7 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleData(contractId, 'contractByContractId', 'getContract', force);
+		return this._getSingleData(contractId, 'fullContractsByContractId', 'getContract', force, true);
 	}
 
 	/**
@@ -1040,11 +1130,11 @@ class API {
      *
      *  @return {Promise}
      */
-	getContracts(contractIds) {
+	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
-		if (contractIds.some((id) => !isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
+		if (!contractIds.every((id) => isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
 
-		return this.wsApi.database.getContracts(contractIds);
+		return this._getSingleData(contractIds, 'contractsByContractId', 'getContracts', force);
 	}
 
 	/**

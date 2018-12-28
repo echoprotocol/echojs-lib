@@ -14,7 +14,7 @@ export const Operations = {};
 export const Transactions = {};
 
 Operations.transfer = new Operation(
-	'transfer',
+	0,
 	{
 		fee: asset,
 		from: protocolIdType('account'),
@@ -26,7 +26,7 @@ Operations.transfer = new Operation(
 );
 
 Operations.limitOrderCreate = new Operation(
-	'limit_order_create',
+	1,
 	{
 		fee: asset,
 		seller: protocolIdType('account'),
@@ -39,7 +39,7 @@ Operations.limitOrderCreate = new Operation(
 );
 
 Operations.limitOrderCancel = new Operation(
-	'limit_order_cancel',
+	2,
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
@@ -49,7 +49,7 @@ Operations.limitOrderCancel = new Operation(
 );
 
 Operations.callOrderUpdate = new Operation(
-	'call_order_update',
+	3,
 	{
 		fee: asset,
 		funding_account: protocolIdType('account'),
@@ -59,19 +59,8 @@ Operations.callOrderUpdate = new Operation(
 	},
 );
 
-Operations.bidCollateral = new Operation(
-	'bid_collateral',
-	{
-		fee: asset,
-		bidder: protocolIdType('account'),
-		additional_collateral: asset,
-		debt_covered: asset,
-		extensions: emptyArray,
-	},
-);
-
 Operations.accountCreate = new Operation(
-	'account_create',
+	5,
 	{
 		fee: asset,
 		registrar: protocolIdType('account'),
@@ -86,7 +75,7 @@ Operations.accountCreate = new Operation(
 );
 
 Operations.accountUpdate = new Operation(
-	'account_update',
+	6,
 	{
 		fee: asset,
 		account: protocolIdType('account'),
@@ -98,7 +87,7 @@ Operations.accountUpdate = new Operation(
 );
 
 Operations.accountWhitelist = new Operation(
-	'account_whitelist',
+	7,
 	{
 		fee: asset,
 		authorizing_account: protocolIdType('account'),
@@ -109,7 +98,7 @@ Operations.accountWhitelist = new Operation(
 );
 
 Operations.accountUpgrade = new Operation(
-	'account_upgrade',
+	8,
 	{
 		fee: asset,
 		account_to_upgrade: protocolIdType('account'),
@@ -119,7 +108,7 @@ Operations.accountUpgrade = new Operation(
 );
 
 Operations.accountTransfer = new Operation(
-	'account_transfer',
+	9,
 	{
 		fee: asset,
 		account_id: protocolIdType('account'),
@@ -129,7 +118,7 @@ Operations.accountTransfer = new Operation(
 );
 
 Operations.assetCreate = new Operation(
-	'asset_create',
+	10,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -143,7 +132,7 @@ Operations.assetCreate = new Operation(
 );
 
 Operations.assetUpdate = new Operation(
-	'asset_update',
+	11,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -155,7 +144,7 @@ Operations.assetUpdate = new Operation(
 );
 
 Operations.assetUpdate_bitasset = new Operation(
-	'asset_update_bitasset',
+	12,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -166,7 +155,7 @@ Operations.assetUpdate_bitasset = new Operation(
 );
 
 Operations.assetUpdateFeedProducers = new Operation(
-	'asset_update_feed_producers',
+	13,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -177,7 +166,7 @@ Operations.assetUpdateFeedProducers = new Operation(
 );
 
 Operations.assetIssue = new Operation(
-	'asset_issue',
+	14,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -189,7 +178,7 @@ Operations.assetIssue = new Operation(
 );
 
 Operations.assetReserve = new Operation(
-	'asset_reserve',
+	15,
 	{
 		fee: asset,
 		payer: protocolIdType('account'),
@@ -199,7 +188,7 @@ Operations.assetReserve = new Operation(
 );
 
 Operations.assetFundFeePool = new Operation(
-	'asset_fund_fee_pool',
+	16,
 	{
 		fee: asset,
 		from_account: protocolIdType('account'),
@@ -210,7 +199,7 @@ Operations.assetFundFeePool = new Operation(
 );
 
 Operations.assetSettle = new Operation(
-	'asset_settle',
+	17,
 	{
 		fee: asset,
 		account: protocolIdType('account'),
@@ -220,7 +209,7 @@ Operations.assetSettle = new Operation(
 );
 
 Operations.assetGlobalSettle = new Operation(
-	'asset_global_settle',
+	18,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -231,7 +220,7 @@ Operations.assetGlobalSettle = new Operation(
 );
 
 Operations.assetPublishFeed = new Operation(
-	'asset_publish_feed',
+	19,
 	{
 		fee: asset,
 		publisher: protocolIdType('account'),
@@ -242,7 +231,7 @@ Operations.assetPublishFeed = new Operation(
 );
 
 Operations.witnessCreate = new Operation(
-	'witness_create',
+	20,
 	{
 		fee: asset,
 		witness_account: protocolIdType('account'),
@@ -252,7 +241,7 @@ Operations.witnessCreate = new Operation(
 );
 
 Operations.witnessUpdate = new Operation(
-	'witness_update',
+	21,
 	{
 		fee: asset,
 		witness: protocolIdType('witness'),
@@ -263,7 +252,7 @@ Operations.witnessUpdate = new Operation(
 );
 
 Operations.proposalCreate = new Operation(
-	'proposal_create',
+	22,
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
@@ -275,7 +264,7 @@ Operations.proposalCreate = new Operation(
 );
 
 Operations.proposalUpdate = new Operation(
-	'proposal_update',
+	23,
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
@@ -291,7 +280,7 @@ Operations.proposalUpdate = new Operation(
 );
 
 Operations.proposalDelete = new Operation(
-	'proposal_delete',
+	24,
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
@@ -302,7 +291,7 @@ Operations.proposalDelete = new Operation(
 );
 
 Operations.withdrawPermission_create = new Operation(
-	'withdraw_permission_create',
+	25,
 	{
 		fee: asset,
 		withdraw_from_account: protocolIdType('account'),
@@ -315,7 +304,7 @@ Operations.withdrawPermission_create = new Operation(
 );
 
 Operations.withdrawPermissionUpdate = new Operation(
-	'withdraw_permission_update',
+	26,
 	{
 		fee: asset,
 		withdraw_from_account: protocolIdType('account'),
@@ -329,7 +318,7 @@ Operations.withdrawPermissionUpdate = new Operation(
 );
 
 Operations.withdrawPermissionClaim = new Operation(
-	'withdraw_permission_claim',
+	27,
 	{
 		fee: asset,
 		withdraw_permission: protocolIdType('withdraw_permission'),
@@ -341,7 +330,7 @@ Operations.withdrawPermissionClaim = new Operation(
 );
 
 Operations.withdrawPermissionDelete = new Operation(
-	'withdraw_permission_delete',
+	28,
 	{
 		fee: asset,
 		withdraw_from_account: protocolIdType('account'),
@@ -350,8 +339,35 @@ Operations.withdrawPermissionDelete = new Operation(
 	},
 );
 
+Operations.committeeMemberCreate = new Operation(
+	29,
+	{
+		fee: asset,
+		committee_member_account: protocolIdType('account'),
+		url: string,
+	},
+);
+
+Operations.committeeMemberUpdate = new Operation(
+	30,
+	{
+		fee: asset,
+		committee_member: protocolIdType('committee_member'),
+		committee_member_account: protocolIdType('account'),
+		new_url: optional(string),
+	},
+);
+
+Operations.committeeMemberUpdateGlobalParameters = new Operation(
+	31,
+	{
+		fee: asset,
+		new_parameters: chainParameters,
+	},
+);
+
 Operations.vestingBalanceCreate = new Operation(
-	'vesting_balance_create',
+	32,
 	{
 		fee: asset,
 		creator: protocolIdType('account'),
@@ -362,7 +378,7 @@ Operations.vestingBalanceCreate = new Operation(
 );
 
 Operations.vestingBalanceWithdraw = new Operation(
-	'vesting_balance_withdraw',
+	33,
 	{
 		fee: asset,
 		vesting_balance: protocolIdType('vesting_balance'),
@@ -372,7 +388,7 @@ Operations.vestingBalanceWithdraw = new Operation(
 );
 
 Operations.workerCreate = new Operation(
-	'worker_create',
+	34,
 	{
 		fee: asset,
 		owner: protocolIdType('account'),
@@ -386,7 +402,7 @@ Operations.workerCreate = new Operation(
 );
 
 Operations.custom = new Operation(
-	'custom',
+	35,
 	{
 		fee: asset,
 		payer: protocolIdType('account'),
@@ -397,7 +413,7 @@ Operations.custom = new Operation(
 );
 
 Operations.assert = new Operation(
-	'assert',
+	36,
 	{
 		fee: asset,
 		fee_paying_account: protocolIdType('account'),
@@ -408,7 +424,7 @@ Operations.assert = new Operation(
 );
 
 Operations.balanceClaim = new Operation(
-	'balance_claim',
+	37,
 	{
 		fee: asset,
 		deposit_to_account: protocolIdType('account'),
@@ -418,35 +434,8 @@ Operations.balanceClaim = new Operation(
 	},
 );
 
-Operations.committeeMemberCreate = new Operation(
-	'committee_member_create',
-	{
-		fee: asset,
-		committee_member_account: protocolIdType('account'),
-		url: string,
-	},
-);
-
-Operations.committeeMemberUpdate = new Operation(
-	'committee_member_update',
-	{
-		fee: asset,
-		committee_member: protocolIdType('committee_member'),
-		committee_member_account: protocolIdType('account'),
-		new_url: optional(string),
-	},
-);
-
-Operations.committeeMemberUpdateGlobalParameters = new Operation(
-	'committee_member_update_global_parameters',
-	{
-		fee: asset,
-		new_parameters: chainParameters,
-	},
-);
-
 Operations.overrideTransfer = new Operation(
-	'override_transfer',
+	38,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -459,7 +448,7 @@ Operations.overrideTransfer = new Operation(
 );
 
 Operations.transferToBlind = new Operation(
-	'transfer_to_blind',
+	39,
 	{
 		fee: asset,
 		amount: asset,
@@ -470,7 +459,7 @@ Operations.transferToBlind = new Operation(
 );
 
 Operations.blindTransfer = new Operation(
-	'blind_transfer',
+	40,
 	{
 		fee: asset,
 		inputs: array(blindInput),
@@ -479,7 +468,7 @@ Operations.blindTransfer = new Operation(
 );
 
 Operations.transferFromBlind = new Operation(
-	'transfer_from_blind',
+	41,
 	{
 		fee: asset,
 		amount: asset,
@@ -490,7 +479,7 @@ Operations.transferFromBlind = new Operation(
 );
 
 Operations.assetClaimFees = new Operation(
-	'asset_claim_fees',
+	43,
 	{
 		fee: asset,
 		issuer: protocolIdType('account'),
@@ -499,8 +488,19 @@ Operations.assetClaimFees = new Operation(
 	},
 );
 
+Operations.bidCollateral = new Operation(
+	45,
+	{
+		fee: asset,
+		bidder: protocolIdType('account'),
+		additional_collateral: asset,
+		debt_covered: asset,
+		extensions: emptyArray,
+	},
+);
+
 Operations.contract = new Operation(
-	'contract',
+	47,
 	{
 		fee: asset,
 		registrar: protocolIdType('account'),
@@ -514,7 +514,7 @@ Operations.contract = new Operation(
 );
 
 Operations.contractTransfer = new Operation(
-	'contract_transfer',
+	48,
 	{
 		fee: asset,
 		from: protocolIdType('contract'),
@@ -523,6 +523,7 @@ Operations.contractTransfer = new Operation(
 		extensions: emptyArray,
 	},
 );
+
 
 Transactions.transaction = new Operation(
 	'transaction',

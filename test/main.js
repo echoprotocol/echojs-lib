@@ -60,13 +60,15 @@ describe('API', () => {
                 expect(accounts).to.be.an('array');
                 expect(accounts).to.deep.include(cache.accountsById.get(accountId1));
                 expect(accounts).to.deep.include(cache.accountsById.get(accountId2));
+                expect(accounts).to.deep.include(cache.objectsById.get(accountId1));
+                expect(accounts).to.deep.include(cache.objectsById.get(accountId2));
             } catch (e) {
                 throw e;
             }
         }).timeout(5000);
     });
     describe('#getAccountCount()', () => {
-        it('should get account count', async () => {
+        it('should get account', async () => {
             try {
                 const wsApi = new WSAPI(ws);
                 const cache = new Cache();
@@ -80,16 +82,40 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getChainId()', () => {
-        it('should get account count', async () => {
+    describe('#lookupAssetSymbols()', () => {
+        it('should get asset by symbol and save it in multi caches', async () => {
             try {
                 const wsApi = new WSAPI(ws);
                 const cache = new Cache();
                 const api = new API(cache, wsApi);
 
-                const chainId = await api.getChainId();
-console.log(chainId)
-                // expect(accountCount).to.be.an('number');
+                const assetKey = 'ECHO';
+                const assetId = '1.3.0';
+                const assets = await api.lookupAssetSymbols([assetKey]);
+
+                expect(assets).to.be.an('array');
+                expect(assets).to.deep.include(cache.assetByAssetId.get(assetId));
+                expect(assets).to.deep.include(cache.objectsById.get(assetId));
+                expect(assets).to.deep.include(cache.assetBySymbol.get(assetKey));
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getAssets()', () => {
+        it('should get assets by id and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const assetId1 = '1.3.0';
+
+                const assets = await api.getAssets([assetId1]);
+
+                expect(assets).to.be.an('array');
+                expect(assets).to.deep.include(cache.assetByAssetId.get(assetId1));
+                expect(assets).to.deep.include(cache.objectsById.get(assetId1));
             } catch (e) {
                 throw e;
             }

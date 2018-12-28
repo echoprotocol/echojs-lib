@@ -18,14 +18,15 @@ class Cache {
 
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
-		this.accountIdByKey = Map();
+		this.accountsIdByKey = Map();
 
 		this.assetByAssetId = new Map();
 		this.assetBySymbol = new Map();
 
 		this.contractBalanceByContractId = new Map();
-		this.contractByContractId = new Map();
-		this.contractResultByContractResultId = new Map();
+		this.contractsByContractId = new Map();
+		this.fullContractsByContractId = new Map();
+		this.contractResultsByContractResultId = new Map();
 
 		this.blockHeadersByBlockNumber = Map();
 		this.blocks = new Map();
@@ -33,16 +34,23 @@ class Cache {
 		this.transactionsByBlockAndIndex = new Map();
 
 		this.witnessByAccountId = new Map();
+		this.witnessByWitnessId = new Map();
+
+		this.committeeMembersByAccount = new Map();
+		this.committeeMembersByCommitteeMemberId = new Map();
+
+		this.accountsBalanceByAccountId = new Map();
+		this.accountsBalanceByAccountName = new Map();
+
+		this.accountReferencesByAccountId = new Map();
+
 		this.balanceObjectsByBalanceId = new Map();
-		this.getAccountRefsOfKeysCalls = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
 		this.accountHistoryRequests = new Map();
-		this.committeeByAccountId = new Map();
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
-		// this.config = new Map();
-		this.chainProperties = null;
+		this.chainProperties = new Map();
 		this.globalProperties = null;
 		this.config = null;
 		this.chainId = null;
