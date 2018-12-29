@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in,no-restricted-syntax */
 import { isObject, isArray } from '../utils/validator';
 
-class Operation {
+class OperationType {
 
 	constructor(operationId, options) {
 		this.operationId = operationId;
@@ -35,4 +35,4 @@ class Operation {
 
 }
 
-export default Operation;
+export default OperationType;

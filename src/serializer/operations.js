@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import Operation from './operation';
+import OperationType from './operation-type';
 
 import {
 	int64, uint64, uint32, uint16, uint8, string, bool, bytes, hex,
@@ -13,7 +13,7 @@ import {
 export const Operations = {};
 export const Transactions = {};
 
-Operations.transfer = new Operation(
+Operations.transfer = new OperationType(
 	0,
 	{
 		fee: asset,
@@ -25,7 +25,7 @@ Operations.transfer = new Operation(
 	},
 );
 
-Operations.limitOrderCreate = new Operation(
+Operations.limitOrderCreate = new OperationType(
 	1,
 	{
 		fee: asset,
@@ -38,7 +38,7 @@ Operations.limitOrderCreate = new Operation(
 	},
 );
 
-Operations.limitOrderCancel = new Operation(
+Operations.limitOrderCancel = new OperationType(
 	2,
 	{
 		fee: asset,
@@ -48,7 +48,7 @@ Operations.limitOrderCancel = new Operation(
 	},
 );
 
-Operations.callOrderUpdate = new Operation(
+Operations.callOrderUpdate = new OperationType(
 	3,
 	{
 		fee: asset,
@@ -59,7 +59,7 @@ Operations.callOrderUpdate = new Operation(
 	},
 );
 
-Operations.accountCreate = new Operation(
+Operations.accountCreate = new OperationType(
 	5,
 	{
 		fee: asset,
@@ -74,7 +74,7 @@ Operations.accountCreate = new Operation(
 	},
 );
 
-Operations.accountUpdate = new Operation(
+Operations.accountUpdate = new OperationType(
 	6,
 	{
 		fee: asset,
@@ -86,7 +86,7 @@ Operations.accountUpdate = new Operation(
 	},
 );
 
-Operations.accountWhitelist = new Operation(
+Operations.accountWhitelist = new OperationType(
 	7,
 	{
 		fee: asset,
@@ -97,7 +97,7 @@ Operations.accountWhitelist = new Operation(
 	},
 );
 
-Operations.accountUpgrade = new Operation(
+Operations.accountUpgrade = new OperationType(
 	8,
 	{
 		fee: asset,
@@ -107,7 +107,7 @@ Operations.accountUpgrade = new Operation(
 	},
 );
 
-Operations.accountTransfer = new Operation(
+Operations.accountTransfer = new OperationType(
 	9,
 	{
 		fee: asset,
@@ -117,7 +117,7 @@ Operations.accountTransfer = new Operation(
 	},
 );
 
-Operations.assetCreate = new Operation(
+Operations.assetCreate = new OperationType(
 	10,
 	{
 		fee: asset,
@@ -131,7 +131,7 @@ Operations.assetCreate = new Operation(
 	},
 );
 
-Operations.assetUpdate = new Operation(
+Operations.assetUpdate = new OperationType(
 	11,
 	{
 		fee: asset,
@@ -143,7 +143,7 @@ Operations.assetUpdate = new Operation(
 	},
 );
 
-Operations.assetUpdate_bitasset = new Operation(
+Operations.assetUpdate_bitasset = new OperationType(
 	12,
 	{
 		fee: asset,
@@ -154,7 +154,7 @@ Operations.assetUpdate_bitasset = new Operation(
 	},
 );
 
-Operations.assetUpdateFeedProducers = new Operation(
+Operations.assetUpdateFeedProducers = new OperationType(
 	13,
 	{
 		fee: asset,
@@ -165,7 +165,7 @@ Operations.assetUpdateFeedProducers = new Operation(
 	},
 );
 
-Operations.assetIssue = new Operation(
+Operations.assetIssue = new OperationType(
 	14,
 	{
 		fee: asset,
@@ -177,7 +177,7 @@ Operations.assetIssue = new Operation(
 	},
 );
 
-Operations.assetReserve = new Operation(
+Operations.assetReserve = new OperationType(
 	15,
 	{
 		fee: asset,
@@ -187,7 +187,7 @@ Operations.assetReserve = new Operation(
 	},
 );
 
-Operations.assetFundFeePool = new Operation(
+Operations.assetFundFeePool = new OperationType(
 	16,
 	{
 		fee: asset,
@@ -198,7 +198,7 @@ Operations.assetFundFeePool = new Operation(
 	},
 );
 
-Operations.assetSettle = new Operation(
+Operations.assetSettle = new OperationType(
 	17,
 	{
 		fee: asset,
@@ -208,7 +208,7 @@ Operations.assetSettle = new Operation(
 	},
 );
 
-Operations.assetGlobalSettle = new Operation(
+Operations.assetGlobalSettle = new OperationType(
 	18,
 	{
 		fee: asset,
@@ -219,7 +219,7 @@ Operations.assetGlobalSettle = new Operation(
 	},
 );
 
-Operations.assetPublishFeed = new Operation(
+Operations.assetPublishFeed = new OperationType(
 	19,
 	{
 		fee: asset,
@@ -230,7 +230,7 @@ Operations.assetPublishFeed = new Operation(
 	},
 );
 
-Operations.witnessCreate = new Operation(
+Operations.witnessCreate = new OperationType(
 	20,
 	{
 		fee: asset,
@@ -240,7 +240,7 @@ Operations.witnessCreate = new Operation(
 	},
 );
 
-Operations.witnessUpdate = new Operation(
+Operations.witnessUpdate = new OperationType(
 	21,
 	{
 		fee: asset,
@@ -251,7 +251,7 @@ Operations.witnessUpdate = new Operation(
 	},
 );
 
-Operations.proposalCreate = new Operation(
+Operations.proposalCreate = new OperationType(
 	22,
 	{
 		fee: asset,
@@ -263,7 +263,7 @@ Operations.proposalCreate = new Operation(
 	},
 );
 
-Operations.proposalUpdate = new Operation(
+Operations.proposalUpdate = new OperationType(
 	23,
 	{
 		fee: asset,
@@ -279,7 +279,7 @@ Operations.proposalUpdate = new Operation(
 	},
 );
 
-Operations.proposalDelete = new Operation(
+Operations.proposalDelete = new OperationType(
 	24,
 	{
 		fee: asset,
@@ -290,7 +290,7 @@ Operations.proposalDelete = new Operation(
 	},
 );
 
-Operations.withdrawPermission_create = new Operation(
+Operations.withdrawPermission_create = new OperationType(
 	25,
 	{
 		fee: asset,
@@ -303,7 +303,7 @@ Operations.withdrawPermission_create = new Operation(
 	},
 );
 
-Operations.withdrawPermissionUpdate = new Operation(
+Operations.withdrawPermissionUpdate = new OperationType(
 	26,
 	{
 		fee: asset,
@@ -317,7 +317,7 @@ Operations.withdrawPermissionUpdate = new Operation(
 	},
 );
 
-Operations.withdrawPermissionClaim = new Operation(
+Operations.withdrawPermissionClaim = new OperationType(
 	27,
 	{
 		fee: asset,
@@ -329,7 +329,7 @@ Operations.withdrawPermissionClaim = new Operation(
 	},
 );
 
-Operations.withdrawPermissionDelete = new Operation(
+Operations.withdrawPermissionDelete = new OperationType(
 	28,
 	{
 		fee: asset,
@@ -339,7 +339,7 @@ Operations.withdrawPermissionDelete = new Operation(
 	},
 );
 
-Operations.committeeMemberCreate = new Operation(
+Operations.committeeMemberCreate = new OperationType(
 	29,
 	{
 		fee: asset,
@@ -348,7 +348,7 @@ Operations.committeeMemberCreate = new Operation(
 	},
 );
 
-Operations.committeeMemberUpdate = new Operation(
+Operations.committeeMemberUpdate = new OperationType(
 	30,
 	{
 		fee: asset,
@@ -358,7 +358,7 @@ Operations.committeeMemberUpdate = new Operation(
 	},
 );
 
-Operations.committeeMemberUpdateGlobalParameters = new Operation(
+Operations.committeeMemberUpdateGlobalParameters = new OperationType(
 	31,
 	{
 		fee: asset,
@@ -366,7 +366,7 @@ Operations.committeeMemberUpdateGlobalParameters = new Operation(
 	},
 );
 
-Operations.vestingBalanceCreate = new Operation(
+Operations.vestingBalanceCreate = new OperationType(
 	32,
 	{
 		fee: asset,
@@ -377,7 +377,7 @@ Operations.vestingBalanceCreate = new Operation(
 	},
 );
 
-Operations.vestingBalanceWithdraw = new Operation(
+Operations.vestingBalanceWithdraw = new OperationType(
 	33,
 	{
 		fee: asset,
@@ -387,7 +387,7 @@ Operations.vestingBalanceWithdraw = new Operation(
 	},
 );
 
-Operations.workerCreate = new Operation(
+Operations.workerCreate = new OperationType(
 	34,
 	{
 		fee: asset,
@@ -401,7 +401,7 @@ Operations.workerCreate = new Operation(
 	},
 );
 
-Operations.custom = new Operation(
+Operations.custom = new OperationType(
 	35,
 	{
 		fee: asset,
@@ -412,7 +412,7 @@ Operations.custom = new Operation(
 	},
 );
 
-Operations.assert = new Operation(
+Operations.assert = new OperationType(
 	36,
 	{
 		fee: asset,
@@ -423,7 +423,7 @@ Operations.assert = new Operation(
 	},
 );
 
-Operations.balanceClaim = new Operation(
+Operations.balanceClaim = new OperationType(
 	37,
 	{
 		fee: asset,
@@ -434,7 +434,7 @@ Operations.balanceClaim = new Operation(
 	},
 );
 
-Operations.overrideTransfer = new Operation(
+Operations.overrideTransfer = new OperationType(
 	38,
 	{
 		fee: asset,
@@ -447,7 +447,7 @@ Operations.overrideTransfer = new Operation(
 	},
 );
 
-Operations.transferToBlind = new Operation(
+Operations.transferToBlind = new OperationType(
 	39,
 	{
 		fee: asset,
@@ -458,7 +458,7 @@ Operations.transferToBlind = new Operation(
 	},
 );
 
-Operations.blindTransfer = new Operation(
+Operations.blindTransfer = new OperationType(
 	40,
 	{
 		fee: asset,
@@ -467,7 +467,7 @@ Operations.blindTransfer = new Operation(
 	},
 );
 
-Operations.transferFromBlind = new Operation(
+Operations.transferFromBlind = new OperationType(
 	41,
 	{
 		fee: asset,
@@ -478,7 +478,7 @@ Operations.transferFromBlind = new Operation(
 	},
 );
 
-Operations.assetClaimFees = new Operation(
+Operations.assetClaimFees = new OperationType(
 	43,
 	{
 		fee: asset,
@@ -488,7 +488,7 @@ Operations.assetClaimFees = new Operation(
 	},
 );
 
-Operations.bidCollateral = new Operation(
+Operations.bidCollateral = new OperationType(
 	45,
 	{
 		fee: asset,
@@ -499,7 +499,7 @@ Operations.bidCollateral = new Operation(
 	},
 );
 
-Operations.contract = new Operation(
+Operations.contract = new OperationType(
 	47,
 	{
 		fee: asset,
@@ -513,7 +513,7 @@ Operations.contract = new Operation(
 	},
 );
 
-Operations.contractTransfer = new Operation(
+Operations.contractTransfer = new OperationType(
 	48,
 	{
 		fee: asset,
@@ -525,7 +525,7 @@ Operations.contractTransfer = new Operation(
 );
 
 
-Transactions.transaction = new Operation(
+Transactions.transaction = new OperationType(
 	'transaction',
 	{
 		ref_block_num: uint16,
@@ -536,7 +536,7 @@ Transactions.transaction = new Operation(
 	},
 );
 
-Transactions.signedTransaction = new Operation(
+Transactions.signedTransaction = new OperationType(
 	'signed_transaction',
 	{
 		ref_block_num: uint16,
