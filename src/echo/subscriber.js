@@ -69,7 +69,7 @@ class Subscriber {
      */
 	subscribeToMarket(callback, baseAssetId, quoteAssetId) {
 		if (!isFunction(callback)) return Promise.reject(new Error('Callback parameter should be a function'));
-		this.wsApi.database.subscribeToMarket(callback, baseAssetId, quoteAssetId);
+		return this.wsApi.database.subscribeToMarket(callback, baseAssetId, quoteAssetId);
 	}
 
 	/**

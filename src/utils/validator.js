@@ -1,7 +1,5 @@
-import { decode } from 'bs58';
 import BN from 'bignumber.js';
 
-import { ripemd160 } from '../crypto/hash';
 import ChainConfig from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 

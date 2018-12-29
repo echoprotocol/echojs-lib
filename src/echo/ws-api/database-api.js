@@ -162,7 +162,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getFullAccounts(accountNamesOrIds, subscribe) {
-		return this.db.exec('get_full_accounts', [accountNameOrIds, subscribe]);
+		return this.db.exec('get_full_accounts', [accountNamesOrIds, subscribe]);
 	}
 
 	/**
@@ -297,7 +297,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
-		return this.db.exec('get_order_book', [baseAssetId, quoteAssetId, depth]);
+		return this.db.exec('get_order_book', [baseAssetName, quoteAssetName, depth]);
 	}
 
 	/**

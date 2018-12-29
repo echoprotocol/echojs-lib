@@ -4,7 +4,7 @@ class Type {
 		this.validatorFunc = validatorFunc;
 	}
 
-	validate(value) {
+	isValid(value) {
 		return this.validatorFunc(value);
 	}
 
