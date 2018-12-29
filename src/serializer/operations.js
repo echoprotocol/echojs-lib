@@ -25,7 +25,6 @@ Operations.transfer = new OperationType(
 		extensions: emptyArray,
 	},
 );
-Operations[0] = Operations.transfer;
 
 Operations.limitOrderCreate = new OperationType(
 	1,
@@ -526,6 +525,12 @@ Operations.contractTransfer = new OperationType(
 	},
 );
 
+for (const operationName in Operations) {
+	if (!{}.hasOwnProperty.call(Operations, operationName)) continue;
+	const operationType = Operations[operationName];
+	const operationId = operationType.id;
+	Operations[operationId] = operationType;
+}
 
 Transactions.transaction = new OperationType(
 	'transaction',
