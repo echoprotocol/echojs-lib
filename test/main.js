@@ -148,7 +148,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getObjects()', () => {
+    describe.skip('#getObjects()', () => {
         it('should get objects by id and save it in multi caches', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -169,19 +169,4 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getObjects()', () => {
-        it('should get objects by id and save it in multi caches', async () => {
-            try {
-                const wsApi = new WSAPI(ws);
-                const cache = new Cache();
-                const api = new API(cache, wsApi);
-
-                const acc = await api.lookupAccountNames(['test101224']);
-                console.log(acc)
-            } catch (e) {
-                throw e;
-            }
-        }).timeout(5000);
-    });
-
 });
