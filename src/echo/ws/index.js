@@ -40,7 +40,9 @@ class WS {
 			await this._ws_rpc.login('', '');
 			await Promise.all(initPromises);
 			this._connected = true;
-			if (this.onOpenCb) this.onOpenCb('open');
+			if (this.onOpenCb) {
+				this.onOpenCb('open');
+			}
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 		}
@@ -69,24 +71,24 @@ class WS {
 	}
 
 	/**
-     * On error callback
-     * @param error
-     */
+	 * On error callback
+	 * @param error
+	 */
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
 	}
 
 	/**
-     * init params and connect to chain
-     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-     * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
-     * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
-     * @param {Number} options.pingInterval - interval in ms between ping requests.
-     * @param {Boolean} options.debug - debug mode status.
-     * @returns {Promise}
-     */
+	 * init params and connect to chain
+	 * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+	 * @param {Object} options - connection params.
+	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+	 * @param {Number} options.maxRetries - max count retries before close socket.
+	 * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+	 * @param {Number} options.pingInterval - interval in ms between ping requests.
+	 * @param {Boolean} options.debug - debug mode status.
+	 * @returns {Promise}
+	 */
 	async connect(url, options = {}) {
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
@@ -135,18 +137,18 @@ class WS {
 	}
 
 	/**
-     * Reconnect to chain, can't be used after close
-     * @returns {Promise}
-     */
+	 * Reconnect to chain, can't be used after close
+	 * @returns {Promise}
+	 */
 	reconnect() {
 		if (!this._ws_rpc) throw new Error('Socket close.');
 		return this._ws_rpc.reconnect();
 	}
 
 	/**
-     * Close socket, delete subscribers
-     * @returns {Promise}
-     */
+	 * Close socket, delete subscribers
+	 * @returns {Promise}
+	 */
 	async close() {
 		if (this._ws_rpc && this._ws_rpc.ws) {
 			try {
@@ -159,57 +161,57 @@ class WS {
 	}
 
 	/**
-     * Set debug option
-     * @param {Boolean} status
-     */
+	 * Set debug option
+	 * @param {Boolean} status
+	 */
 	setDebugOption(status) {
 		this._ws_rpc.setDebugOption(status);
 	}
 
 	/**
-     * database API
-     * @returns {GrapheneApi}
-     */
+	 * database API
+	 * @returns {GrapheneApi}
+	 */
 	dbApi() {
 		return this._database;
 	}
 
 	/**
-     * network API
-     * @returns {GrapheneApi}
-     */
+	 * network API
+	 * @returns {GrapheneApi}
+	 */
 	networkApi() {
 		return this._network_broadcast;
 	}
 
 	/**
-     * history API
-     * @returns {GrapheneApi}
-     */
+	 * history API
+	 * @returns {GrapheneApi}
+	 */
 	historyApi() {
 		return this._history;
 	}
 
 	/**
-     * registration API
-     * @returns {GrapheneApi}
-     */
+	 * registration API
+	 * @returns {GrapheneApi}
+	 */
 	registrationApi() {
 		return this._registration;
 	}
 
 	/**
-     * asset API
-     * @returns {GrapheneApi}
-     */
+	 * asset API
+	 * @returns {GrapheneApi}
+	 */
 	assetApi() {
 		return this._asset;
 	}
 
 	/**
-     * login API
-     * @returns {GrapheneApi}
-     */
+	 * login API
+	 * @returns {GrapheneApi}
+	 */
 	loginApi() {
 		return this._login;
 	}
