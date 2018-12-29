@@ -16,7 +16,10 @@ import {
 	isBytecode,
 	isRipemd160,
 	isPublicKey,
-	isVoteId, isWitnessId, isCommitteeMemberId,
+	isVoteId,
+	isWitnessId,
+	isCommitteeMemberId,
+	isEchoRandKey,
 } from '../utils/validator';
 
 import { Transactions, Operations } from '../serializer/operations';
@@ -103,7 +106,10 @@ class API {
 			if (resultArray[i]) continue;
 			const key = requestedObjectsKeys.shift();
 			const requestedObject = requestedObjects.shift();
-
+			if (!requestedObject) {
+				resultArray[i] = requestedObject;
+				continue;
+			}
 			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
 			if (duplicateToObjectById) {
 				this.cache.setInMap('objectsById', key, requestedObject);
@@ -157,7 +163,10 @@ class API {
 			if (resultArray[i]) continue;
 			const key = requestedObjectsKeys.shift();
 			const requestedObject = requestedObjects.shift();
-
+			if (!requestedObject) {
+				resultArray[i] = requestedObject;
+				continue;
+			}
 			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
 			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
 		}
@@ -186,7 +195,9 @@ class API {
 
 		try {
 			const requestedObject = await this.wsApi.database[methodName](key);
-
+			if (!requestedObject) {
+				return requestedObject;
+			}
 			if (duplicateToObjectById) {
 				this.cache.setInMap('objectsById', key, requestedObject);
 			}
@@ -218,9 +229,11 @@ class API {
 		}
 
 		try {
-			const value = await this.wsApi.database[methodName](...params);
-
-			return this.cache.setInMap(cacheName, key, value);
+			const requestedObject = await this.wsApi.database[methodName](...params);
+			if (!requestedObject) {
+				return requestedObject;
+			}
+			return this.cache.setInMap(cacheName, key, requestedObject);
 		} catch (error) {
 			throw error;
 		}
@@ -268,7 +281,10 @@ class API {
 			if (resultArray[i]) continue;
 			const key = requestedObjectsKeys.shift();
 			const requestedObject = requestedObjects.shift();
-
+			if (!requestedObject) {
+				resultArray[i] = requestedObject;
+				continue;
+			}
 			if (isAccountId(key)) {
 				const nameKey = requestedObject.name;
 
@@ -489,7 +505,10 @@ class API {
 			if (resultArray[i]) continue;
 
 			const requestedObject = requestedObjects.shift();
-
+			if (!requestedObject) {
+				resultArray[i] = requestedObject;
+				continue;
+			}
 			const nameKey = requestedObject.name;
 			const idKey = requestedObject.id;
 
@@ -524,7 +543,9 @@ class API {
 
 		try {
 			const requestedObject = await this.wsApi.database.getAccountByName(accountName);
-
+			if (!requestedObject) {
+				return requestedObject;
+			}
 			const idKey = requestedObject.id;
 
 			this.cache.setInMap('accountsById', idKey, requestedObject);
@@ -724,7 +745,10 @@ class API {
 			if (resultArray[i]) continue;
 
 			const requestedObject = requestedObjects.shift();
-
+			if (!requestedObject) {
+				resultArray[i] = requestedObject;
+				continue;
+			}
 			const idKey = requestedObject.id;
 			const nameKey = requestedObject.symbol;
 
@@ -1234,6 +1258,26 @@ class API {
 		if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
 
 		return this.wsApi.database.getRecentTransactionById(transactionId);
+	}
+
+	/**
+     *  @method registerAccount
+     *
+     *  @param  {String} accountName
+     * 	@param  {String} ownerKey
+     * 	@param  {String} activeKey
+     * 	@param  {String} memoKey
+     * 	@param  {String} echoRandKey
+     *
+     *  @return {Promise}
+     */
+	registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey) {
+		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
+		if (!isPublicKey(ownerKey)) return Promise.reject(new Error('Owner public key is invalid'));
+		if (!isPublicKey(activeKey)) return Promise.reject(new Error('Active public key is invalid'));
+		if (!isPublicKey(memoKey)) return Promise.reject(new Error('Memo public key is invalid'));
+		if (!isEchoRandKey(echoRandKey)) return Promise.reject(new Error('Echo rand key is invalid'));
+		return this.wsApi.registration.registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey);
 	}
 
 }

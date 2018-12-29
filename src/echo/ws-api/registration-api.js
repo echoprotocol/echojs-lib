@@ -15,26 +15,13 @@ class RegistrationAPI {
 	 *  @param  {String} accountName
 	 * 	@param  {String} ownerKey
 	 * 	@param  {String} activeKey
+	 * 	@param  {String} memoKey
 	 * 	@param  {String} echoRandKey
-	 * 	@param  {String} registrarAccount
-	 * 	@param  {String} referrerAccount
-	 * 	@param  {String} referrerPercent
 	 *
 	 *  @return {Promise}
 	 */
-	registerAccount(
-		accountName, ownerKey, activeKey, echoRandKey,
-		registrarAccountName, referrerAccountName, referrerPercent,
-	) {
-		return this.db.exec('register_account', [
-			accountName,
-			ownerKey,
-			activeKey,
-			echoRandKey,
-			registrarAccountName,
-			referrerAccountName,
-			referrerPercent,
-		]);
+	registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey) {
+		return this.db.exec('register_account', [accountName, ownerKey, activeKey, memoKey, echoRandKey]);
 	}
 
 }

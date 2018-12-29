@@ -11,13 +11,13 @@ const url = 'ws://195.201.164.54:6311';
 describe('API', () => {
     const ws = new WS();
     beforeEach(async () => {
-        await ws.connect(url);
+        await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login']});
     });
     afterEach(async () => {
         await ws.close();
     });
 
-    describe('#getBlock()', () => {
+    describe.skip('#getBlock()', () => {
         it('should get block and save it to cache', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -32,7 +32,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getTransaction()', () => {
+    describe.skip('#getTransaction()', () => {
         it.skip('should get transaction and save it to cache', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -48,7 +48,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getAccounts()', () => {
+    describe.skip('#getAccounts()', () => {
         it('should get accounts and save it to cache', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -68,7 +68,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getAccountCount()', () => {
+    describe.skip('#getAccountCount()', () => {
         it('should get account count', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -83,7 +83,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#lookupAssetSymbols()', () => {
+    describe.skip('#lookupAssetSymbols()', () => {
         it('should get asset by symbol and save it in multi caches', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -103,7 +103,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getAssets()', () => {
+    describe.skip('#getAssets()', () => {
         it('should get assets by id and save it in multi caches', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -122,7 +122,7 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
-    describe('#getObjects()', () => {
+    describe.skip('#getObjects()', () => {
         it('should get objects by id and save it in multi caches', async () => {
             try {
                 const wsApi = new WSAPI(ws);
@@ -148,4 +148,40 @@ describe('API', () => {
             }
         }).timeout(5000);
     });
+    describe('#getObjects()', () => {
+        it('should get objects by id and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const accountName = 'teqst112f21';
+                const ownerKey = 'ECHOCV';
+                const activeKey = 'ECHO6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV';
+                const memoKey = 'ECHO6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV';
+                const echoRandKey = 'DETDvH';
+
+                const answer = await api.registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey);
+                console.log(answer)
+                // expect(objects).to.be.an('array');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getObjects()', () => {
+        it('should get objects by id and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const acc = await api.lookupAccountNames(['test101224']);
+                console.log(acc)
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+
 });
