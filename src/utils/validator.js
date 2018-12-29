@@ -116,6 +116,7 @@ export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 
 export const isAccountBalanceId = (v) => isString(v) && accountBalanceIdRegex.test(v);
+export const isOperationId = (v) => isUInt8(v) && v < 49;
 
 export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
 
