@@ -21,7 +21,6 @@ import {
 	isVoteId,
 	isWitnessId,
 	isCommitteeMemberId,
-	isOperationId,
 } from '../utils/validator';
 
 import { Transactions, Operations } from '../serializer/operations';
@@ -1259,6 +1258,27 @@ class API {
 		if (!isOperationHistoryId(start)) return Promise.reject(new Error('Start parameter is invalid'));
 
 		return this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
+	}
+
+	/**
+     *  @method getRelativeAccountHistory
+     *  Get operations relevant to the specified account referenced
+     *  by an event numbering specific to the account.
+     *
+     *  @param {String} accountId
+     *  @param {Number} stop [Sequence number of earliest operation]
+     *  @param {Number} limit     [count operations (max 100)]
+     *  @param {Number} start [Sequence number of the most recent operation to retrieve]
+     *
+     *  @return {Promise}
+     */
+	getRelativeAccountHistory(accountId, stop = 0, limit = 100, start = 0) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
+		if (!isUInt64(stop)) return Promise.reject(new Error('Stop parameter should be non negative number'));
+		if (!isUInt64(limit) || limit > 100) return Promise.reject(new Error('Limit should be capped at 100'));
+		if (!isUInt64(start)) return Promise.reject(new Error('Start parameter should be non negative number'));
+
+		return this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
 	}
 
 }
