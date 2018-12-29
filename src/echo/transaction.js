@@ -52,7 +52,7 @@ class Transaction {
 		if (!operationType) throw new Error(`unknown operation ${name}`);
 		// TODO: proposal_create
 		const operation = [operationType.id, props];
-		if (!operationType.validate(operation, { feeIsRequired: false })) throw new Error('invalid props');
+		operationType.check(operation, false);
 		this._operations.push(operation);
 		return this;
 	}
@@ -79,7 +79,7 @@ class Transaction {
 		};
 		for (const op of operations) {
 			if (op[1].fee === undefined) addOperationToAsset(assetId, op);
-			else if (op[1].fee.amount === undefined) addOperationToAsset(op[1].fee.assetId, op);
+			else if (op[1].fee.amount === undefined) addOperationToAsset(op[1].fee.asset_id, op);
 		}
 		const notDefaultAssetsIds = [...operationsByNotDefaultFee.keys()];
 		await Promise.all([
@@ -88,7 +88,7 @@ class Transaction {
 				const fees = await this.echo.api.getRequiredFees(defaultAssetOperations);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
 					const fee = fees[opIndex];
-					defaultAssetOperations[opIndex][1].fee = { assetId: fee.asset_id, amount: fee.amount };
+					defaultAssetOperations[opIndex][1].fee = { asset_id: fee.asset_id, amount: fee.amount };
 				}
 			})(),
 			...notDefaultAssetsIds.map(async (notDefaultAssetId) => {
@@ -101,7 +101,7 @@ class Transaction {
 				const totalFees = new BigNumber(0);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
 					const fee = fees[opIndex];
-					ops[opIndex][1].fee = { assetId: fee.asset_id, amount: fee.amount };
+					ops[opIndex][1].fee = { asset_id: fee.asset_id, amount: fee.amount };
 					totalFees.plus(fee.amount);
 				}
 				if (totalFees.gt(feePool)) throw new Error('fee pool overflow');

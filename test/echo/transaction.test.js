@@ -40,7 +40,7 @@ describe('Transaction', () => {
 			});
 			it('invalid props', () => {
 				const func = () => new Transaction(echo).addOperation('transfer', {});
-				expect(func).to.throw(Error, 'invalid props');
+				expect(func).to.throw(Error, 'Parameter from is invalid');
 			});
 		});
 		describe('successful', () => {
@@ -49,7 +49,7 @@ describe('Transaction', () => {
 				const operationProps = {
 					from: '1.2.1',
 					to: '1.2.2',
-					amount: { amount: 123, assetId: '1.3.1' },
+					amount: { amount: 123, asset_id: '1.3.1' },
 					extensions: [],
 				};
 				const transactionWithOperation = transaction.addOperation('transfer', operationProps);
@@ -78,28 +78,28 @@ describe('Transaction', () => {
 				const operationProps = {
 					from: '1.2.1',
 					to: '1.2.2',
-					amount: { amount: 123, assetId: '1.3.0' },
+					amount: { amount: 123, asset_id: '1.3.0' },
 					extensions: [],
 				};
 				const transaction = new Transaction(echo).addOperation('transfer', operationProps);
 				await transaction.setRequiredFees();
 				deepStrictEqual(transaction.operations, [[0, {
 					...operationProps,
-					fee: { assetId: '1.3.0', amount: 20 },
+					fee: { asset_id: '1.3.0', amount: 20 },
 				}]]);
 			});
 			it('custom asset', async () => {
 				const operationProps = {
 					from: '1.2.1',
 					to: '1.2.2',
-					amount: { amount: 123, assetId: '1.3.0' },
-					fee: { assetId: '1.3.1' },
+					amount: { amount: 123, asset_id: '1.3.0' },
+					fee: { asset_id: '1.3.1' },
 					extensions: [],
 				};
 				const transaction = new Transaction(echo).addOperation('transfer', operationProps);
 				await transaction.setRequiredFees();
 				const { fee } = transaction.operations[0][1];
-				strictEqual(fee.assetId, '1.3.1');
+				strictEqual(fee.asset_id, '1.3.1');
 				ok(fee.amount > 0);
 			});
 

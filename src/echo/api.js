@@ -16,7 +16,7 @@ import {
 	isBytecode,
 	isRipemd160,
 	isPublicKey,
-	isVoteId,
+	isVoteId, isWitnessId, isCommitteeMemberId,
 } from '../utils/validator';
 
 import { Transactions, Operations } from '../serializer/operations';
@@ -72,7 +72,7 @@ class API {
      * @returns {Promise.<Array.<*>>}
      * @private
      */
-	async _getArrayData(array, cacheName, methodName, force = false, dupicateToObjectById = false) {
+	async _getArrayData(array, cacheName, methodName, force = false, duplicateToObjectById = false) {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
@@ -107,7 +107,7 @@ class API {
 			const requestedObject = requestedObjects.shift();
 
 			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
-			if (dupicateToObjectById) {
+			if (duplicateToObjectById) {
 				this.cache.setInMap('objectsById', key, requestedObject);
 			}
 		}
@@ -177,7 +177,7 @@ class API {
      * @returns {Promise.<*>}
      * @private
      */
-	async _getSingleData(key, cacheName, methodName, force = false, dupicateToObjectById = false) {
+	async _getSingleData(key, cacheName, methodName, force = false, duplicateToObjectById = false) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
 
@@ -189,7 +189,7 @@ class API {
 		try {
 			const requestedObject = await this.wsApi.database[methodName](key);
 
-			if (dupicateToObjectById) {
+			if (duplicateToObjectById) {
 				this.cache.setInMap('objectsById', key, requestedObject);
 			}
 
@@ -229,18 +229,89 @@ class API {
 	}
 
 	/**
+	 *
+     * @param {Array} array
+     * @param {String} cacheName
+     * @param {String} methodName
+     * @param {Boolean} force
+     * @returns {Promise.<Array.<*>>}
+     * @private
+     */
+	async _getObjectsById(array, cacheName, methodName, force = false) {
+		const { length } = array;
+
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
+
+		for (let i = 0; i < length; i += 1) {
+			const key = array[i];
+
+			if (!force) {
+				const cacheValue = this.cache[cacheName].get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjectsKeys.push(key);
+		}
+
+		let requestedObjects;
+
+		try {
+			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
+		} catch (error) {
+			throw error;
+		}
+
+		for (let i = 0; i < length; i += 1) {
+			if (resultArray[i]) continue;
+			const key = requestedObjectsKeys.shift();
+			const requestedObject = requestedObjects.shift();
+
+			if (isAccountId(key)) {
+				const nameKey = requestedObject.name;
+
+				this.cache.setInMap('accountsById', key, requestedObject);
+				this.cache.setInMap('accountsByName', nameKey, requestedObject);
+
+			} else if (isAssetId(key)) {
+				const nameKey = requestedObject.symbol;
+
+				this.cache.setInMap('assetByAssetId', key, requestedObject);
+				this.cache.setInMap('assetBySymbol', nameKey, requestedObject);
+
+			} else if (isWitnessId(key)) {
+
+				this.cache.setInMap('witnessByWitnessId', key, requestedObject);
+
+			} else if (isCommitteeMemberId(key)) {
+
+				this.cache.setInMap('committeeMembersByCommitteeMemberId', key, requestedObject);
+
+			}
+
+			resultArray[i] = this.cache.setInMap(cacheName, key, requestedObject);
+		}
+
+		return resultArray;
+	}
+
+	/**
      *  @method getObjects
      *  @param  {Array<String>} objectIds
      *  @param {Boolean} force
      *
      *  @return {Promise}
      */
-	getObjects(objectIds, force = false) { // TODO save to categorical maps
+	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
 		if (!objectIds.every((id) => isObjectId(id))) return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayData(objectIds, 'objectsById', 'getObjects', force);
+		return this._getObjectsById(objectIds, 'objectsById', 'getObjects', force);
 	}
 
 	/**
@@ -929,7 +1000,7 @@ class API {
      *  @return {Promise}
      */
 	getTransactionHex(transaction) {
-		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// transaction is signed
 		return this.wsApi.database.getTransactionHex(transaction);
@@ -944,7 +1015,7 @@ class API {
      *  @return {Promise}
      */
 	getRequiredSignatures(transaction, availableKeys) {
-		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 		if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
 		if (!availableKeys.every((key) => isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
 
@@ -959,7 +1030,7 @@ class API {
      *  @return {Promise}
      */
 	getPotentialSignatures(transaction) {
-		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.getPotentialSignatures(transaction);
 	}
@@ -972,7 +1043,7 @@ class API {
      *  @return {Promise}
      */
 	getPotentialAddressSignatures(transaction) {
-		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.getPotentialAddressSignatures(transaction);
 	}
@@ -985,7 +1056,7 @@ class API {
      *  @return {Promise}
      */
 	verifyAuthority(transaction) {
-		if (!Transactions.transaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		return this.wsApi.database.verifyAuthority(transaction);
 	}
@@ -1014,7 +1085,7 @@ class API {
      *  @return {Promise}
      */
 	validateTransaction(transaction) {
-		if (!Transactions.signedTransaction.validate(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+		if (!Transactions.signedTransaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
 
 		// signed transaction
 		return this.wsApi.database.validateTransaction(transaction);
@@ -1030,9 +1101,7 @@ class API {
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		// if (!operations.every((v) => Operations.some((op) => op.validate(v)))) return Promise.reject(new Error('Operations should contain valid operations'));
-		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
-
+		if (!operations.every((v) => Operations[v[0]].isValid(v, false))) return Promise.reject(new Error('qwe'));
 		return this.wsApi.database.getRequiredFees(operations, assetId);
 	}
 
@@ -1103,7 +1172,7 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleData(contractId, 'fullContractsByContractId', 'getContract', force, true);
+		return this._getSingleData(contractId, 'fullContractsByContractId', 'getContract', force);
 	}
 
 	/**
