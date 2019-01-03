@@ -15,6 +15,8 @@ class API {
 		// TODO reset
 	}
 
+	setOptions() {}
+
 }
 
 export default API;
