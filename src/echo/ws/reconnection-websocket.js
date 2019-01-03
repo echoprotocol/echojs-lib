@@ -166,10 +166,14 @@ class ReconnectionWebSocket {
 	 * connect to socket, can't be used after close
 	 * @returns {Promise}
 	 */
-	reconnect() {
-		if (!this.ws) return Promise.reject(new Error('Socket not exist.'));
+	async reconnect() {
+		if (!this.ws) {
+			Promise.reject(new Error('Socket not exist.'));
+			return;
+		}
+
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
-		return this.connect(this.url, this._options);
+		await this.connect(this.url, this._options);
 	}
 
 	/**

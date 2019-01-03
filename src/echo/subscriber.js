@@ -35,13 +35,13 @@ class Subscriber {
 	/**
 	 *  @method init
 	 *
-	 *  @return {undefined}
+	 *  @return {Promise.<undefined>}
 	 */
-	init() {
-		this._wsApi.database.setSubscribeCallback(this._onUpdate, true);
+	async init() {
+		await this._wsApi.database.setSubscribeCallback(this._onUpdate, true);
 
 		if (this.subscriptions.echorand) {
-			this._setConsensusMessageCallback();
+			await this._setConsensusMessageCallback();
 		}
 	}
 
@@ -106,10 +106,8 @@ class Subscriber {
 	*  @return {Promise.<undefined>}
 	*/
 	async _setConsensusMessageCallback() {
-		if (!this.subscriptions.echorand) {
-			await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
-			this.subscriptions.echorand = true;
-		}
+		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+		this.subscriptions.echorand = true;
 	}
 
 	/**
@@ -126,7 +124,9 @@ class Subscriber {
 
 		this.subscribers.echorand.push(callback);
 
-		await this._setConsensusMessageCallback();
+		if (!this.subscriptions.echorand) {
+			await this._setConsensusMessageCallback();
+		}
 	}
 
 	/**

@@ -21,6 +21,7 @@ class Echo {
 			await this._ws.connect(address, options);
 
 			if (this._isInitModules) {
+				await this.subscriber.init();
 				return;
 			}
 
@@ -48,7 +49,7 @@ class Echo {
 	}
 
 	async reconnect() {
-		this._ws.reconnect();
+		await this._ws.reconnect();
 		await this.subscriber.init();
 	}
 

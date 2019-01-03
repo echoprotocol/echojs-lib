@@ -15,7 +15,6 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-
 	describe('setEchorandSubscribe', () => {
 		it('is not a function', async () => {
 			try {
@@ -24,6 +23,21 @@ describe('SUBSCRIBER', () => {
 				expect(err.message).to.equal('Callback is not a function');
 			}
 		});
+
+		it('reconnect', (done) => {
+			let isCalled = false;
+			let isReconnected = false;
+
+			echo.subscriber.setEchorandSubscribe((result) => {
+				if (!isCalled && isReconnected) {
+					done();
+					isCalled = true;
+				}
+			}).then(() => echo.reconnect()).then(() => {
+				isReconnected = true;
+			});
+		}).timeout(30 * 1000);
+
 
 		it('test', (done) => {
 			let isCalled = false;
