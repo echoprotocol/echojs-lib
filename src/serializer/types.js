@@ -11,7 +11,7 @@ import {
 export const uint64 = new Type(isUInt64);
 export const uint32 = new Type(isUInt32);
 export const uint16 = new Type(isUInt16);
-export const uint8 = new Type(isUInt8);
+export const uint8 = new Type(isUInt8, (value) => );
 export const int64 = new Type(isInt64);
 export const string = new Type(isString);
 export const hex = new Type(isHex);

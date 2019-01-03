@@ -1,10 +1,11 @@
-/* eslint-disable no-restricted-syntax */
+import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
 
 import Echo from './index';
 import { Operations } from '../serializer/operations';
 import { isString, isObject } from '../utils/validator';
-import BigNumber from 'bignumber.js';
+import PrivateKey from '../crypto/private-key';
+import PublicKey from '../crypto/public-key';
 
 /** @typedef {[number,{[key:string]:any}]} Operation */
 
@@ -15,6 +16,12 @@ class Transaction {
 	 * @type {Array<Operation>}
 	 */
 	get operations() { return cloneDeep(this._operations); }
+
+	/**
+	 * @readonly
+	 * @type {boolean}
+	 */
+	get finalized() { return this._finalized; }
 
 	/** @type {Echo} */
 	get echo() { return this._echo; }
@@ -28,6 +35,15 @@ class Transaction {
 		this._echo = value;
 	}
 
+	/** @type {number} */
+	get expiration() { return this._expiration; }
+
+	set expiration(value) {
+		if (typeof value !== 'number') throw new Error('expiration is not a number');
+		// TODO: more validators
+		this._expiration = value;
+	}
+
 	/** @param {Echo} echo */
 	constructor(echo) {
 		this.echo = echo;
@@ -36,6 +52,30 @@ class Transaction {
 		 * @type {Array<Operation>}
 		 */
 		this._operations = [];
+		/**
+		 * @private
+		 * @type {Array<{ privateKey:PrivateKey, publicKey:PublicKey }>}
+		 */
+		this._signers = [];
+		/**
+		 * @private
+		 * @type {Array<Buffer>}
+		 */
+		this._signatures = [];
+		/**
+		 * @private
+		 * @type {boolean}
+		 */
+		this._finalized = false;
+		/**
+		 * @private
+		 * @type {number}
+		 */
+		this._expiration = undefined;
+	}
+
+	checkNotFinalized() {
+		if (this.finalized) throw new Error('already finalized');
 	}
 
 	/**
@@ -44,7 +84,7 @@ class Transaction {
 	 * @returns {Transaction}
 	 */
 	addOperation(name, props = {}) {
-		// TODO: check finalization
+		this.checkNotFinalized();
 		if (name === undefined) throw new Error('name is missing');
 		if (!isString(name)) throw new Error('name is not a string');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
@@ -62,8 +102,8 @@ class Transaction {
 	 * @returns {Promise<void>}
 	 */
 	async setRequiredFees(assetId = '1.3.0') {
+		this.checkNotFinalized();
 		const operations = this._operations;
-		// TODO: check finalization
 		if (operations.length === 0) throw new Error('no operations');
 		/** @type Map<string,Array<Operation>> */
 		const operationsByNotDefaultFee = new Map();
@@ -108,6 +148,45 @@ class Transaction {
 			}),
 		]);
 		return this;
+	}
+
+	/**
+	 * @param {PrivateKey|Buffer} privateKey
+	 * @param {PublicKey} [publicKey]
+	 */
+	addSigner(privateKey, publicKey = privateKey.toPublicKey()) {
+		this.checkNotFinalized();
+		if (Buffer.isBuffer(privateKey)) privateKey = PrivateKey.fromBuffer(privateKey);
+		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
+		if (!(publicKey instanceof PublicKey)) throw new Error('public key is not instance of PublicKey class');
+		const privateKeyHex = privateKey.toHex();
+		for (const signer of this._signers) {
+			if (signer.privateKey.toHex() === privateKeyHex) return;
+		}
+		this._signers.push({ privateKey, publicKey });
+	}
+
+	async sign(privateKey) {
+		this.checkNotFinalized();
+		if (privateKey !== undefined) this.addSigner(privateKey);
+		const [dynamicGlobalChainData] = await this.echo.api.getObjects(['2.1.0']);
+		if (this.expiration === undefined) {
+			const headBlockTimeSeconds = Math.ceil(new Date(dynamicGlobalChainData.time).getTime() / 1000);
+			const nowSeconds = Math.ceil(new Date().getTime() / 1000);
+			// the head block time should be updated every 3 seconds
+			// if it isn't then help the transaction to expire (using head_block_sec)
+			// if the user's clock is very far behind, use the head block time.
+			this.expiration = nowSeconds - headBlockTimeSeconds > 30 ?
+				headBlockTimeSeconds : Math.max(nowSeconds, headBlockTimeSeconds);
+		}
+		// one more check to avoid that the sign method was called several times
+		// without waiting for the first call to be executed
+		this.checkNotFinalized();
+		const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
+		const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		this._signatures = this._signers.map(({ privateKey, publicKey }) => {
+		});
+		this.finalized = true;
 	}
 
 }
