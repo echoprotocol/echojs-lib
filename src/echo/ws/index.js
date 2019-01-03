@@ -3,6 +3,7 @@ import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
+import emitter from '../event-emitter';
 
 class WS {
 
@@ -57,6 +58,8 @@ class WS {
 		}
 
 		await this._initGrapheneApi();
+
+		emitter.emit('ws-open');
 	}
 
 	/**
@@ -66,6 +69,8 @@ class WS {
 		if (this._isFirstTime) this._isFirstTime = false;
 		this._connected = false;
 		if (this.onCloseCb) this.onCloseCb('close');
+
+		emitter.emit('ws-close');
 	}
 
 	/**
@@ -74,6 +79,8 @@ class WS {
      */
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
+
+		emitter.emit('ws-error');
 	}
 
 	/**
