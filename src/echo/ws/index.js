@@ -45,6 +45,7 @@ class WS extends EventEmitter {
 			await Promise.all(initPromises);
 			this._connected = true;
 			if (this.onOpenCb) this.onOpenCb('open');
+			this.emit('open');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 		}
@@ -61,8 +62,6 @@ class WS extends EventEmitter {
 		}
 
 		await this._initGrapheneApi();
-
-		this.emit('open');
 	}
 
 	/**

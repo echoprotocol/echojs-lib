@@ -5,6 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register test/**/*.js",
+    "test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"

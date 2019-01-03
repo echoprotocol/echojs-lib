@@ -44,6 +44,8 @@ class Echo {
 		this.api = new API(this.cache, this._wsApi);
 		this.subscriber = new Subscriber(this.cache, this._wsApi);
 
+		await this.subscriber.init();
+
 		this._ws.on('open', async () => {
 			await this.subscriber.init();
 		});
