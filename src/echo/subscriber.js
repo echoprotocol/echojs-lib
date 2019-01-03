@@ -30,11 +30,19 @@ class Subscriber {
 			disconnect: [],
 		};
 
-		this._init();
 	}
 
-	_init() {
+	/**
+	 *  @method init
+	 *
+	 *  @return {undefined}
+	 */
+	init() {
 		this._wsApi.database.setSubscribeCallback(this._onUpdate, true);
+
+		if (this.subscriptions.echorand) {
+			this._setConsensusMessageCallback();
+		}
 	}
 
 	_onUpdate() {}
