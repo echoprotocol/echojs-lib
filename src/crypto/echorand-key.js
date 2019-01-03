@@ -1,33 +1,31 @@
-import { sign } from 'tweetnacl';
+import { box } from 'tweetnacl';
 
 import { isString, isBuffer } from '../utils/validator';
 
-class EchorandKey {
+class ED25519 {
 
 	/**
-     *  @method fromSeed
-     *  This is private, the same seed produces the same private key every time.
+     *  @method fromPrivateKey
      *
-     *  @param {String|Buffer} pk - any length string.
+     *  @param {String|Buffer} seed - 32 byte length string.
      *
      *  @return {Buffer} ed25519 public key
      */
-	static fromPrivateKey(pk) {
-		if (!(isString(pk) || isBuffer(pk))) {
+	static publicKeyFromSeed(seed) {
+		if (!(isString(seed) || isBuffer(seed))) {
 			throw new Error('private key must be string of buffer');
 		}
 
-		if (isString(pk)) pk = Buffer.from(pk, 'hex');
+		if (isString(seed)) seed = Buffer.from(seed, 'hex');
 
-		if (pk.length !== 64) {
-			throw new Error(`Expecting 64 bytes, instead got ${pk.length}`);
+		if (seed.length !== 32) {
+			throw new Error(`Expecting 32 bytes, instead got ${seed.length}`);
 		}
 
-		return sign.keyPair.fromSecretKey(pk).publicKey;
+		return box.keyPair.fromSecretKey(seed).publicKey;
 	}
-
 
 }
 
-export default EchorandKey; // TODO rename to ed25519 enicoder
+export default ED25519;
 

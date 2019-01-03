@@ -59,12 +59,12 @@ class Cache {
 
 	setInMap(map, key, value) {
 		if (this.isUsed) this[map] = this[map].set(key, value);
-		return value;
+		return this;
 	}
 
 	set(param, value) {
 		if (this.isUsed) this[param] = value;
-		return value;
+		return this;
 	}
 
 }

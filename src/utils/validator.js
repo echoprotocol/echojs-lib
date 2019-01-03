@@ -133,7 +133,6 @@ export const isHex = (v) => isString(v) && hexRegex.test(v);
 
 export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
 
-
 export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v);
 
 export const isRipemd160 = (v) => isHex(v) && v.length === 40;
@@ -156,7 +155,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 	return addressPrefix === prefix;
 };
 
-export const isEchoRandKey = (v) => isString(v); // TODO
+export const isEchoRandKey = (v) => isString(v) && isBytes(v, 32);
 
 export const isAccountName = (v) => {
 	if (!isString(v)) return false;
