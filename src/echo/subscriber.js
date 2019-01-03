@@ -1,3 +1,5 @@
+import { isFunction } from '../utils/validator';
+
 class Subscriber {
 
 	/**
@@ -42,7 +44,7 @@ class Subscriber {
 	 *
 	 *  @param {Object} options
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	setOptions(options) {
 		this.options = options;
@@ -51,7 +53,7 @@ class Subscriber {
 	/**
 	 *  @method reset
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	reset() {
 		this.subscriptions = {
@@ -82,7 +84,7 @@ class Subscriber {
 	 *
 	 *  @param  {Array} result
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	_echorandUpdate(result) {
 		this.subscribers.echorand.forEach((callback) => {
@@ -91,32 +93,43 @@ class Subscriber {
 	}
 
 	/**
-	 *  @method setEchorandSubscribe
-	 *
-	 *  @param  {Function} callback
-	 *
-	 *  @return {Promise.<Number>}
-	 */
-	async setEchorandSubscribe(callback) {
-		const index = this.subscribers.echorand.push(callback) - 1;
-
+	*  @method _setConsensusMessageCallback
+	*
+	*  @return {Promise.<undefined>}
+	*/
+	async _setConsensusMessageCallback() {
 		if (!this.subscriptions.echorand) {
 			await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
 			this.subscriptions.echorand = true;
 		}
+	}
 
-		return index;
+	/**
+	 *  @method setEchorandSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
+	async setEchorandSubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.echorand.push(callback);
+
+		await this._setConsensusMessageCallback();
 	}
 
 	/**
 	 *  @method removeEchorandSubscribe
 	 *
-	 *  @param  {Number} index
+	 *  @param  {Function} callback
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
-	removeEchorandSubscribe(index) {
-		this.subscribers.echorand = this.subscribers.echorand.filter((c, i) => i !== index);
+	removeEchorandSubscribe(callback) {
+		this.subscribers.echorand = this.subscribers.echorand.filter((c) => c !== callback);
 	}
 
 	onBlockApply() {}

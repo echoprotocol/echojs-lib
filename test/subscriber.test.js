@@ -16,8 +16,14 @@ describe('SUBSCRIBER', () => {
 	});
 
 
-	describe('setEchorandSubscribe / removeEchorandSubscribe', () => {
-		let index;
+	describe('setEchorandSubscribe', () => {
+		it('is not a function', async () => {
+			try {
+				await echo.subscriber.setEchorandSubscribe(1);
+			} catch (err) {
+				expect(err.message).to.equal('Callback is not a function');
+			}
+		});
 
 		it('test', (done) => {
 			let isCalled = false;
@@ -32,13 +38,16 @@ describe('SUBSCRIBER', () => {
 					done();
 					isCalled = true;
 				}
-			}).then((i) => {
-				index = i;
 			});
 		}).timeout(30 * 1000);
 
-		after(() => {
-			echo.subscriber.removeEchorandSubscribe(index);
+	});
+
+	describe('removeEchorandSubscribe', () => {
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setEchorandSubscribe(callback);
+			echo.subscriber.removeEchorandSubscribe(callback);
 		});
 	});
 
