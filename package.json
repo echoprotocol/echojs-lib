@@ -27,7 +27,7 @@
     "crypto-js": "^3.1.9-1",
     "deep-equal": "^1.0.1",
     "ecurve": "^1.0.6",
-    "event-emitter": "^0.3.5",
+    "events": "^3.0.0",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
     "ws": "^6.1.2"

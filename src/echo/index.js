@@ -4,7 +4,6 @@ import WSAPI from './ws-api';
 import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
-import emitter from './event-emitter';
 
 class Echo {
 
@@ -45,7 +44,7 @@ class Echo {
 		this.api = new API(this.cache, this._wsApi);
 		this.subscriber = new Subscriber(this.cache, this._wsApi);
 
-		emitter.on('ws-open', async () => {
+		this._ws.on('open', async () => {
 			await this.subscriber.init();
 		});
 	}
