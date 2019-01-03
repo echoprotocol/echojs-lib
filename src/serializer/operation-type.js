@@ -1,6 +1,11 @@
 /* eslint-disable guard-for-in,no-restricted-syntax */
+import ByteBuffer from 'bytebuffer';
 import { isObject, isArray } from '../utils/validator';
 import { unrequiredAsset } from './types';
+import appendToBytebuffer from './append-bytebuffer';
+
+/** @typedef {[number,{[key:string]:*}]} Operation */
+/** @typedef {import('./type').default} Type */
 
 class OperationType {
 
@@ -10,11 +15,19 @@ class OperationType {
 	 */
 	get id() { return this._id; }
 
+	/**
+	 * @param {number} id
+	 * @param {{[key:string]:Type}} options
+	 */
 	constructor(id, options) {
 		this._id = id;
 		this.options = options;
 	}
 
+	/**
+	 * @param {Operation} operation
+	 * @param {boolean} feeIsRequired
+	 */
 	check(operation = [], feeIsRequired = true) {
 		if (!isArray(operation)) throw new Error('Operation should be an array');
 
@@ -28,7 +41,7 @@ class OperationType {
 		for (const [key, validator] of optionsEntries) {
 			const value = operation[1][key];
 			if (!feeIsRequired && key === 'fee') {
-				if (!unrequiredAsset.isValid(value)) throw new Error('Fee parameter is invalid');
+				if (!unrequiredAsset.validate(value)) throw new Error('Fee parameter is invalid');
 				continue;
 			}
 			if (!validator.isValid(value)) throw new Error(`Parameter ${key} is invalid`);
@@ -43,6 +56,21 @@ class OperationType {
 		} catch (_) {
 			return false;
 		}
+	}
+
+	/**
+	 * @param {Operation} operation
+	 * @returns {Buffer}
+	 */
+	toBuffer(operation) {
+		this.check(operation);
+		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+		for (const [key, type] of Object.entries(this.options)) {
+			const value = operation[1][key];
+			appendToBytebuffer(type, value, result);
+		}
+		result.copy(0, result.offset);
+		return Buffer.from(result.toBinary(), 'binary');
 	}
 
 }

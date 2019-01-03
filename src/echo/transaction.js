@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
 
 import Echo from './index';
-import { Operations } from '../serializer/operations';
+import { Operations, Transactions } from '../serializer/operations';
 import { isString, isObject } from '../utils/validator';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
@@ -184,6 +184,7 @@ class Transaction {
 		this.checkNotFinalized();
 		const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
 		const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		const transactionBuffer = Transactions.transaction.toBuffer(['transaction', ])
 		this._signatures = this._signers.map(({ privateKey, publicKey }) => {
 		});
 		this.finalized = true;

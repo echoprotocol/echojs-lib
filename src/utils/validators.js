@@ -3,6 +3,21 @@ import BN from 'bignumber.js';
 import ChainConfig from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 
+export function validateSafeInteger(value) {
+	if (typeof value !== 'number') throw new Error('value is not a number');
+	if (!Number.isInteger(value)) throw new Error('value is not a integer');
+}
+
+export function validatePositiveSafeInteger(value) {
+	validateSafeInteger(value);
+	if (value <= 0) throw new Error('value is not positive');
+}
+
+export function validateUnsignedSafeInteger(value) {
+	validateSafeInteger(value);
+	if (value < 0) throw new Error('value is negative');
+}
+
 const urlRegex = new RegExp(
 	'^(https|http|wss|ws):\\/\\/' + // protocol
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
@@ -13,7 +28,7 @@ const urlRegex = new RegExp(
     '(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
-const idRegex = /^\d+\.\d+\.(\d+)$/;
+export const idRegex = /^(0|([1-9]\d*\.)){2}(0|([1-9]\d*))$/;
 
 const accountIdRegex = /^1\.2\.[1-9]\d*$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;

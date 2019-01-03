@@ -9,6 +9,7 @@ import {
 	workerInitializer, predicate, blindOutput,
 	array, set, operation, memoData, optional, emptyArray,
 } from './types';
+import ArrayType from './complex-types/array-type';
 
 /** @type {{[name:string]:OperationType}} */
 export const Operations = {};
@@ -455,6 +456,7 @@ Operations.transferToBlind = new OperationType(
 		amount: asset,
 		from: protocolIdType('account'),
 		blinding_factor: bytes(32),
+		outputs: ArrayType.of(blindOutput),
 		outputs: array(blindOutput),
 	},
 );

@@ -1,27 +1,25 @@
-class Type {
+/** @typedef {import('bytebuffer')} ByteBuffer */
 
-	/**
-	 * @param {(value:any)=>boolean} validatorFunc
-	 * @param {(value:any)=>Array<number>} toBytesConverter
-	 */
-	constructor(validatorFunc, toBytesConverter) {
-		this.validatorFunc = validatorFunc;
-		/**
-		 * @private
-		 * @type {(value:any)=>Array<number>}
-		 */
-		this._toBytesConverter = toBytesConverter;
-	}
-
-	isValid(value) {
-		return this.validatorFunc(value);
-	}
-
-	toBytes(value) {
-		if (!this.isValid(value)) throw new Error('invalid value');
-		return this._toBytesConverter(value);
-	}
-
+function notImplemented() {
+	throw new Error('not implemented');
 }
 
-export default Type;
+/** @abstract */
+export default class Type {
+
+	/**
+	 * @abstract
+	 * @param {*} value
+	 */
+	// eslint-disable-next-line no-unused-vars
+	validate(value) { notImplemented(); }
+
+	/**
+	 * @abstract
+	 * @param {*} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	// eslint-disable-next-line no-unused-vars
+	appendToByteBuffer(value, bytebuffer) { notImplemented(); }
+
+}

@@ -1,29 +1,25 @@
 /* eslint-disable max-len */
 import Type from './type';
-import {
-	isUInt64, isUInt32, isUInt16, isUInt8, isInt64, isString, isHex, isBoolean, isArray, isVoid, isBytes,
-	isAccountId, isAssetId, isForceSettlementId, isCommitteeMemberId, isWitnessId, isLimitOrderId, isCallOrderId, isCustomId,
-	isProposalId, isOperationHistoryId, isWithdrawPermissionId, isVestingBalanceId, isWorkerId, isBalanceId, isContractId, isVoteId,
-	isPublicKey, isTimePointSec,
-	isObject, isEmptyObject, isEmptyArray,
-} from '../utils/validator';
+import * as validator from '../utils/validator';
+import ArrayType from './complex-types/array-type';
+import SetType from './complex-types/set-type';
+import MapType from './complex-types/map-type';
 
-export const uint64 = new Type(isUInt64);
-export const uint32 = new Type(isUInt32);
-export const uint16 = new Type(isUInt16);
-export const uint8 = new Type(isUInt8, (value) => );
-export const int64 = new Type(isInt64);
-export const string = new Type(isString);
-export const hex = new Type(isHex);
-export const bool = new Type(isBoolean);
+export const uint64 = new Type(validator.isUInt64);
+export const uint32 = new Type(validator.isUInt32);
+export const uint16 = new Type(validator.isUInt16);
+export const uint8 = new Type(validator.isUInt8);
+export const int64 = new Type(validator.isInt64);
+export const string = new Type(validator.isString);
+export const hex = new Type(validator.isHex);
+export const bool = new Type(validator.isBoolean);
+export const object = new Type(validator.isObject);
+export const publicKey = new Type(validator.isPublicKey);
+export const timePointSec = new Type(validator.isTimePointSec);
 
-export const object = new Type(isObject);
-export const publicKey = new Type(isPublicKey);
+export const array = (type) => new ArrayType(type);
+export const set = (type) => new SetType(type);
 
-export const timePointSec = new Type(isTimePointSec);
-
-export const array = (type) => new Type((v) => isArray(v) && v.every((e) => type.validation(e)));
-export const set = (type) => new Type((v) => isArray(v) && v.every((e) => type.validation(e) && new Set(v).size === v.length));
 const map = (keyType, valueType) => new Type((v) => {
 	if (!isArray(v)) return false;
 	const { length } = v;
@@ -42,7 +38,7 @@ const map = (keyType, valueType) => new Type((v) => {
 });
 
 export const bytes = (length) => new Type((v) => isBytes(v, length));
-export const operation = (operations) => new Type((v) => operations.some((op) => op.verify(v)));
+export const operation = (operations) => new Type((v) => operations.some((op) => op.isValid(v)));
 export const asset = new Type((v) => isObject(v) && isInt64(v.amount) && isAssetId((v.asset_id)));
 
 export const unrequiredAsset = new Type((v) =>
@@ -55,51 +51,31 @@ export const optional = (type) => new Type((v) => isVoid(v) || type.isValid(v));
 
 export const emptyArray = new Type(isEmptyArray);
 
-export const protocolIdType = (idType) => {
-	switch (idType) {
-		case 'account':
-			return new Type(isAccountId);
-		case 'asset':
-			return new Type(isAssetId);
-		case 'force_settlement':
-			return new Type(isForceSettlementId);
-		case 'committee_member':
-			return new Type(isCommitteeMemberId);
-		case 'witness':
-			return new Type(isWitnessId);
-		case 'limit_order':
-			return new Type(isLimitOrderId);
-		case 'call_order':
-			return new Type(isCallOrderId);
-		case 'custom':
-			return new Type(isCustomId);
-		case 'operation_history':
-			return new Type(isOperationHistoryId);
-		case 'withdraw_permission':
-			return new Type(isWithdrawPermissionId);
-		case 'vesting_balance':
-			return new Type(isVestingBalanceId);
-		case 'worker':
-			return new Type(isWorkerId);
-		case 'balance':
-			return new Type(isBalanceId);
-		case 'proposal':
-			return new Type(isProposalId);
-		case 'contract':
-			return new Type(isContractId);
-		case 'vote':
-			return new Type(isVoteId);
-		default:
-			return new Type(() => false);
-	}
+export const protocolId = {
+	account: new Type(validator.isAccountId),
+	asset: new Type(validator.isAssetId),
+	force_settlement: new Type(validator.isForceSettlementId),
+	committee_member: new Type(validator.isCommitteeMemberId),
+	witness: new Type(validator.isWitnessId),
+	limit_order: new Type(validator.isLimitOrderId),
+	call_order: new Type(validator.isCallOrderId),
+	custom: new Type(validator.isCustomId),
+	operation_history: new Type(validator.isOperationHistoryId),
+	withdraw_permission: new Type(validator.isWithdrawPermissionId),
+	vesting_balance: new Type(validator.isVestingBalanceId),
+	worker: new Type(validator.isWorkerId),
+	balance: new Type(validator.isBalanceId),
+	proposal: new Type(validator.isProposalId),
+	contract: new Type(validator.isContractId),
+	vote: new Type(validator.isVoteId),
 };
 
 export const authority = new Type((v) =>
 	isObject(v) &&
     isUInt32(v.weight_threshold) &&
-    map(protocolIdType('account'), uint16).isValid(v.account_auths) &&
-    map(publicKey, uint16).isValid(v.key_auths) &&
-    map(publicKey, uint16).isValid(v.address_auths));
+    map(protocolIdType('account'), uint16).validate(v.account_auths) &&
+    map(publicKey, uint16).validate(v.key_auths) &&
+    map(publicKey, uint16).validate(v.address_auths));
 
 export const accountOptions = new Type((v) =>
 	isObject(v) &&
@@ -112,15 +88,15 @@ export const accountOptions = new Type((v) =>
 
 export const price = new Type((v) =>
 	isObject(v) &&
-	asset.isValid(v.base) &&
-	asset.isValid(v.quote));
+	asset.validate(v.base) &&
+	asset.validate(v.quote));
 
 export const priceFeed = new Type((v) =>
 	isObject(v) &&
-	price.isValid(v.settlement_price) &&
+	price.validate(v.settlement_price) &&
 	isUInt16(v.maintenance_collateral_ratio) &&
 	isUInt16(v.maximum_short_squeeze_ratio) &&
-	price.isValid(v.core_exchange_rate));
+	price.validate(v.core_exchange_rate));
 
 export const assetOptions = new Type((v) =>
 	isObject(v) &&
@@ -129,13 +105,13 @@ export const assetOptions = new Type((v) =>
     isUInt64(v.max_market_fee) &&
     isUInt16(v.issuer_permissions) &&
     isUInt16(v.flags) &&
-	price.isValid(v.core_exchange_rate) &&
-    set(protocolIdType('account')).isValid(v.whitelist_authorities) &&
-    set(protocolIdType('account')).isValid(v.blacklist_authorities) &&
-    set(protocolIdType('asset')).isValid(v.whitelist_markets) &&
-    set(protocolIdType('asset')).isValid(v.blacklist_markets) &&
+	price.validate(v.core_exchange_rate) &&
+    set(protocolIdType('account')).validate(v.whitelist_authorities) &&
+    set(protocolIdType('account')).validate(v.blacklist_authorities) &&
+    set(protocolIdType('asset')).validate(v.whitelist_markets) &&
+    set(protocolIdType('asset')).validate(v.blacklist_markets) &&
 	isString(v.description) &&
-    optional(object).isValid(v.extension));
+    optional(object).validate(v.extension));
 
 
 const linearVestingPolicyInitializer = new Type((v) =>
@@ -519,7 +495,7 @@ const feeParameters = custom([
 
 const feeSchedule = new Type((v) =>
 	isObject(v) &&
-	set(feeParameters).isValid(v.parameters) &&
+	set(feeParameters).validate(v.parameters) &&
 	isUInt32(v.scale));
 
 
@@ -529,33 +505,33 @@ export const bitassetOptions = new Type((v) =>
     isUInt8(v.minimum_feeds) &&
     isUInt32(v.force_settlement_delay_sec) &&
     isUInt16(v.maximum_force_settlement_volume) &&
-    set(protocolIdType('asset')).isValid(v.short_backing_asset) &&
-    optional(object).isValid(v.extension));
+    set(protocolIdType('asset')).validate(v.short_backing_asset) &&
+    optional(object).validate(v.extension));
 
 export const stealthConfirmation = new Type((v) =>
 	isObject(v) &&
     isPublicKey(v.one_time_key) &&
-    optional(publicKey).isValid(v.to) &&
+    optional(publicKey).validate(v.to) &&
 	isHex(v.encrypted_memo));
 
 export const blindInput = new Type((v) =>
 	isObject(v) &&
     isBytes(v.commitment, 33) &&
-    authority.isValid(v.owner));
+    authority.validate(v.owner));
 
 export const blindOutput = new Type((v) =>
 	isObject(v) &&
     isHex(v.range_proof) &&
-    authority.isValid(v.owner) &&
-    optional(stealthConfirmation).isValid(v.stealth_memo));
+    authority.validate(v.owner) &&
+    optional(stealthConfirmation).validate(v.stealth_memo));
 
-export const vestingPolicyInitializer = new Type((v) => custom([linearVestingPolicyInitializer, cddVestingPolicyInitializer]).isValid(v));
-export const workerInitializer = new Type((v) => custom([refundWorkerInitializer, vestingBalanceWorkerInitializer, burnWorkerInitializer]).isValid(v));
-export const predicate = new Type((v) => custom([accountNameEqLitPredicate, assetSymbolEqLitPredicate, blockIdPredicate]).isValid(v));
+export const vestingPolicyInitializer = new Type((v) => custom([linearVestingPolicyInitializer, cddVestingPolicyInitializer]).validate(v));
+export const workerInitializer = new Type((v) => custom([refundWorkerInitializer, vestingBalanceWorkerInitializer, burnWorkerInitializer]).validate(v));
+export const predicate = new Type((v) => custom([accountNameEqLitPredicate, assetSymbolEqLitPredicate, blockIdPredicate]).validate(v));
 
 export const chainParameters = new Type((v) =>
 	isObject(v) &&
-    feeSchedule.isValid(v.current_fees) &&
+    feeSchedule.validate(v.current_fees) &&
 	isUInt8(v.block_interval) &&
 	isUInt32(v.maintenance_interval) &&
 	isUInt8(v.maintenance_skip_slots) &&
@@ -583,6 +559,6 @@ export const chainParameters = new Type((v) =>
     isUInt16(v.accounts_per_fee_scale) &&
     isUInt8(v.account_fee_scale_bitshifts) &&
     isUInt8(v.max_authority_depth) &&
-    echorandConfig.isValid(v.echorand_config) &&
+    echorandConfig.validate(v.echorand_config) &&
 	isEmptyArray(v.extensions));
 
