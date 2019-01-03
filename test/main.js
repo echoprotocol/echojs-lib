@@ -134,6 +134,7 @@ describe('API', () => {
                 const assetSymbol = 'ECHO';
 
                 const objects = await api.getObjects([accountId, assetId]);
+
                 const assetName = objects[0].name;
 
                 expect(objects).to.be.an('array');
@@ -143,6 +144,111 @@ describe('API', () => {
                 expect(objects).to.deep.include(cache.assetBySymbol.get(assetSymbol));
                 expect(objects).to.deep.include(cache.accountsById.get(accountId));
                 expect(objects).to.deep.include(cache.accountsByName.get(assetName));
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getCommitteeMembers()', () => {
+        it('should get committee member by id and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const committeeMember = '1.5.1';
+
+                const objects = await api.getCommitteeMembers([committeeMember]);
+
+                expect(objects).to.be.an('array');
+                expect(objects).to.deep.include(cache.objectsById.get(committeeMember));
+                expect(objects).to.deep.include(cache.committeeMembersByCommitteeMemberId.get(committeeMember));
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getAccountByName()', () => {
+        it('should get account by name and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const accountName = 'test1012';
+
+                const account = await api.getAccountByName(accountName);
+
+                expect(account).to.exist;
+
+                const { id } = account;
+
+                expect(account).to.deep.equal(cache.objectsById.get(id));
+                expect(account).to.deep.equal(cache.accountsById.get(id));
+                expect(account).to.deep.equal(cache.accountsByName.get(accountName));
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getWitnesses()', () => {
+        it('should get witnesses by id and save it in multi caches', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const witnessId = '1.6.1';
+
+                const objects = await api.getWitnesses([witnessId]);
+
+                expect(objects).to.be.an('array');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#getAllContracts()', () => {
+        it('should get all contracts', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const contracts = await api.getAllContracts();
+                expect(contracts).to.be.an('array');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#lookupAccounts()', () => {
+        it('should get account by name and limit', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const lowerBoundName = 't';
+
+                const accounts = await api.lookupAccounts(lowerBoundName);
+                expect(accounts).to.be.an('array');
+            } catch (e) {
+                throw e;
+            }
+        }).timeout(5000);
+    });
+    describe('#listAssets()', () => {
+        it('should get assets by name and limit', async () => {
+            try {
+                const wsApi = new WSAPI(ws);
+                const cache = new Cache();
+                const api = new API(cache, wsApi);
+
+                const lowerBoundSymbol = 'E';
+
+                const assets = await api.listAssets(lowerBoundSymbol);
+                expect(assets).to.be.an('array');
             } catch (e) {
                 throw e;
             }
