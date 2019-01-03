@@ -127,6 +127,8 @@ export const isObjectId = (v) => {
 
 };
 
+export const isBuffer = (v) => Buffer.isBuffer(v);
+
 export const isHex = (v) => isString(v) && hexRegex.test(v);
 
 export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
