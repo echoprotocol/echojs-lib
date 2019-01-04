@@ -70,6 +70,8 @@ class Cache {
 		return this;
 	}
 
+	setOptions() {}
+
 }
 
 export default Cache;

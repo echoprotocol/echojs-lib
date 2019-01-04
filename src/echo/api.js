@@ -1358,6 +1358,8 @@ class API {
 		return this.wsApi.database.getRecentTransactionById(transactionId);
 	}
 
+	setOptions() {}
+
 }
 
 export default API;
