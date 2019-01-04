@@ -2,11 +2,10 @@ import EventEmitter from 'events';
 import { Map } from 'immutable';
 
 import {
+	isFunction,
 	isObjectId,
 	isLimitOrderId,
 	isCallOrderId,
-	// isAssetDynamicDataId,
-	// isBitassetDataId,
 	isAccountBalanceId,
 	isAccountStatisticsId,
 	isTransactionId,
@@ -54,11 +53,19 @@ class Subscriber extends EventEmitter {
 			disconnect: [],
 		};
 
-		this._init();
 	}
 
-	_init() {
-		this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
+	/**
+	 *  @method init
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
+	async init() {
+		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
+
+		if (this.subscriptions.echorand) {
+			await this._setConsensusMessageCallback();
+		}
 	}
 
 	// [ [ { id: '2.9.149095',
@@ -330,7 +337,7 @@ class Subscriber extends EventEmitter {
 	 *
 	 *  @param {Object} options
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	setOptions(options) {
 		this.options = options;
@@ -339,7 +346,7 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @method reset
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	reset() {
 		this.subscriptions = {
@@ -370,7 +377,7 @@ class Subscriber extends EventEmitter {
 	 *
 	 *  @param  {Array} result
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
 	_echorandUpdate(result) {
 		this.subscribers.echorand.forEach((callback) => {
@@ -379,32 +386,43 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
+	*  @method _setConsensusMessageCallback
+	*
+	*  @return {Promise.<undefined>}
+	*/
+	async _setConsensusMessageCallback() {
+		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+		this.subscriptions.echorand = true;
+	}
+
+	/**
 	 *  @method setEchorandSubscribe
 	 *
 	 *  @param  {Function} callback
 	 *
-	 *  @return {Promise.<Number>}
+	 *  @return {Promise.<undefined>}
 	 */
 	async setEchorandSubscribe(callback) {
-		const index = this.subscribers.echorand.push(callback) - 1;
-
-		if (!this.subscriptions.echorand) {
-			await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
-			this.subscriptions.echorand = true;
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
 		}
 
-		return index;
+		this.subscribers.echorand.push(callback);
+
+		if (!this.subscriptions.echorand) {
+			await this._setConsensusMessageCallback();
+		}
 	}
 
 	/**
 	 *  @method removeEchorandSubscribe
 	 *
-	 *  @param  {Number} index
+	 *  @param  {Function} callback
 	 *
-	 *  @return {Void}
+	 *  @return {undefined}
 	 */
-	removeEchorandSubscribe(index) {
-		this.subscribers.echorand = this.subscribers.echorand.filter((c, i) => i !== index);
+	removeEchorandSubscribe(callback) {
+		this.subscribers.echorand = this.subscribers.echorand.filter((c) => c !== callback);
 	}
 
 	onBlockApply() {}

@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len,no-empty */
 import WebSocket from 'isomorphic-ws';
 
 import {
@@ -166,10 +166,13 @@ class ReconnectionWebSocket {
 	 * connect to socket, can't be used after close
 	 * @returns {Promise}
 	 */
-	reconnect() {
-		if (!this.ws) return Promise.reject(new Error('Socket not exist.'));
+	async reconnect() {
+		if (!this.ws) {
+			throw new Error('Socket not exist.');
+		}
+
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
-		return this.connect(this.url, this._options);
+		await this.connect(this.url, this._options);
 	}
 
 	/**
@@ -362,9 +365,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-	 * remove pending request from map
-	 * @private
-	 */
+     * remove pending request from map
+     * @private
+     */
 	_removePendingRequest(id) {
 		delete this._cbs[id];
 		delete this._subs[id];
@@ -372,9 +375,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-	 * remove successful request from map
-	 * @private
-	 */
+     * remove successful request from map
+     * @private
+     */
 	_removeSuccessfulRequest(id) {
 		delete this._cbs[id];
 

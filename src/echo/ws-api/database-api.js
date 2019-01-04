@@ -156,13 +156,13 @@ class DatabaseAPI {
 
 	/**
 	 *  @method getFullAccounts
-	 *  @param  {Array<String>} accountNameOrIds
+	 *  @param  {Array<String>} accountNamesOrIds
 	 *  @param  {Boolean} subscribe
 	 *
 	 *  @return {Promise}
 	 */
-	getFullAccounts(accountNameOrIds, subscribe) {
-		return this.db.exec('get_full_accounts', [accountNameOrIds, subscribe]);
+	getFullAccounts(accountNamesOrIds, subscribe) {
+		return this.db.exec('get_full_accounts', [accountNamesOrIds, subscribe]);
 	}
 
 	/**
@@ -228,13 +228,13 @@ class DatabaseAPI {
 
 	/**
 	 *  @method getNamedAccountBalances
-	 *  @param  {String} accountId
+	 *  @param  {String} accountName
 	 *  @param  {Array<String>} assetIds
 	 *
 	 *  @return {Promise}
 	 */
-	getNamedAccountBalances(accountId, assetIds) {
-		return this.db.exec('get_named_account_balances', [accountId, assetIds]);
+	getNamedAccountBalances(accountName, assetIds) {
+		return this.db.exec('get_named_account_balances', [accountName, assetIds]);
 	}
 
 	/**
@@ -290,14 +290,14 @@ class DatabaseAPI {
 
 	/**
 	 *  @method getOrderBook
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
 	 *  @param  {Number} depth
 	 *
 	 *  @return {Promise}
 	 */
-	getOrderBook(baseAssetId, quoteAssetId, depth = 50) {
-		return this.db.exec('get_order_book', [baseAssetId, quoteAssetId, depth]);
+	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
+		return this.db.exec('get_order_book', [baseAssetName, quoteAssetName, depth]);
 	}
 
 	/**
@@ -539,6 +539,17 @@ class DatabaseAPI {
 	 */
 	getPotentialSignatures(transaction) {
 		return this.db.exec('get_potential_signatures', [transaction]);
+	}
+
+	/**
+     *  @method getPotentialAddressSignatures
+     *
+     *  @param  {Object} transaction
+     *
+     *  @return {Promise}
+     */
+	getPotentialAddressSignatures(transaction) {
+		return this.db.exec('get_potential_address_signatures', [transaction]);
 	}
 
 	/**

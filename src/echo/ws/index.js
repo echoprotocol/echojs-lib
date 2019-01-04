@@ -1,12 +1,16 @@
 /* global window */
+import EventEmitter from 'events';
+
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
-class WS {
+class WS extends EventEmitter {
 
 	constructor() {
+		super();
+
 		this._ws_rpc = new ReconnectionWebSocket();
 
 		this._connected = false;
@@ -41,6 +45,7 @@ class WS {
 			await Promise.all(initPromises);
 			this._connected = true;
 			if (this.onOpenCb) this.onOpenCb('open');
+			this.emit('open');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 		}
@@ -66,6 +71,8 @@ class WS {
 		if (this._isFirstTime) this._isFirstTime = false;
 		this._connected = false;
 		if (this.onCloseCb) this.onCloseCb('close');
+
+		this.emit('close');
 	}
 
 	/**
@@ -74,6 +81,8 @@ class WS {
      */
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
+
+		this.emit('error');
 	}
 
 	/**

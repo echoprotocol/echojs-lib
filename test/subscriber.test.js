@@ -15,9 +15,29 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
+	describe('setEchorandSubscribe', () => {
+		it('is not a function', async () => {
+			try {
+				await echo.subscriber.setEchorandSubscribe(1);
+			} catch (err) {
+				expect(err.message).to.equal('Callback is not a function');
+			}
+		});
 
-	describe('setEchorandSubscribe / removeEchorandSubscribe', () => {
-		let index;
+		it('reconnect', (done) => {
+			let isCalled = false;
+			let isReconnected = false;
+
+			echo.subscriber.setEchorandSubscribe((result) => {
+				if (!isCalled && isReconnected) {
+					done();
+					isCalled = true;
+				}
+			}).then(() => echo.reconnect()).then(() => {
+				isReconnected = true;
+			});
+		}).timeout(30 * 1000);
+
 
 		it('test', (done) => {
 			let isCalled = false;
@@ -32,17 +52,20 @@ describe('SUBSCRIBER', () => {
 					done();
 					isCalled = true;
 				}
-			}).then((i) => {
-				index = i;
 			});
 		}).timeout(30 * 1000);
 
-		after(() => {
-			echo.subscriber.removeEchorandSubscribe(index);
+	});
+
+	describe('removeEchorandSubscribe', () => {
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setEchorandSubscribe(callback);
+			echo.subscriber.removeEchorandSubscribe(callback);
 		});
 	});
 
-	after(() => {
-		echo.disconnect();
+	after(async () => {
+		await echo.disconnect();
 	});
 });
