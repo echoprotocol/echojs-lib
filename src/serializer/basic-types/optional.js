@@ -24,7 +24,15 @@ class OptionalType extends Type {
 		this.type.validate(value);
 	}
 
-	// TODO: implement
+	/**
+	 * @param {*} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer(value, bytebuffer) {
+		this.validate(value);
+		bytebuffer.writeUint8(value === undefined ? 0 : 1);
+		if (value !== undefined) this.type.appendToByteBuffer(value, bytebuffer);
+	}
 
 }
 

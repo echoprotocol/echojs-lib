@@ -9,7 +9,7 @@ class PublicKeyType extends Type {
 		PublicKey.fromStringOrThrow(value);
 	}
 
-	// TODO: implement
+	appendToByteBuffer() { super.appendToByteBuffer(); }
 
 }
 

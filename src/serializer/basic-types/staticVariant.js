@@ -18,7 +18,9 @@ class StaticVariantType extends Type {
 		this._types = [...types];
 	}
 
-	// TODO: implement
+	validate() { super.validate(); }
+
+	appendToByteBuffer() { super.appendToByteBuffer(); }
 
 }
 

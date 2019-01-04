@@ -2,7 +2,9 @@ import Type from '../type';
 
 class AddressType extends Type {
 
-	// TODO: implement
+	validate() { super.validate(); }
+
+	appendToByteBuffer() { super.appendToByteBuffer(); }
 
 }
 

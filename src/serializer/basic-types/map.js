@@ -34,7 +34,9 @@ class MapType extends Type {
 		this._valueType = valueType;
 	}
 
-	// TODO: implement
+	validate() { super.validate(); }
+
+	appendToByteBuffer() { super.appendToByteBuffer(); }
 
 }
 

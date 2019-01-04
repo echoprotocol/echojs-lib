@@ -1,6 +1,9 @@
+import BigNumber from 'bignumber.js';
+
+import echo from '../../';
 import { transfer } from '../../src/echo/operations';
 import PublicKey from '../../src/crypto/public-key';
-import BigNumber from 'bignumber.js';
+import Transaction from '../../src/echo/transaction';
 
 describe('transfer', () => {
 	// describe('failure creation', () => { });
@@ -18,6 +21,19 @@ describe('transfer', () => {
 					message: 'test_message',
 				},
 			}]);
+		});
+	});
+	describe('converting to bytebuffer', () => {
+		it('minimal object', () => {
+			const transaction = new Transaction(echo);
+			transaction.addOperation('transfer', {
+				// FIXME: remove optional fee
+				fee: { asset_id: '1.3.1', amount: 20 },
+				from: '1.2.123',
+				to: '1.2.456',
+				amount: { asset_id: '1.3.2', amount: 30 },
+			});
+			console.log(transaction.toByteBuffer().toHex());
 		});
 	});
 });

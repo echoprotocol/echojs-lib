@@ -46,7 +46,9 @@ class IdType extends Type {
 	 * @param {string|number} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
-	appendToByteBuffer(value, bytebuffer) { bytebuffer.writeVarint32(this.toId(value)); }
+	appendToByteBuffer(value, bytebuffer) {
+		bytebuffer.writeVarint32(this.toId(value));
+	}
 
 }
 

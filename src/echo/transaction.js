@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js';
+import ByteBuffer from 'bytebuffer';
 import { cloneDeep } from 'lodash';
 
 import Echo from './index';
-import { Operations, Transactions } from './operations';
+import operations from './operations';
 import { isString, isObject } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
@@ -88,11 +89,11 @@ class Transaction {
 		if (name === undefined) throw new Error('name is missing');
 		if (!isString(name)) throw new Error('name is not a string');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
-		const operationType = Operations[name];
+		const operationType = operations[name];
 		if (!operationType) throw new Error(`unknown operation ${name}`);
 		// TODO: proposal_create
 		const operation = [operationType.id, props];
-		operationType.check(operation, false);
+		operationType.validate(operation, false);
 		this._operations.push(operation);
 		return this;
 	}
@@ -103,8 +104,8 @@ class Transaction {
 	 */
 	async setRequiredFees(assetId = '1.3.0') {
 		this.checkNotFinalized();
-		const operations = this._operations;
-		if (operations.length === 0) throw new Error('no operations');
+		const operationTypes = this._operations;
+		if (operationTypes.length === 0) throw new Error('no operations');
 		/** @type Map<string,Array<Operation>> */
 		const operationsByNotDefaultFee = new Map();
 		const defaultAssetOperations = [];
@@ -117,7 +118,7 @@ class Transaction {
 			if (!arr) operationsByNotDefaultFee.set(notDefaultAssetId, [operation]);
 			else arr.push(operation);
 		};
-		for (const op of operations) {
+		for (const op of operationTypes) {
 			if (op[1].fee === undefined) addOperationToAsset(assetId, op);
 			else if (op[1].fee.amount === undefined) addOperationToAsset(op[1].fee.asset_id, op);
 		}
@@ -166,6 +167,16 @@ class Transaction {
 		this._signers.push({ privateKey, publicKey });
 	}
 
+	/** @returns {ByteBuffer} */
+	toByteBuffer() {
+		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+		for (const operationData of this._operations) {
+			const operationType = operations[operationData[0]];
+			operationType.appendToByteBuffer(operationData, result);
+		}
+		return result.copy(0, result.offset);
+	}
+
 	async sign(privateKey) {
 		this.checkNotFinalized();
 		if (privateKey !== undefined) this.addSigner(privateKey);
@@ -182,11 +193,12 @@ class Transaction {
 		// one more check to avoid that the sign method was called several times
 		// without waiting for the first call to be executed
 		this.checkNotFinalized();
-		const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
-		const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		const transactionBuffer = Transactions.transaction.toBuffer(['transaction', ])
-		this._signatures = this._signers.map(({ privateKey, publicKey }) => {
-		});
+		// TODO: implement
+		// const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
+		// const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		// const transactionBuffer = Transactions.transaction.toBuffer(['transaction', ])
+		// this._signatures = this._signers.map(({ privateKey, publicKey }) => {
+		// });
 		this.finalized = true;
 	}
 

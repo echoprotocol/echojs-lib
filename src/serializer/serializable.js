@@ -1,5 +1,4 @@
 import Type from './type';
-import { validateObjectKeysEquals } from '../utils/validators';
 
 export class Serializable extends Type {
 
@@ -27,7 +26,10 @@ export class Serializable extends Type {
 
 	/** @type {[key:string]:*} */
 	validate(value) {
-		validateObjectKeysEquals(value, this.types);
+		for (const key in value) {
+			if (!Object.prototype.hasOwnProperty.call(value, key)) continue;
+			if (!this.types[key]) throw new Error(`unknown property ${key}`);
+		}
 		for (const key in this.types) {
 			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
 			const type = this.types[key];
@@ -35,7 +37,20 @@ export class Serializable extends Type {
 		}
 	}
 
-	// TODO: implement
+	/**
+	 * @param {{[key:string]:*}} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer(value, bytebuffer) {
+		this.validate(value);
+		for (const key in this.types) {
+			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
+			const type = this.types[key];
+			type.appendToByteBuffer(value[key], bytebuffer);
+			console.log(bytebuffer.copy(0, bytebuffer.offset).toHex());
+			
+		}
+	}
 
 }
 

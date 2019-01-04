@@ -2,7 +2,7 @@ import { Serializable } from './serializable';
 import Type from './type';
 import { validateUnsignedSafeInteger } from '../utils/validators';
 
-class Operation extends Type {
+export class Operation extends Type {
 
 	/**
 	 * @readonly
@@ -50,7 +50,14 @@ class Operation extends Type {
 		this.serializable.validate(operationProps);
 	}
 
-	// TODO: implement
+	/**
+	 * @param {[_OperationId,Serializable]} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer(value, bytebuffer) {
+		this.validate(value);
+		this.serializable.appendToByteBuffer(value[1], bytebuffer);
+	}
 
 }
 
