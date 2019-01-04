@@ -5,24 +5,24 @@ import { isString, isBuffer } from '../utils/validator';
 class ED25519 {
 
 	/**
-     *  @method fromPrivateKey
+     *  @method publicKeyFromPrivateKey
      *
-     *  @param {String|Buffer} seed - 32 byte length string.
+     *  @param {String|Buffer} pk - 32 byte hex string.
      *
      *  @return {Buffer} ed25519 public key
      */
-	static publicKeyFromSeed(seed) {
-		if (!(isString(seed) || isBuffer(seed))) {
+	static publicKeyFromPrivateKey(pk) {
+		if (!(isString(pk) || isBuffer(pk))) {
 			throw new Error('private key must be string of buffer');
 		}
 
-		if (isString(seed)) seed = Buffer.from(seed, 'hex');
+		if (isString(pk)) pk = Buffer.from(pk, 'hex');
 
-		if (seed.length !== 32) {
-			throw new Error(`Expecting 32 bytes, instead got ${seed.length}`);
+		if (pk.length !== 32) {
+			throw new Error(`Expecting 32 bytes, instead got ${pk.length}`);
 		}
 
-		return box.keyPair.fromSecretKey(seed).publicKey;
+		return Buffer.from(box.keyPair.fromSecretKey(pk).publicKey);
 	}
 
 }

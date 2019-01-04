@@ -44,13 +44,16 @@ class Cache {
 
 		this.accountReferencesByAccountId = new Map();
 
+		this.bitAssetsByBitAssetId = new Map();
+		this.dynamicAssetDataByDynamicAssetDataId = new Map();
+
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
 		this.accountHistoryRequests = new Map();
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
-		this.chainProperties = new Map();
+		this.chainProperties = null;
 		this.globalProperties = null;
 		this.config = null;
 		this.chainId = null;
@@ -66,6 +69,8 @@ class Cache {
 		if (this.isUsed) this[param] = value;
 		return this;
 	}
+
+	setOptions() {}
 
 }
 

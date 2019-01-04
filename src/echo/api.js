@@ -1,4 +1,4 @@
-/* eslint-disable no-continue,max-len */
+/* eslint-disable no-continue,max-len,no-await-in-loop */
 
 import {
 	isArray,
@@ -19,6 +19,8 @@ import {
 	isVoteId,
 	isWitnessId,
 	isCommitteeMemberId,
+	isBitAssetId,
+	isDynamicAssetDataId,
 	isEchoRandKey,
 } from '../utils/validator';
 
@@ -81,7 +83,7 @@ class API {
      * @param {String} cacheName
      * @param {String} methodName
      * @param {Boolean} force
-     * @param {Object} cacheParams
+     * @param {Array} cacheParams
      *
      * @returns {Promise.<Array.<*>>}
      * @private
@@ -138,6 +140,7 @@ class API {
      * @param {String} cacheName
      * @param {String} methodName
      * @param {Boolean} force
+     * @param {Array} cacheParams
      *
      * @returns {Promise.<*>}
      * @private
@@ -237,46 +240,72 @@ class API {
 
 		try {
 			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
+
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+				const key = requestedObjectsKeys.shift();
+				const requestedObject = requestedObjects.shift();
+
+				resultArray[i] = requestedObject;
+				if (!requestedObject) {
+					continue;
+				}
+
+				if (isAccountId(key)) {
+					const nameKey = requestedObject.name;
+
+					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
+
+				} else if (isAssetId(key)) {
+					const nameKey = requestedObject.symbol;
+
+					const bitAssetId = requestedObject.bitasset_data_id;
+					const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
+
+					if (bitAssetId) {
+						const bitasset = await this.getBitAssetData(bitAssetId, force);
+						if (bitasset) {
+							requestedObject.bitasset = bitasset;
+						}
+					}
+
+					if (dynamicAssetDataId) {
+						const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
+						if (dynamicAssetData) {
+							requestedObject.dynamic = dynamicAssetData;
+						}
+					}
+
+					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
+						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+
+				} else if (isWitnessId(key)) {
+
+					this.cache.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, key, requestedObject);
+
+				} else if (isCommitteeMemberId(key)) {
+
+					this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
+
+				} else if (isBitAssetId(key)) {
+
+					this.cache.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, key, requestedObject);
+
+				} else if (isDynamicAssetDataId(key)) {
+
+					this.cache.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
+
+				}
+
+				this.cache.setInMap(cacheName, key, requestedObject);
+			}
+
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
-
-		for (let i = 0; i < length; i += 1) {
-			if (resultArray[i]) continue;
-			const key = requestedObjectsKeys.shift();
-			const requestedObject = requestedObjects.shift();
-
-			resultArray[i] = requestedObject;
-			if (!requestedObject) {
-				continue;
-			}
-
-			if (isAccountId(key)) {
-				const nameKey = requestedObject.name;
-
-				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
-					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
-
-			} else if (isAssetId(key)) {
-				const nameKey = requestedObject.symbol;
-
-				this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
-					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
-
-			} else if (isWitnessId(key)) {
-
-				this.cache.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, key, requestedObject);
-
-			} else if (isCommitteeMemberId(key)) {
-
-				this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
-
-			}
-
-			this.cache.setInMap(cacheName, key, requestedObject);
-		}
-
-		return resultArray;
 	}
 
 	/**
@@ -295,10 +324,53 @@ class API {
 	}
 
 	/**
+     *  @method getObject
+     *  @param  {String} objectId
+     *  @param {Boolean} force
+     *
+     *  @returns {Promise.<*>}
+     */
+	async getObject(objectId, force = false) {
+		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectIds should be a array'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return (await this.getObjects([objectId], force))[0];
+	}
+
+	/**
+	 *
+     * 	@param {String} bitAssetId
+     *  @param {Boolean} force
+     * 	@returns  {Promise.<Array.<*>>}
+     * 	@private
+     */
+	getBitAssetData(bitAssetId, force = false) {
+		if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this.getObject(bitAssetId, force);
+	}
+
+
+	/**
+     *
+     * 	@param {String} dynamicAssetDataId
+     *  @param {Boolean} force
+     * 	@returns  {Promise.<Array.<*>>}
+     * 	@private
+     */
+	getDynamicAssetData(dynamicAssetDataId, force = false) {
+		if (!isDynamicAssetDataId(dynamicAssetDataId)) return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return this.getObject(dynamicAssetDataId, force);
+	}
+
+	/**
      *  @method getBlockHeader
      *  @param  {Number} blockNum
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{previous:String,timestamp:String,witness:String,account:String,transaction_merkle_root:String,state_root_hash:String,result_root_hash:String,extensions:[]}>}
      */
 	getBlockHeader(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -310,7 +382,7 @@ class API {
      *  @method getBlock
      *  @param  {Number} blockNum
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{previous:String,timestamp:String,witness:String,account:String,transaction_merkle_root:String,state_root_hash:String,result_root_hash:String,extensions:[],witness_signature:String,ed_signature:String,verifications:Array,round:Number,rand:String,cert:{_rand:String,_block_hash:String,_producer:Number,_signatures:Array.<{_step:Number,_value:Number,_signer:Number,_bba_sign:String}>},transactions:Array.<{ref_block_num:Number,ref_block_prefix:Number,expiration:String,operations:Array.<*>,extensions:[],signatures:Array.<String>,operation_results:Array.<Array.<*>>}}>}
      */
 	getBlock(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -323,7 +395,7 @@ class API {
      *  @param  {Number} blockNum
      *  @param  {Number} transactionIndex
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{ref_block_num:Number,ref_block_prefix:Number,expiration:String,operations:Array.<*>,extensions:[],signatures:Array.<String>,operation_results:Array.<Array.<*>>}>}
      */
 	getTransaction(blockNum, transactionIndex) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -338,7 +410,7 @@ class API {
      *  @method getChainProperties
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{id:String,chain_id:String,immutable_parameters:{min_committee_member_count:Number,min_witness_count:Number,num_special_accounts:Number,num_special_assets:Number}}>}
      */
 	getChainProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -349,7 +421,7 @@ class API {
 	/**
      *  @method getGlobalProperties
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{id:String,parameters:{current_fees:{parameters:Array.<*>,scale:Number},block_interval:Number,maintenance_interval:Number,maintenance_skip_slots:Number,committee_proposal_review_period:Number,maximum_transaction_size:Number,maximum_block_size:Number,maximum_time_until_expiration:Number,maximum_proposal_lifetime:Number,maximum_asset_whitelist_authorities:Number,maximum_asset_feed_publishers:Number,maximum_witness_count:Number,maximum_committee_count:Number,maximum_authority_membership:Number,reserve_percent_of_fee:Number,network_percent_of_fee:Number,lifetime_referrer_percent_of_fee:Number,cashback_vesting_period_seconds:Number,cashback_vesting_threshold:Number,count_non_member_votes:Boolean,allow_non_member_whitelists:Boolean,witness_pay_per_block:Number,worker_budget_per_day:String,max_predicate_opcode:Number,fee_liquidation_threshold:Number,accounts_per_fee_scale:Number,account_fee_scale_bitshifts:Number,max_authority_depth:Number,extensions:[]},next_available_vote_id:Number,active_committee_members:Array.<String>,active_witnesses:Array.<String>}>}
      */
 	getGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -361,7 +433,7 @@ class API {
      *  @method getConfig
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{GRAPHENE_SYMBOL:String,GRAPHENE_ADDRESS_PREFIX:String,GRAPHENE_ED_PREFIX:String,GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number,GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number,GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number,GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number,GRAPHENE_MAX_SHARE_SUPPLY:String,GRAPHENE_MAX_PAY_RATE:Number,GRAPHENE_MAX_SIG_CHECK_DEPTH:Number,GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number,GRAPHENE_MIN_BLOCK_INTERVAL:Number,GRAPHENE_MAX_BLOCK_INTERVAL:Number,GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number,GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number,GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number,GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number,GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number,GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number,GRAPHENE_MIN_UNDO_HISTORY:Number,GRAPHENE_MAX_UNDO_HISTORY:Number,GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number,GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number,GRAPHENE_BLOCKCHAIN_PRECISION:Number,GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number,GRAPHENE_DEFAULT_TRANSFER_FEE:Number,GRAPHENE_MAX_INSTANCE_ID:String,GRAPHENE_100_PERCENT:Number,GRAPHENE_1_PERCENT:Number,GRAPHENE_MAX_MARKET_FEE_PERCENT:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number,GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number,GRAPHENE_MAX_FEED_PRODUCERS:Number,GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number,GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number,GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number,GRAPHENE_COLLATERAL_RATIO_DENOM:Number,GRAPHENE_MIN_COLLATERAL_RATIO:Number,GRAPHENE_MAX_COLLATERAL_RATIO:Number,GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number,GRAPHENE_DEFAULT_MAX_WITNESSES:Number,GRAPHENE_DEFAULT_MAX_COMMITTEE:Number,GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number,GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number,GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number,GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,GRAPHENE_MAX_WORKER_NAME_LENGTH:Number,GRAPHENE_MAX_URL_LENGTH:Number,GRAPHENE_NEAR_SCHEDULE_CTR_IV:String,GRAPHENE_FAR_SCHEDULE_CTR_IV:String,GRAPHENE_CORE_ASSET_CYCLE_RATE:Number,GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number,GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY: '50000000000',GRAPHENE_MAX_INTEREST_APR:Number,GRAPHENE_COMMITTEE_ACCOUNT:String,GRAPHENE_WITNESS_ACCOUNT:String,GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,GRAPHENE_NULL_ACCOUNT:String,GRAPHENE_TEMP_ACCOUNT:String}>}
      */
 	async getConfig(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -384,7 +456,7 @@ class API {
 	/**
      *  @method getDynamicGlobalProperties
      *
-     *  @returns {Promise.<Object>}
+     *  @returns {Promise.<{id:String,head_block_number:Number,head_block_id:String,time:String,current_witness:String,next_maintenance_time:String,last_budget_time:String,witness_budget:Number,accounts_registered_this_interval:Number,recently_missed_count:Number,current_aslot:Number,recent_slots_filled:String,dynamic_flags:Number,last_irreversible_block_num:Number}>}
      */
 	async getDynamicGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -448,17 +520,20 @@ class API {
 			const key = accountNamesOrIds[i];
 			let cacheValue = null;
 
-			if (isAccountId(key)) {
-				cacheValue = this.cache.accountsById.get(key);
-			} else {
-				cacheValue = this.cache.accountsByName.get(key);
+			if (!force) {
+				if (isAccountId(key)) {
+					cacheValue = this.cache.accountsById.get(key);
+				} else {
+					cacheValue = this.cache.accountsByName.get(key);
+				}
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
 			}
 
-			if (cacheValue) {
-				resultArray[i] = cacheValue;
-			} else {
-				requestedObjects.push(key);
-			}
+			requestedObjects.push(key);
 		}
 
 		try {
@@ -493,7 +568,7 @@ class API {
      *  @param  {String} accountName
      *  @param {Boolean} force
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	async getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
@@ -598,7 +673,7 @@ class API {
      *  @method getVestedBalances
      *  @param  {Array<String>} balanceIds
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getVestedBalances(balanceIds) {
 		if (!isArray(balanceIds)) return Promise.reject(new Error('Balance ids should be an array'));
@@ -611,7 +686,7 @@ class API {
      *  @method getVestingBalances
      *  @param  {String} accountId
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getVestingBalances(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -624,16 +699,78 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<*>>}
+     *  @returns {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
      */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
 		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'symbol', cache: CacheMaps.ASSET_BY_SYMBOL }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
+		const { length } = assetIds;
 
-		return this._getArrayDataWithMultiSave(assetIds, CacheMaps.ASSET_BY_ASSET_ID, 'getAssets', force, cacheParams);
+		const resultArray = new Array(length).fill(null);
+		let requestedObjects = [];
+
+		for (let i = 0; i < length; i += 1) {
+
+			const key = assetIds[i];
+
+			if (!force) {
+				const cacheValue = this.cache.assetByAssetId.get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjects.push(key);
+		}
+
+		try {
+			requestedObjects = await this.wsApi.database.getAssets(requestedObjects);
+
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+
+				const requestedObject = requestedObjects.shift();
+
+				resultArray[i] = requestedObject;
+				if (!requestedObject) {
+					continue;
+				}
+
+				const bitAssetId = requestedObject.bitasset_data_id;
+				const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
+
+				if (bitAssetId) {
+					const bitasset = await this.getBitAssetData(bitAssetId, force);
+					if (bitasset) {
+						requestedObject.bitasset = bitasset;
+					}
+				}
+
+				if (dynamicAssetDataId) {
+					const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
+					if (dynamicAssetData) {
+						requestedObject.dynamic = dynamicAssetData;
+					}
+				}
+
+				const idKey = requestedObject.id;
+				const nameKey = requestedObject.symbol;
+
+				this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+			}
+
+			return resultArray;
+		} catch (error) {
+			throw error;
+		}
+
 	}
 
 	/**
@@ -655,7 +792,7 @@ class API {
      *  @param  {Array<String>} symbolsOrIds
      *  @param {Boolean} force
      *
-     *  @return {Promise}
+     *  @return {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
      */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
@@ -670,19 +807,23 @@ class API {
 		for (let i = 0; i < length; i += 1) {
 
 			const key = symbolsOrIds[i];
-			let cacheValue = null;
 
-			if (isAssetId(key)) {
-				cacheValue = this.cache.assetByAssetId.get(key);
-			} else {
-				cacheValue = this.cache.assetBySymbol.get(key);
+			if (!force) {
+				let cacheValue = null;
+
+				if (isAssetId(key)) {
+					cacheValue = this.cache.assetByAssetId.get(key);
+				} else {
+					cacheValue = this.cache.assetBySymbol.get(key);
+				}
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
 			}
 
-			if (cacheValue) {
-				resultArray[i] = cacheValue;
-			} else {
-				requestedObjects.push(key);
-			}
+			requestedObjects.push(key);
 		}
 
 		try {
@@ -699,6 +840,23 @@ class API {
 			resultArray[i] = requestedObject;
 			if (!requestedObject) {
 				continue;
+			}
+
+			const bitAssetId = requestedObject.bitasset_data_id;
+			const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
+
+			if (bitAssetId) {
+				const bitasset = await this.getBitAssetData(bitAssetId, force);
+				if (bitasset) {
+					requestedObject.bitasset = bitasset;
+				}
+			}
+
+			if (dynamicAssetDataId) {
+				const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
+				if (dynamicAssetData) {
+					requestedObject.dynamic = dynamicAssetData;
+				}
 			}
 
 			const idKey = requestedObject.id;
@@ -718,7 +876,7 @@ class API {
      *  @param  {String} quoteAssetName
      *  @param  {Number} depth
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
@@ -734,7 +892,7 @@ class API {
      *  @param  {String} quoteAssetId
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getLimitOrders(baseAssetId, quoteAssetId, limit) {
 		if (!isAssetId(baseAssetId)) return Promise.reject(new Error('Base asset id is invalid'));
@@ -749,7 +907,7 @@ class API {
      *  @param  {String} assetId
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getCallOrders(assetId, limit) {
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
@@ -763,7 +921,7 @@ class API {
      *  @param  {String} assetId
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getSettleOrders(assetId, limit) {
 		if (!isAssetId(assetId)) return Promise.reject(new Error('Asset id is invalid'));
@@ -776,7 +934,7 @@ class API {
      *  @method getMarginPositions
      *  @param  {String} accountId
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getMarginPositions(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -790,7 +948,7 @@ class API {
      *  @param  {String} baseAssetName
      *  @param  {String} quoteAssetName
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getTicker(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
@@ -805,7 +963,7 @@ class API {
      *  @param  {String} baseAssetName
      *  @param  {String} quoteAssetName
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	get24Volume(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
@@ -823,7 +981,7 @@ class API {
      *  @param  {Number} stop
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = GET_TRADE_HISTORY_DEFAULT_LIMIT) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
@@ -874,7 +1032,7 @@ class API {
      *  @param  {String} lowerBoundName
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	lookupWitnessAccounts(lowerBoundName, limit = LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
@@ -886,7 +1044,7 @@ class API {
 	/**
      *  @method getWitnessCount
      *
-     *  @return {Promise}
+     *  @return {Promise.<Number>}
      */
 	getWitnessCount() {
 		return this.wsApi.database.getWitnessCount();
@@ -931,7 +1089,7 @@ class API {
      *  @param  {String} lowerBoundName
      *  @param  {Number} limit
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	lookupCommitteeMemberAccounts(lowerBoundName, limit = COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
@@ -945,7 +1103,7 @@ class API {
      *
      *  @param  {String} accountId
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getWorkersByAccount(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -956,9 +1114,9 @@ class API {
 	/**
      *  @method lookupVoteIds
      *
-     *  @param  {Array<Strings>} votes
+     *  @param  {Array<String>} votes
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	lookupVoteIds(votes) {
 		if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
@@ -973,7 +1131,7 @@ class API {
      *
      *  @param  {Object} transaction
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getTransactionHex(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -988,7 +1146,7 @@ class API {
      *  @param  {Object} transaction
      *  @param  {Array<String>} availableKeys [public keys]
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getRequiredSignatures(transaction, availableKeys) {
 		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -1003,7 +1161,7 @@ class API {
      *
      *  @param  {Object} transaction
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getPotentialSignatures(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -1016,7 +1174,7 @@ class API {
      *
      *  @param  {Object} transaction
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getPotentialAddressSignatures(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -1029,7 +1187,7 @@ class API {
      *
      *  @param  {Object} transaction
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	verifyAuthority(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -1043,7 +1201,7 @@ class API {
      *  @param  {Object} accountNameOrId
      *  @param  {Array<String>} signers [public keys]
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	verifyAccountAuthority(accountNameOrId, signers) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) return Promise.reject(new Error('Account name or id is invalid'));
@@ -1058,7 +1216,7 @@ class API {
      *
      *  @param  {Object} transaction
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	validateTransaction(transaction) {
 		if (!Transactions.signedTransaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
@@ -1088,7 +1246,7 @@ class API {
      *
      *  @param  {String} accountNameOrId
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getProposedTransactions(accountNameOrId) {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) return Promise.reject(new Error('AccountNameOrId is invalid'));
@@ -1112,7 +1270,7 @@ class API {
      *  @param  {Number} fromBlock
      *  @param  {Number} toBlock
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
@@ -1144,7 +1302,7 @@ class API {
      *  @param  {String} contractId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Object>}
+     *  @return {Promise.<{contract_info:{id:String,statistics:String,suicided:Boolean},code:String,storage:Array.<Array>}>}
      */
 	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
@@ -1176,14 +1334,15 @@ class API {
      *  @method getContracts
      *
      *  @param  {Array<String>} contractIds
+	 *  @param {Boolean} force
      *
-     *  @return {Promise.<Object>}
+     *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
      */
 	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
 		if (!contractIds.every((id) => isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
 
-		return this._getSingleDataWithMultiSave(contractIds, CacheMaps.CONTRACTS_BY_CONTRACT_ID, 'getContracts', force);
+		return this._getArrayDataWithMultiSave(contractIds, CacheMaps.CONTRACTS_BY_CONTRACT_ID, 'getContracts', force);
 	}
 
 	/**
@@ -1206,7 +1365,7 @@ class API {
      *
      *  @param  {String} transactionId
      *
-     *  @return {Promise}
+     *  @return {Promise.<*>}
      */
 	getRecentTransactionById(transactionId) {
 		if (!isRipemd160(transactionId)) return Promise.reject(new Error('Transaction id should be a 20 bytes hex string'));
@@ -1233,6 +1392,8 @@ class API {
 		if (!isEchoRandKey(echoRandKey)) return Promise.reject(new Error('Echo rand key is invalid'));
 		return this.wsApi.registration.registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey);
 	}
+
+	setOptions() {}
 
 }
 

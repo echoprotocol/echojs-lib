@@ -5,12 +5,12 @@ import { CHAIN_APIS } from '../constants/ws-constants';
 
 const urlRegex = new RegExp(
 	'^(https|http|wss|ws):\\/\\/' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])|' + // OR ip (v4) address
-    '\\[(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\\])' + // OR ip (v6) address
-    '(:(0|[1-9][0-9]{0,3}|[1-6][0-5]{2}[0-3][0-5]))?' + // port
-    '(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$' // fragment locater
+	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+	'(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])|' + // OR ip (v4) address
+	'\\[(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\\])' + // OR ip (v6) address
+	'(:(0|[1-9][0-9]{0,3}|[1-6][0-5]{2}[0-3][0-5]))?' + // port
+	'(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+	'(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
 const idRegex = /^\d+\.\d+\.(\d+)$/;
@@ -29,9 +29,11 @@ const withdrawPermissionIdRegex = /^1\.12\.[1-9]\d*$/;
 const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
 const workerIdRegex = /^1\.14\.[1-9]\d*$/;
 const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
-const contractIdRegex = /^1\.16\.[1-9]\d*$/;
+const contractIdRegex = /^1\.16\.(0|[1-9]\d*)$/;
 const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
 
+const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
+const bitAssetIdRegex = /^2\.4\.(0|[1-9]\d*)$/;
 const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
@@ -146,6 +148,10 @@ export const isAssetName = (v) =>
     (/[A-Z]$/.test(v)) &&
     (!/^[A-Z0-9.]$/.test(v));
 
+export const isBitAssetId = (v) => isString(v) && bitAssetIdRegex.test(v);
+
+export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRegex.test(v);
+
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
 	if (!isString(v) || v.length !== (50 + addressPrefix.length)) return false;
@@ -155,7 +161,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 	return addressPrefix === prefix;
 };
 
-export const isEchoRandKey = (v) => isString(v) && isBytes(v, 32);
+export const isEchoRandKey = (v) => isString(v);
 
 export const isAccountName = (v) => {
 	if (!isString(v)) return false;
