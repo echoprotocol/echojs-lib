@@ -29,9 +29,11 @@ const withdrawPermissionIdRegex = /^1\.12\.[1-9]\d*$/;
 const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
 const workerIdRegex = /^1\.14\.[1-9]\d*$/;
 const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
-const contractIdRegex = /^1\.16\.[1-9]\d*$/;
+const contractIdRegex = /^1\.16\.(0|[1-9]\d*)$/;
 const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
 
+const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
+const bitAssetIdRegex = /^2\.4\.(0|[1-9]\d*)$/;
 const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
@@ -131,7 +133,6 @@ export const isHex = (v) => isString(v) && hexRegex.test(v);
 
 export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
 
-
 export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v);
 
 export const isRipemd160 = (v) => isHex(v) && v.length === 40;
@@ -144,6 +145,10 @@ export const isAssetName = (v) =>
     (/^[A-Z]/.test(v)) &&
     (/[A-Z]$/.test(v)) &&
     (!/^[A-Z0-9.]$/.test(v));
+
+export const isBitAssetId = (v) => isString(v) && bitAssetIdRegex.test(v);
+
+export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRegex.test(v);
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
