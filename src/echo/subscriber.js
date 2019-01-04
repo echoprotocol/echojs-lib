@@ -16,6 +16,11 @@ import {
 	isCommitteeMemberId,
 	isDynamicGlobalObjectId,
 	isAccountId,
+	isAssetId,
+	isDynamicAssetDataId,
+	isWorkerId,
+	isBitAssetId,
+	isProposalId,
 } from '../utils/validator';
 
 import { CANCEL_LIMIT_ORDER, CLOSE_CALL_ORDER } from '../constants';
@@ -68,57 +73,6 @@ class Subscriber extends EventEmitter {
 		}
 	}
 
-	// [ [ { id: '2.9.149095',
-	//   account: '1.2.401',
-	//   operation_id: '1.11.144030',
-	//   sequence: 1,
-	//   next: '2.9.0' },
-	// { id: '2.7.6372',
-	//   trx: [Object],
-	//   trx_id: '1376b9009ddd9746a0c28f8f5a1bb7687cbb0eeb' },
-	// { id: '1.2.401',
-	//   membership_expiration_date: '1970-01-01T00:00:00',
-	//   registrar: '1.2.17',
-	//   referrer: '1.2.17',
-	//   lifetime_referrer: '1.2.17',
-	//   network_fee_percentage: 2000,
-	//   lifetime_referrer_fee_percentage: 3000,
-	//   referrer_rewards_percentage: 0,
-	//   name: 'test-n4',
-	//   owner: [Object],
-	//   active: [Object],
-	//   options: [Object],
-	//   statistics: '2.6.401',
-	//   whitelisting_accounts: [],
-	//   blacklisting_accounts: [],
-	//   whitelisted_accounts: [],
-	//   blacklisted_accounts: [],
-	//   owner_special_authority: [Array],
-	//   active_special_authority: [Array],
-	//   top_n_control_flags: 0 },
-	// { id: '1.18.727216', results_id: [] },
-	// { id: '2.6.401',
-	//   owner: '1.2.401',
-	//   most_recent_op: '2.9.149095',
-	//   total_ops: 1,
-	//   removed_ops: 0,
-	//   total_core_in_orders: 0,
-	//   lifetime_fees_paid: 0,
-	//   pending_fees: 0,
-	//   pending_vested_fees: 0 },
-	// { id: '1.11.144030',
-	//   op: [Array],
-	//   result: [Array],
-	//   block_num: 727217,
-	//   trx_in_block: 0,
-	//   op_in_trx: 0,
-	//   virtual_op: 7888 },
-	// { id: '2.9.149094',
-	//   account: '1.2.17',
-	//   operation_id: '1.11.144030',
-	//   sequence: 771,
-	//   next: '2.9.149084' } ] ]
-
 	_updateObject(object) {
 		console.log('object', object);
 
@@ -140,57 +94,46 @@ class Subscriber extends EventEmitter {
 		);
 
 		// check interested by id type
-		// 	-	transaction
 		if (isTransactionId(object.id)) {
 			return null;
 		}
 
-		// 	-	accountTransactionHistory - object.account (subs on account)
 		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.account)) {
 			return null;
 		}
 
-		// 	-	limitOrder - object.seller (subs on account)
 		if (isLimitOrderId(object.id) && !subscribedAccounts.includes(object.seller)) {
 			return null;
 		}
 
-		// 	-	callOrder - object.borrower (subs on account)
 		if (isCallOrderId(object.id) && !subscribedAccounts.includes(object.borrower)) {
 			return null;
 		}
 
-		// -		accountBalance - object.owner (subs on account)
 		if (isAccountBalanceId(object.id) && !subscribedAccounts.includes(object.owner)) {
 			return null;
 		}
 
-		// -		operationHistory
 		if (isOperationHistoryId(object.id)) {
 			return null;
 		}
 
-		// -		blockSummary
 		if (isBlockSummaryId(object.id)) {
 			return null;
 		}
 
-		// -		accountStatistics - object.owner (subs on account)
 		if (isAccountStatisticsId(object.id) && !subscribedAccounts.includes(object.owner)) {
 			return null;
 		}
 
-		// -		witness - object.id (subs on witnesses)
 		if (isWitnessId(object.id) && !subscribedWitnesses.includes(object.id)) {
 			return null;
 		}
 
-		// 		committee - !previously! object.id (subs on committee)
 		if (isCommitteeMemberId(object.id)) {
 			return null;
 		}
 
-		// 		'0.0.' or '5.1.'
 		if (/^0\.0\.[1-9]\d*$/.test(object.id) || /^5\.1\.[1-9]\d*$/.test(object.id)) {
 			return null;
 		}
@@ -253,6 +196,34 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isAccountId(object.id)) {
+			//
+		}
+
+		if (isAssetId(object.id)) {
+			//
+		}
+
+		if (isDynamicAssetDataId(object.id)) {
+			//
+		}
+
+		if (isWorkerId(object.id)) {
+			//
+		}
+
+		if (isBitAssetId(object.id)) {
+			//
+		}
+
+		if (isCallOrderId(object.id)) {
+			//
+		}
+
+		if (isLimitOrderId(object.id)) {
+			//
+		}
+
+		if (isProposalId(object.id)) {
 			//
 		}
 
