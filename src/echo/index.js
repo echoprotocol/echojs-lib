@@ -46,7 +46,7 @@ class Echo {
 
 		await this.subscriber.init();
 
-		this._ws.onOpenCb(async () => {
+		this._ws.onOpenCb = (async () => {
 			await this.subscriber.init();
 		});
 	}
@@ -55,10 +55,9 @@ class Echo {
 		await this._ws.reconnect();
 	}
 
-	disconnect() {
-		this.api.reset();
+	async disconnect() {
 		this.subscriber.reset();
-		this._ws.close();
+		await this._ws.close();
 	}
 
 }

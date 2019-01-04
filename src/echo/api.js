@@ -264,16 +264,16 @@ class API {
 					const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
 
 					if (bitAssetId) {
-						const bitasset = (await this._getBitAssetData(bitAssetId, force))[0];
+						const bitasset = await this.getBitAssetData(bitAssetId, force);
 						if (bitasset) {
 							requestedObject.bitasset = bitasset;
 						}
 					}
 
 					if (dynamicAssetDataId) {
-						const dynamicAssetData = (await this._getDynamicAssetData(dynamicAssetDataId, force))[0];
+						const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
 						if (dynamicAssetData) {
-							requestedObject.dynamic_asset_data_id = dynamicAssetData;
+							requestedObject.dynamic = dynamicAssetData;
 						}
 					}
 
@@ -323,17 +323,31 @@ class API {
 	}
 
 	/**
+     *  @method getObject
+     *  @param  {String} objectId
+     *  @param {Boolean} force
+     *
+     *  @returns {Promise.<*>}
+     */
+	async getObject(objectId, force = false) {
+		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectIds should be a array'));
+		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+
+		return (await this.getObjects([objectId], force))[0];
+	}
+
+	/**
 	 *
      * 	@param {String} bitAssetId
      *  @param {Boolean} force
      * 	@returns  {Promise.<Array.<*>>}
      * 	@private
      */
-	_getBitAssetData(bitAssetId, force = false) {
+	getBitAssetData(bitAssetId, force = false) {
 		if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.getObjects([bitAssetId], force);
+		return this.getObject(bitAssetId, force);
 	}
 
 
@@ -344,11 +358,11 @@ class API {
      * 	@returns  {Promise.<Array.<*>>}
      * 	@private
      */
-	_getDynamicAssetData(dynamicAssetDataId, force = false) {
+	getDynamicAssetData(dynamicAssetDataId, force = false) {
 		if (!isDynamicAssetDataId(dynamicAssetDataId)) return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.getObjects([dynamicAssetDataId], force);
+		return this.getObject(dynamicAssetDataId, force);
 	}
 
 	/**
@@ -684,7 +698,7 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Numbermax_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
+     *  @returns {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
      */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -730,16 +744,16 @@ class API {
 				const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
 
 				if (bitAssetId) {
-					const bitasset = (await this._getBitAssetData(bitAssetId, force))[0];
+					const bitasset = await this.getBitAssetData(bitAssetId, force);
 					if (bitasset) {
 						requestedObject.bitasset = bitasset;
 					}
 				}
 
 				if (dynamicAssetDataId) {
-					const dynamicAssetData = (await this._getDynamicAssetData(dynamicAssetDataId, force))[0];
+					const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
 					if (dynamicAssetData) {
-						requestedObject.dynamic_asset_data_id = dynamicAssetData;
+						requestedObject.dynamic = dynamicAssetData;
 					}
 				}
 
@@ -777,7 +791,7 @@ class API {
      *  @param  {Array<String>} symbolsOrIds
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Numbermax_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>}
+     *  @return {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
      */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
@@ -831,16 +845,16 @@ class API {
 			const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
 
 			if (bitAssetId) {
-				const bitasset = (await this._getBitAssetData(bitAssetId, force))[0];
+				const bitasset = await this.getBitAssetData(bitAssetId, force);
 				if (bitasset) {
 					requestedObject.bitasset = bitasset;
 				}
 			}
 
 			if (dynamicAssetDataId) {
-				const dynamicAssetData = (await this._getDynamicAssetData(dynamicAssetDataId, force))[0];
+				const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
 				if (dynamicAssetData) {
-					requestedObject.dynamic_asset_data_id = dynamicAssetData;
+					requestedObject.dynamic = dynamicAssetData;
 				}
 			}
 

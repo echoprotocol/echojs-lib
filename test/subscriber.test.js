@@ -65,7 +65,7 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-	after(() => {
-		echo.disconnect();
+	after(async () => {
+		await echo.disconnect();
 	});
 });
