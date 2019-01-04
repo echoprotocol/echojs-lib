@@ -1,3 +1,4 @@
+import Type from './type';
 
 export { default as uint8 } from './basic-types/integers/uint8';
 export { default as uint16 } from './basic-types/integers/uint16';
@@ -14,9 +15,11 @@ export { default as bytes } from './basic-types/bytes';
 export { default as id, protocolId } from './basic-types/id';
 // objectId
 export { default as optional } from './basic-types/optional';
-export { default as publicKey } from './basic-types/publicKeyType';
-// set
+export { default as publicKey } from './basic-types/public-key-type';
+export { default as set } from './basic-types/set';
 // static variant
 // string
 // time point seconds
 // vote id
+
+export const voidType = new Type();

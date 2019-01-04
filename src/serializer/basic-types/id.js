@@ -57,10 +57,13 @@ class IdType extends Type {
  * @param {number} objectTypeId
  * @returns {IdType}
  */
-export default function id(reservedSpaceId, objectTypeId) { return new IdType(reservedSpaceId, objectTypeId); }
+function id(reservedSpaceId, objectTypeId) { return new IdType(reservedSpaceId, objectTypeId); }
 
 /**
  * @param {number} objectTypeId
  * @returns {IdType}
  */
-export function protocolId(objectTypeId) { return id(RESERVED_SPACES.PROTOCOL_IDS, objectTypeId); }
+function protocolId(objectTypeId) { return id(RESERVED_SPACES.PROTOCOL_IDS, objectTypeId); }
+
+export default id;
+export { protocolId };

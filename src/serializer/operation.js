@@ -2,7 +2,7 @@ import { Serializable } from './serializable';
 import Type from './type';
 import { validateUnsignedSafeInteger } from '../utils/validators';
 
-export class Operation extends Type {
+class Operation extends Type {
 
 	/**
 	 * @readonly
@@ -67,3 +67,4 @@ export class Operation extends Type {
  * @returns {Operation}
  */
 export default function operation(id, serializable) { return new Operation(id, serializable); }
+export { Operation };

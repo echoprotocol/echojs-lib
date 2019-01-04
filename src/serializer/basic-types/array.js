@@ -1,6 +1,6 @@
 import Type from '../type';
 
-export class ArrayType extends Type {
+class ArrayType extends Type {
 
 	/**
 	 * @readonly
@@ -45,3 +45,4 @@ export class ArrayType extends Type {
  * @returns {ArrayType}
  */
 export default function array(type) { return new ArrayType(type); }
+export { ArrayType };

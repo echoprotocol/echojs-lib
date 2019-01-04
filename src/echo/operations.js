@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import operation from '../serializer/operation';
 import { asset, memoData } from '../serializer/types';
-import { optional, protocolId } from '../serializer/basic-types';
+import { optional, protocolId, set, voidType } from '../serializer/basic-types';
 import { OBJECT_TYPE } from '../constants/chain-types';
 
 /** @typedef {import('../serializer/operation').Operation} Operation */
@@ -12,6 +12,7 @@ export const transfer = operation(0, {
 	to: protocolId(OBJECT_TYPE.ACCOUNT),
 	amount: asset,
 	memo: optional(memoData),
+	extensions: set(voidType),
 });
 
 /** @type {{[operationName:string]:Operation}} */

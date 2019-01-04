@@ -1,6 +1,6 @@
 import Type from './type';
 
-export class Serializable extends Type {
+class Serializable extends Type {
 
 	/**
 	 * @readonly
@@ -47,8 +47,6 @@ export class Serializable extends Type {
 			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
 			const type = this.types[key];
 			type.appendToByteBuffer(value[key], bytebuffer);
-			console.log(bytebuffer.copy(0, bytebuffer.offset).toHex());
-			
 		}
 	}
 
@@ -59,3 +57,4 @@ export class Serializable extends Type {
  * @returns {Serializable}
  */
 export default function serializable(types) { return new Serializable(types); }
+export { Serializable };

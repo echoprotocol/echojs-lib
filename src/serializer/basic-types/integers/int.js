@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Type from '../../type';
 
 /** @abstract */
-export default class IntType extends Type {
+class IntType extends Type {
 
 	/** @param {number} bitsCount */
 	constructor(bitsCount) {
@@ -25,3 +25,5 @@ export default class IntType extends Type {
 	}
 
 }
+
+export default IntType;

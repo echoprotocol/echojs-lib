@@ -1,4 +1,6 @@
+import { strictEqual, ok } from 'assert';
 import BigNumber from 'bignumber.js';
+import ByteBuffer from 'bytebuffer';
 
 import echo from '../../';
 import { transfer } from '../../src/echo/operations';
@@ -33,7 +35,10 @@ describe('transfer', () => {
 				to: '1.2.456',
 				amount: { asset_id: '1.3.2', amount: 30 },
 			});
-			console.log(transaction.toByteBuffer().toHex());
+			const result = transaction.toByteBuffer();
+			ok(result instanceof ByteBuffer);
+			console.log(result.toHex());
+			strictEqual(result.toHex(), '1400000000000000017bc8031e00000000000000020000');
 		});
 	});
 });

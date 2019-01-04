@@ -5,7 +5,7 @@ function notImplemented() {
 }
 
 /** @abstract */
-export default class Type {
+class Type {
 
 	/**
 	 * @abstract
@@ -23,3 +23,5 @@ export default class Type {
 	appendToByteBuffer(value, bytebuffer) { notImplemented(); }
 
 }
+
+export default Type;
