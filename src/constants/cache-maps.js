@@ -35,7 +35,7 @@ export const ACCOUNT_REFERENCES_BY_ACCOUNT_ID = 'accountReferencesByAccountId';
 export const BALANCE_OBJECTS_BY_BALANCE_ID = 'balanceObjectsByBalanceId';
 export const GET_ACCOUNT_REFS_OF_ACCOUNTS_CALLS = 'getAccountRefsOfAccountsCalls';
 export const ACCOUNT_HISTORY_REQUESTS = 'accountHistoryRequests';
-export const OBJECTS_BY_VOTE_ID = 'objectsByVoteId'
+export const OBJECTS_BY_VOTE_ID = 'objectsByVoteId';
 export const FETCHING_GET_FULL_ACCOUNTS = 'fetchingGetFullAccounts';
 
 export const BIT_ASSETS_BY_BIT_ASSET_ID = 'bitAssetsByBitAssetId';
