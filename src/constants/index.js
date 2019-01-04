@@ -8,9 +8,14 @@ const ECHORAND_TYPES = {
 	BLOCK_NOTIFICATION: 2,
 };
 
+const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
+const CLOSE_CALL_ORDER = 'close-call-order';
+
 export default {
 	CHAIN_TYPES,
 	CHAIN_CONFIG,
 	START_OPERATION_ID,
 	ECHORAND_TYPES,
+	CANCEL_LIMIT_ORDER,
+	CLOSE_CALL_ORDER,
 };
