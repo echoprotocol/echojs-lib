@@ -4,7 +4,7 @@
   "description": "Pure JavaScript ECHO library for node.js",
   "main": "./index.js",
   "scripts": {
-    "test": "mocha --require babel-core/register --require babel-polyfill --exit test/**/*.js",
+    "test": "mocha --require babel-core/register --require babel-polyfill --exit",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"

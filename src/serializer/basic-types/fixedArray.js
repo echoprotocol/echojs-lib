@@ -1,5 +1,5 @@
 import { ArrayType } from './array';
-import { validatePositiveSafeInteger } from '../../utils/validator';
+import { validatePositiveSafeInteger } from '../../utils/validators';
 
 class FixedArrayType extends ArrayType {
 

@@ -17,9 +17,9 @@ import {
 	isRipemd160,
 	isPublicKey,
 	isVoteId, isWitnessId, isCommitteeMemberId,
-} from '../utils/validator';
+} from '../utils/validators';
 
-import { Transactions, Operations } from '../serializer/operations';
+import { Transactions, Operations } from './operations';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
 

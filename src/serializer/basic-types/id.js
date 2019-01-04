@@ -61,4 +61,4 @@ export default function id(reservedSpaceId, objectTypeId) { return new IdType(re
  * @param {number} objectTypeId
  * @returns {IdType}
  */
-export function protocolId(objectTypeId) { return id(RESERVED_SPACES.IMPLEMENTATION_IDS, objectTypeId); }
+export function protocolId(objectTypeId) { return id(RESERVED_SPACES.PROTOCOL_IDS, objectTypeId); }

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
-import { validateUrl, validateOptionsError } from '../../utils/validator';
+import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
 class WS {

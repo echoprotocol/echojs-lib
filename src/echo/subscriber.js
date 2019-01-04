@@ -1,7 +1,7 @@
 import {
 	isFunction,
 	isBoolean,
-} from '../utils/validator';
+} from '../utils/validators';
 
 class Subscriber {
 

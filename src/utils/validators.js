@@ -18,6 +18,15 @@ export function validateUnsignedSafeInteger(value) {
 	if (value < 0) throw new Error('value is negative');
 }
 
+export function validateObjectKeysEquals(actual, expected) {
+	const actualKeys = new Set(Object.keys(actual));
+	const expectedKeys = new Set(Object.keys(expected));
+	if (actualKeys.size !== expectedKeys.size) throw new Error('invalid keys count');
+	for (const key in expectedKeys) {
+		if (!actualKeys.has(key)) throw new Error(`no key ${key}`);
+	}
+}
+
 const urlRegex = new RegExp(
 	'^(https|http|wss|ws):\\/\\/' + // protocol
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name

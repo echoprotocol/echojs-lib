@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
-import echo from '../../';
-import Transaction from '../../src/echo/transaction';
+import echo from '../';
+import Transaction from '../src/echo/transaction';
 import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 
 describe('Transaction', () => {

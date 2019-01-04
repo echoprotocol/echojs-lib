@@ -17,7 +17,7 @@ class BytesType extends Type {
 	/** @param {number|undefined} size */
 	constructor(size) {
 		super();
-		if (size !== undefined || typeof value !== 'number') throw new Error('invalid bytes size type');
+		if (size !== undefined && typeof size !== 'number') throw new Error('invalid bytes size type');
 		/**
 		 * @private
 		 * @type {number|undefined}

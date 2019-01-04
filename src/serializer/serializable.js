@@ -1,0 +1,46 @@
+import Type from './type';
+import { validateObjectKeysEquals } from '../utils/validators';
+
+export class Serializable extends Type {
+
+	/**
+	 * @readonly
+	 * @type {Object<string,Type>}
+	 */
+	get types() { return { ...this._types }; }
+
+	/** @param {Object<string,Type>} types */
+	constructor(types) {
+		if (typeof types !== 'object' || types === null) throw new Error('property "types" is not a object');
+		for (const key in types) {
+			if (!Object.prototype.hasOwnProperty.call(types, key)) continue;
+			const type = types[key];
+			if (!(type instanceof Type)) throw new Error(`type of field "${key}" is not a instance of Type class`);
+		}
+		super();
+		/**
+		 * @private
+		 * @type {Object<string,Type>}
+		 */
+		this._types = types;
+	}
+
+	/** @type {[key:string]:*} */
+	validate(value) {
+		validateObjectKeysEquals(value, this.types);
+		for (const key in this.types) {
+			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
+			const type = this.types[key];
+			type.validate(value[key]);
+		}
+	}
+
+	// TODO: implement
+
+}
+
+/**
+ * @param {Object<string,Type>} types
+ * @returns {Serializable}
+ */
+export default function serializable(types) { return new Serializable(types); }

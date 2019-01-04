@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
 
 import Echo from './index';
-import { Operations, Transactions } from '../serializer/operations';
-import { isString, isObject } from '../utils/validator';
+import { Operations, Transactions } from './operations';
+import { isString, isObject } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
 
