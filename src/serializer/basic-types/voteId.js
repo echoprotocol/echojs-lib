@@ -8,6 +8,4 @@ class VoteIdType extends Type {
 
 }
 
-const voteId = new VoteIdType();
-
-export default voteId;
+export default new VoteIdType();

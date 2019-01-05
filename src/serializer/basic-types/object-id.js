@@ -23,6 +23,4 @@ class ObjectId extends Type {
 
 }
 
-const objectId = new ObjectId();
-
-export default objectId;
+export default new ObjectId();

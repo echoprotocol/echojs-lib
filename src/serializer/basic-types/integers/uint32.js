@@ -18,6 +18,4 @@ class Uint32Type extends UintType {
 
 }
 
-const uint32 = new Uint32Type();
-
-export default uint32;
+export default new Uint32Type();

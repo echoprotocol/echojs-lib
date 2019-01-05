@@ -8,6 +8,4 @@ class AddressType extends Type {
 
 }
 
-const address = new AddressType();
-
-export default address;
+export default new AddressType();

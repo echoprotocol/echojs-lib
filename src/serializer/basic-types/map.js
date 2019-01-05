@@ -45,4 +45,4 @@ class MapType extends Type {
  * @param {Type} valueType
  * @returns {MapType}
  */
-export default function map(keyType, valueType) { return new MapType(keyType, valueType); }
+export default (keyType, valueType) => new MapType(keyType, valueType);

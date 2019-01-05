@@ -19,6 +19,4 @@ class Int64Type extends IntType {
 
 }
 
-const int64 = new Int64Type();
-
-export default int64;
+export default new Int64Type();

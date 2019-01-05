@@ -16,6 +16,4 @@ class BoolType extends Type {
 
 }
 
-const bool = new BoolType();
-
-export default bool;
+export default new BoolType();

@@ -19,6 +19,4 @@ class Uint64Type extends UintType {
 
 }
 
-const uint64 = new Uint64Type();
-
-export default uint64;
+export default new Uint64Type();

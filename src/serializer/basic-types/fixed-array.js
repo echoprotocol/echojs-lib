@@ -45,4 +45,4 @@ class FixedArrayType extends ArrayType {
  * @param {Type} type
  * @returns {FixedArrayType}
  */
-export default function fixedArray(count, type) { return new FixedArrayType(count, type); }
+export default (count, type) => new FixedArrayType(count, type);

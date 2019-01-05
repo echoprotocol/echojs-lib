@@ -46,4 +46,4 @@ class BytesType extends Type {
 }
 
 /** @param {number|undefined} size */
-export default function bytes(size) { return new BytesType(size); }
+export default (size) => new BytesType(size);

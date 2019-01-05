@@ -44,5 +44,5 @@ class ArrayType extends Type {
  * @param {Type} type
  * @returns {ArrayType}
  */
-export default function array(type) { return new ArrayType(type); }
+export default (type) => new ArrayType(type);
 export { ArrayType };

@@ -29,6 +29,4 @@ class TimePointSecType extends Type {
 
 }
 
-const timePointSec = new TimePointSecType();
-
-export default timePointSec;
+export default new TimePointSecType();

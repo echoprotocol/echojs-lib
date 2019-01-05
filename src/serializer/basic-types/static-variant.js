@@ -28,4 +28,4 @@ class StaticVariantType extends Type {
  * @param {Array<Type>} types
  * @returns {StaticVariantType}
  */
-export default function staticVariant(types) { return new StaticVariantType(types); }
+export default (types) => new StaticVariantType(types);

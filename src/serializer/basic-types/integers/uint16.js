@@ -18,6 +18,4 @@ class Uint16Type extends UintType {
 
 }
 
-const uint16 = new Uint16Type();
-
-export default uint16;
+export default new Uint16Type();

@@ -40,4 +40,4 @@ class OptionalType extends Type {
  * @param {Type} type
  * @returns {OptionalType}
  */
-export default function optional(type) { return new OptionalType(type); }
+export default (type) => new OptionalType(type);

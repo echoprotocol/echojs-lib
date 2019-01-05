@@ -1,0 +1,17 @@
+export const NULL = 0;
+export const BASE = 1;
+export const ACCOUNT = 2;
+export const ASSET = 3;
+export const FORCE_SETTLEMENT = 4;
+export const COMMITTEE_MEMBER = 5;
+export const WITNESS = 6;
+export const LIMIT_ORDER = 7;
+export const CALL_ORDER = 8;
+export const CUSTOM = 9;
+export const PROPOSAL = 10;
+export const OPERATION_HISTORY = 11;
+export const WITHDRAW_PERMISSION = 12;
+export const VESTING_BALANCE = 13;
+export const WORKER = 14;
+export const BALANCE = 15;
+export const CONTRACT = 16;

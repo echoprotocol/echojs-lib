@@ -18,6 +18,4 @@ class Uint8Type extends UintType {
 
 }
 
-const uint8 = new Uint8Type();
-
-export default uint8;
+export default new Uint8Type();

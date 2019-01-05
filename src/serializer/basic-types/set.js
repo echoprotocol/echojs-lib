@@ -51,4 +51,4 @@ class SetType extends Type {
  * @param {Type} type
  * @returns {SetType}
  */
-export default function set(type) { return new SetType(type); }
+export default (type) => new SetType(type);

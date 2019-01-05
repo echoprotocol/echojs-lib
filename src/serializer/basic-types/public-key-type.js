@@ -13,6 +13,4 @@ class PublicKeyType extends Type {
 
 }
 
-const publicKey = new PublicKeyType();
-
-export default publicKey;
+export default  new PublicKeyType();

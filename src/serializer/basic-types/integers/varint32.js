@@ -18,6 +18,4 @@ class Varint32Type extends IntType {
 
 }
 
-const varint32 = new Varint32Type();
-
-export default varint32;
+export default new Varint32Type();

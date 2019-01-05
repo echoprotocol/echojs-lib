@@ -19,6 +19,4 @@ class StringType extends Type {
 
 }
 
-const string = new StringType();
-
-export default string;
+export default new StringType();

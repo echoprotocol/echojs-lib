@@ -1,7 +1,6 @@
 import Type from '../type';
 import { toId } from '../../utils/converters';
 import { validateUnsignedSafeInteger } from '../../utils/validators';
-import { RESERVED_SPACES } from '../../constants/chain-types';
 
 class IdType extends Type {
 
@@ -52,18 +51,4 @@ class IdType extends Type {
 
 }
 
-/**
- * @param {number} reservedSpaceId
- * @param {number} objectTypeId
- * @returns {IdType}
- */
-function id(reservedSpaceId, objectTypeId) { return new IdType(reservedSpaceId, objectTypeId); }
-
-/**
- * @param {number} objectTypeId
- * @returns {IdType}
- */
-function protocolId(objectTypeId) { return id(RESERVED_SPACES.PROTOCOL_IDS, objectTypeId); }
-
-export default id;
-export { protocolId };
+export default (reservedSpaceId, objectTypeId) => new IdType(reservedSpaceId, objectTypeId);
