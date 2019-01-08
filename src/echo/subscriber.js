@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Map } from 'immutable';
+import { Map, Set, fromJS } from 'immutable';
 
 import {
 	isFunction,
@@ -23,7 +23,12 @@ import {
 	isProposalId,
 } from '../utils/validator';
 
-import { CANCEL_LIMIT_ORDER, CLOSE_CALL_ORDER } from '../constants';
+import {
+	CANCEL_LIMIT_ORDER,
+	UPDATE_CALL_ORDER,
+	CLOSE_CALL_ORDER,
+	BITASSET_UPDATE,
+} from '../constants';
 
 class Subscriber extends EventEmitter {
 
@@ -52,6 +57,7 @@ class Subscriber extends EventEmitter {
 			all: [], // "all" means all updates from setSubscribeCallback
 			account: [], // { ids: [], callback: () => {} }
 			witness: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
 			connect: [],
@@ -89,6 +95,10 @@ class Subscriber extends EventEmitter {
 			[],
 		);
 		const subscribedWitnesses = this.subscribers.witness.reduce(
+			(arr, { ids }) => arr.concat(ids),
+			[],
+		);
+		const subscribedCommitteeMembers = this.subscribers.committeeMember.reduce(
 			(arr, { ids }) => arr.concat(ids),
 			[],
 		);
@@ -130,7 +140,7 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
-		if (isCommitteeMemberId(object.id)) {
+		if (isCommitteeMemberId(object.id) && !subscribedCommitteeMembers.includes(object.id)) {
 			return null;
 		}
 
@@ -149,20 +159,7 @@ class Subscriber extends EventEmitter {
 		obj = obj ? obj.mergeDeep(new Map(object)) : new Map(object);
 		this.cache.setInMap('objectsById', object.id, obj);
 
-		// TODO update dependencies by id type
-		//		balancePrefix
-		//		accountStatsPrefix
-		// 		witnessPrefix
-		//		committeePrefix
-		//		accountPrefix
-		//		assetPrefix
-		//		assetDynamicDataPrefix
-		// 		workerPrefix
-		// 		bitassetDataPrefix
-		// 		callOrderPrefix
-		// 		orderPrefix
-		// 		proposalPrefix
-
+		// update dependencies by id type
 		if (isAccountBalanceId(object.id)) {
 			let owner = this.cache.objectsById.get(object.owner);
 			if (!owner) {
@@ -183,7 +180,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					// ChainStore.fetchRecentHistory(object.owner);
+					// fetchFullAccounts([object.owner], true, true);
 				}
 			} catch (err) {
 				//
@@ -195,36 +192,149 @@ class Subscriber extends EventEmitter {
 			this.cache.setInMap('objectsByVoteId', object.vote_id, object.id);
 		}
 
+		if (isCommitteeMemberId(object.id)) {
+			this.cache.setInMap('committeeMembersByAccount', object.committee_member_account, object.id);
+			this.cache.setInMap('objectsByVoteId', object.vote_id, object.id);
+		}
+
 		if (isAccountId(object.id)) {
-			//
+			obj = obj.set('active', fromJS(object.active));
+			obj = obj.set('owner', fromJS(object.owner));
+			obj = obj.set('options', fromJS(object.options));
+			obj = obj.set('whitelisting_accounts', fromJS(object.whitelisting_accounts));
+			obj = obj.set('blacklisting_accounts', fromJS(object.blacklisting_accounts));
+			obj = obj.set('whitelisted_accounts', fromJS(object.whitelisted_accounts));
+			obj = obj.set('blacklisted_accounts', fromJS(object.blacklisted_accounts));
+
+			if (this.cache.objectsById.get(object.id)) {
+				this.cache.setInMap('objectsById', object.id, obj);
+			}
+
+			if (this.cache.accountsByName.get(object.name)) {
+				this.cache.setInMap('accountsByName', object.name, object.id);
+			}
 		}
 
 		if (isAssetId(object.id)) {
-			//
+			this.cache.setInMap('assetBySymbol', object.symbol, object.id);
+
+			const dynamic = obj.get('dynamic');
+			if (!dynamic) {
+				let dad = this.cache.objectsById.get(object.dynamic_asset_data_id);
+
+				if (!dad) {
+					dad = new Map();
+				}
+
+				if (!dad.get('asset_id')) {
+					dad = dad.set('asset_id', object.id);
+				}
+
+				this.cache.setInMap('objectsById', object.dynamic_asset_data_id, dad);
+
+				obj = obj.set('dynamic', dad);
+				this.cache.setInMap('objectsById', object.id, obj);
+			}
+
+			const bitasset = obj.get('bitasset');
+			if (!bitasset && object.bitasset_data_id) {
+				let bad = this.cache.objectsById.get(object.bitasset_data_id);
+
+				if (!bad) {
+					bad = new Map();
+				}
+
+				if (!bad.get('asset_id')) {
+					bad = bad.set('asset_id', object.id);
+				}
+				this.cache.setInMap('objectsById', object.bitasset_data_id, bad);
+
+				obj = obj.set('bitasset', bad);
+				this.cache.setInMap('objectsById', object.id, obj);
+			}
 		}
 
 		if (isDynamicAssetDataId(object.id)) {
-			//
+			const assetId = obj.get('asset_id');
+			if (assetId) {
+				let asset = this.cache.objectsById.get(assetId);
+				if (asset && asset.set) {
+					asset = asset.set('dynamic', obj);
+					this.cache.setInMap('objectsById', assetId, asset);
+				}
+			}
 		}
 
 		if (isWorkerId(object.id)) {
-			//
+			this.cache.setInMap('objectsByVoteId', object.vote_for, object.id);
+			this.cache.setInMap('objectsByVoteId', object.vote_against, object.id);
 		}
 
 		if (isBitAssetId(object.id)) {
-			//
+			const assetId = obj.get('asset_id');
+
+			if (assetId) {
+				let asset = this.cache.objectsById.get(assetId);
+				if (asset) {
+					asset = asset.set('bitasset', obj);
+					this.emit(BITASSET_UPDATE, asset);
+					this.cache.setInMap('objectsById', assetId, asset);
+				}
+			}
 		}
 
 		if (isCallOrderId(object.id)) {
-			//
+			this.emit(UPDATE_CALL_ORDER, object);
+
+			let account = this.cache.objectsById.get(object.borrower);
+
+			if (account) {
+				if (!account.has('call_orders')) {
+					account = account.set('call_orders', new Set());
+				}
+				const callOrders = account.get('call_orders');
+				if (!callOrders.has(object.id)) {
+					account = account.set('call_orders', callOrders.add(object.id));
+					this.cache.setInMap('objectsById', account.get('id'), account);
+					// Force subscription to the object in the witness node by calling get_objects
+					// Apis.instance().dbApi().exec('get_objects', [[object.id]]);
+				}
+			}
 		}
 
 		if (isLimitOrderId(object.id)) {
-			//
+			let account = this.cache.objectsById.get(object.seller);
+
+			if (account) {
+
+				if (!account.has('orders')) {
+					account = account.set('orders', new Set());
+				}
+				const limitOrders = account.get('orders');
+
+				if (!limitOrders.has(object.id)) {
+					account = account.set('orders', limitOrders.add(object.id));
+					this.cache.setInMap('objectsById', account.get('id'), account);
+
+					// Force subscription to the object in the witness node by calling get_objects
+					// Apis.instance().dbApi().exec('get_objects', [[object.id]]);
+				}
+			}
 		}
 
 		if (isProposalId(object.id)) {
-			//
+			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
+				let impactedAccount = this.cache.objectsById.get(id);
+				if (impactedAccount) {
+					let proposals = impactedAccount.get('proposals', new Set());
+
+					if (!proposals.includes(object.id)) {
+						proposals = proposals.add(object.id);
+						impactedAccount = impactedAccount.set('proposals', proposals);
+						this._updateObject(impactedAccount.toJS());
+					}
+				}
+			});
 		}
 
 		return null;

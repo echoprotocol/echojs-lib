@@ -9,7 +9,9 @@ const ECHORAND_TYPES = {
 };
 
 const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
+const UPDATE_CALL_ORDER = 'update-call-order';
 const CLOSE_CALL_ORDER = 'close-call-order';
+const BITASSET_UPDATE = 'bitasset-update';
 
 export default {
 	CHAIN_TYPES,
@@ -17,5 +19,7 @@ export default {
 	START_OPERATION_ID,
 	ECHORAND_TYPES,
 	CANCEL_LIMIT_ORDER,
+	UPDATE_CALL_ORDER,
 	CLOSE_CALL_ORDER,
+	BITASSET_UPDATE,
 };
