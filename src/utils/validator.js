@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import BN from 'bignumber.js';
 
 import ChainConfig from '../config/chain-config';
@@ -129,6 +130,8 @@ export const isObjectId = (v) => {
 
 };
 
+export const isBuffer = (v) => Buffer.isBuffer(v);
+
 export const isHex = (v) => isString(v) && hexRegex.test(v);
 
 export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
@@ -152,11 +155,20 @@ export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRege
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
-	if (!isString(v) || v.length !== (50 + addressPrefix.length)) return false;
+	if (!isString(v) || v.length !== (ChainConfig.PUBLIC_KEY_LENGTH + addressPrefix.length)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
-	return addressPrefix !== prefix;
+	return addressPrefix === prefix;
+};
+
+export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) => {
+
+	if (!isString(v) || v.length !== (ChainConfig.ECHORAND_KEY_LENGTH + echorandPrefix.length)) return false;
+
+	const prefix = v.slice(0, echorandPrefix.length);
+
+	return echorandPrefix === prefix;
 };
 
 export const isAccountName = (v) => {

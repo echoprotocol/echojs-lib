@@ -23,7 +23,6 @@ class Cache {
 		this.assetByAssetId = new Map();
 		this.assetBySymbol = new Map();
 
-		this.contractBalanceByContractId = new Map();
 		this.contractsByContractId = new Map();
 		this.fullContractsByContractId = new Map();
 		this.contractResultsByContractResultId = new Map();
@@ -49,7 +48,6 @@ class Cache {
 
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
-		this.accountHistoryRequests = new Map();
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
