@@ -16,6 +16,7 @@ import {
 	predicate,
 	blindOutput,
 	blindInput,
+	operationWrapper,
 } from '../serializer/composit-types';
 
 import {
@@ -32,7 +33,6 @@ import {
 	uint8,
 	uint16,
 	publicKey,
-	staticVariant,
 	uint32,
 	bytes,
 	uint64,
@@ -99,8 +99,6 @@ import {
 	BALANCE,
 	FORCE_SETTLEMENT,
 } from '../constants/object-types';
-
-const operationWrapper = staticVariant({});
 
 /** @typedef {import('../serializer/operation').Operation} Operation */
 

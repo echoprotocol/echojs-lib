@@ -2,19 +2,23 @@ import BigNumber from 'bignumber.js';
 import ByteBuffer from 'bytebuffer';
 import { cloneDeep } from 'lodash';
 
-import Echo from './index';
+import Api from './api';
 import operations from './operations';
 import { isString, isObject } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
+import transaction from '../serializer/transaction-type';
+import { toBuffer } from '../serializer/type';
+import Signature from '../crypto/signature';
+import { CHAIN_CONFIG } from '../constants';
 
-/** @typedef {[number,{[key:string]:any}]} Operation */
+/** @typedef {[number,{[key:string]:any}]} _Operation */
 
 class Transaction {
 
 	/**
 	 * @readonly
-	 * @type {Array<Operation>}
+	 * @type {Array<_Operation>}
 	 */
 	get operations() { return cloneDeep(this._operations); }
 
@@ -24,16 +28,16 @@ class Transaction {
 	 */
 	get finalized() { return this._finalized; }
 
-	/** @type {Echo} */
-	get echo() { return this._echo; }
+	/** @type {Api} */
+	get api() { return this._echo; }
 
-	set echo(value) {
-		if (!(value instanceof Echo)) throw new Error('value is not instance of Echo');
+	set api(value) {
+		if (!(value instanceof Api)) throw new Error('value is not a Api instance');
 		/**
 		 * @private
-		 * @type {Echo}
+		 * @type {Api}
 		 */
-		this._echo = value;
+		this._api = value;
 	}
 
 	/** @type {number} */
@@ -45,12 +49,12 @@ class Transaction {
 		this._expiration = value;
 	}
 
-	/** @param {Echo} echo */
-	constructor(echo) {
-		this.echo = echo;
+	/** @param {Api} api */
+	constructor(api) {
+		this.api = api;
 		/**
 		 * @private
-		 * @type {Array<Operation>}
+		 * @type {Array<_Operation>}
 		 */
 		this._operations = [];
 		/**
@@ -106,7 +110,7 @@ class Transaction {
 		this.checkNotFinalized();
 		const operationTypes = this._operations;
 		if (operationTypes.length === 0) throw new Error('no operations');
-		/** @type Map<string,Array<Operation>> */
+		/** @type Map<string,Array<_Operation>> */
 		const operationsByNotDefaultFee = new Map();
 		const defaultAssetOperations = [];
 		const addOperationToAsset = (notDefaultAssetId, operation) => {
@@ -126,7 +130,7 @@ class Transaction {
 		await Promise.all([
 			(async () => {
 				if (defaultAssetOperations.length === 0) return;
-				const fees = await this.echo.api.getRequiredFees(defaultAssetOperations);
+				const fees = await this.api.getRequiredFees(defaultAssetOperations);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
 					const fee = fees[opIndex];
 					defaultAssetOperations[opIndex][1].fee = { asset_id: fee.asset_id, amount: fee.amount };
@@ -136,8 +140,8 @@ class Transaction {
 				const ops = operationsByNotDefaultFee.get(notDefaultAssetId);
 				/** @type {Array<{asset_id:string, amount:number}>} */
 				const [fees, feePool] = await Promise.all([
-					this.echo.api.getRequiredFees(ops, notDefaultAssetId),
-					this.echo.api.getFeePool(notDefaultAssetId),
+					this.api.getRequiredFees(ops, notDefaultAssetId),
+					this.api.getFeePool(notDefaultAssetId),
 				]);
 				const totalFees = new BigNumber(0);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
@@ -177,10 +181,13 @@ class Transaction {
 		return result.copy(0, result.offset);
 	}
 
-	async sign(privateKey) {
+	/**
+	 * @param {PrivateKey=} _privateKey
+	 */
+	async sign(_privateKey) {
 		this.checkNotFinalized();
-		if (privateKey !== undefined) this.addSigner(privateKey);
-		const [dynamicGlobalChainData] = await this.echo.api.getObjects(['2.1.0']);
+		if (_privateKey !== undefined) this.addSigner(_privateKey);
+		const [dynamicGlobalChainData] = await this.api.getObjects(['2.1.0']);
 		if (this.expiration === undefined) {
 			const headBlockTimeSeconds = Math.ceil(new Date(dynamicGlobalChainData.time).getTime() / 1000);
 			const nowSeconds = Math.ceil(new Date().getTime() / 1000);
@@ -190,15 +197,23 @@ class Transaction {
 			this.expiration = nowSeconds - headBlockTimeSeconds > 30 ?
 				headBlockTimeSeconds : Math.max(nowSeconds, headBlockTimeSeconds);
 		}
+		const chainId = await this.api.getChainId();
 		// one more check to avoid that the sign method was called several times
 		// without waiting for the first call to be executed
 		this.checkNotFinalized();
-		// TODO: implement
-		// const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
-		// const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		// const transactionBuffer = Transactions.transaction.toBuffer(['transaction', ])
-		// this._signatures = this._signers.map(({ privateKey, publicKey }) => {
-		// });
+		const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
+		const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		const transactionBuffer = toBuffer(transaction, {
+			ref_block_num: refBlockNum,
+			ref_block_prefix: refBlockPrefix,
+			expiration: this.expiration,
+			operations: this.operations,
+			extensions: [],
+		});
+		this._signatures = this._signers.map(({ privateKey }) => {
+			const chainBuffer = Buffer.from(chainId, 'hex');
+			return Signature.signBuffer(Buffer.concat([chainBuffer, transactionBuffer]), privateKey);
+		});
 		this.finalized = true;
 	}
 

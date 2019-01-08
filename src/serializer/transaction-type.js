@@ -1,0 +1,22 @@
+import serializable from './serializable';
+import { uint16, uint32, timePointSec, array, empty, set, bytes } from './basic-types';
+import { operationWrapper } from './composit-types';
+
+const transaction = serializable({
+	ref_block_num: uint16,
+	ref_block_prefix: uint32,
+	expiration: timePointSec,
+	operations: array(operationWrapper),
+	extensions: set(empty),
+});
+
+export const signedTransaction = serializable({
+	ref_block_num: uint16,
+	ref_block_prefix: uint32,
+	expiration: timePointSec,
+	operations: array(operationWrapper),
+	extensions: set(empty),
+	signatures: array(bytes(65)),
+});
+
+export default transaction;

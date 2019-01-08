@@ -1,3 +1,5 @@
+import ByteBuffer from 'bytebuffer';
+
 /** @typedef {import('bytebuffer')} ByteBuffer */
 
 function notImplemented() {
@@ -26,4 +28,16 @@ class Type {
 
 }
 
+/**
+ * @param {Type} type
+ * @param {*} value
+ * @returns {Buffer}
+ */
+function toBuffer(type, value) {
+	const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+	type.appendToByteBuffer(value, result);
+	return result.copy(0, result.offset);
+}
+
 export default Type;
+export { toBuffer };
