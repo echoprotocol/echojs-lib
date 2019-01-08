@@ -13,4 +13,4 @@ class PublicKeyType extends Type {
 
 }
 
-export default  new PublicKeyType();
+export default new PublicKeyType();

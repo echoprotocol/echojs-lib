@@ -3,9 +3,9 @@ import BN from 'bignumber.js';
 import ChainConfig from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 
-export function validateSafeInteger(value) {
-	if (typeof value !== 'number') throw new Error('value is not a number');
-	if (!Number.isInteger(value)) throw new Error('value is not a integer');
+export function validateSafeInteger(value, fieldName) {
+	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
+	if (!Number.isInteger(value)) throw new Error(`${fieldName} is not a integer`);
 }
 
 export function validatePositiveSafeInteger(value) {
@@ -13,9 +13,9 @@ export function validatePositiveSafeInteger(value) {
 	if (value <= 0) throw new Error('value is not positive');
 }
 
-export function validateUnsignedSafeInteger(value) {
-	validateSafeInteger(value);
-	if (value < 0) throw new Error('value is negative');
+export function validateUnsignedSafeInteger(value, fieldName = 'value') {
+	validateSafeInteger(value, fieldName);
+	if (value < 0) throw new Error(`${fieldName} is negative`);
 }
 
 const urlRegex = new RegExp(

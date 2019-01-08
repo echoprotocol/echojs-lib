@@ -7,6 +7,8 @@ function notImplemented() {
 /** @abstract */
 class Type {
 
+	// FIXME: go through all composite types and rewrite validators so that subtypes are not validated twice
+
 	/**
 	 * @abstract
 	 * @param {*} value

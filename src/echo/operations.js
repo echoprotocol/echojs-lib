@@ -10,6 +10,12 @@ import {
 	memoData,
 	price,
 	priceFeed,
+	chainParameters,
+	vestingPolicyInitializer,
+	workerInitializer,
+	predicate,
+	blindOutput,
+	blindInput,
 } from '../serializer/composit-types';
 
 import {
@@ -27,6 +33,9 @@ import {
 	uint16,
 	publicKey,
 	staticVariant,
+	uint32,
+	bytes,
+	uint64,
 } from '../serializer/basic-types';
 
 import {
@@ -53,9 +62,45 @@ import {
 	WITNESS_CREATE,
 	WITNESS_UPDATE,
 	PROPOSAL_CREATE,
+	PROPOSAL_UPDATE,
+	PROPOSAL_DELETE,
+	WITHDRAW_PERMISSION_CREATE,
+	WITHDRAW_PERMISSION_UPDATE,
+	WITHDRAW_PERMISSION_CLAIM,
+	WITHDRAW_PERMISSION_DELETE,
+	COMMITTEE_MEMBER_CREATE,
+	COMMITTEE_MEMBER_UPDATE,
+	COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS,
+	VESTING_BALANCE_CREATE,
+	VESTING_BALANCE_WITHDRAW,
+	WORKER_CREATE,
+	CUSTOM,
+	ASSERT,
+	BALANCE_CLAIM,
+	OVERRIDE_TRANSFER,
+	TRANSFER_TO_BLIND,
+	BLIND_TRANSFER,
+	TRANSFER_FROM_BLIND,
+	ASSET_SETTLE_CANCEL,
+	ASSET_CLAIM_FEES,
+	CONTRACT,
+	CONTRACT_TRANSFER,
 } from '../constants/operations-ids';
 
-import { ACCOUNT, LIMIT_ORDER, ASSET, WITNESS } from '../constants/object-types';
+import {
+	ACCOUNT,
+	LIMIT_ORDER,
+	ASSET,
+	WITNESS,
+	PROPOSAL,
+	WITHDRAW_PERMISSION,
+	COMMITTEE_MEMBER,
+	VESTING_BALANCE,
+	BALANCE,
+	FORCE_SETTLEMENT,
+} from '../constants/object-types';
+
+const operationWrapper = staticVariant({});
 
 /** @typedef {import('../serializer/operation').Operation} Operation */
 
@@ -244,22 +289,262 @@ export const witnessUpdate = operation(WITNESS_UPDATE, {
 
 export const proposalCreate = operation(PROPOSAL_CREATE, {
 	fee: asset,
-	fee_paying_account: protocolId('account'),
+	fee_paying_account: protocolId(ACCOUNT),
 	expiration_time: timePointSec,
-	proposed_ops: array(staticVariant),
+	proposed_ops: array(operationWrapper),
 	review_period_seconds: optional(uint32),
-	extensions: set(futureExtensions)
+	extensions: set(empty),
+});
+
+export const proposalUpdate = operation(PROPOSAL_UPDATE, {
+	fee: asset,
+	fee_paying_account: protocolId(ACCOUNT),
+	proposal: protocolId(PROPOSAL),
+	active_approvals_to_add: set(protocolId(ACCOUNT)),
+	active_approvals_to_remove: set(protocolId(ACCOUNT)),
+	owner_approvals_to_add: set(protocolId(ACCOUNT)),
+	owner_approvals_to_remove: set(protocolId(ACCOUNT)),
+	key_approvals_to_add: set(publicKey),
+	key_approvals_to_remove: set(publicKey),
+	extensions: set(empty),
+});
+
+export const proposalDelete = operation(PROPOSAL_DELETE, {
+	fee: asset,
+	fee_paying_account: protocolId(ACCOUNT),
+	using_owner_authority: bool,
+	proposal: protocolId(PROPOSAL),
+	extensions: set(empty),
+});
+
+export const withdrawPermissionCreate = operation(WITHDRAW_PERMISSION_CREATE, {
+	fee: asset,
+	withdraw_from_account: protocolId(ACCOUNT),
+	authorized_account: protocolId(ACCOUNT),
+	withdrawal_limit: asset,
+	withdrawal_period_sec: uint32,
+	periods_until_expiration: uint32,
+	period_start_time: timePointSec,
+});
+
+export const withdrawPermissionUpdate = operation(WITHDRAW_PERMISSION_UPDATE, {
+	fee: asset,
+	withdraw_from_account: protocolId(ACCOUNT),
+	authorized_account: protocolId(ACCOUNT),
+	permission_to_update: protocolId(WITHDRAW_PERMISSION),
+	withdrawal_limit: asset,
+	withdrawal_period_sec: uint32,
+	period_start_time: timePointSec,
+	periods_until_expiration: uint32,
+});
+
+export const withdrawPermissionClaim = operation(WITHDRAW_PERMISSION_CLAIM, {
+	fee: asset,
+	withdraw_permission: protocolId(WITHDRAW_PERMISSION),
+	withdraw_from_account: protocolId(ACCOUNT),
+	withdraw_to_account: protocolId(ACCOUNT),
+	amount_to_withdraw: asset,
+	memo: optional(memoData),
+});
+
+export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
+	fee: asset,
+	withdraw_from_account: protocolId(ACCOUNT),
+	authorized_account: protocolId(ACCOUNT),
+	withdrawal_permission: protocolId(WITHDRAW_PERMISSION),
+});
+
+export const committeeMemberCreate = operation(COMMITTEE_MEMBER_CREATE, {
+	fee: asset,
+	committee_member_account: protocolId(ACCOUNT),
+	url: string,
+});
+
+export const committeeMemberUpdate = operation(COMMITTEE_MEMBER_UPDATE, {
+	fee: asset,
+	committee_member: protocolId(COMMITTEE_MEMBER),
+	committee_member_account: protocolId(ACCOUNT),
+	new_url: optional(string),
+});
+
+export const committeeMemberUpdateGlobalParameters = operation(COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS, {
+	fee: asset,
+	new_parameters: chainParameters,
+});
+
+export const vestingBalanceCreate = operation(VESTING_BALANCE_CREATE, {
+	fee: asset,
+	creator: protocolId(ACCOUNT),
+	owner: protocolId(ACCOUNT),
+	amount: asset,
+	policy: vestingPolicyInitializer,
+});
+
+export const vestingBalanceWithdraw = operation(VESTING_BALANCE_WITHDRAW, {
+	fee: asset,
+	vesting_balance: protocolId(VESTING_BALANCE),
+	owner: protocolId(ACCOUNT),
+	amount: asset,
+});
+
+export const workerCreate = operation(WORKER_CREATE, {
+	fee: asset,
+	owner: protocolId(ACCOUNT),
+	work_begin_date: timePointSec,
+	work_end_date: timePointSec,
+	daily_pay: int64,
+	name: string,
+	url: string,
+	initializer: workerInitializer,
+});
+
+export const custom = operation(CUSTOM, {
+	fee: asset,
+	payer: protocolId(ACCOUNT),
+	required_auths: set(protocolId(ACCOUNT)),
+	id: uint16,
+	data: bytes(),
+});
+
+export const assert = operation(ASSERT, {
+	fee: asset,
+	fee_paying_account: protocolId(ACCOUNT),
+	predicates: array(predicate),
+	required_auths: set(protocolId(ACCOUNT)),
+	extensions: set(empty),
+});
+
+export const balanceClaim = operation(BALANCE_CLAIM, {
+	fee: asset,
+	deposit_to_account: protocolId(ACCOUNT),
+	balance_to_claim: protocolId(BALANCE),
+	balance_owner_key: publicKey,
+	total_claimed: asset,
+});
+
+export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
+	fee: asset,
+	issuer: protocolId(ACCOUNT),
+	from: protocolId(ACCOUNT),
+	to: protocolId(ACCOUNT),
+	amount: asset,
+	memo: optional(memoData),
+	extensions: set(empty),
+});
+
+export const transferToBlind = operation(TRANSFER_TO_BLIND, {
+	fee: asset,
+	amount: asset,
+	from: protocolId(ACCOUNT),
+	blinding_factor: bytes(32),
+	outputs: array(blindOutput),
+});
+
+export const blindTransfer = operation(BLIND_TRANSFER, {
+	fee: asset,
+	inputs: array(blindInput),
+	outputs: array(blindOutput),
+});
+
+export const transferFromBlind = operation(TRANSFER_FROM_BLIND, {
+	fee: asset,
+	amount: asset,
+	to: protocolId(ACCOUNT),
+	blinding_factor: bytes(32),
+	inputs: array(blindInput),
+});
+
+export const assetSettleCancel = operation(ASSET_SETTLE_CANCEL, {
+	fee: asset,
+	settlement: protocolId(FORCE_SETTLEMENT),
+	account: protocolId(ACCOUNT),
+	amount: asset,
+	extensions: set(empty),
+});
+
+export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
+	fee: asset,
+	issuer: protocolId(ACCOUNT),
+	amount_to_claim: asset,
+	extensions: set(empty),
+});
+
+export const contract = operation(CONTRACT, {
+	fee: asset,
+	registrar: protocolId(ACCOUNT),
+	receiver: optional(protocolId(CONTRACT)),
+	asset_id: protocolId(ASSET),
+	value: uint64,
+	gasPrice: uint64,
+	gas: uint64,
+	code: string,
+});
+
+export const contractTransfer = operation(CONTRACT_TRANSFER, {
+	fee: asset,
+	from: protocolId(CONTRACT),
+	to: protocolId(CONTRACT),
+	amount: asset,
+	extensions: set(empty),
 });
 
 /** @type {{[operationName:string]:Operation}} */
-const operations = {
+export const operationByName = {
 	transfer,
+	limitOrderCreate,
+	limitOrderCancel,
+	callOrderUpdate,
+	fillOrder,
+	accountCreate,
+	accountUpdate,
+	accountWhitelist,
+	accountUpgrade,
+	accountTransfer,
+	assetCreate,
+	assetUpdate,
+	assetUpdateBitasset,
+	assetUpdateFeedProducers,
+	assetIssue,
+	assetReserve,
+	assetFundFeePool,
+	assetSettle,
+	assetGlobalSettle,
+	assetPublishFeed,
+	witnessCreate,
+	witnessUpdate,
+	proposalCreate,
+	proposalUpdate,
+	proposalDelete,
+	withdrawPermissionCreate,
+	withdrawPermissionUpdate,
+	withdrawPermissionClaim,
+	withdrawPermissionDelete,
+	committeeMemberCreate,
+	committeeMemberUpdate,
+	committeeMemberUpdateGlobalParameters,
+	vestingBalanceCreate,
+	vestingBalanceWithdraw,
+	workerCreate,
+	custom,
+	assert,
+	balanceClaim,
+	overrideTransfer,
+	transferToBlind,
+	blindTransfer,
+	transferFromBlind,
+	assetSettleCancel,
+	assetClaimFees,
+	contractTransfer,
+	contract,
 };
 
-for (const operationName in operations) {
-	if (!Object.prototype.hasOwnProperty.call(operations, operationName)) continue;
-	const operationType = operations[operationName];
-	operations[operationType.id] = operationType;
-}
+/** @type {Array<Operation>} */
+export const allOperations = Object.values(operationByName);
 
-export default operations;
+/** @type {{[id:number]:Operation}} */
+export const operationById = allOperations.reduce((acc, op) => {
+	acc[op.id] = op;
+	return acc;
+}, {});
+
+operationWrapper.types = operationById;
