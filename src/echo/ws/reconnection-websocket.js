@@ -28,16 +28,16 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * init params and connect to chain
-     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-     * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
-     * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
-     * @param {Number} options.pingInterval - interval in ms between ping requests.
-     * @param {Boolean} options.debug - debug mode status.
-     * @returns {Promise}
-     */
+	 * init params and connect to chain
+	 * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+	 * @param {Object} options - connection params.
+	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+	 * @param {Number} options.maxRetries - max count retries before close socket.
+	 * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+	 * @param {Number} options.pingInterval - interval in ms between ping requests.
+	 * @param {Boolean} options.debug - debug mode status.
+	 * @returns {Promise}
+	 */
 	async connect(
 		url,
 		options = {},
@@ -75,9 +75,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * inner connection method
-     * @returns {Promise}
-     */
+	 * inner connection method
+	 * @returns {Promise}
+	 */
 	_connect() {
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
@@ -144,7 +144,9 @@ class ReconnectionWebSocket {
 				this._reconnectionTimeoutId = setTimeout(async () => {
 					try {
 						await this._connect();
-					} catch (_) {}
+					} catch (_) {
+						//
+					}
 				}, this._options.connectionTimeout);
 
 			};
@@ -161,29 +163,32 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * connect to socket, can't be used after close
-     * @returns {Promise}
-     */
-	reconnect() {
-		if (!this.ws) return Promise.reject(new Error('Socket not exist.'));
+	 * connect to socket, can't be used after close
+	 * @returns {Promise}
+	 */
+	async reconnect() {
+		if (!this.ws) {
+			throw new Error('Socket not exist.');
+		}
+
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
-		return this.connect(this.url, this._options);
+		await this.connect(this.url, this._options);
 	}
 
 	/**
-     * set debug option
-     * @param {Boolean} status
-     */
+	 * set debug option
+	 * @param {Boolean} status
+	 */
 	setDebugOption(status) {
 		this._options.debug = Boolean(status);
 	}
 
 	/**
-     * call a method with params via RPC
-     * @param {Array<any>} params
-     * @param {Number} timeout - timeout before reject
-     * @returns {Promise}
-     */
+	 * call a method with params via RPC
+	 * @param {Array<any>} params
+	 * @param {Number} timeout - timeout before reject
+	 * @returns {Promise}
+	 */
 	call(params, timeout = this._options.connectionTimeout) {
 		if (this.ws.readyState !== WebSocket.OPEN) {
 			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
@@ -194,8 +199,8 @@ class ReconnectionWebSocket {
 		this._cbId += 1;
 
 		if (method === 'set_subscribe_callback' || method === 'subscribe_to_market' ||
-            method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
-			method === 'set_block_applied_callback'
+			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
+			method === 'set_block_applied_callback' || method === 'set_consensus_message_callback'
 		) {
 			// Store callback in subs map
 			this._subs[this._cbId] = {
@@ -240,15 +245,16 @@ class ReconnectionWebSocket {
 				reject,
 				timeoutId,
 			};
+
 			this.ws.send(JSON.stringify(request));
 		});
 
 	}
 
 	/**
-     * message handler
-     * @param response
-     */
+	 * message handler
+	 * @param response
+	 */
 	_responseHandler(response) {
 		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
@@ -292,20 +298,20 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * get access to chain
-     * @param {String} user
-     * @param {String} password
-     * @param {Number} timeout - timeout before reject
-     * @returns {Promise}
-     */
+	 * get access to chain
+	 * @param {String} user
+	 * @param {String} password
+	 * @param {Number} timeout - timeout before reject
+	 * @returns {Promise}
+	 */
 	login(user, password, timeout = this._options.connectionTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
 	/**
 	 * clear ping interval
-     * @private
-     */
+	 * @private
+	 */
 	_clearPingInterval() {
 		if (this._pingIntervalId) {
 			clearInterval(this._pingIntervalId);
@@ -315,8 +321,8 @@ class ReconnectionWebSocket {
 
 	/**
 	 * clear reconnection timeout
-     * @private
-     */
+	 * @private
+	 */
 	_clearReconnectionTimeout() {
 		if (this._reconnectionTimeoutId) {
 			clearTimeout(this._reconnectionTimeoutId);
@@ -327,8 +333,8 @@ class ReconnectionWebSocket {
 
 	/**
 	 * clear waiting calls
-     * @private
-     */
+	 * @private
+	 */
 	_clearWaitingCallPromises() {
 		const err = new Error('connection closed');
 
@@ -338,8 +344,8 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * make call for check connection
-     */
+	 * make call for check connection
+	 */
 	async _loginPing() {
 		try {
 			await this.login('', '', this._options.pingTimeout);
@@ -351,8 +357,8 @@ class ReconnectionWebSocket {
 
 	/**
 	 * show debug logs
-     * @private
-     */
+	 * @private
+	 */
 	_debugLog(...messages) {
 		if (!this._options.debug) return;
 		console.log(...messages);
@@ -383,9 +389,9 @@ class ReconnectionWebSocket {
 
 
 	/**
-     *
-     * @returns {Promise}
-     */
+	 *
+	 * @returns {Promise}
+	 */
 	close() {
 		if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) return Promise.reject(new Error('Socket already close'));
 
