@@ -154,7 +154,7 @@ export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRege
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
-	if (!isString(v) || v.length !== (50 + addressPrefix.length)) return false;
+	if (!isString(v) || v.length !== (ChainConfig.PUBLIC_KEY_LENGTH + addressPrefix.length)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
@@ -163,7 +163,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
 export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) => {
 
-	if (!isString(v) || v.length !== (44 + echorandPrefix.length)) return false;
+	if (!isString(v) || v.length !== (ChainConfig.ECHORAND_KEY_LENGTH + echorandPrefix.length)) return false;
 
 	const prefix = v.slice(0, echorandPrefix.length);
 
