@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import BN from 'bignumber.js';
 
 import ChainConfig from '../config/chain-config';
