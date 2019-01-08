@@ -18,6 +18,7 @@ class VoteIdType extends Type {
 		validateUnsignedSafeInteger(id, 'vote id');
 		if (type > 0xff) throw new Error('invalid type');
 		if (id > 0xffffff) throw new Error('invalid id');
+		return { type, id };
 	}
 
 	/**
