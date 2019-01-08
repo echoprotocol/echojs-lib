@@ -12,7 +12,6 @@ export const ACCOUNTS_ID_BY_KEY = 'accountsIdByKey';
 export const ASSET_BY_ASSET_ID = 'assetByAssetId';
 export const ASSET_BY_SYMBOL = 'assetBySymbol';
 
-export const CONTRACT_BALANCE_BY_CONTRACT_ID = 'contractBalanceByContractId';
 export const CONTRACTS_BY_CONTRACT_ID = 'contractsByContractId';
 export const FULL_CONTRACTS_BY_CONTRACT_ID = 'fullContractsByContractId';
 export const CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID = 'contractResultsByContractResultId';

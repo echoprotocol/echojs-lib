@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 class RegistrationAPI {
 
 	/**
@@ -10,18 +11,18 @@ class RegistrationAPI {
 	}
 
 	/**
-	 *  @method registerAccount
-	 *
-	 *  @param  {String} accountName
-	 * 	@param  {String} ownerKey
-	 * 	@param  {String} activeKey
-	 * 	@param  {String} memoKey
-	 * 	@param  {String} echoRandKey
-	 *
-	 *  @return {Promise}
-	 */
-	registerAccount(accountName, ownerKey, activeKey, memoKey, echoRandKey) {
-		return this.db.exec('register_account', [accountName, ownerKey, activeKey, memoKey, echoRandKey]);
+     *  @method registerAccount
+     *
+     *  @param  {String} name
+     * 	@param  {String} ownerKey
+     * 	@param  {String} activeKey
+     * 	@param  {String} echoRandKey
+     * 	@param  {String} memoKey
+     *
+     *  @return {Promise}
+     */
+	registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) {
+		return this.db.exec('register_account', [name, ownerKey, activeKey, memoKey, echoRandKey]);
 	}
 
 }
