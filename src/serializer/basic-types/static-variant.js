@@ -37,20 +37,25 @@ class StaticVariantType extends Type {
 		this.types = types;
 	}
 
-	validate() { super.validate(); }
-
 	/** @typedef {number} _VariantId */
+
+	/** @param {[_VariantId,any]} value */
+	validate(value) {
+		if (!Array.isArray(value)) throw new Error('value is not an array');
+		const [key, element] = value;
+		const type = this.types[key];
+		if (!type) throw new Error(`type with key ${key} not found`);
+		type.validate(element);
+		return { key, type };
+	}
+
 
 	/**
 	 * @param {[_VariantId,any]} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
-		// TODO: validation
-		if (!Array.isArray(value)) throw new Error('value is not an array');
-		const [key] = value;
-		const type = this.types[key];
-		if (!type) throw new Error(`type with key ${key} not found`);
+		const { key, type } = this.validate();
 		bytebuffer.writeVarint32(key);
 		type.appendToByteBuffer(value, bytebuffer);
 	}
