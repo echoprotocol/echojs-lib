@@ -23,6 +23,7 @@ import {
 	isBitAssetId,
 	isDynamicAssetDataId,
 	isEchoRandKey,
+	isOperationId,
 } from '../utils/validator';
 
 import { Transactions, Operations } from '../serializer/operations';
@@ -1547,6 +1548,28 @@ class API {
 		if (!isUInt64(start)) return Promise.reject(new Error('Start parameter should be non negative number'));
 
 		return this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
+	}
+
+	/**
+     *  @method getAccountHistoryOperations
+     *  Get only asked operations relevant to the specified account.
+     *
+     *  @param {String} accountId
+     *  @param {String} operationId
+     *  @param {Number} start [Id of the most recent operation to retrieve]
+     *  @param {Number} stop [Id of the earliest operation to retrieve]
+     *  @param {Number} limit     [count operations (max 100)]
+     *
+     *  @return {Promise}
+     */
+	getAccountHistoryOperations(accountId, operationId, start = ApiConfig.START_OPERATION_HISTORY_ID, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
+		if (!isOperationId(operationId)) return Promise.reject(new Error('Operation id invalid'));
+		if (!isOperationHistoryId(start)) return Promise.reject(new Error('Start parameter is invalid'));
+		if (!isOperationHistoryId(stop)) return Promise.reject(new Error('Stop parameter is invalid'));
+		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`));
+
+		return this.wsApi.history.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
 	}
 
 	setOptions() {}
