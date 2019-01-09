@@ -234,6 +234,8 @@ class Transaction {
 				headBlockTimeSeconds : Math.max(nowSeconds, headBlockTimeSeconds);
 		}
 		const chainId = await this.api.getChainId();
+		// one more check to avoid that the sign method was called several times
+		// without waiting for the first call to be executed
 		this.checkNotFinalized();
 		this._finalized = true;
 		/**
@@ -253,8 +255,6 @@ class Transaction {
 			operations: this.operations,
 			extensions: [],
 		});
-		// one more check to avoid that the sign method was called several times
-		// without waiting for the first call to be executed
 		this._signatures = this._signers.map(({ privateKey }) => {
 			const chainBuffer = Buffer.from(chainId, 'hex');
 			return Signature.signBuffer(Buffer.concat([chainBuffer, transactionBuffer]), privateKey);
