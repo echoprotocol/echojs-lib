@@ -12,6 +12,7 @@ import {
 	isAssetId,
 	isBalanceId,
 	isContractId,
+	isOperationHistoryId,
 	isContractResultId,
 	isBytecode,
 	isRipemd160,
@@ -26,14 +27,7 @@ import {
 
 import { Transactions, Operations } from '../serializer/operations';
 
-import {
-	LOOKUP_ACCOUNTS_DEFAULT_LIMIT, LOOKUP_ACCOUNTS_MAX_LIMIT,
-	LIST_ASSETS_DEFAULT_LIMIT, LIST_ASSETS_MAX_LIMIT,
-	GET_TRADE_HISTORY_DEFAULT_LIMIT, GET_TRADE_HISTORY_MAX_LIMIT,
-	LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT, LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT,
-	COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT, COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT,
-} from '../constants/api-config';
-
+import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 
 class API {
@@ -135,6 +129,66 @@ class API {
 	}
 
 	/**
+     *
+     * @param {Array} array
+     * @param {String} cacheName
+     * @param {String} methodName
+     * @param {Boolean} force
+     * @param {Array} cacheParams
+     *
+     * @returns {Promise.<Array.<*>>}
+     * @private
+     */
+	async _getAccountDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams = []) {
+		const { length } = array;
+
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
+
+		for (let i = 0; i < length; i += 1) {
+			const key = array[i];
+
+			if (!force) {
+				const cacheValue = this.cache[cacheName].get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjectsKeys.push(key);
+		}
+
+		let requestedObjects;
+
+		try {
+			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
+
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+				const key = requestedObjectsKeys.shift();
+				let requestedObject = requestedObjects.shift();
+
+				resultArray[i] = requestedObject;
+				if (!requestedObject) {
+					continue;
+				}
+
+				requestedObject = await this._addHistory(requestedObject);
+
+				this.cache.setInMap(cacheName, key, requestedObject);
+				cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
+			}
+
+			return resultArray;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	/**
 	 *
      * @param {*} value
      * @param {String} cacheName
@@ -160,6 +214,45 @@ class API {
 			if (!requestedObject) {
 				return requestedObject;
 			}
+
+			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
+
+			this.cache.setInMap(cacheName, key, requestedObject);
+
+			return requestedObject;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	/**
+     *
+     * @param {*} value
+     * @param {String} cacheName
+     * @param {String} methodName
+     * @param {Boolean} force
+     * @param {Array} cacheParams
+     *
+     * @returns {Promise.<*>}
+     * @private
+     */
+	async _getSingleAccountDataWithMultiSave(key, cacheName, methodName, force = false, cacheParams = []) {
+		if (!force) {
+			const cacheValue = this.cache[cacheName].get(key);
+
+			if (cacheValue) {
+				return cacheValue;
+			}
+		}
+
+		try {
+			let requestedObject = await this.wsApi.database[methodName](key);
+
+			if (!requestedObject) {
+				return requestedObject;
+			}
+
+			requestedObject = await this._addHistory(requestedObject);
 
 			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
 
@@ -235,6 +328,33 @@ class API {
 	}
 
 	/**
+     *
+     * @param {Object} account
+     * @param {Number} limit
+     *  @returns {Promise.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>}>}
+     * @private
+     */
+	async _addHistory(account, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
+		const start = '1.11.0';
+		let stop = start;
+
+		const { history } = account;
+
+		if (history && history[0] && history[0].id) {
+			stop = history[0].id;
+		} else {
+			account.history = [];
+		}
+
+		try {
+			account.history = [...account.history, ...(await this.getAccountHistory(account.id, stop, limit, start))];
+			return account;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	/**
 	 *
      * @param {Array} array
      * @param {String} cacheName
@@ -283,6 +403,8 @@ class API {
 				if (isAccountId(key)) {
 					const nameKey = requestedObject.name;
 
+					requestedObject = await this._addHistory(requestedObject);
+
 					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
 						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
 
@@ -301,6 +423,10 @@ class API {
 				} else if (isCommitteeMemberId(key)) {
 
 					this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
+
+				} else if (isVoteId(key)) {
+
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, key, requestedObject);
 
 				} else if (isBitAssetId(key)) {
 
@@ -497,7 +623,7 @@ class API {
      *  @param  {Array<String>} accountIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
      */
 	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
@@ -506,7 +632,7 @@ class API {
 
 		const cacheParams = [{ param: 'name', cache: CacheMaps.ACCOUNTS_BY_NAME }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
 
-		return this._getArrayDataWithMultiSave(accountIds, CacheMaps.ACCOUNTS_BY_ID, 'getAccounts', force, cacheParams);
+		return this._getAccountDataWithMultiSave(accountIds, CacheMaps.ACCOUNTS_BY_ID, 'getAccounts', force, cacheParams);
 	}
 
 	/**
@@ -515,7 +641,7 @@ class API {
      *  @param  {Boolean} subscribe
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
      */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
@@ -558,12 +684,18 @@ class API {
 		for (let i = 0; i < length; i += 1) {
 			if (resultArray[i]) continue;
 
-			const requestedObject = requestedObjects.shift();
+			let requestedObject = requestedObjects.shift();
 
-			resultArray[i] = requestedObject;
-			if (!requestedObject) {
+			if (!requestedObject || !requestedObject[1] || !requestedObject[1].account) {
+				resultArray[i] = null;
 				continue;
 			}
+
+			requestedObject = requestedObject[1].account;
+
+			requestedObject = await this._addHistory(requestedObject);
+
+			resultArray[i] = requestedObject;
 
 			const nameKey = requestedObject.name;
 			const idKey = requestedObject.id;
@@ -581,14 +713,14 @@ class API {
      *  @param  {String} accountName
      *  @param {Boolean} force
      *
-     *  @return {Promise.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>}
+     *  @return {Promise.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>}
      */
 	getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 		const cacheParams = [{ param: 'id', cache: CacheMaps.ACCOUNTS_BY_ID }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
 
-		return this._getSingleDataWithMultiSave(accountName, CacheMaps.ACCOUNTS_BY_NAME, 'getAccountByName', force, cacheParams);
+		return this._getSingleAccountDataWithMultiSave(accountName, CacheMaps.ACCOUNTS_BY_NAME, 'getAccountByName', force, cacheParams);
 	}
 
 	/**
@@ -610,7 +742,7 @@ class API {
      *  @param  {Array<String>} accountNames
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
      */
 	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
@@ -619,7 +751,7 @@ class API {
 
 		const cacheParams = [{ param: 'id', cache: CacheMaps.ACCOUNTS_BY_ID }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
 
-		return this._getArrayDataWithMultiSave(accountNames, CacheMaps.ACCOUNTS_BY_NAME, 'lookupAccountNames', force, cacheParams);
+		return this._getAccountDataWithMultiSave(accountNames, CacheMaps.ACCOUNTS_BY_NAME, 'lookupAccountNames', force, cacheParams);
 	}
 
 	/** @typedef {string} AccountName */
@@ -632,9 +764,9 @@ class API {
      *
      *  @return {Promise.<Array<[AccountName, AccountId]>>}
      */
-	lookupAccounts(lowerBoundName, limit = LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
+	lookupAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('Lower bound name should be a string'));
-		if (!isUInt64(limit) || limit > LOOKUP_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be a integer and must not exceed ${LOOKUP_ACCOUNTS_MAX_LIMIT}`));
+		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`));
 
 		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
@@ -778,9 +910,9 @@ class API {
      *
      *  @return {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String}>>}
      */
-	listAssets(lowerBoundSymbol, limit = LIST_ASSETS_DEFAULT_LIMIT) {
+	listAssets(lowerBoundSymbol, limit = ApiConfig.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) return Promise.reject(new Error('Lower bound symbol is invalid'));
-		if (!isUInt64(limit) || limit > LIST_ASSETS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be a integer and must not exceed ${LIST_ASSETS_MAX_LIMIT}`));
+		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`));
 
 		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
@@ -966,12 +1098,12 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = GET_TRADE_HISTORY_DEFAULT_LIMIT) {
+	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = ApiConfig.GET_TRADE_HISTORY_DEFAULT_LIMIT) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
 		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
 		if (!isUInt64(start)) return Promise.reject(new Error('Start should be UNIX timestamp'));
 		if (!isUInt64(stop)) return Promise.reject(new Error('Stop should be UNIX timestamp'));
-		if (!isUInt64(limit) || limit > GET_TRADE_HISTORY_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${GET_TRADE_HISTORY_MAX_LIMIT}`));
+		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`));
 
 		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
@@ -1017,9 +1149,9 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	lookupWitnessAccounts(lowerBoundName, limit = LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT) {
+	lookupWitnessAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-		if (!isUInt64(limit) || limit > LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`));
+		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`));
 
 		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
 	}
@@ -1074,9 +1206,9 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	lookupCommitteeMemberAccounts(lowerBoundName, limit = COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
+	lookupCommitteeMemberAccounts(lowerBoundName, limit = ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) return Promise.reject(new Error('LowerBoundName should be string'));
-		if (!isUInt64(limit) || limit > COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`));
+		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`));
 
 		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
@@ -1374,6 +1506,26 @@ class API {
 		if (!isEchoRandKey(echoRandKey)) return Promise.reject(new Error('Echo rand key is invalid'));
 
 		return this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
+	}
+
+	/**
+     *  @method getAccountHistory
+     *  Get operations relevant to the specificed account.
+     *
+     *  @param {String} accountId
+     *  @param {String} stop [Id of the earliest operation to retrieve]
+     *  @param {Number} limit     [count operations (max 100)]
+     *  @param {String} start [Id of the most recent operation to retrieve]
+     *
+     *  @return {Promise}
+     */
+	getAccountHistory(accountId, stop = ApiConfig.START_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.STOP_OPERATION_HISTORY_ID) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
+		if (!isOperationHistoryId(stop)) return Promise.reject(new Error('Stop parameter is invalid'));
+		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT}`));
+		if (!isOperationHistoryId(start)) return Promise.reject(new Error('Start parameter is invalid'));
+
+		return this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
 	}
 
 	setOptions() {}
