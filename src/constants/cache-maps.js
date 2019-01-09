@@ -12,7 +12,6 @@ export const ACCOUNTS_ID_BY_KEY = 'accountsIdByKey';
 export const ASSET_BY_ASSET_ID = 'assetByAssetId';
 export const ASSET_BY_SYMBOL = 'assetBySymbol';
 
-export const CONTRACT_BALANCE_BY_CONTRACT_ID = 'contractBalanceByContractId';
 export const CONTRACTS_BY_CONTRACT_ID = 'contractsByContractId';
 export const FULL_CONTRACTS_BY_CONTRACT_ID = 'fullContractsByContractId';
 export const CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID = 'contractResultsByContractResultId';
@@ -27,6 +26,9 @@ export const WITNESS_BY_WITNESS_ID = 'witnessByWitnessId';
 
 export const COMMITTEE_MEMBERS_BY_ACCOUNT = 'committeeMembersByAccount';
 export const COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID = 'committeeMembersByCommitteeMemberId';
+
+export const OBJECTS_BY_VOTE_ID = 'objectsByVoteId';
+
 export const ACCOUNTS_BALANCE_BY_ACCOUNT_ID = 'accountsBalanceByAccountId';
 export const ACCOUNTS_BALANCE_BY_ACCOUNT_NAME = 'accountsBalanceByAccountName';
 
@@ -34,8 +36,6 @@ export const ACCOUNT_REFERENCES_BY_ACCOUNT_ID = 'accountReferencesByAccountId';
 
 export const BALANCE_OBJECTS_BY_BALANCE_ID = 'balanceObjectsByBalanceId';
 export const GET_ACCOUNT_REFS_OF_ACCOUNTS_CALLS = 'getAccountRefsOfAccountsCalls';
-export const ACCOUNT_HISTORY_REQUESTS = 'accountHistoryRequests';
-export const OBJECTS_BY_VOTE_ID = 'objectsByVoteId';
 export const FETCHING_GET_FULL_ACCOUNTS = 'fetchingGetFullAccounts';
 
 export const BIT_ASSETS_BY_BIT_ASSET_ID = 'bitAssetsByBitAssetId';

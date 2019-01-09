@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import BN from 'bignumber.js';
 
 import ChainConfig from '../config/chain-config';
@@ -24,7 +25,7 @@ const limitOrderIdRegex = /^1\.7\.[1-9]\d*$/;
 const callOrderIdRegex = /^1\.8\.[1-9]\d*$/;
 const customIdRegex = /^1\.9\.[1-9]\d*$/;
 const proposalIdRegex = /^1\.10\.[1-9]\d*$/;
-const operationHistoryIdRegex = /^1\.11\.[1-9]\d*$/;
+const operationHistoryIdRegex = /^1\.11\.(0|[1-9]\d*)$/;
 const withdrawPermissionIdRegex = /^1\.12\.[1-9]\d*$/;
 const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
 const workerIdRegex = /^1\.14\.[1-9]\d*$/;
@@ -123,6 +124,7 @@ export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 
 export const isAccountBalanceId = (v) => isString(v) && accountBalanceIdRegex.test(v);
+export const isOperationId = (v) => isUInt8(v) && v < 49;
 
 export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
 
@@ -133,6 +135,8 @@ export const isObjectId = (v) => {
 	return (match !== null && v.split('.').length === 3);
 
 };
+
+export const isBuffer = (v) => Buffer.isBuffer(v);
 
 export const isHex = (v) => isString(v) && hexRegex.test(v);
 
@@ -166,11 +170,20 @@ export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObject
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
-	if (!isString(v) || v.length !== (50 + addressPrefix.length)) return false;
+	if (!isString(v) || v.length !== (ChainConfig.PUBLIC_KEY_LENGTH + addressPrefix.length)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
-	return addressPrefix !== prefix;
+	return addressPrefix === prefix;
+};
+
+export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) => {
+
+	if (!isString(v) || v.length !== (ChainConfig.ECHORAND_KEY_LENGTH + echorandPrefix.length)) return false;
+
+	const prefix = v.slice(0, echorandPrefix.length);
+
+	return echorandPrefix === prefix;
 };
 
 export const isAccountName = (v) => {
