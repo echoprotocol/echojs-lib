@@ -24,7 +24,7 @@ import {
 	isEchoRandKey,
 } from '../utils/validators';
 
-import { Transactions, operationById } from './operations';
+import { operationById } from './operations';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
@@ -39,7 +39,6 @@ import {
 
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
-import { inspect } from 'util';
 
 class API {
 
@@ -1117,31 +1116,30 @@ class API {
 	/**
      *  @method getTransactionHex
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	getTransactionHex(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-
+	getTransactionHex(tr) {
+		transaction.validate(tr);
 		// transaction is signed
-		return this.wsApi.database.getTransactionHex(transaction);
+		return this.wsApi.database.getTransactionHex(tr);
 	}
 
 	/**
      *  @method getRequiredSignatures
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *  @param  {Array<String>} availableKeys [public keys]
      *
      *  @return {Promise.<*>}
      */
-	getRequiredSignatures(transaction, availableKeys) {
-		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
+	getRequiredSignatures(tr, availableKeys) {
+		transaction.validate(tr);
 		if (!isArray(availableKeys)) return Promise.reject(new Error('Available keys ids should be an array'));
 		if (!availableKeys.every((key) => isPublicKey(key))) return Promise.reject(new Error('\'Available keys should contain valid public keys'));
 
-		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
+		return this.wsApi.database.getRequiredSignatures(tr, availableKeys);
 	}
 
 	/**
@@ -1171,14 +1169,13 @@ class API {
 	/**
      *  @method verifyAuthority
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	verifyAuthority(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-
-		return this.wsApi.database.verifyAuthority(transaction);
+	verifyAuthority(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.verifyAuthority(tr);
 	}
 
 	/**
@@ -1200,15 +1197,14 @@ class API {
 	/**
      *  @method validateTransaction
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	validateTransaction(transaction) {
-		if (!Transactions.signedTransaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-
+	validateTransaction(tr) {
+		signedTransaction.validate(tr);
 		// signed transaction
-		return this.wsApi.database.validateTransaction(transaction);
+		return this.wsApi.database.validateTransaction(tr);
 	}
 
 	/**
