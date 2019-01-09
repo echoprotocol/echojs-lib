@@ -25,11 +25,15 @@ class BytesType extends Type {
 		this._size = size;
 	}
 
-	/** @param {string|Buffer} value */
+	/**
+	 * @param {string|Buffer} value
+	 * @returns {Buffer}
+	 */
 	validate(value) {
 		value = toBuffer(value);
 		if (!Buffer.isBuffer(value)) throw new Error('value is not a buffer or hex-string');
 		if (this.size !== undefined && value.length !== this.size) throw new Error('invalid buffer size');
+		return value;
 	}
 
 	/**
@@ -42,6 +46,12 @@ class BytesType extends Type {
 		if (this.size === undefined) bytebuffer.writeVarint32(value.length);
 		bytebuffer.append(value.toString('binary'), 'binary');
 	}
+
+	/**
+	 * @param {string|Buffer} value
+	 * @returns {string}
+	 */
+	toObject(value) { return this.validate(value).toString('hex'); }
 
 }
 

@@ -60,6 +60,15 @@ class StaticVariantType extends Type {
 		type.appendToByteBuffer(value, bytebuffer);
 	}
 
+	/**
+	 * @param {[_VariantId,*]} value
+	 * @returns {[number,*]}
+	 */
+	toObject(value) {
+		const { key, type } = this.validate();
+		return [key, type.toObject(value)];
+	}
+
 }
 
 /**

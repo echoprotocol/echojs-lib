@@ -21,6 +21,15 @@ class ObjectId extends Type {
 		bytebuffer.writeUint64(reservedSpaceId.shiftLeft(56).or(objectTypeId.shiftLeft(48).or(instanceId)));
 	}
 
+	/**
+	 * @param {string} value
+	 * @returns {string}
+	 */
+	toObject(value) {
+		this.validate(value);
+		return value;
+	}
+
 }
 
 export default new ObjectId();

@@ -50,6 +50,23 @@ class Serializable extends Type {
 		}
 	}
 
+	/**
+	 * @param {{[key:string]:*}} serializedObject
+	 * @returns {{[key:string]:*}}
+	 */
+	toObject(serializedObject) {
+		if (typeof serializedObject !== 'object' || serializedObject === null) {
+			throw new Error('invalid serializedObject type');
+		}
+		const result = {};
+		for (const field in this.types) {
+			if (!Object.prototype.hasOwnProperty.call(this.types, field)) continue;
+			const type = this.types[field];
+			result[field] = type.toObject(serializedObject[field]);
+		}
+		return result;
+	}
+
 }
 
 /**

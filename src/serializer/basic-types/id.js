@@ -49,6 +49,12 @@ class IdType extends Type {
 		bytebuffer.writeVarint32(this.toId(value));
 	}
 
+	/**
+	 * @param {string|number} value
+	 * @returns {string}
+	 */
+	toObject(value) { return `${this.reservedSpaceId}.${this.objectTypeId}.${this.validate(value)}`; }
+
 }
 
 export default (reservedSpaceId, objectTypeId) => new IdType(reservedSpaceId, objectTypeId);

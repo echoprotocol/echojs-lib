@@ -7,14 +7,31 @@ import operations from './operations';
 import { isString, isObject } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
-import transaction from '../serializer/transaction-type';
+import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
-import { CHAIN_CONFIG } from '../constants';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
 class Transaction {
+
+	/**
+	 * @readonly
+	 * @type {number}
+	 */
+	get refBlockNum() {
+		this.checkFinalized();
+		return this._refBlockNum;
+	}
+
+	/**
+	 * @readonly
+	 * @type {number}
+	 */
+	get refBlockPrefix() {
+		this.checkFinalized();
+		return this._refBlockPrefix;
+	}
 
 	/**
 	 * @readonly
@@ -81,6 +98,10 @@ class Transaction {
 
 	checkNotFinalized() {
 		if (this.finalized) throw new Error('already finalized');
+	}
+
+	checkFinalized() {
+		if (!this.finalized) throw new Error('transaction is not finalized');
 	}
 
 	/**
@@ -198,23 +219,44 @@ class Transaction {
 				headBlockTimeSeconds : Math.max(nowSeconds, headBlockTimeSeconds);
 		}
 		const chainId = await this.api.getChainId();
-		// one more check to avoid that the sign method was called several times
-		// without waiting for the first call to be executed
 		this.checkNotFinalized();
-		const refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
-		const refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		this.finalized = true;
+		/**
+		 * @private
+		 * @type {number|undefined}
+		 */
+		this._refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
+		/**
+		 * @private
+		 * @type {number|undefined}
+		 */
+		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
 		const transactionBuffer = toBuffer(transaction, {
-			ref_block_num: refBlockNum,
-			ref_block_prefix: refBlockPrefix,
+			ref_block_num: this.refBlockNum,
+			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
 			operations: this.operations,
 			extensions: [],
 		});
+		// one more check to avoid that the sign method was called several times
+		// without waiting for the first call to be executed
 		this._signatures = this._signers.map(({ privateKey }) => {
 			const chainBuffer = Buffer.from(chainId, 'hex');
 			return Signature.signBuffer(Buffer.concat([chainBuffer, transactionBuffer]), privateKey);
 		});
-		this.finalized = true;
+	}
+
+	async broadcast(wasBroadcastedCallback) {
+		if (!this.finalized) await this.sign();
+		const transactionObject = signedTransaction.toObject({
+			ref_block_num: this.refBlockNum,
+			ref_block_prefix: this.refBlockPrefix,
+			expiration: this.expiration,
+			operations: this.operations,
+			extensions: [],
+			signatures: this._signatures,
+		});
+		return this.api.broadcastTransactionWithCallback(transactionObject, wasBroadcastedCallback);
 	}
 
 }

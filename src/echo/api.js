@@ -22,6 +22,7 @@ import {
 import { Transactions, Operations } from './operations';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
+/** @typedef {import('./ws-api').default} WSAPI */
 
 class API {
 
@@ -1246,6 +1247,24 @@ class API {
 		if (!asset) throw new Error(`asset ${assetId} not found`);
 		const [assetDynamicData] = await this.getObjects([asset.dynamic_asset_data_id]);
 		return assetDynamicData.fee_pool;
+	}
+
+	// TODO: fix @returns in JSDoc
+	/**
+	 * @param {import('../serializer/transaction-type').SignedTransactionObject} signedTransaction
+	 * @param {()=>* =} wasBroadcastedCallback
+	 * @returns {Promise<*>}
+	 */
+	broadcasstTransactionWithCallback(signedTransaction, wasBroadcastedCallback) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.network.broadcastTransactionWithCallback((res) => resolve(res), signedTransaction);
+			} catch (error) {
+				reject(error);
+				return;
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
 	}
 
 }

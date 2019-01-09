@@ -40,6 +40,15 @@ class AddressType extends Type {
 		for (let i = 0; i < offset; i += 1) bytebuffer.writeUint8(0);
 	}
 
+	/**
+	 * @param {string|PublicKey} value
+	 * @returns {string}
+	 */
+	toObject(value) {
+		this.validate(value);
+		return (value instanceof PublicKey) ? value.toAddressString() : value;
+	}
+
 }
 
 export default new AddressType();

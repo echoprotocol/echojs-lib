@@ -4,6 +4,7 @@ import WSAPI from './ws-api';
 import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
+import Transaction from './transaction';
 
 class Echo {
 
@@ -50,6 +51,9 @@ class Echo {
 		this.subscriber.reset();
 		this._ws.close();
 	}
+
+	/** @returns {Transaction} */
+	createTransaction() { return new Transaction(this.api); }
 
 }
 

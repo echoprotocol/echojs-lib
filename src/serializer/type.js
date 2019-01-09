@@ -26,6 +26,14 @@ class Type {
 	// eslint-disable-next-line no-unused-vars
 	appendToByteBuffer(value, bytebuffer) { notImplemented(); }
 
+	/**
+	 * @abstract
+	 * @param {*} value
+	 * @returns {*}
+	 */
+	// eslint-disable-next-line no-unused-vars
+	toObject(value) { notImplemented(); }
+
 }
 
 /**

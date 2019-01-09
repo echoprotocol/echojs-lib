@@ -17,6 +17,15 @@ class Uint64Type extends UintType {
 		bytebuffer.writeUint64(BigNumber.isBigNumber(value) ? BigNumberToLong(value, true) : value);
 	}
 
+	/**
+	 * @override
+	 * @param {number|string|BigNumber} value
+	 * @returns {string}
+	 */
+	toObject(value) {
+		return this.validate(value).toString();
+	}
+
 }
 
 export default new Uint64Type();

@@ -10,6 +10,17 @@ const transaction = serializable({
 	extensions: set(empty),
 });
 
+// TODO: fix properties types in JSDoc
+/**
+ * @typedef {Object} SignedTransactionObject
+ * @property {*} ref_block_num
+ * @property {*} ref_block_prefix
+ * @property {*} expiration
+ * @property {*} operations
+ * @property {*} extensions
+ * @property {*} signatures
+ */
+
 export const signedTransaction = serializable({
 	ref_block_num: uint16,
 	ref_block_prefix: uint32,

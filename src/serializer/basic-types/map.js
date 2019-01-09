@@ -71,6 +71,15 @@ class MapType extends Type {
 		}
 	}
 
+	/**
+	 * @param {Array<[_MapKey,_MapValue]>} value
+	 * @param {Array<[*,*]>} value
+	 */
+	toObject(value) {
+		this.validate(value);
+		return value.map(([key, element]) => [this.keyType.toObject(key), this.valueType.toObject(element)]);
+	}
+
 }
 
 /**

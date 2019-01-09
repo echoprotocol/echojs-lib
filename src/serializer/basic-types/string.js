@@ -2,9 +2,14 @@ import Type from '../type';
 
 class StringType extends Type {
 
-	/** @param {string|Buffer} value */
+	/**
+	 * @param {string|Buffer} value
+	 * @returns {string}
+	 */
 	validate(value) {
-		if (typeof value !== 'string' || !Buffer.isBuffer(value)) throw new Error('value is not a string');
+		if (typeof value === 'string') return value;
+		if (Buffer.isBuffer(value)) return value.toString('binary');
+		throw new Error('value is not a string');
 	}
 
 	/**
@@ -16,6 +21,12 @@ class StringType extends Type {
 		bytebuffer.writeVarint32(value.length);
 		bytebuffer.append(value.toString('binary'), 'binary');
 	}
+
+	/**
+	 * @param {string} value
+	 * @returns {string}
+	 */
+	toObject(value) { return this.validate(value); }
 
 }
 

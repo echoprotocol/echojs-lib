@@ -31,6 +31,15 @@ class VoteIdType extends Type {
 		bytebuffer.writeUint32((id << 8) | type);
 	}
 
+	/**
+	 * @param {stirng|{type:number,id:number}} value
+	 * @returns {string}
+	 */
+	toObject(value) {
+		const { type, id } = this.validate(value);
+		return `${type}:${id}`;
+	}
+
 }
 
 export default new VoteIdType();

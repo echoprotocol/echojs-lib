@@ -22,6 +22,12 @@ class PublicKeyType extends Type {
 		bytebuffer.append(value.toBuffer().toString('binary'), 'binary');
 	}
 
+	/**
+	 * @param {string|PublicKey} value
+	 * @returns {string}
+	 */
+	toObject(value) { return this.validate(value).toString(); }
+
 }
 
 export default new PublicKeyType();

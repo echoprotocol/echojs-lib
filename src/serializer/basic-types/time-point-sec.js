@@ -1,4 +1,5 @@
 import Type from '../type';
+import { validateUnsignedSafeInteger } from '../../utils/validators';
 
 /**
  * @param {Date} date
@@ -8,12 +9,23 @@ function getSeconds(date) { return Math.floor(date.getTime() / 1000); }
 
 class TimePointSecType extends Type {
 
-	/** @param {number|Date|string} value */
+	/**
+	 * @param {number|Date|string} value
+	 * @returns {Date}
+	 */
 	validate(value) {
-		if (typeof value === 'number') return;
-		if (value instanceof Date) return;
+		if (typeof value === 'number') {
+			validateUnsignedSafeInteger(value);
+			value *= 1000;
+			validateUnsignedSafeInteger(value);
+			return new Date(value);
+		}
+		if (value instanceof Date) return value;
 		if (typeof value !== 'string') throw new Error('invalid time_point_sec type');
-		if (Number.isNaN(getSeconds(value))) throw new Error('invalid time_point_sec format');
+		value = new Date(value);
+		const time = value.getTime();
+		if (Number.isNaN(time)) throw new Error('invalid time_point_sec format');
+		return value;
 	}
 
 	/**
@@ -26,6 +38,12 @@ class TimePointSecType extends Type {
 		if (typeof value === 'string') value = getSeconds(new Date(value));
 		bytebuffer.writeUint32(value);
 	}
+
+	/**
+	 * @param {number|Date|string} value
+	 * @returns {string}
+	 */
+	toObject(value) { return this.validate(value).toISOString().split('.')[0]; }
 
 }
 

@@ -38,6 +38,15 @@ class FixedArrayType extends ArrayType {
 		super.appendToByteBuffer(value, bytebuffer, false);
 	}
 
+	/**
+	 * @param {Array<*>} value
+	 * @returns {Array<*>}
+	 */
+	toObject(value) {
+		this.validate(value);
+		return value.map((element) => this.type.validate(element));
+	}
+
 }
 
 /**

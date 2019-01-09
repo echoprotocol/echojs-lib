@@ -38,6 +38,15 @@ class ArrayType extends Type {
 		for (const element of value) this.type.appendToByteBuffer(element, bytebuffer);
 	}
 
+	/**
+	 * @param {Array<*>} value
+	 * @returns {Array<*>}
+	 */
+	toObject(value) {
+		this.validate(value);
+		return value.map((element) => this.type.toObject(element));
+	}
+
 }
 
 /**

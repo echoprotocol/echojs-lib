@@ -34,6 +34,12 @@ class OptionalType extends Type {
 		if (value !== undefined) this.type.appendToByteBuffer(value, bytebuffer);
 	}
 
+	/**
+	 * @param {undefined|*} value
+	 * @returns {undefined|*}
+	 */
+	toObject(value) { return value === undefined ? undefined : this.type.toObject(value); }
+
 }
 
 /**

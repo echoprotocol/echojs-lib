@@ -17,6 +17,15 @@ class Int64Type extends IntType {
 		bytebuffer.writeInt64(BigNumber.isBigNumber(value) ? BigNumberToLong(value) : value);
 	}
 
+	/**
+	 * @override
+	 * @param {number|string|BigNumber} value
+	 * @returns {string}
+	 */
+	toObject(value) {
+		return this.validate(value).toString();
+	}
+
 }
 
 export default new Int64Type();

@@ -29,10 +29,14 @@ class SetType extends Type {
 		this._type = type;
 	}
 
-	/** @param {undefined|Array<*>|Set<*>} value */
+	/**
+	 * @param {undefined|Array<*>|Set<*>} value
+	 * @returns {Set<*>}
+	 */
 	validate(value) {
 		value = toSet(value);
 		for (const element of value) this.type.validate(element);
+		return value;
 	}
 
 	/**
@@ -40,10 +44,16 @@ class SetType extends Type {
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
-		value = toSet(value);
+		value = this.validate(value);
 		bytebuffer.writeVarint32(value.size);
 		for (const element of value) this.type.appendToByteBuffer(element, bytebuffer);
 	}
+
+	/**
+	 * @param {undefined|Array<*>|Set<*>} value
+	 * @returns {Array<*>}
+	 */
+	toObject(value) { return [...this.validate(value)].map((element) => this.type.toObject(element)); }
 
 }
 
