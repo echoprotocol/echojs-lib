@@ -1,4 +1,5 @@
 /* eslint-disable no-continue,max-len,no-await-in-loop */
+import { Map } from 'immutable';
 
 import {
 	isArray,
@@ -68,7 +69,7 @@ class API {
 		try {
 			const requestedObject = await this.wsApi.database[methodName]();
 
-			this.cache.set(cacheName, requestedObject);
+			this.cache.set(cacheName, new Map(requestedObject));
 
 			return requestedObject;
 		} catch (error) {
@@ -126,8 +127,8 @@ class API {
 				continue;
 			}
 
-			this.cache.setInMap(cacheName, key, requestedObject);
-			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
+			this.cache.setInMap(cacheName, key, new Map(requestedObject));
+			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], new Map(requestedObject)));
 		}
 
 		return resultArray;
@@ -160,9 +161,9 @@ class API {
 				return requestedObject;
 			}
 
-			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], requestedObject));
+			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject[param], new Map(requestedObject)));
 
-			this.cache.setInMap(cacheName, key, requestedObject);
+			this.cache.setInMap(cacheName, key, new Map(requestedObject));
 
 			return requestedObject;
 		} catch (error) {
@@ -197,7 +198,7 @@ class API {
 				return requestedObject;
 			}
 
-			this.cache.setInMap(cacheName, key, requestedObject);
+			this.cache.setInMap(cacheName, key, new Map(requestedObject));
 
 			return requestedObject;
 		} catch (error) {
@@ -254,8 +255,8 @@ class API {
 				if (isAccountId(key)) {
 					const nameKey = requestedObject.name;
 
-					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
-						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
+					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, new Map(requestedObject))
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, new Map(requestedObject));
 
 				} else if (isAssetId(key)) {
 					const nameKey = requestedObject.symbol;
@@ -277,28 +278,28 @@ class API {
 						}
 					}
 
-					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
-						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, new Map(requestedObject))
+						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, new Map(requestedObject));
 
 				} else if (isWitnessId(key)) {
 
-					this.cache.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, key, requestedObject);
+					this.cache.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, key, new Map(requestedObject));
 
 				} else if (isCommitteeMemberId(key)) {
 
-					this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
+					this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, new Map(requestedObject));
 
 				} else if (isBitAssetId(key)) {
 
-					this.cache.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, key, requestedObject);
+					this.cache.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, key, new Map(requestedObject));
 
 				} else if (isDynamicAssetDataId(key)) {
 
-					this.cache.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
+					this.cache.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, new Map(requestedObject));
 
 				}
 
-				this.cache.setInMap(cacheName, key, requestedObject);
+				this.cache.setInMap(cacheName, key, new Map(requestedObject));
 			}
 
 			return resultArray;
@@ -554,9 +555,9 @@ class API {
 			const nameKey = requestedObject.name;
 			const idKey = requestedObject.id;
 
-			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
+			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, new Map(requestedObject))
+				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, new Map(requestedObject))
+				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, new Map(requestedObject));
 		}
 
 		return resultArray;
@@ -760,9 +761,9 @@ class API {
 				const idKey = requestedObject.id;
 				const nameKey = requestedObject.symbol;
 
-				this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+				this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, new Map(requestedObject))
+					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, new Map(requestedObject))
+					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, new Map(requestedObject));
 			}
 
 			return resultArray;
@@ -861,9 +862,9 @@ class API {
 			const idKey = requestedObject.id;
 			const nameKey = requestedObject.symbol;
 
-			this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+			this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, new Map(requestedObject))
+				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, new Map(requestedObject))
+				.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, new Map(requestedObject));
 		}
 
 		return resultArray;
@@ -1377,4 +1378,3 @@ class API {
 }
 
 export default API;
-

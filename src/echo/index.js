@@ -46,7 +46,7 @@ class Echo {
 
 		await this.subscriber.init();
 
-		this._ws.onOpenCb = (async () => {
+		this._ws.on('open', async () => {
 			await this.subscriber.init();
 		});
 	}
