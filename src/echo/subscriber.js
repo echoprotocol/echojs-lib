@@ -1,102 +1,150 @@
-import {
-	isFunction,
-	isBoolean,
-} from '../utils/validators';
+import { isFunction } from '../utils/validators';
 
 class Subscriber {
 
-	constructor(cache, api) {
+	/**
+	 *  @constructor
+	 *
+	 *  @param {Cache} cache
+	 *  @param {WSAPI} wsApi
+	 */
+	constructor(cache, wsApi) {
 		this.cache = cache;
-		this.wsApi = api;
+		this._wsApi = wsApi;
+
+		this.subscriptions = {
+			all: false,
+			account: false,
+			echorand: false,
+			block: false,
+			connect: false,
+			disconnect: false,
+		};
+
+		this.subscribers = {
+			all: [], // "all" means all updates from setSubscribeCallback
+			account: [],
+			echorand: [],
+			block: [],
+			connect: [],
+			disconnect: [],
+		};
+
 	}
 
+	/**
+	 *  @method init
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
+	async init() {
+		await this._wsApi.database.setSubscribeCallback(this._onUpdate, true);
+
+		if (this.subscriptions.echorand) {
+			await this._setConsensusMessageCallback();
+		}
+	}
+
+	_onUpdate() {}
+
+	/**
+	 *  @method setOptions
+	 *
+	 *  @param {Object} options
+	 *
+	 *  @return {undefined}
+	 */
+	setOptions(options) {
+		this.options = options;
+	}
+
+	/**
+	 *  @method reset
+	 *
+	 *  @return {undefined}
+	 */
 	reset() {
-		// TODO reset subscribers
+		this.subscriptions = {
+			all: false,
+			account: false,
+			echorand: false,
+			block: false,
+			connect: false,
+			disconnect: false,
+		};
+
+		this.subscribers = {
+			all: [],
+			account: [],
+			echorand: [],
+			block: [],
+			connect: [],
+			disconnect: [],
+		};
+	}
+
+	onAllUpdates() {}
+
+	onAccountUpdate() {}
+
+	/**
+	 *  @method _echorandUpdate
+	 *
+	 *  @param  {Array} result
+	 *
+	 *  @return {undefined}
+	 */
+	_echorandUpdate(result) {
+		this.subscribers.echorand.forEach((callback) => {
+			callback(result);
+		});
 	}
 
 	/**
-     *  @method setSubscribeCallback
-     *  @param  {Function} callback
-     *  @param  {Boolean} notifyRemoveCreate
-     *
-     *  @return {Promise}
-     */
-	setSubscribeCallback(callback, notifyRemoveCreate) {
-		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-		if (!isBoolean(notifyRemoveCreate)) return Promise.reject(new Error('notifyRemoveCreate should be a boolean'));
-
-		return this.wsApi.database.setSubscribeCallback(callback, notifyRemoveCreate);
+	*  @method _setConsensusMessageCallback
+	*
+	*  @return {Promise.<undefined>}
+	*/
+	async _setConsensusMessageCallback() {
+		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+		this.subscriptions.echorand = true;
 	}
 
 	/**
-     *  @method setPendingTransactionCallback
-     *  @param  {Function} callback
-     *
-     *  @return {Promise}
-     */
-	setPendingTransactionCallback(callback) {
-		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-		return this.wsApi.database.setPendingTransactionCallback(callback);
+	 *  @method setEchorandSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
+	async setEchorandSubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.echorand.push(callback);
+
+		if (!this.subscriptions.echorand) {
+			await this._setConsensusMessageCallback();
+		}
 	}
 
 	/**
-     *  @method setBlockAppliedCallback
-     *  @param  {Function} callback
-     *
-     *  @return {Promise}
-     */
-	setBlockAppliedCallback(callback) {
-		if (!isFunction(callback)) return Promise.reject(new Error('Callback should be a function'));
-		return this.wsApi.database.setBlockAppliedCallback(callback);
+	 *  @method removeEchorandSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeEchorandSubscribe(callback) {
+		this.subscribers.echorand = this.subscribers.echorand.filter((c) => c !== callback);
 	}
 
-	/**
-     *  @method cancelAllSubscriptions
-     *
-     *  @return {Promise}
-     */
-	cancelAllSubscriptions() {
-		return this.wsApi.database.cancelAllSubscriptions();
-	}
+	onBlockApply() {}
 
-	/**
-     *  @method subscribeToMarket
-     *  @param  {Function} callback
-     *  @param  {String} baseAssetId
-     *  @param  {String} quoteAssetId
-     *
-     *  @return {Promise}
-     */
-	subscribeToMarket(callback, baseAssetId, quoteAssetId) {
-		if (!isFunction(callback)) return Promise.reject(new Error('Callback parameter should be a function'));
-		return this.wsApi.database.subscribeToMarket(callback, baseAssetId, quoteAssetId);
-	}
+	onConnect() {}
 
-	/**
-     *  @method unsubscribeFromMarket
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *
-     *  @return {Promise}
-     */
-	unsubscribeFromMarket(baseAssetName, quoteAssetName) {
-		this.wsApi.database.unsubscribeFromMarket(baseAssetName, quoteAssetName);
-	}
-
-	/**
-     *  @method subscribeContractLogs
-     *
-     *  @param  {Function} callback
-     *  @param  {String} contractId
-     *  @param  {Number} fromBlock
-     *  @param  {Number} toBlock
-     *
-     *  @return {Promise}
-     */
-	subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
-		this.wsApi.database.subscribeContractLogs(callback, contractId, fromBlock, toBlock);
-	}
+	onDisconnect() {}
 
 }
 

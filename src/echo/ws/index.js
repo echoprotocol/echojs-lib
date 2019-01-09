@@ -1,12 +1,16 @@
-/* eslint-disable max-len */
+/* global window */
+import EventEmitter from 'events';
+
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
 
-class WS {
+class WS extends EventEmitter {
 
 	constructor() {
+		super();
+
 		this._ws_rpc = new ReconnectionWebSocket();
 
 		this._connected = false;
@@ -41,6 +45,7 @@ class WS {
 			await Promise.all(initPromises);
 			this._connected = true;
 			if (this.onOpenCb) this.onOpenCb('open');
+			this.emit('open');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 		}
@@ -66,6 +71,8 @@ class WS {
 		if (this._isFirstTime) this._isFirstTime = false;
 		this._connected = false;
 		if (this.onCloseCb) this.onCloseCb('close');
+
+		this.emit('close');
 	}
 
 	/**
@@ -74,15 +81,19 @@ class WS {
      */
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
+
+		this.emit('error');
 	}
 
 	/**
      * init params and connect to chain
      * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
      * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
+     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
+     * 		default call delay before reject it.
      * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+     * @param {Number} options.pingTimeout - delay time in ms between ping request
+     * 		and socket disconnect.
      * @param {Number} options.pingInterval - interval in ms between ping requests.
      * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
@@ -212,6 +223,14 @@ class WS {
      */
 	loginApi() {
 		return this._login;
+	}
+
+	/**
+     * network node API
+     * @returns {GrapheneApi}
+     */
+	networkNodeApi() {
+		return this._network_node;
 	}
 
 }

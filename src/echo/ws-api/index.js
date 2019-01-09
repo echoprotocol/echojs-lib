@@ -4,6 +4,7 @@ import NetworkAPI from './network-api';
 import HistoryAPI from './history-api';
 import RegistrationAPI from './registration-api';
 import LoginAPI from './login-api';
+import NetworkNodeAPI from './network-node-api';
 
 
 class WSAPI {
@@ -22,6 +23,7 @@ class WSAPI {
 		this.history = new HistoryAPI(this.ws.historyApi());
 		this.registration = new RegistrationAPI(this.ws.registrationApi());
 		this.login = new LoginAPI(this.ws.loginApi());
+		this.networkNode = new NetworkNodeAPI(this.ws.networkNodeApi());
 	}
 
 }
