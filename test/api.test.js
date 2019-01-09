@@ -474,5 +474,24 @@ describe('API', () => {
                 }
             }).timeout(5000);
         });
+        describe('#getRelativeAccountHistory()', () => {
+            it('should get relative account history', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const accountId = '1.2.2';
+                    const start = 0;
+                    const stop = 0;
+                    const limit = 10;
+
+                    const history = await api.getRelativeAccountHistory(accountId, stop, limit, start);
+                    expect(history).to.be.an('array');
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
     });
 });

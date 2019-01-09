@@ -1528,6 +1528,27 @@ class API {
 		return this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
 	}
 
+	/**
+     *  @method getRelativeAccountHistory
+     *  Get operations relevant to the specified account referenced
+     *  by an event numbering specific to the account.
+     *
+     *  @param {String} accountId
+     *  @param {Number} stop [Sequence number of earliest operation]
+     *  @param {Number} limit     [count operations (max 100)]
+     *  @param {Number} start [Sequence number of the most recent operation to retrieve]
+     *
+     *  @return {Promise}
+     */
+	getRelativeAccountHistory(accountId, stop = ApiConfig.RELATIVE_ACCOUNT_HISTORY_STOP, limit = ApiConfig.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.RELATIVE_ACCOUNT_HISTORY_START) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
+		if (!isUInt64(stop)) return Promise.reject(new Error('Stop parameter should be non negative number'));
+		if (!isUInt64(limit) || limit > ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`));
+		if (!isUInt64(start)) return Promise.reject(new Error('Start parameter should be non negative number'));
+
+		return this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
+	}
+
 	setOptions() {}
 
 }
