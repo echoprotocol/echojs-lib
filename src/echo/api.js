@@ -21,6 +21,7 @@ import {
 	isCommitteeMemberId,
 	isBitAssetId,
 	isDynamicAssetDataId,
+	isEchoRandKey,
 } from '../utils/validator';
 
 import { Transactions, Operations } from '../serializer/operations';
@@ -207,6 +208,34 @@ class API {
 
 	/**
 	 *
+     * @param {Object} requestedObject
+     * @param {Boolean} force
+     *  @returns {Promise.<{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String,dynamic:Object,bitasset:Object|undefined}>}
+     * @private
+     */
+	async _addAssetExtraFields(requestedObject, force = false) {
+		const bitAssetId = requestedObject.bitasset_data_id;
+		const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
+
+		if (bitAssetId) {
+			const bitasset = await this.getBitAssetData(bitAssetId, force);
+			if (bitasset) {
+				requestedObject.bitasset = bitasset;
+			}
+		}
+
+		if (dynamicAssetDataId) {
+			const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
+			if (dynamicAssetData) {
+				requestedObject.dynamic = dynamicAssetData;
+			}
+		}
+
+		return requestedObject;
+	}
+
+	/**
+	 *
      * @param {Array} array
      * @param {String} cacheName
      * @param {String} methodName
@@ -244,7 +273,7 @@ class API {
 			for (let i = 0; i < length; i += 1) {
 				if (resultArray[i]) continue;
 				const key = requestedObjectsKeys.shift();
-				const requestedObject = requestedObjects.shift();
+				let requestedObject = requestedObjects.shift();
 
 				resultArray[i] = requestedObject;
 				if (!requestedObject) {
@@ -260,22 +289,7 @@ class API {
 				} else if (isAssetId(key)) {
 					const nameKey = requestedObject.symbol;
 
-					const bitAssetId = requestedObject.bitasset_data_id;
-					const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
-
-					if (bitAssetId) {
-						const bitasset = await this.getBitAssetData(bitAssetId, force);
-						if (bitasset) {
-							requestedObject.bitasset = bitasset;
-						}
-					}
-
-					if (dynamicAssetDataId) {
-						const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
-						if (dynamicAssetData) {
-							requestedObject.dynamic = dynamicAssetData;
-						}
-					}
+					requestedObject = await this._addAssetExtraFields(requestedObject, force);
 
 					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
 						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
@@ -483,7 +497,7 @@ class API {
      *  @param  {Array<String>} accountIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<*>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
      */
 	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
@@ -501,7 +515,7 @@ class API {
      *  @param  {Boolean} subscribe
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<*>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
      */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
@@ -567,9 +581,9 @@ class API {
      *  @param  {String} accountName
      *  @param {Boolean} force
      *
-     *  @return {Promise.<*>}
+     *  @return {Promise.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>}
      */
-	async getAccountByName(accountName, force = false) {
+	getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 		const cacheParams = [{ param: 'id', cache: CacheMaps.ACCOUNTS_BY_ID }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
@@ -596,7 +610,7 @@ class API {
      *  @param  {Array<String>} accountNames
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<*>>}
+     *  @returns {Promise.<Array.<{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number}>>}
      */
 	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
@@ -698,7 +712,7 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
+     *  @returns {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String,dynamic:Object,bitasset:Object|undefined}>>}
      */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -733,29 +747,14 @@ class API {
 			for (let i = 0; i < length; i += 1) {
 				if (resultArray[i]) continue;
 
-				const requestedObject = requestedObjects.shift();
+				let requestedObject = requestedObjects.shift();
 
 				resultArray[i] = requestedObject;
 				if (!requestedObject) {
 					continue;
 				}
 
-				const bitAssetId = requestedObject.bitasset_data_id;
-				const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
-
-				if (bitAssetId) {
-					const bitasset = await this.getBitAssetData(bitAssetId, force);
-					if (bitasset) {
-						requestedObject.bitasset = bitasset;
-					}
-				}
-
-				if (dynamicAssetDataId) {
-					const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
-					if (dynamicAssetData) {
-						requestedObject.dynamic = dynamicAssetData;
-					}
-				}
+				requestedObject = await this._addAssetExtraFields(requestedObject, force);
 
 				const idKey = requestedObject.id;
 				const nameKey = requestedObject.symbol;
@@ -777,7 +776,7 @@ class API {
      *  @param  {String} lowerBoundSymbol
      *  @param  {Number} limit
      *
-     *  @return {Promise.<Array.<{}>>}
+     *  @return {Promise.<Array.<{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String}>>}
      */
 	listAssets(lowerBoundSymbol, limit = LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) return Promise.reject(new Error('Lower bound symbol is invalid'));
@@ -834,29 +833,14 @@ class API {
 		for (let i = 0; i < length; i += 1) {
 			if (resultArray[i]) continue;
 
-			const requestedObject = requestedObjects.shift();
+			let requestedObject = requestedObjects.shift();
 
 			resultArray[i] = requestedObject;
 			if (!requestedObject) {
 				continue;
 			}
 
-			const bitAssetId = requestedObject.bitasset_data_id;
-			const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
-
-			if (bitAssetId) {
-				const bitasset = await this.getBitAssetData(bitAssetId, force);
-				if (bitasset) {
-					requestedObject.bitasset = bitasset;
-				}
-			}
-
-			if (dynamicAssetDataId) {
-				const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
-				if (dynamicAssetData) {
-					requestedObject.dynamic = dynamicAssetData;
-				}
-			}
+			requestedObject = await this._addAssetExtraFields(requestedObject, force);
 
 			const idKey = requestedObject.id;
 			const nameKey = requestedObject.symbol;
@@ -1356,7 +1340,7 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataWithMultiSave(contractId, CacheMaps.CONTRACT_BALANCE_BY_CONTRACT_ID, 'getContractBalances', force);
+		return this.getContractBalances(contractId);
 	}
 
 	/**
@@ -1372,9 +1356,28 @@ class API {
 		return this.wsApi.database.getRecentTransactionById(transactionId);
 	}
 
+	/**
+     *  @method registerAccount
+     *
+     *  @param  {String} name
+     * 	@param  {String} ownerKey
+     * 	@param  {String} activeKey
+     * 	@param  {String} echoRandKey
+     *
+     *  @return {Promise}
+     */
+	registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) {
+		if (!isAccountName(name)) return Promise.reject(new Error('Name is invalid'));
+		if (!isPublicKey(ownerKey)) return Promise.reject(new Error('Owner public key is invalid'));
+		if (!isPublicKey(activeKey)) return Promise.reject(new Error('Active public key is invalid'));
+		if (!isPublicKey(memoKey)) return Promise.reject(new Error('Memo public key is invalid'));
+		if (!isEchoRandKey(echoRandKey)) return Promise.reject(new Error('Echo rand key is invalid'));
+
+		return this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
+	}
+
 	setOptions() {}
 
 }
 
 export default API;
-
