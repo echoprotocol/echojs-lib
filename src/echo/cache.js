@@ -35,8 +35,10 @@ class Cache {
 		this.witnessByAccountId = new Map();
 		this.witnessByWitnessId = new Map();
 
-		this.committeeMembersByAccount = new Map();
+		this.committeeMembersByAccountId = new Map();
 		this.committeeMembersByCommitteeMemberId = new Map();
+
+		this.objectsByVoteId = new Map();
 
 		this.accountsBalanceByAccountId = new Map();
 		this.accountsBalanceByAccountName = new Map();
@@ -48,7 +50,6 @@ class Cache {
 
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
-		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
 		this.chainProperties = null;
