@@ -77,10 +77,14 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
 		}
+
+		if (this.subscriptions.block) {
+			await this._setBlockApplyCallback();
+		}
 	}
 
 	_updateObject(object) {
-		console.log('object', object);
+		// console.log('object', object);
 
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
@@ -382,7 +386,7 @@ class Subscriber extends EventEmitter {
 	}
 
 	_onRespond([messages]) {
-		console.log('messages', messages);
+		// console.log('messages', messages);
 
 		const orders = [];
 		const response = [];
@@ -442,6 +446,8 @@ class Subscriber extends EventEmitter {
 		this.subscribers = {
 			all: [],
 			account: [],
+			witness: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
 			connect: [],
@@ -506,7 +512,58 @@ class Subscriber extends EventEmitter {
 		this.subscribers.echorand = this.subscribers.echorand.filter((c) => c !== callback);
 	}
 
-	onBlockApply() {}
+	/**
+     *  @method _blockApplyUpdate
+     *
+     *  @param  {Array} result
+     *
+     *  @return {undefined}
+     */
+	_blockApplyUpdate(result) {
+		this.subscribers.block.forEach((callback) => {
+			callback(result);
+		});
+	}
+
+	/**
+     *  @method _setBlockApplyCallback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async _setBlockApplyCallback() {
+		await this._wsApi.database.setBlockAppliedCallback(this._blockApplyUpdate.bind(this));
+		this.subscriptions.block = true;
+	}
+
+	/**
+     *  @method setBlockApplySubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async setBlockApplySubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.block.push(callback);
+
+		if (!this.subscriptions.block) {
+			await this._setBlockApplyCallback();
+		}
+	}
+
+	/**
+     *  @method removeBlockApplySubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removeBlockApplySubscribe(callback) {
+		this.subscribers.block = this.subscribers.block.filter((c) => c !== callback);
+	}
 
 	onConnect() {}
 
