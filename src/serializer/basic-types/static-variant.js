@@ -42,20 +42,19 @@ class StaticVariantType extends Type {
 	/** @param {[_VariantId,any]} value */
 	validate(value) {
 		if (!Array.isArray(value)) throw new Error('value is not an array');
-		const [key, element] = value;
+		const [key] = value;
 		const type = this.types[key];
 		if (!type) throw new Error(`type with key ${key} not found`);
-		type.validate(element);
+		type.validate(value);
 		return { key, type };
 	}
-
 
 	/**
 	 * @param {[_VariantId,any]} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
-		const { key, type } = this.validate();
+		const { key, type } = this.validate(value);
 		bytebuffer.writeVarint32(key);
 		type.appendToByteBuffer(value, bytebuffer);
 	}
@@ -65,7 +64,7 @@ class StaticVariantType extends Type {
 	 * @returns {[number,*]}
 	 */
 	toObject(value) {
-		const { key, type } = this.validate();
+		const { key, type } = this.validate(value);
 		return [key, type.toObject(value)];
 	}
 

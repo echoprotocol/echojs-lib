@@ -108,7 +108,7 @@ export const transfer = operation(TRANSFER, {
 	to: protocolId(ACCOUNT),
 	amount: asset,
 	memo: optional(memoData),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const limitOrderCreate = operation(LIMIT_ORDER_CREATE, {
@@ -118,14 +118,14 @@ export const limitOrderCreate = operation(LIMIT_ORDER_CREATE, {
 	min_to_receive: asset,
 	expiration: timePointSec,
 	fill_or_kill: bool,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const limitOrderCancel = operation(LIMIT_ORDER_CANCEL, {
 	fee: asset,
 	fee_paying_account: protocolId(ACCOUNT),
 	order: protocolId(LIMIT_ORDER),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const callOrderUpdate = operation(CALL_ORDER_UPDATE, {
@@ -133,7 +133,7 @@ export const callOrderUpdate = operation(CALL_ORDER_UPDATE, {
 	funding_account: protocolId(ACCOUNT),
 	delta_collateral: asset,
 	delta_debt: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const fillOrder = operation(FILL_ORDER, {
@@ -153,7 +153,7 @@ export const accountCreate = operation(ACCOUNT_CREATE, {
 	owner: authority,
 	active: authority,
 	options: accountOptions,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const accountUpdate = operation(ACCOUNT_UPDATE, {
@@ -162,7 +162,7 @@ export const accountUpdate = operation(ACCOUNT_UPDATE, {
 	owner: optional(authority),
 	active: optional(authority),
 	new_options: optional(accountOptions),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const accountWhitelist = operation(ACCOUNT_WHITELIST, {
@@ -170,21 +170,21 @@ export const accountWhitelist = operation(ACCOUNT_WHITELIST, {
 	authorizing_account: protocolId(ACCOUNT),
 	account_to_list: protocolId(ACCOUNT),
 	new_listing: uint8,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const accountUpgrade = operation(ACCOUNT_UPGRADE, {
 	fee: asset,
 	account_to_upgrade: protocolId(ACCOUNT),
 	upgrade_to_lifetime_member: bool,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const accountTransfer = operation(ACCOUNT_TRANSFER, {
 	fee: asset,
 	account_id: protocolId(ACCOUNT),
 	new_owner: protocolId(ACCOUNT),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetCreate = operation(ASSET_CREATE, {
@@ -195,7 +195,7 @@ export const assetCreate = operation(ASSET_CREATE, {
 	common_options: assetOptions,
 	bitasset_opts: optional(bitassetOptions),
 	is_prediction_market: bool,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetUpdate = operation(ASSET_UPDATE, {
@@ -204,7 +204,7 @@ export const assetUpdate = operation(ASSET_UPDATE, {
 	asset_to_update: protocolId(ASSET),
 	new_issuer: optional(protocolId(ACCOUNT)),
 	new_options: assetOptions,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetUpdateBitasset = operation(ASSET_UPDATE_BITASSET, {
@@ -212,7 +212,7 @@ export const assetUpdateBitasset = operation(ASSET_UPDATE_BITASSET, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_update: protocolId(ASSET),
 	new_options: bitassetOptions,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetUpdateFeedProducers = operation(ASSET_UPDATE_FEED_PRODUCERS, {
@@ -220,7 +220,7 @@ export const assetUpdateFeedProducers = operation(ASSET_UPDATE_FEED_PRODUCERS, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_update: protocolId(ASSET),
 	new_feed_producers: set(protocolId(ACCOUNT)),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetIssue = operation(ASSET_ISSUE, {
@@ -229,14 +229,14 @@ export const assetIssue = operation(ASSET_ISSUE, {
 	asset_to_issue: asset,
 	issue_to_account: protocolId(ACCOUNT),
 	memo: optional(memoData),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetReserve = operation(ASSET_RESERVE, {
 	fee: asset,
 	payer: protocolId(ACCOUNT),
 	amount_to_reserve: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetFundFeePool = operation(ASSET_FUND_FEE_POOL, {
@@ -244,14 +244,14 @@ export const assetFundFeePool = operation(ASSET_FUND_FEE_POOL, {
 	from_account: protocolId(ACCOUNT),
 	asset_id: protocolId(ASSET),
 	amount: int64,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetSettle = operation(ASSET_SETTLE, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetGlobalSettle = operation(ASSET_GLOBAL_SETTLE, {
@@ -259,7 +259,7 @@ export const assetGlobalSettle = operation(ASSET_GLOBAL_SETTLE, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_settle: protocolId(ASSET),
 	settle_price: price,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetPublishFeed = operation(ASSET_PUBLISH_FEED, {
@@ -267,7 +267,7 @@ export const assetPublishFeed = operation(ASSET_PUBLISH_FEED, {
 	publisher: protocolId(ACCOUNT),
 	asset_id: protocolId(ASSET),
 	feed: priceFeed,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const witnessCreate = operation(WITNESS_CREATE, {
@@ -291,7 +291,7 @@ export const proposalCreate = operation(PROPOSAL_CREATE, {
 	expiration_time: timePointSec,
 	proposed_ops: array(operationWrapper),
 	review_period_seconds: optional(uint32),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const proposalUpdate = operation(PROPOSAL_UPDATE, {
@@ -304,7 +304,7 @@ export const proposalUpdate = operation(PROPOSAL_UPDATE, {
 	owner_approvals_to_remove: set(protocolId(ACCOUNT)),
 	key_approvals_to_add: set(publicKey),
 	key_approvals_to_remove: set(publicKey),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const proposalDelete = operation(PROPOSAL_DELETE, {
@@ -312,7 +312,7 @@ export const proposalDelete = operation(PROPOSAL_DELETE, {
 	fee_paying_account: protocolId(ACCOUNT),
 	using_owner_authority: bool,
 	proposal: protocolId(PROPOSAL),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const withdrawPermissionCreate = operation(WITHDRAW_PERMISSION_CREATE, {
@@ -409,7 +409,7 @@ export const assert = operation(ASSERT, {
 	fee_paying_account: protocolId(ACCOUNT),
 	predicates: array(predicate),
 	required_auths: set(protocolId(ACCOUNT)),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const balanceClaim = operation(BALANCE_CLAIM, {
@@ -427,7 +427,7 @@ export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
 	to: protocolId(ACCOUNT),
 	amount: asset,
 	memo: optional(memoData),
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const transferToBlind = operation(TRANSFER_TO_BLIND, {
@@ -457,14 +457,14 @@ export const assetSettleCancel = operation(ASSET_SETTLE_CANCEL, {
 	settlement: protocolId(FORCE_SETTLEMENT),
 	account: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
 	fee: asset,
 	issuer: protocolId(ACCOUNT),
 	amount_to_claim: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 export const contract = operation(CONTRACT, {
@@ -483,7 +483,7 @@ export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	from: protocolId(CONTRACT),
 	to: protocolId(CONTRACT),
 	amount: asset,
-	extensions: set(empty),
+	extensions: optional(empty),
 });
 
 /** @type {{[operationName:string]:Operation}} */

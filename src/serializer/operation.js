@@ -41,13 +41,19 @@ class Operation extends Type {
 
 	/** @typedef {number} _OperationId */
 
-	/** @param {[_OperationId,Serializable]} value */
-	validate(value) {
+	/**
+	 * @param {[_OperationId,Serializable]} value
+	 * @param {boolean=true} feeIsRequired
+	 */
+	validate(value, feeIsRequired = true) {
 		if (!Array.isArray(value)) throw new Error('operation is not an array');
 		if (value.length !== 2) throw new Error('invalid count of operation elements');
 		const [operationId, operationProps] = value;
 		if (operationId !== this.id) throw new Error('invalid operation id');
-		this.serializable.validate(operationProps);
+		this.serializable.validate({
+			...operationProps,
+			fee: feeIsRequired ? operationProps.fee : { asset_id: '1.3.0', amount: 0, ...operationProps.fee },
+		});
 	}
 
 	/**
@@ -57,6 +63,13 @@ class Operation extends Type {
 	appendToByteBuffer(value, bytebuffer) {
 		this.validate(value);
 		this.serializable.appendToByteBuffer(value[1], bytebuffer);
+	}
+
+	toObject(value) {
+		this.validate(value);
+		const [, operationProps] = value;
+		return this.serializable.toObject(operationProps);
+		// return [this.id, this.serializable.toObject(operationProps)];
 	}
 
 }

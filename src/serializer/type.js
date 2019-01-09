@@ -16,7 +16,7 @@ class Type {
 	 * @param {*} value
 	 */
 	// eslint-disable-next-line no-unused-vars
-	validate(value) { notImplemented(); }
+	validate(value, feeIsRequired = true) { notImplemented(); }
 
 	/**
 	 * @abstract
@@ -44,7 +44,7 @@ class Type {
 function toBuffer(type, value) {
 	const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
 	type.appendToByteBuffer(value, result);
-	return result.copy(0, result.offset);
+	return result.copy(0, result.offset).toBuffer();
 }
 
 export default Type;

@@ -53,7 +53,7 @@ class IdType extends Type {
 	 * @param {string|number} value
 	 * @returns {string}
 	 */
-	toObject(value) { return `${this.reservedSpaceId}.${this.objectTypeId}.${this.validate(value)}`; }
+	toObject(value) { return `${this.reservedSpaceId}.${this.objectTypeId}.${this.toId(value)}`; }
 
 }
 

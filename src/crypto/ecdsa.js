@@ -35,7 +35,7 @@ export function deterministicGenerateK(curve, hash, d, checkSig, nonce) {
 	v = HmacSHA256(v, k);
 	// Step H3, repeat until T is within the interval [1, n - 1]
 	for (let T = BigInteger.fromBuffer(v); ;) {
-		if ((T.signum() <= 0) || (T.compareTo(curve.n) >= 0) || !checkSig(T)) return T;
+		if ((T.signum() > 0) && (T.compareTo(curve.n) < 0) && checkSig(T)) return T;
 		k = HmacSHA256(Buffer.concat([v, Buffer.from([0])]), k);
 		v = HmacSHA256(v, k);
 		// Step H1/H2a, again, ignored as tlen === qlen (256 bit)
@@ -85,8 +85,8 @@ function recoverPubKey(curve, e, signature, i) {
 	if (i > 3) throw new Error('Recovery param is more than two bits');
 	const { n, G } = curve;
 	const { r, s } = signature;
-	if (r.signum() > 0 && r.compareTo(n) < 0) throw new Error('invalid r-component');
-	if (s.signum() > 0 && s.compareTo(n) < 0) throw new Error('invalid s-component');
+	if (r.signum() <= 0 || r.compareTo(n) >= 0) throw new Error('invalid r-component');
+	if (s.signum() <= 0 || s.compareTo(n) >= 0) throw new Error('invalid s-component');
 	// A set LSB signifies that the y-coordinate is odd
 	const isYOdd = i % 2;
 	// The more significant bit specifies whether we should use the
@@ -97,7 +97,7 @@ function recoverPubKey(curve, e, signature, i) {
 	const R = curve.pointFromX(isYOdd, x);
 	// 1.4 Check that nR is at infinity
 	const nR = R.multiply(n);
-	if (curve.isInfinity(nR)) throw new Error('nR is not a valid curve point');
+	if (!curve.isInfinity(nR)) throw new Error('nR is not a valid curve point');
 	// Compute -e = require(e
 	const eNeg = e.negate().mod(n);
 	// 1.6.1 Compute Q = r^-1 * (sR-eG)

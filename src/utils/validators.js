@@ -80,7 +80,7 @@ export const isArray = (v) => Array.isArray(v) && !isEmpty(v.length);
 
 export const isEmptyArray = (v) => Array.isArray(v) && v.length === 0;
 
-export const isNumber = (v) => v && typeof v === 'number';
+export const isNumber = (v) => typeof v === 'number';
 
 const isUInt = (v, x) => {
 	if (isNumber(v) && v > Number.MAX_SAFE_INTEGER) return false;

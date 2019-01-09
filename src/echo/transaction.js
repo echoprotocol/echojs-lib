@@ -3,8 +3,8 @@ import ByteBuffer from 'bytebuffer';
 import { cloneDeep } from 'lodash';
 
 import Api from './api';
-import operations from './operations';
-import { isString, isObject } from '../utils/validators';
+import { operationById, operationByName } from './operations';
+import { isString, isNumber, isObject, validateUnsignedSafeInteger } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
@@ -46,7 +46,7 @@ class Transaction {
 	get finalized() { return this._finalized; }
 
 	/** @type {Api} */
-	get api() { return this._echo; }
+	get api() { return this._api; }
 
 	set api(value) {
 		if (!(value instanceof Api)) throw new Error('value is not a Api instance');
@@ -66,6 +66,17 @@ class Transaction {
 		this._expiration = value;
 	}
 
+	/**
+	 * @readonly
+	 * @type {boolean}
+	 */
+	get hasAllFees() {
+		for (const [, { fee }] of this.operations) {
+			if (fee === undefined || fee.amount === undefined) return false;
+		}
+		return true;
+	}
+
 	/** @param {Api} api */
 	constructor(api) {
 		this.api = api;
@@ -81,7 +92,7 @@ class Transaction {
 		this._signers = [];
 		/**
 		 * @private
-		 * @type {Array<Buffer>}
+		 * @type {Array<Signature>}
 		 */
 		this._signatures = [];
 		/**
@@ -112,9 +123,10 @@ class Transaction {
 	addOperation(name, props = {}) {
 		this.checkNotFinalized();
 		if (name === undefined) throw new Error('name is missing');
-		if (!isString(name)) throw new Error('name is not a string');
+		if (!isString(name) && !isNumber(name)) throw new Error('name is not a string or id');
+		if (typeof name === 'number') validateUnsignedSafeInteger(name, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
-		const operationType = operations[name];
+		const operationType = typeof name === 'number' ? operationById[name] : operationByName[name];
 		if (!operationType) throw new Error(`unknown operation ${name}`);
 		// TODO: proposal_create
 		const operation = [operationType.id, props];
@@ -179,6 +191,7 @@ class Transaction {
 	/**
 	 * @param {PrivateKey|Buffer} privateKey
 	 * @param {PublicKey} [publicKey]
+	 * @returns {Transaction}
 	 */
 	addSigner(privateKey, publicKey = privateKey.toPublicKey()) {
 		this.checkNotFinalized();
@@ -187,16 +200,17 @@ class Transaction {
 		if (!(publicKey instanceof PublicKey)) throw new Error('public key is not instance of PublicKey class');
 		const privateKeyHex = privateKey.toHex();
 		for (const signer of this._signers) {
-			if (signer.privateKey.toHex() === privateKeyHex) return;
+			if (signer.privateKey.toHex() === privateKeyHex) return this;
 		}
 		this._signers.push({ privateKey, publicKey });
+		return this;
 	}
 
 	/** @returns {ByteBuffer} */
 	toByteBuffer() {
 		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
 		for (const operationData of this._operations) {
-			const operationType = operations[operationData[0]];
+			const operationType = operationById[operationData[0]];
 			operationType.appendToByteBuffer(operationData, result);
 		}
 		return result.copy(0, result.offset);
@@ -208,9 +222,10 @@ class Transaction {
 	async sign(_privateKey) {
 		this.checkNotFinalized();
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
+		if (!this.hasAllFees) await this.setRequiredFees();
 		const [dynamicGlobalChainData] = await this.api.getObjects(['2.1.0']);
 		if (this.expiration === undefined) {
-			const headBlockTimeSeconds = Math.ceil(new Date(dynamicGlobalChainData.time).getTime() / 1000);
+			const headBlockTimeSeconds = Math.ceil(new Date(`${dynamicGlobalChainData.time}Z`).getTime() / 1000);
 			const nowSeconds = Math.ceil(new Date().getTime() / 1000);
 			// the head block time should be updated every 3 seconds
 			// if it isn't then help the transaction to expire (using head_block_sec)
@@ -220,7 +235,7 @@ class Transaction {
 		}
 		const chainId = await this.api.getChainId();
 		this.checkNotFinalized();
-		this.finalized = true;
+		this._finalized = true;
 		/**
 		 * @private
 		 * @type {number|undefined}
@@ -254,7 +269,7 @@ class Transaction {
 			expiration: this.expiration,
 			operations: this.operations,
 			extensions: [],
-			signatures: this._signatures,
+			signatures: this._signatures.map((signature) => signature.toBuffer()),
 		});
 		return this.api.broadcastTransactionWithCallback(transactionObject, wasBroadcastedCallback);
 	}

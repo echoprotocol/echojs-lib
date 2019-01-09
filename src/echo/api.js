@@ -19,7 +19,8 @@ import {
 	isVoteId, isWitnessId, isCommitteeMemberId,
 } from '../utils/validators';
 
-import { Transactions, Operations } from './operations';
+import { Transactions, Operations, operationById } from './operations';
+import { inspect } from 'util';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
@@ -1102,7 +1103,10 @@ class API {
      */
 	getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		if (!operations.every((v) => Operations[v[0]].isValid(v, false))) return Promise.reject(new Error('qwe'));
+		for (const operation of operations) {
+			const [operationId] = operation;
+			operationById[operationId].validate(operation, false);
+		}
 		return this.wsApi.database.getRequiredFees(operations, assetId);
 	}
 
@@ -1255,11 +1259,12 @@ class API {
 	 * @param {()=>* =} wasBroadcastedCallback
 	 * @returns {Promise<*>}
 	 */
-	broadcasstTransactionWithCallback(signedTransaction, wasBroadcastedCallback) {
+	broadcastTransactionWithCallback(signedTransaction, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.network.broadcastTransactionWithCallback((res) => resolve(res), signedTransaction);
 			} catch (error) {
+				console.log(inspect(error, false, null, true));
 				reject(error);
 				return;
 			}

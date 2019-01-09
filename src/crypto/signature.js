@@ -63,7 +63,7 @@ export default class Signature {
 		if (!Buffer.isBuffer(hash)) throw new Error('invalid hash type');
 		if (hash.length !== 32) throw new Error('invalid sha256 hash length');
 		for (let nonce = 0; ; nonce += 1) {
-			if (nonce % 10 === 0) console.warn(`[WARN]: ${nonce} attempts to find canonical signature`);
+			if (nonce && !(nonce % 10)) console.warn(`[WARN]: ${nonce} attempts to find canonical signature`);
 			const ecs = sign(secp256k1, hash, privateKey.d, nonce);
 			const der = ecs.toDER();
 			const lenR = der[3];
@@ -84,6 +84,15 @@ export default class Signature {
 	static signBuffer(buffer, privateKey) {
 		const hash = sha256(buffer);
 		return Signature.signBufferSha256(hash, privateKey);
+	}
+
+	/** @returns {Buffer} */
+	toBuffer() {
+		const result = Buffer.alloc(65);
+		result.writeUInt8(this.i, 0);
+		this.r.toBuffer(32).copy(result, 1);
+		this.s.toBuffer(32).copy(result, 33);
+		return result;
 	}
 
 }
