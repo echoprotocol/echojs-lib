@@ -33,7 +33,7 @@ const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
 const contractIdRegex = /^1\.16\.(0|[1-9]\d*)$/;
 const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
 
-const dynamicGlobalObjectIdRegex = /2.1.0$/;
+const dynamicGlobalObjectIdRegex = /^2.1.0$/;
 const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
 const bitAssetIdRegex = /^2\.4\.(0|[1-9]\d*)$/;
 const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;

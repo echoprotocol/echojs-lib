@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
@@ -21,6 +22,7 @@ import {
 	isWorkerId,
 	isBitAssetId,
 	isProposalId,
+	isArray,
 } from '../utils/validator';
 
 import {
@@ -38,11 +40,12 @@ class Subscriber extends EventEmitter {
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
 	 */
-	constructor(cache, wsApi) {
+	constructor(cache, wsApi, api) {
 		super();
 
 		this.cache = cache;
 		this._wsApi = wsApi;
+		this._api = api;
 
 		this.subscriptions = {
 			all: false,
@@ -184,7 +187,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					// fetchFullAccounts([object.owner], true, true);
+					this._api.getFullAccounts([object.owner], true, true);
 				}
 			} catch (err) {
 				//
@@ -217,6 +220,8 @@ class Subscriber extends EventEmitter {
 			if (this.cache.accountsByName.get(object.name)) {
 				this.cache.setInMap('accountsByName', object.name, object.id);
 			}
+
+			// TODO use account callback
 		}
 
 		if (isAssetId(object.id)) {
@@ -563,6 +568,56 @@ class Subscriber extends EventEmitter {
      */
 	removeBlockApplySubscribe(callback) {
 		this.subscribers.block = this.subscribers.block.filter((c) => c !== callback);
+	}
+
+	/**
+     *  @method _setAccountSubscribe
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async _setAccountSubscribe() {
+
+		const array = this.subscribers.account.reduce((accum, { accounts }) => {
+			accum.push(...accounts);
+			return accum;
+		}, []);
+
+		const result = new Set(array);
+
+		await this._api.getFullAccounts(result.toArray());
+		this.subscriptions.account = true;
+	}
+
+	/**
+     *  @method setAccountSubscribe
+     *
+     *  @param  {Function} callback
+     *  @param  {Array.<String>} accounts
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async setAccountSubscribe(callback, accounts) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (!isArray(accounts)) throw new Error('Accounts should be an array');
+		if (accounts.length < 1) throw new Error('Accounts length should be more then 0');
+		if (!accounts.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
+        // TODO getFullAccounts if not in cache
+
+		this.subscribers.account.push({ callback, accounts });
+	}
+
+	/**
+     *  @method removeAccountSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removeAccountSubscribe(callback) {
+		this.subscribers.block = this.subscribers.block.filter(({ callback: innerCallback }) => innerCallback !== callback);
 	}
 
 	onConnect() {}
