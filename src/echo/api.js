@@ -1572,6 +1572,26 @@ class API {
 		return this.wsApi.history.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
 	}
 
+	/**
+     *  @method getContractHistory
+     *  Get operations relevant to the specificed account.
+     *
+     *  @param {String} contractId
+     *  @param {String} stop [Id of the earliest operation to retrieve]
+     *  @param {Number} limit     [count operations (max 100)]
+     *  @param {String} start [Id of the most recent operation to retrieve]
+     *
+     *  @return {Promise}
+     */
+	getContractHistory(contractId, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.START_OPERATION_HISTORY_ID) {
+		if (!isContractId(contractId)) return Promise.reject(new Error('Contract is invalid'));
+		if (!isOperationHistoryId(stop)) return Promise.reject(new Error('Stop parameter is invalid'));
+		if (!isUInt64(limit) || limit > ApiConfig.CONTRACT_HISTORY_MAX_LIMIT) return Promise.reject(new Error(`Limit should be capped at ${ApiConfig.CONTRACT_HISTORY_MAX_LIMIT}`));
+		if (!isOperationHistoryId(start)) return Promise.reject(new Error('Start parameter is invalid'));
+
+		return this.wsApi.history.getContractHistory(contractId, stop, limit, start);
+	}
+
 	setOptions() {}
 
 }
