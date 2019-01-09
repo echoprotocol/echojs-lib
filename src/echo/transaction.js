@@ -57,7 +57,7 @@ class Transaction {
 		this._api = value;
 	}
 
-	/** @type {number} */
+	/** @type {number|undefined} */
 	get expiration() { return this._expiration; }
 
 	set expiration(value) {
@@ -261,9 +261,31 @@ class Transaction {
 		});
 	}
 
-	async broadcast(wasBroadcastedCallback) {
-		if (!this.finalized) await this.sign();
-		const transactionObject = signedTransaction.toObject({
+	/**
+	 * @returns {Promise<{ publicKeys:Array<string>, addresses:Array<string> }>}
+	 */
+	async getPotentialSignatures() {
+		const transactionObject = this.finalized ? this.transactionObject : transaction.toObject({
+			ref_block_num: 0,
+			ref_block_prefix: 0,
+			expiration: this.expiration === undefined ? 0 : this.expiration,
+			operations: this.operations.map(([id, op]) => [id, { fee: { asset_id: '1.3.0', amount: 0 }, ...op }]),
+			extensions: [],
+		});
+		const [publicKeys, addresses] = await Promise.all([
+			this.api.getPotentialSignatures(transactionObject),
+			this.api.getPotentialAddressSignatures(transactionObject),
+		]);
+		return { publicKeys, addresses };
+	}
+
+	/**
+	 * @readonly
+	 * @type {import('../serializer/transaction-type').SignedTransactionObject}
+	 */
+	get transactionObject() {
+		this.checkFinalized();
+		return signedTransaction.toObject({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
@@ -271,7 +293,11 @@ class Transaction {
 			extensions: [],
 			signatures: this._signatures.map((signature) => signature.toBuffer()),
 		});
-		return this.api.broadcastTransactionWithCallback(transactionObject, wasBroadcastedCallback);
+	}
+
+	async broadcast(wasBroadcastedCallback) {
+		if (!this.finalized) await this.sign();
+		return this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
 	}
 
 }

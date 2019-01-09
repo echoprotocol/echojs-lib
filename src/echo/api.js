@@ -38,6 +38,8 @@ import {
 } from '../constants/api-config';
 
 import * as CacheMaps from '../constants/cache-maps';
+import transaction, { signedTransaction } from '../serializer/transaction-type';
+import { inspect } from 'util';
 
 class API {
 
@@ -1149,10 +1151,9 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	getPotentialSignatures(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-
-		return this.wsApi.database.getPotentialSignatures(transaction);
+	getPotentialSignatures(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.getPotentialSignatures(tr);
 	}
 
 	/**
@@ -1162,10 +1163,9 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	getPotentialAddressSignatures(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) return Promise.reject(new Error('Transaction is invalid'));
-
-		return this.wsApi.database.getPotentialAddressSignatures(transaction);
+	getPotentialAddressSignatures(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.getPotentialAddressSignatures(tr);
 	}
 
 	/**
@@ -1374,14 +1374,17 @@ class API {
 
 	// TODO: fix @returns in JSDoc
 	/**
-	 * @param {import('../serializer/transaction-type').SignedTransactionObject} signedTransaction
+	 * @param {import('../serializer/transaction-type').SignedTransactionObject} signedTransactionObject
 	 * @param {()=>* =} wasBroadcastedCallback
 	 * @returns {Promise<*>}
 	 */
-	broadcastTransactionWithCallback(signedTransaction, wasBroadcastedCallback) {
+	broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				await this.wsApi.network.broadcastTransactionWithCallback((res) => resolve(res), signedTransaction);
+				await this.wsApi.network.broadcastTransactionWithCallback(
+					(res) => resolve(res),
+					signedTransactionObject,
+				);
 			} catch (error) {
 				reject(error);
 				return;

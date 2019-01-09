@@ -1,10 +1,12 @@
 import 'mocha';
 import { expect } from 'chai';
-import echo from '../';
+import { Echo } from '../';
 import Transaction from '../src/echo/transaction';
 import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
+
+const echo = new Echo();
 
 describe('Transaction', () => {
 
@@ -108,19 +110,33 @@ describe('Transaction', () => {
 	// 	});
 	// });
 
-	describe('broadcast', () => {
-		it('qwe', async () => {
-			const pk = 'WIF';
+	// describe('broadcast', () => {
+	// 	it('qwe', async () => {
+	// 		const pk = 'WIF';
+	// 		const transaction = echo.createTransaction();
+	// 		transaction.addOperation(TRANSFER, {
+	// 			from: '1.2.390',
+	// 			to: '1.2.190',
+	// 			amount: { asset_id: '1.3.0', amount: 1000 },
+	// 		});
+	// 		transaction.addSigner(PrivateKey.fromWif(pk));
+	// 		const result = await transaction.broadcast(() => console.log(1));
+	// 		console.log(result);
+	// 	}).timeout(11000);
+	// });
+
+	describe('get potential signatures', () => {
+		it('asd', async () => {
+			const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
 			const transaction = echo.createTransaction();
 			transaction.addOperation(TRANSFER, {
 				from: '1.2.390',
 				to: '1.2.190',
 				amount: { asset_id: '1.3.0', amount: 1000 },
 			});
-			transaction.addSigner(PrivateKey.fromWif(pk));
-			const result = await transaction.broadcast(() => console.log(1));
-			console.log(result);
-		}).timeout(11000);
+			// await transaction.sign(PrivateKey.fromWif(pk));
+			console.log(await transaction.getPotentialSignatures());
+		});
 	});
 
 });
