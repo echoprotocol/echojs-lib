@@ -5,14 +5,20 @@ import echo, { constants } from '../index';
 
 describe('SUBSCRIBER', () => {
 	before(async () => {
-		await echo.connect('ws://195.201.164.54:6311', {
-			connectionTimeout: 5000,
-			maxRetries: 5,
-			pingTimeout: 3000,
-			pingInterval: 3000,
-			debug: false,
-			apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']
-		});
+		await echo.connect(
+			'ws://195.201.164.54:6311',
+			{
+				apis: [
+					'database',
+					'network_broadcast',
+					'history',
+					'registration',
+					'asset',
+					'login',
+					'network_node',
+				],
+			},
+		);
 	});
 
 	describe('setEchorandSubscribe', () => {
@@ -45,7 +51,7 @@ describe('SUBSCRIBER', () => {
 			echo.subscriber.setEchorandSubscribe((result) => {
 				expect(result).to.be.an('array').that.is.not.empty;
 				expect(result[0]).to.be.an('object').that.is.not.empty;
-				expect(result[0].type).to.be.a('number');
+				expect(result[0].type).to.be.a('string');
 				expect(result[0].round).to.be.a('number');
 
 				if (!isCalled) {
@@ -92,6 +98,53 @@ describe('SUBSCRIBER', () => {
 			const callback = () => {};
 			await echo.subscriber.setGlobalSubscribe(callback);
 			echo.subscriber.removeGlobalSubscribe(callback);
+		});
+	});
+
+	describe('setPendingTransactionSubscribe', () => {
+		it('is not a function', async () => {
+			try {
+				await echo.subscriber.setPendingTransactionSubscribe(1);
+			} catch (err) {
+				expect(err.message).to.equal('Callback is not a function');
+			}
+		});
+
+		it('test', (done) => {
+			/* callback test will be available, when transaction builder will be merged */
+			// let isCalled = false;
+
+			expect(echo.subscriber.subscriptions.transaction).to.be.false;
+			expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.empty;
+
+			echo.subscriber.setPendingTransactionSubscribe((result) => {
+				// expect(result).to.be.an('array').that.is.not.empty;
+				// expect(result[0]).to.be.an('object').that.is.not.empty;
+				// expect(result[0].type).to.be.a('number');
+				// expect(result[0].round).to.be.a('number');
+				//
+				// if (!isCalled) {
+				// 	done();
+				// 	isCalled = true;
+				// }
+			}).then(() => {
+				expect(echo.subscriber.subscriptions.transaction).to.be.true;
+				expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.not.empty;
+				done();
+			});
+		}).timeout(30 * 1000);
+
+	});
+
+	describe('removePendingTransactionSubscribe', () => {
+		it('test', async () => {
+			const { length } = echo.subscriber.subscribers.transaction;
+
+			const callback = () => {};
+			await echo.subscriber.setPendingTransactionSubscribe(callback);
+			echo.subscriber.removePendingTransactionSubscribe(callback);
+
+			expect(echo.subscriber.subscribers.transaction.length).to.equal(length);
 		});
 	});
 

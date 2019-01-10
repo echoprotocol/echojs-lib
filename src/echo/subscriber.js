@@ -50,6 +50,7 @@ class Subscriber extends EventEmitter {
 			account: false,
 			echorand: false,
 			block: false,
+			transaction: false,
 			connect: false,
 			disconnect: false,
 		};
@@ -61,6 +62,7 @@ class Subscriber extends EventEmitter {
 			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
+			transaction: [],
 			connect: [],
 			disconnect: [],
 		};
@@ -77,6 +79,10 @@ class Subscriber extends EventEmitter {
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
+		}
+
+		if (this.subscriptions.transaction) {
+			await this._setPendingTransactionCallback();
 		}
 	}
 
@@ -530,6 +536,60 @@ class Subscriber extends EventEmitter {
 	 */
 	removeGlobalSubscribe(callback) {
 		this.subscribers.global = this.subscribers.global.filter((c) => c !== callback);
+	}
+
+	/**
+	 *  @method _pendingTransactionUpdate
+	 *
+	 *  @param  {Array} result
+	 *
+	 *  @return {undefined}
+	 */
+	_pendingTransactionUpdate(result) {
+		this.subscribers.transaction.forEach((callback) => {
+			callback(result);
+		});
+	}
+
+	/**
+	*  @method _setPendingTransactionCallback
+	*
+	*  @return {Promise.<undefined>}
+	*/
+	async _setPendingTransactionCallback() {
+		await this._wsApi.database
+			.setPendingTransactionCallback(this._pendingTransactionUpdate.bind(this));
+		this.subscriptions.transaction = true;
+	}
+
+	/**
+	 *  @method setPendingTransactionSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
+	async setPendingTransactionSubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.transaction.push(callback);
+
+		if (!this.subscriptions.transaction) {
+			await this._setPendingTransactionCallback();
+		}
+	}
+
+	/**
+	 *  @method removePendingTransactionSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removePendingTransactionSubscribe(callback) {
+		this.subscribers.transaction = this.subscribers.transaction.filter((c) => c !== callback);
 	}
 
 	onBlockApply() {}
