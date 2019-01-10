@@ -16,11 +16,11 @@ const urlRegex = new RegExp(
 );
 const idRegex = /^\d+\.\d+\.(\d+)$/;
 
-const accountIdRegex = /^1\.2\.[1-9]\d*$/;
+const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
 const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
-const committeeMemberIdRegex = /^1\.5\.[1-9]\d*$/;
-const witnessIdRegex = /^1\.6\.[1-9]\d*$/;
+const committeeMemberIdRegex = /^1\.5\.(0|[1-9]\d*)$/;
+const witnessIdRegex = /^1\.6\.(0|[1-9]\d*)$/;
 const limitOrderIdRegex = /^1\.7\.[1-9]\d*$/;
 const callOrderIdRegex = /^1\.8\.[1-9]\d*$/;
 const customIdRegex = /^1\.9\.[1-9]\d*$/;
