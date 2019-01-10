@@ -24,7 +24,7 @@ export const TRANSACTIONS_BY_BLOCK_AND_INDEX = 'transactionsByBlockAndIndex';
 export const WITNESS_BY_ACCOUNT_ID = 'witnessByAccountId';
 export const WITNESS_BY_WITNESS_ID = 'witnessByWitnessId';
 
-export const COMMITTEE_MEMBERS_BY_ACCOUNT = 'committeeMembersByAccount';
+export const COMMITTEE_MEMBERS_BY_ACCOUNT_ID = 'committeeMembersByAccountId';
 export const COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID = 'committeeMembersByCommitteeMemberId';
 
 export const OBJECTS_BY_VOTE_ID = 'objectsByVoteId';
