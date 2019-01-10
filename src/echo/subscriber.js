@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len,no-continue */
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
@@ -84,6 +84,8 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.block) {
 			await this._setBlockApplyCallback();
 		}
+
+		await this._setAccountSubscribe();
 	}
 
 	_updateObject(object) {
@@ -221,7 +223,16 @@ class Subscriber extends EventEmitter {
 				this.cache.setInMap('accountsByName', object.name, object.id);
 			}
 
-			// TODO use account callback
+			const { length } = this.subscribers.account;
+
+			for (let i = 0; i < length; i += 1) {
+
+				if (this.subscribers.account[i].accounts.includes(object.id)) {
+					this.subscribers.account[i].callback(obj);
+					continue;
+				}
+			}
+
 		}
 
 		if (isAssetId(object.id)) {
@@ -585,7 +596,6 @@ class Subscriber extends EventEmitter {
 		const result = new Set(array);
 
 		await this._api.getFullAccounts(result.toArray());
-		this.subscriptions.account = true;
 	}
 
 	/**
@@ -604,7 +614,8 @@ class Subscriber extends EventEmitter {
 		if (!isArray(accounts)) throw new Error('Accounts should be an array');
 		if (accounts.length < 1) throw new Error('Accounts length should be more then 0');
 		if (!accounts.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
-        // TODO getFullAccounts if not in cache
+
+		await this._api.getFullAccounts(accounts);
 
 		this.subscribers.account.push({ callback, accounts });
 	}
@@ -617,7 +628,7 @@ class Subscriber extends EventEmitter {
      *  @return {undefined}
      */
 	removeAccountSubscribe(callback) {
-		this.subscribers.block = this.subscribers.block.filter(({ callback: innerCallback }) => innerCallback !== callback);
+		this.subscribers.account = this.subscribers.account.filter(({ callback: innerCallback }) => innerCallback !== callback);
 	}
 
 	onConnect() {}
