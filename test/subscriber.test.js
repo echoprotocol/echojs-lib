@@ -190,12 +190,40 @@ describe('SUBSCRIBER', () => {
         describe('removeAccountSubscribe', () => {
             it('test', async () => {
                 const callback = () => {};
-                console.log(echo.cache.objectsById)
                 await echo.subscriber.setAccountSubscribe(callback, ['1.2.1']);
-                console.log(echo.cache.objectsById)
                 echo.subscriber.removeAccountSubscribe(callback);
             });
         });
+	});
+
+	describe.skip('setGlobalSubscribe', () => {
+		it('test', (done) => {
+			let isCalled = false;
+
+			echo.api.getObjects(['2.1.0']);
+
+			echo.subscriber.setGlobalSubscribe((result) => {
+				if (result[0] && result[0].id === '2.1.0') {
+					expect(result).to.be.an('array').that.is.not.empty;
+					expect(result[0]).to.be.an('object').that.is.not.empty;
+					expect(result[0].id).to.be.a('string');
+					expect(result[0].head_block_number).to.be.a('number');
+
+					if (!isCalled) {
+						done();
+						isCalled = true;
+					}
+				}
+			});
+		}).timeout(30 * 1000);
+	});
+
+	describe('removeGlobalSubscribe', () => {
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setGlobalSubscribe(callback);
+			echo.subscriber.removeGlobalSubscribe(callback);
+		});
 	});
 
 	after(async () => {

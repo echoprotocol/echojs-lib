@@ -20,12 +20,12 @@ const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
 const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
 const committeeMemberIdRegex = /^1\.5\.[1-9]\d*$/;
-const witnessIdRegex = /^1\.6\.[1-9]\d*$/;
+const witnessIdRegex = /^1\.6\.(0|[1-9]\d*)$/;
 const limitOrderIdRegex = /^1\.7\.[1-9]\d*$/;
 const callOrderIdRegex = /^1\.8\.[1-9]\d*$/;
 const customIdRegex = /^1\.9\.[1-9]\d*$/;
 const proposalIdRegex = /^1\.10\.[1-9]\d*$/;
-const operationHistoryIdRegex = /^1\.11\.[1-9]\d*$/;
+const operationHistoryIdRegex = /^1\.11\.(0|[1-9]\d*)$/;
 const withdrawPermissionIdRegex = /^1\.12\.[1-9]\d*$/;
 const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
 const workerIdRegex = /^1\.14\.[1-9]\d*$/;
@@ -124,6 +124,7 @@ export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 
 export const isAccountBalanceId = (v) => isString(v) && accountBalanceIdRegex.test(v);
+export const isOperationId = (v) => isUInt8(v) && v < 49;
 
 export const isVoteId = (v) => isString(v) && voteIdTypeRegex.test(v);
 

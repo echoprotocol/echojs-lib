@@ -39,6 +39,7 @@ class Subscriber extends EventEmitter {
 	 *
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
+	 *  @param {API} api
 	 */
 	constructor(cache, wsApi, api) {
 		super();
@@ -48,7 +49,6 @@ class Subscriber extends EventEmitter {
 		this._api = api;
 
 		this.subscriptions = {
-			all: false,
 			account: false,
 			echorand: false,
 			block: false,
@@ -57,7 +57,7 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.subscribers = {
-			all: [], // "all" means all updates from setSubscribeCallback
+			global: [], // "global" means all updates from setSubscribeCallback
 			account: [], // { ids: [], callback: () => {} }
 			witness: [], // { ids: [], callback: () => {} }
 			committeeMember: [], // { ids: [], callback: () => {} }
@@ -89,8 +89,6 @@ class Subscriber extends EventEmitter {
 	}
 
 	_updateObject(object) {
-		// console.log('object', object);
-
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
@@ -184,7 +182,6 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isAccountStatisticsId(object.id)) {
-			// TODO not update if account not exists in cache
 			try {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
@@ -234,7 +231,6 @@ class Subscriber extends EventEmitter {
 					continue;
 				}
 			}
-
 		}
 
 		if (isAssetId(object.id)) {
@@ -334,8 +330,9 @@ class Subscriber extends EventEmitter {
 				if (!callOrders.has(object.id)) {
 					account = account.set('call_orders', callOrders.add(object.id));
 					this.cache.setInMap('objectsById', account.get('id'), account);
+
 					// Force subscription to the object in the witness node by calling get_objects
-					// Apis.instance().dbApi().exec('get_objects', [[object.id]]);
+					this._api.getObjects([object.id]);
 				}
 			}
 		}
@@ -355,7 +352,7 @@ class Subscriber extends EventEmitter {
 					this.cache.setInMap('objectsById', account.get('id'), account);
 
 					// Force subscription to the object in the witness node by calling get_objects
-					// Apis.instance().dbApi().exec('get_objects', [[object.id]]);
+					this._api.getObjects([object.id]);
 				}
 			}
 		}
@@ -420,12 +417,9 @@ class Subscriber extends EventEmitter {
 	}
 
 	_onRespond([messages]) {
-		// console.log('messages', messages);
-
 		const orders = [];
-		const response = [];
 
-		messages.forEach((msg) => {
+		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
 				// _updateOrder -> return order type - push to orders = { type, order }
@@ -435,10 +429,11 @@ class Subscriber extends EventEmitter {
 					orders.push({ type, id: msg });
 				}
 
-			} else {
-				// TODO _updateObject -> push to response
-				this._updateObject(msg);
+				return false;
 			}
+
+			this._updateObject(msg);
+			return true;
 		});
 
 		// emit orders
@@ -446,8 +441,8 @@ class Subscriber extends EventEmitter {
 		this.emit(CLOSE_CALL_ORDER, orders.filter(({ type }) => type === CLOSE_CALL_ORDER));
 
 		// inform external subscribers
-		this.subscribers.all.forEach((callback) => {
-			callback(response);
+		this.subscribers.global.forEach((callback) => {
+			callback(updates);
 		});
 	}
 
@@ -469,7 +464,7 @@ class Subscriber extends EventEmitter {
 	 */
 	reset() {
 		this.subscriptions = {
-			all: false,
+			global: false,
 			account: false,
 			echorand: false,
 			block: false,
@@ -478,14 +473,15 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.subscribers = {
-			all: [],
+			global: [],
 			account: [],
-			witness: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
+			witness: [],
+			committeeMember: [],
 			echorand: [],
 			block: [],
 			connect: [],
 			disconnect: [],
+
 		};
 	}
 
@@ -544,6 +540,32 @@ class Subscriber extends EventEmitter {
 	 */
 	removeEchorandSubscribe(callback) {
 		this.subscribers.echorand = this.subscribers.echorand.filter((c) => c !== callback);
+	}
+
+	/**
+     *  @method setGlobalSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	setGlobalSubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.global.push(callback);
+	}
+
+	/**
+     *  @method removeGlobalSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removeGlobalSubscribe(callback) {
+		this.subscribers.global = this.subscribers.global.filter((c) => c !== callback);
 	}
 
 	/**
