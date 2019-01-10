@@ -1,7 +1,10 @@
 import assert from 'assert';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
 import echo, { constants } from '../index';
+
+chai.use(spies);
 
 describe('SUBSCRIBER', () => {
 	before(async () => {
@@ -145,6 +148,50 @@ describe('SUBSCRIBER', () => {
 			echo.subscriber.removePendingTransactionSubscribe(callback);
 
 			expect(echo.subscriber.subscribers.transaction.length).to.equal(length);
+		});
+	});
+
+	describe('setStatusSubscribe', () => {
+		it('status - connect', async () => {
+			const spy = chai.spy(() => {});
+
+			echo.subscriber.setStatusSubscribe('connect', spy);
+			await echo.reconnect();
+			expect(spy).to.have.been.called(1);
+		});
+
+		it('status - disconnect', async () => {
+			const spy = chai.spy(() => {});
+
+			echo.subscriber.setStatusSubscribe('disconnect', spy);
+			await echo.reconnect();
+			expect(spy).to.have.been.called(1);
+		});
+
+	});
+
+	describe('removeStatusSubscribe', () => {
+
+		it('status - connect',  async () => {
+			const spy = chai.spy(() => {});
+
+			const { length } = echo.subscriber.subscribers.connect;
+			echo.subscriber.setStatusSubscribe('connect', spy);
+			echo.subscriber.removeStatusSubscribe('connect', spy);
+			await echo.reconnect();
+			expect(echo.subscriber.subscribers.connect.length).to.equal(length);
+			expect(spy).to.not.have.been.called();
+		});
+
+		it('status - disconnect', async () => {
+			const spy = chai.spy(() => {});
+
+			const { length } = echo.subscriber.subscribers.disconnect;
+			echo.subscriber.setStatusSubscribe('disconnect', spy);
+			echo.subscriber.removeStatusSubscribe('disconnect', spy);
+			await echo.reconnect();
+			expect(echo.subscriber.subscribers.disconnect.length).to.equal(length);
+			expect(spy).to.not.have.been.called();
 		});
 	});
 

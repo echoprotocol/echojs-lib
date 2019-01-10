@@ -1,6 +1,8 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
+import { STATUS } from '../constants/ws-constants';
+
 import {
 	isFunction,
 	isObjectId,
@@ -38,21 +40,21 @@ class Subscriber extends EventEmitter {
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
 	 *  @param {API} api
+	 *  @param {WS} ws
 	 */
-	constructor(cache, wsApi, api) {
+	constructor(cache, wsApi, api, ws) {
 		super();
 
 		this.cache = cache;
 		this._wsApi = wsApi;
 		this._api = api;
+		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
 			echorand: false,
 			block: false,
 			transaction: false,
-			connect: false,
-			disconnect: false,
 		};
 
 		this.subscribers = {
@@ -84,6 +86,18 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.transaction) {
 			await this._setPendingTransactionCallback();
 		}
+
+		// if (this.subscribers.connect.length) {
+		// 	this.subscribers.connect.forEach((callback) => {
+		// 		this._ws.on(STATUS.OPEN, callback);
+		// 	});
+		// }
+		//
+		// if (this.subscribers.disconnect.length) {
+		// 	this.subscribers.disconnect.forEach((callback) => {
+		// 		this._ws.on(STATUS.CLOSE, callback);
+		// 	});
+		// }
 	}
 
 	_updateObject(object) {
@@ -594,9 +608,59 @@ class Subscriber extends EventEmitter {
 
 	onBlockApply() {}
 
-	onConnect() {}
+	/**
+	 *  @method setStatusSubscribe
+	 *
+	 *  @param  {String} status from enum ['connect', 'disconnect']
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	setStatusSubscribe(status, callback) {
+		if (!['connect', 'disconnect'].includes(status)) {
+			throw new Error('Invalid status');
+		}
 
-	onDisconnect() {}
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (status === 'connect') {
+			this._ws.on(STATUS.OPEN, callback);
+			this.subscribers.connect.push(callback);
+		} else {
+			this._ws.on(STATUS.CLOSE, callback);
+			this.subscribers.disconnect.push(callback);
+		}
+
+	}
+
+	/**
+	 *  @method removeStatusSubscribe
+	 *
+	 *  @param  {String} status from enum ['connect', 'disconnect']
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeStatusSubscribe(status, callback) {
+		if (!['connect', 'disconnect'].includes(status)) {
+			throw new Error('Invalid status');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (status === 'connect') {
+			this._ws.off(STATUS.OPEN, callback);
+			this.subscribers.connect = this.subscribers.connect.filter((c) => c !== callback);
+		} else {
+			this._ws.off(STATUS.CLOSE, callback);
+			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
+		}
+
+	}
 
 }
 
