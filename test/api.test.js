@@ -624,7 +624,7 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const start = 0;
                     const stop = 0;
                     const limit = 10;
@@ -643,7 +643,7 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const operationId = 0;
                     const start = '1.11.0';
                     const stop = '1.11.0';

@@ -761,8 +761,8 @@ class API {
 		return this._getAccountDataWithMultiSave(accountNames, CacheMaps.ACCOUNTS_BY_NAME, 'lookupAccountNames', force, cacheParams);
 	}
 
-	/** @typedef {string} AccountName */
-	/** @typedef {string} AccountId */
+	/** @typedef {String} AccountName */
+	/** @typedef {String} AccountId */
 
 	/**
      *  @method lookupAccounts
@@ -1000,10 +1000,10 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
+	getOrderBook(baseAssetName, quoteAssetName, depth = ApiConfig.ORDER_BOOK_DEFAULT_DEPTH) {
 		if (!isAssetName(baseAssetName)) return Promise.reject(new Error('Base asset name is invalid'));
 		if (!isAssetName(quoteAssetName)) return Promise.reject(new Error('Quote asset name is invalid'));
-		if (!isUInt64(depth) || depth > 50) return Promise.reject(new Error('Depth should be a integer and must not exceed 50'));
+		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) return Promise.reject(new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`));
 
 		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
@@ -1457,7 +1457,7 @@ class API {
      *  @param  {Number} fromBlock
      *  @param  {Number} toBlock
      *
-     *  @return {Promise.<*>}
+     *  @return {Promise.<Array.<{address:String,log:Array.<String>,data:String}>>}
      */
 	getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
@@ -1474,7 +1474,7 @@ class API {
      *  @param  {String} resultContractId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Object>}
+     *  @return {Promise.<{exec_res:{excepted:String,new_address:String,output:String,code_deposit:String,gas_refunded:String,deposit_size:Number,gas_for_deposit:String},tr_receipt: {status_code:String,gas_used:String,bloom:String,log:Array}}>}
      */
 	getContractResult(resultContractId, force = false) {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
@@ -1544,7 +1544,7 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.getContractBalances(contractId);
+		return this.wsApi.database.getContractBalances(contractId);
 	}
 
 	/**
@@ -1568,7 +1568,7 @@ class API {
      * 	@param  {String} activeKey
      * 	@param  {String} echoRandKey
      *
-     *  @return {Promise}
+     *  @return {Promise.<null>}
      */
 	registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) {
 		if (!isAccountName(name)) return Promise.reject(new Error('Name is invalid'));
@@ -1582,14 +1582,14 @@ class API {
 
 	/**
      *  @method getAccountHistory
-     *  Get operations relevant to the specificed account.
+     *  Get operations relevant to the specified account.
      *
      *  @param {String} accountId
      *  @param {String} stop [Id of the earliest operation to retrieve]
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {String} start [Id of the most recent operation to retrieve]
      *
-     *  @return {Promise}
+     *  @return {Promise.<Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>>}
      */
 	getAccountHistory(accountId, stop = ApiConfig.START_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.STOP_OPERATION_HISTORY_ID) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
@@ -1610,7 +1610,7 @@ class API {
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {Number} start [Sequence number of the most recent operation to retrieve]
      *
-     *  @return {Promise}
+     *  @return {Promise.<Array.<{id:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_trx:Number,virtual_op:Number}>>}
      */
 	getRelativeAccountHistory(accountId, stop = ApiConfig.RELATIVE_ACCOUNT_HISTORY_STOP, limit = ApiConfig.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.RELATIVE_ACCOUNT_HISTORY_START) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
@@ -1631,7 +1631,7 @@ class API {
      *  @param {Number} stop [Id of the earliest operation to retrieve]
      *  @param {Number} limit     [count operations (max 100)]
      *
-     *  @return {Promise}
+     *  @return {Promise<Array.<{ id:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_trx:Number,virtual_op:Number}>>}
      */
 	getAccountHistoryOperations(accountId, operationId, start = ApiConfig.START_OPERATION_HISTORY_ID, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account is invalid'));
@@ -1645,14 +1645,14 @@ class API {
 
 	/**
      *  @method getContractHistory
-     *  Get operations relevant to the specificed account.
+     *  Get operations relevant to the specified account.
      *
      *  @param {String} contractId
      *  @param {String} stop [Id of the earliest operation to retrieve]
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {String} start [Id of the most recent operation to retrieve]
      *
-     *  @return {Promise}
+     *  @return {Promise.<Array.<*>>}
      */
 	getContractHistory(contractId, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.START_OPERATION_HISTORY_ID) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract is invalid'));
