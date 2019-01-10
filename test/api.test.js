@@ -257,19 +257,26 @@ describe('API', () => {
 
                     const assetId = '1.3.0';
                     const accountId = '1.2.2';
+                    const witnessId = '1.6.0';
                     const assetSymbol = 'ECHO';
 
-                    const objects = await api.getObjects([accountId, assetId]);
+                    const objects = await api.getObjects([accountId, assetId, witnessId]);
 
                     const assetName = objects[0].name;
+                    const witnessAccountId = objects[2].witness_account;
+                    const witnessVoteId = objects[2].vote_id;
 
                     expect(objects).to.be.an('array');
                     expect(objects).to.deep.include(cache.objectsById.get(assetId));
                     expect(objects).to.deep.include(cache.objectsById.get(accountId));
+                    expect(objects).to.deep.include(cache.objectsById.get(witnessId));
                     expect(objects).to.deep.include(cache.assetByAssetId.get(assetId));
                     expect(objects).to.deep.include(cache.assetBySymbol.get(assetSymbol));
                     expect(objects).to.deep.include(cache.accountsById.get(accountId));
                     expect(objects).to.deep.include(cache.accountsByName.get(assetName));
+                    expect(objects).to.deep.include(cache.witnessByWitnessId.get(witnessId));
+                    expect(objects).to.deep.include(cache.witnessByAccountId.get(witnessAccountId));
+                    expect(objects).to.deep.include(cache.objectsByVoteId.get(witnessVoteId));
                 } catch (e) {
                     throw e;
                 }
@@ -448,6 +455,142 @@ describe('API', () => {
                 } catch (_) {}
             }).timeout(5000);
         });
+        describe('#lookupVoteIds()', () => {
+            it('should get vote by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const committeeVoteId = '0:1';
+                    const witnessVoteId = '1:0';
+
+                    const objects = await api.lookupVoteIds([committeeVoteId, witnessVoteId]);
+
+                    expect(objects).to.be.an('array');
+
+                    const committeeAccountId = objects[0].committee_member_account;
+                    const committeeId = objects[0].id;
+
+                    expect(objects).to.deep.include(cache.objectsById.get(committeeId));
+                    expect(objects).to.deep.include(cache.committeeMembersByCommitteeMemberId.get(committeeId));
+                    expect(objects).to.deep.include(cache.committeeMembersByAccountId.get(committeeAccountId));
+                    expect(objects).to.deep.include(cache.objectsByVoteId.get(committeeVoteId));
+
+
+                    const witnessAccountId = objects[1].witness_account;
+                    const witnessId = objects[1].id;
+
+                    expect(objects).to.deep.include(cache.objectsById.get(witnessId));
+                    expect(objects).to.deep.include(cache.witnessByWitnessId.get(witnessId));
+                    expect(objects).to.deep.include(cache.witnessByAccountId.get(witnessAccountId));
+                    expect(objects).to.deep.include(cache.objectsByVoteId.get(witnessVoteId));
+
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMembers()', () => {
+            it('should get committee by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const id = '1.5.0';
+
+                    const objects = await api.getCommitteeMembers([id]);
+
+                    expect(objects).to.be.an('array');
+
+                    const accountId = objects[0].committee_member_account;
+                    const voteId = objects[0].vote_id;
+
+                    expect(objects).to.deep.include(cache.objectsById.get(id));
+                    expect(objects).to.deep.include(cache.committeeMembersByCommitteeMemberId.get(id));
+                    expect(objects).to.deep.include(cache.committeeMembersByAccountId.get(accountId));
+                    expect(objects).to.deep.include(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMemberByAccount()', () => {
+            it('should get committee by account id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const accountId = '1.2.6';
+
+                    const object = await api.getCommitteeMemberByAccount(accountId);
+
+                    expect(object).to.be.an('object');
+
+                    const id = object.id;
+                    const voteId = object.vote_id;
+
+                    expect(object).to.deep.equal(cache.objectsById.get(id));
+                    expect(object).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id));
+                    expect(object).to.deep.equal(cache.committeeMembersByAccountId.get(accountId));
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getWitnesses()', () => {
+            it('should get witnesses by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const id = '1.6.0';
+
+                    const objects = await api.getWitnesses([id]);
+
+                    expect(objects).to.be.an('array');
+
+                    const accountId = objects[0].witness_account;
+                    const voteId = objects[0].vote_id;
+
+                    expect(objects).to.deep.include(cache.objectsById.get(id));
+                    expect(objects).to.deep.include(cache.witnessByWitnessId.get(id));
+                    expect(objects).to.deep.include(cache.witnessByAccountId.get(accountId));
+                    expect(objects).to.deep.include(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMemberByAccount()', () => {
+            it('should get witnesses by account id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const accountId = '1.2.0';
+
+                    const object = await api.getWitnessByAccount(accountId);
+
+                    expect(object).to.be.an('object');
+
+                    const id = object.id;
+                    const voteId = object.vote_id;
+
+                    expect(object).to.deep.equal(cache.objectsById.get(id));
+                    expect(object).to.deep.equal(cache.witnessByWitnessId.get(id));
+                    expect(object).to.deep.equal(cache.witnessByAccountId.get(accountId));
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
     });
 
     describe('history', () => {
@@ -481,7 +624,7 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const start = 0;
                     const stop = 0;
                     const limit = 10;
@@ -500,7 +643,7 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const operationId = 0;
                     const start = '1.11.0';
                     const stop = '1.11.0';
