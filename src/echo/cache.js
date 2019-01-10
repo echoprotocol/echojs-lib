@@ -48,7 +48,6 @@ class Cache {
 
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
-		this.accountHistoryRequests = new Map();
 		this.objectsByVoteId = new Map();
 		this.fetchingGetFullAccounts = new Map();
 
