@@ -191,7 +191,7 @@ class API {
 
 	/**
 	 *
-     * @param {*} value
+     * @param {*} key
      * @param {String} cacheName
      * @param {String} methodName
      * @param {Boolean} force
@@ -228,7 +228,7 @@ class API {
 
 	/**
      *
-     * @param {*} value
+     * @param {*} key
      * @param {String} cacheName
      * @param {String} methodName
      * @param {Boolean} force
