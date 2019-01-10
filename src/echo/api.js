@@ -1240,10 +1240,10 @@ class API {
 	/**
      *  @method lookupVoteIds
      *
-     *  @param  {Array<String>} force
-     *  @param  {Booleab} votes
+     *  @param  {Array<String>} votes
+     *  @param  {Booleab} force
      *
-     *  @return {Promise.<{id:String,committee_member_account:String|undefined,witness_account:String|undefined,vote_id:String,total_votes:Number,url:String,last_aslot:Number|undefined,signing_key:String|undefined,pay_vb:String|undefined,total_missed:Number|undefined,last_confirmed_block_num:Number|undefined,ed_signing_key:String|undefined}>}
+     *  @return {Promise.<Array.<{id:String,committee_member_account:String|undefined,witness_account:String|undefined,vote_id:String,total_votes:Number,url:String,last_aslot:Number|undefined,signing_key:String|undefined,pay_vb:String|undefined,total_missed:Number|undefined,last_confirmed_block_num:Number|undefined,ed_signing_key:String|undefined}>>}
      */
 	async lookupVoteIds(votes, force = false) {
 		if (!isArray(votes)) return Promise.reject(new Error('Votes should be an array'));
@@ -1272,7 +1272,7 @@ class API {
 		let requestedObjects;
 
 		try {
-			requestedObjects = await this.wsApi.database.lookupVoteIds(votes);
+			requestedObjects = await this.wsApi.database.lookupVoteIds(requestedObjectsKeys);
 		} catch (error) {
 			throw error;
 		}
