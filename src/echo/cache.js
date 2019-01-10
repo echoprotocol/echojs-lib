@@ -23,6 +23,9 @@ class Cache {
 		this.assetByAssetId = new Map();
 		this.assetBySymbol = new Map();
 
+		this.dynamicAssetDataByDynamicAssetDataId = new Map();
+		this.bitAssetsByBitAssetId = new Map();
+
 		this.contractsByContractId = new Map();
 		this.fullContractsByContractId = new Map();
 		this.contractResultsByContractResultId = new Map();
@@ -42,9 +45,6 @@ class Cache {
 		this.accountsBalanceByAccountName = new Map();
 
 		this.accountReferencesByAccountId = new Map();
-
-		this.bitAssetsByBitAssetId = new Map();
-		this.dynamicAssetDataByDynamicAssetDataId = new Map();
 
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();

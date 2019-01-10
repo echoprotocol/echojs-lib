@@ -1340,7 +1340,7 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('ContractId is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this.getContractBalances(contractId);
+		return this.wsApi.database.getContractBalances(contractId);
 	}
 
 	/**

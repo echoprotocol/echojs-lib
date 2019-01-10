@@ -197,13 +197,17 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isWitnessId(object.id)) {
-			this.cache.setInMap('witnessByAccountId', object.witness_account, object.id);
-			this.cache.setInMap('objectsByVoteId', object.vote_id, object.id);
+			this.cache.setInMap('witnessByAccountId', object.witness_account, obj)
+				.setInMap('witnessByWitnessId', object.id, obj)
+				.setInMap('objectsById', object.id, obj)
+				.setInMap('objectsByVoteId', object.vote_id, obj);
 		}
 
 		if (isCommitteeMemberId(object.id)) {
-			this.cache.setInMap('committeeMembersByAccount', object.committee_member_account, object.id);
-			this.cache.setInMap('objectsByVoteId', object.vote_id, object.id);
+			this.cache.setInMap('committeeMembersByAccount', object.committee_member_account, obj)
+				.setInMap('committeeMembersByCommitteeMemberId', object.id, obj)
+				.setInMap('objectsById', object.id, obj)
+				.setInMap('objectsByVoteId', object.vote_id, obj);
 		}
 
 		if (isAccountId(object.id)) {
@@ -216,11 +220,9 @@ class Subscriber extends EventEmitter {
 			obj = obj.set('blacklisted_accounts', fromJS(object.blacklisted_accounts));
 
 			if (this.cache.objectsById.get(object.id)) {
-				this.cache.setInMap('objectsById', object.id, obj);
-			}
-
-			if (this.cache.accountsByName.get(object.name)) {
-				this.cache.setInMap('accountsByName', object.name, object.id);
+				this.cache.setInMap('objectsById', object.id, obj)
+					.setInMap('accountsById', object.id, obj)
+					.setInMap('accountsByName', object.name, obj);
 			}
 
 			const { length } = this.subscribers.account;
@@ -236,8 +238,6 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isAssetId(object.id)) {
-			this.cache.setInMap('assetBySymbol', object.symbol, object.id);
-
 			const dynamic = obj.get('dynamic');
 			if (!dynamic) {
 				let dad = this.cache.objectsById.get(object.dynamic_asset_data_id);
@@ -250,10 +250,10 @@ class Subscriber extends EventEmitter {
 					dad = dad.set('asset_id', object.id);
 				}
 
-				this.cache.setInMap('objectsById', object.dynamic_asset_data_id, dad);
+				this.cache.setInMap('objectsById', object.dynamic_asset_data_id, dad)
+					.setInMap('dynamicAssetDataByDynamicAssetDataId', object.dynamic_asset_data_id, dad);
 
 				obj = obj.set('dynamic', dad);
-				this.cache.setInMap('objectsById', object.id, obj);
 			}
 
 			const bitasset = obj.get('bitasset');
@@ -267,11 +267,16 @@ class Subscriber extends EventEmitter {
 				if (!bad.get('asset_id')) {
 					bad = bad.set('asset_id', object.id);
 				}
-				this.cache.setInMap('objectsById', object.bitasset_data_id, bad);
+
+				this.cache.setInMap('objectsById', object.bitasset_data_id, bad)
+					.setInMap('bitAssetsByBitAssetId', object.bitasset_data_id, bad);
 
 				obj = obj.set('bitasset', bad);
-				this.cache.setInMap('objectsById', object.id, obj);
 			}
+
+			this.cache.setInMap('objectsById', object.id, obj)
+				.setInMap('assetByAssetId', object.id, obj)
+				.setInMap('assetBySymbol', object.symbol, obj);
 		}
 
 		if (isDynamicAssetDataId(object.id)) {
@@ -280,14 +285,21 @@ class Subscriber extends EventEmitter {
 				let asset = this.cache.objectsById.get(assetId);
 				if (asset && asset.set) {
 					asset = asset.set('dynamic', obj);
-					this.cache.setInMap('objectsById', assetId, asset);
+
+					this.cache.setInMap('objectsById', assetId, asset)
+						.setInMap('assetByAssetId', assetId, asset)
+						.setInMap('accountsByName', asset.get('symbol'), asset);
 				}
 			}
+
+			this.cache.setInMap('objectsById', object.id, obj)
+				.setInMap('dynamicAssetDataByDynamicAssetDataId', object.id, obj);
+
 		}
 
 		if (isWorkerId(object.id)) {
-			this.cache.setInMap('objectsByVoteId', object.vote_for, object.id);
-			this.cache.setInMap('objectsByVoteId', object.vote_against, object.id);
+			this.cache.setInMap('objectsByVoteId', object.vote_for, obj);
+			this.cache.setInMap('objectsByVoteId', object.vote_against, obj);
 		}
 
 		if (isBitAssetId(object.id)) {
@@ -298,9 +310,15 @@ class Subscriber extends EventEmitter {
 				if (asset) {
 					asset = asset.set('bitasset', obj);
 					this.emit(BITASSET_UPDATE, asset);
-					this.cache.setInMap('objectsById', assetId, asset);
+
+					this.cache.setInMap('objectsById', assetId, asset)
+						.setInMap('assetByAssetId', assetId, asset)
+						.setInMap('accountsByName', asset.get('symbol'), asset);
 				}
 			}
+
+			this.cache.setInMap('objectsById', object.id, obj)
+				.setInMap('bitAssetsByBitAssetId', object.id, obj);
 		}
 
 		if (isCallOrderId(object.id)) {
