@@ -85,7 +85,9 @@ class Subscriber extends EventEmitter {
 			await this._setBlockApplyCallback();
 		}
 
-		await this._setAccountSubscribe();
+		if (this.subscribers.account.length !== 0) {
+			await this._setAccountSubscribe();
+		}
 	}
 
 	_updateObject(object) {
@@ -581,6 +583,7 @@ class Subscriber extends EventEmitter {
 		});
 	}
 
+
 	/**
      *  @method _setBlockApplyCallback
      *
@@ -634,6 +637,10 @@ class Subscriber extends EventEmitter {
 		}, []);
 
 		const result = new Set(array);
+
+		if (result.size === 0) {
+			return;
+		}
 
 		await this._api.getFullAccounts(result.toArray());
 	}
