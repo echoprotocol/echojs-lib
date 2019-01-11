@@ -426,14 +426,6 @@ class API {
 
 					requestedObject = await this._addHistory(requestedObject);
 
-					requestedObject = requestedObject.set('active', new Map(requestedObject.get('active')));
-					requestedObject = requestedObject.set('owner', new Map(requestedObject.get('owner')));
-					requestedObject = requestedObject.set('options', new Map(requestedObject.get('options')));
-					requestedObject = requestedObject.set('whitelisting_accounts', new Map(requestedObject.get('whitelisting_accounts')));
-					requestedObject = requestedObject.set('blacklisting_accounts', new Map(requestedObject.get('blacklisting_accounts')));
-					requestedObject = requestedObject.set('whitelisted_accounts', new Map(requestedObject.get('whitelisted_accounts')));
-					requestedObject = requestedObject.set('blacklisted_accounts', new Map(requestedObject.get('blacklisted_accounts')));
-
 					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
 						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
 
