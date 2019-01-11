@@ -161,14 +161,14 @@ class Subscriber extends EventEmitter {
 
 		// check if dynamic global object
 		if (isDynamicGlobalObjectId(object.id)) {
-			this.cache.set('dynamicGlobalProperties', new Map(object));
+			this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, new Map(object));
 		}
 
 		// get object from cache by id -> update or create
 		let obj = this.cache.objectsById.get(object.id);
 		const previous = obj || new Map();
 		obj = obj ? obj.mergeDeep(new Map(object)) : new Map(object);
-		this.cache.setInMap('objectsById', object.id, obj);
+		this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj);
 
 		// update dependencies by id type
 		if (isAccountBalanceId(object.id)) {
@@ -182,7 +182,7 @@ class Subscriber extends EventEmitter {
 				owner = owner.set('balances', new Map());
 			}
 			owner = owner.setIn(['balances', object.asset_type], object.id);
-			this.cache.setInMap('objectsById', object.owner, owner);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.owner, owner);
 		}
 
 		if (isAccountStatisticsId(object.id)) {
@@ -198,17 +198,17 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isWitnessId(object.id)) {
-			this.cache.setInMap('witnessByAccountId', object.witness_account, obj)
-				.setInMap('witnessByWitnessId', object.id, obj)
-				.setInMap('objectsById', object.id, obj)
-				.setInMap('objectsByVoteId', object.vote_id, obj);
+			this.cache.setInMap(CacheMaps.WITNESS_BY_ACCOUNT_ID, object.witness_account, obj)
+				.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
 		}
 
 		if (isCommitteeMemberId(object.id)) {
-			this.cache.setInMap('committeeMembersByAccount', object.committee_member_account, obj)
-				.setInMap('committeeMembersByCommitteeMemberId', object.id, obj)
-				.setInMap('objectsById', object.id, obj)
-				.setInMap('objectsByVoteId', object.vote_id, obj);
+			this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, object.committee_member_account, obj)
+				.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
 		}
 
 		if (isAccountId(object.id)) {
@@ -221,9 +221,9 @@ class Subscriber extends EventEmitter {
 			obj = obj.set('blacklisted_accounts', fromJS(object.blacklisted_accounts));
 
 			if (this.cache.objectsById.get(object.id)) {
-				this.cache.setInMap('objectsById', object.id, obj)
-					.setInMap('accountsById', object.id, obj)
-					.setInMap('accountsByName', object.name, obj);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+					.setInMap(CacheMaps.ACCOUNTS_BY_ID, object.id, obj)
+					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, object.name, obj);
 			}
 
 			const { length } = this.subscribers.account;
@@ -250,8 +250,8 @@ class Subscriber extends EventEmitter {
 					dad = dad.set('asset_id', object.id);
 				}
 
-				this.cache.setInMap('objectsById', object.dynamic_asset_data_id, dad)
-					.setInMap('dynamicAssetDataByDynamicAssetDataId', object.dynamic_asset_data_id, dad);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.dynamic_asset_data_id, dad)
+					.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, object.dynamic_asset_data_id, dad);
 
 				obj = obj.set('dynamic', dad);
 			}
@@ -268,15 +268,15 @@ class Subscriber extends EventEmitter {
 					bad = bad.set('asset_id', object.id);
 				}
 
-				this.cache.setInMap('objectsById', object.bitasset_data_id, bad)
-					.setInMap('bitAssetsByBitAssetId', object.bitasset_data_id, bad);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.bitasset_data_id, bad)
+					.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, object.bitasset_data_id, bad);
 
 				obj = obj.set('bitasset', bad);
 			}
 
-			this.cache.setInMap('objectsById', object.id, obj)
-				.setInMap('assetByAssetId', object.id, obj)
-				.setInMap('assetBySymbol', object.symbol, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+				.setInMap(CacheMaps.ASSET_BY_ASSET_ID, object.id, obj)
+				.setInMap(CacheMaps.ASSET_BY_SYMBOL, object.symbol, obj);
 		}
 
 		if (isDynamicAssetDataId(object.id)) {
@@ -286,20 +286,20 @@ class Subscriber extends EventEmitter {
 				if (asset && asset.set) {
 					asset = asset.set('dynamic', obj);
 
-					this.cache.setInMap('objectsById', assetId, asset)
-						.setInMap('assetByAssetId', assetId, asset)
-						.setInMap('accountsByName', asset.get('symbol'), asset);
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, assetId, asset)
+						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
 				}
 			}
 
-			this.cache.setInMap('objectsById', object.id, obj)
-				.setInMap('dynamicAssetDataByDynamicAssetDataId', object.id, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+				.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, object.id, obj);
 
 		}
 
 		if (isWorkerId(object.id)) {
-			this.cache.setInMap('objectsByVoteId', object.vote_for, obj);
-			this.cache.setInMap('objectsByVoteId', object.vote_against, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_for, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_against, obj);
 		}
 
 		if (isBitAssetId(object.id)) {
@@ -311,14 +311,14 @@ class Subscriber extends EventEmitter {
 					asset = asset.set('bitasset', obj);
 					this.emit(BITASSET_UPDATE, asset);
 
-					this.cache.setInMap('objectsById', assetId, asset)
-						.setInMap('assetByAssetId', assetId, asset)
-						.setInMap('accountsByName', asset.get('symbol'), asset);
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, assetId, asset)
+						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
 				}
 			}
 
-			this.cache.setInMap('objectsById', object.id, obj)
-				.setInMap('bitAssetsByBitAssetId', object.id, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.id, obj)
+				.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, object.id, obj);
 		}
 
 		if (isCallOrderId(object.id)) {
@@ -333,7 +333,7 @@ class Subscriber extends EventEmitter {
 				const callOrders = account.get('call_orders');
 				if (!callOrders.has(object.id)) {
 					account = account.set('call_orders', callOrders.add(object.id));
-					this.cache.setInMap('objectsById', account.get('id'), account);
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, account.get('id'), account);
 
 					// Force subscription to the object in the witness node by calling get_objects
 					this._api.getObjects([object.id]);
@@ -353,7 +353,7 @@ class Subscriber extends EventEmitter {
 
 				if (!limitOrders.has(object.id)) {
 					account = account.set('limit_orders', limitOrders.add(object.id));
-					this.cache.setInMap('objectsById', account.get('id'), account);
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, account.get('id'), account);
 
 					// Force subscription to the object in the witness node by calling get_objects
 					this._api.getObjects([object.id]);
@@ -394,7 +394,7 @@ class Subscriber extends EventEmitter {
 			if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
 				const limitOrders = account.get('limit_orders');
 				account = account.set('limit_orders', limitOrders.delete(obj));
-				this.cache.setInMap('objectsById', account.get('id'), account);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, account.get('id'), account);
 			}
 
 			type = CANCEL_LIMIT_ORDER;
@@ -407,14 +407,14 @@ class Subscriber extends EventEmitter {
 			if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
 				const callOrders = account.get('call_orders');
 				account = account.set('call_orders', callOrders.delete(obj));
-				this.cache.setInMap('objectsById', account.get('id'), account);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, account.get('id'), account);
 			}
 
 			type = CLOSE_CALL_ORDER;
 		}
 
 		// delete from objects
-		this.cache.setInMap('objectsById', id, null);
+		this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, id, null);
 
 		// return type
 		return type;
