@@ -32,6 +32,8 @@ import {
 	BITASSET_UPDATE,
 } from '../constants';
 
+import * as CacheMaps from '../constants/cache-maps';
+
 class Subscriber extends EventEmitter {
 
 	/**
@@ -344,13 +346,13 @@ class Subscriber extends EventEmitter {
 
 			if (account) {
 
-				if (!account.has('orders')) {
-					account = account.set('orders', new Set());
+				if (!account.has('limit_orders')) {
+					account = account.set('limit_orders', new Set());
 				}
-				const limitOrders = account.get('orders');
+				const limitOrders = account.get('limit_orders');
 
 				if (!limitOrders.has(object.id)) {
-					account = account.set('orders', limitOrders.add(object.id));
+					account = account.set('limit_orders', limitOrders.add(object.id));
 					this.cache.setInMap('objectsById', account.get('id'), account);
 
 					// Force subscription to the object in the witness node by calling get_objects
@@ -389,9 +391,9 @@ class Subscriber extends EventEmitter {
 			// get account from objects by seller param
 			let account = this.cache.objectsById.get(obj.get('seller'));
 			// if account get orders, delete this order
-			if (account && account.has('orders') && account.get('orders').has(obj)) {
-				const limitOrders = account.get('orders');
-				account = account.set('orders', limitOrders.delete(obj));
+			if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
+				const limitOrders = account.get('limit_orders');
+				account = account.set('limit_orders', limitOrders.delete(obj));
 				this.cache.setInMap('objectsById', account.get('id'), account);
 			}
 

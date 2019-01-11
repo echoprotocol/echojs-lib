@@ -1,5 +1,5 @@
 /* eslint-disable no-continue,max-len,no-await-in-loop */
-import { Map, List, fromJS } from 'immutable';
+import { Map, List, Set, fromJS } from 'immutable';
 
 import {
 	isArray,
@@ -185,6 +185,7 @@ class API {
 
 				requestedObject = fromJS(requestedObject);
 				requestedObject = await this._addHistory(requestedObject);
+				requestedObject = this._addOrders(requestedObject);
 				resultArray[i] = requestedObject;
 
 				this.cache.setInMap(cacheName, key, requestedObject);
@@ -265,6 +266,7 @@ class API {
 
 			requestedObject = fromJS(requestedObject);
 			requestedObject = await this._addHistory(requestedObject);
+			requestedObject = this._addOrders(requestedObject);
 
 			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
 
@@ -373,6 +375,24 @@ class API {
 	}
 
 	/**
+     *
+     * @param {Map} requestedObject
+     *  @returns {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>}>}
+     * @private
+     */
+	_addOrders(requestedObject) {
+
+		if (!requestedObject.has('limit_orders')) {
+			requestedObject = requestedObject.set('limit_orders', new Set());
+		}
+		if (!requestedObject.has('call_orders')) {
+			requestedObject = requestedObject.set('call_orders', new Set());
+		}
+
+		return requestedObject;
+	}
+
+	/**
 	 *
      * @param {Array} array
      * @param {String} cacheName
@@ -425,6 +445,7 @@ class API {
 					const nameKey = requestedObject.get('name');
 
 					requestedObject = await this._addHistory(requestedObject);
+					requestedObject = this._addOrders(requestedObject);
 
 					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
 						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
@@ -738,6 +759,7 @@ class API {
 			requestedObject = requestedObject[1].account;
 			requestedObject = fromJS(requestedObject);
 			requestedObject = await this._addHistory(requestedObject);
+			requestedObject = this._addOrders(requestedObject);
 			resultArray[i] = requestedObject;
 
 			const nameKey = requestedObject.get('name');

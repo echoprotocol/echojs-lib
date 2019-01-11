@@ -185,6 +185,7 @@ describe('API', () => {
                     const accounts = await api.getAccounts([accountId1, accountId2]);
 
                     expect(accounts).to.be.an('object');
+
                     expect(accounts.get(0)).to.deep.equal(cache.accountsById.get(accountId1));
                     expect(accounts.get(0)).to.deep.equal(cache.objectsById.get(accountId1));
                     expect(accounts.get(1)).to.deep.equal(cache.accountsById.get(accountId2));
@@ -206,6 +207,7 @@ describe('API', () => {
                     const accounts = await api.getFullAccounts([accountId1, accountId2]);
 
                     expect(accounts).to.be.an('object');
+
                     expect(accounts.get(0)).to.deep.equal(cache.accountsById.get(accountId1));
                     expect(accounts.get(0)).to.deep.equal(cache.objectsById.get(accountId1));
                     expect(accounts.get(1)).to.deep.equal(cache.accountsById.get(accountId2));
