@@ -315,26 +315,26 @@ class API {
 
 	/**
 	 *
-     * @param {Object} requestedObject
+     * @param {Map} requestedObject
      * @param {Boolean} force
      *  @returns {Promise.<Map{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String,dynamic:Object,bitasset:Object|undefined}>}
      * @private
      */
 	async _addAssetExtraFields(requestedObject, force = false) {
-		const bitAssetId = requestedObject.bitasset_data_id;
-		const dynamicAssetDataId = requestedObject.dynamic_asset_data_id;
+		const bitAssetId = requestedObject.get('bitasset_data_id');
+		const dynamicAssetDataId = requestedObject.get('dynamic_asset_data_id');
 
 		if (bitAssetId) {
 			const bitasset = await this.getBitAssetData(bitAssetId, force);
 			if (bitasset) {
-				requestedObject.bitasset = bitasset;
+				requestedObject = requestedObject.set('bitasset', bitasset);
 			}
 		}
 
 		if (dynamicAssetDataId) {
 			const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
 			if (dynamicAssetData) {
-				requestedObject.dynamic = dynamicAssetData;
+				requestedObject = requestedObject.set('dynamic', dynamicAssetData);
 			}
 		}
 		return requestedObject;
@@ -342,13 +342,13 @@ class API {
 
 	/**
      *
-     * @param {Object} account
+     * @param {Map} account
      * @param {Number} limit
      *  @returns {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>}>}
      * @private
      */
 	async _addHistory(account, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
-		const start = '1.11.0';
+		const start = ApiConfig.START_OPERATION_HISTORY_ID;
 		let stop = start;
 
 		let history = account.get('history');
@@ -419,11 +419,11 @@ class API {
 					continue;
 				}
 
-				requestedObject = new Map(requestedObject);
+				requestedObject = fromJS(requestedObject);
 
 				if (isAccountId(key)) {
 					const nameKey = requestedObject.get('name');
-					// TODO transfer all maps to immutable maps
+
 					requestedObject = await this._addHistory(requestedObject);
 
 					requestedObject = requestedObject.set('active', new Map(requestedObject.get('active')));
@@ -940,8 +940,8 @@ class API {
 					continue;
 				}
 
+				requestedObject = fromJS(requestedObject);
 				requestedObject = await this._addAssetExtraFields(requestedObject, force);
-				requestedObject = new Map(requestedObject);
 				resultArray[i] = requestedObject;
 
 				const idKey = requestedObject.get('id');
@@ -1029,8 +1029,8 @@ class API {
 				continue;
 			}
 
+			requestedObject = fromJS(requestedObject);
 			requestedObject = await this._addAssetExtraFields(requestedObject, force);
-			requestedObject = new Map(requestedObject);
 			resultArray[i] = requestedObject;
 
 			const idKey = requestedObject.get('id');
