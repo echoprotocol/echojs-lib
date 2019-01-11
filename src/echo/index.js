@@ -51,6 +51,10 @@ class Echo {
 		});
 	}
 
+	syncCacheWithStore(store) {
+		return this.cache.setStore(store);
+	}
+
 	async reconnect() {
 		await this._ws.reconnect();
 	}
