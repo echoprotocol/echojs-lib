@@ -6,6 +6,7 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 import { inspect } from 'util';
+import pk from '../src/crypto/private-key';
 
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
 const url = 'ws://195.201.164.54:6311';
@@ -14,7 +15,7 @@ describe('API', () => {
     describe('database', () => {
         const ws = new WS();
         beforeEach(async () => {
-            await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
+            await ws.connect(url, { debug: false,  apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
         });
         afterEach(async () => {
             await ws.close();
@@ -208,10 +209,13 @@ describe('API', () => {
 
                     expect(accounts).to.be.an('object');
 
-                    expect(accounts.get(0)).to.deep.equal(cache.accountsById.get(accountId1));
-                    expect(accounts.get(0)).to.deep.equal(cache.objectsById.get(accountId1));
-                    expect(accounts.get(1)).to.deep.equal(cache.accountsById.get(accountId2));
-                    expect(accounts.get(1)).to.deep.equal(cache.objectsById.get(accountId2));
+                    expect(accounts.get(0)).to.deep.equal(cache.fullAccounts.get(accountId1));
+                    expect(cache.accountsById.get(accountId1)).to.be.an('object');
+                    expect(cache.objectsById.get(accountId1)).to.be.an('object');
+
+                    expect(accounts.get(1)).to.deep.equal(cache.fullAccounts.get(accountId2));
+                    expect(cache.accountsById.get(accountId2)).to.be.an('object');
+                    expect(cache.objectsById.get(accountId2)).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -293,7 +297,7 @@ describe('API', () => {
 
                     expect(objects.get(0)).to.deep.equal(cache.accountsById.get(accountId));
                     expect(objects.get(0)).to.deep.equal(cache.objectsById.get(accountId));
-                    expect(objects.get(0)).to.deep.equal(cache.accountsByName.get(accountName));
+                    expect(accountId).to.equal(cache.accountsByName.get(accountName));
                     expect(objects.get(1)).to.deep.equal(cache.objectsById.get(assetId));
                     expect(objects.get(1)).to.deep.equal(cache.assetByAssetId.get(assetId));
                     expect(objects.get(1)).to.deep.equal(cache.assetBySymbol.get(assetSymbol));
@@ -334,7 +338,7 @@ describe('API', () => {
 
                     const accountName = 'relaxed-committee-account';
 
-                    const account = await api.getAccountByName(accountName);
+                    const account = await api.getAccountByName(accountName, true);
 
                     expect(account).to.exist;
 
@@ -342,7 +346,7 @@ describe('API', () => {
 
                     expect(account).to.deep.equal(cache.objectsById.get(id));
                     expect(account).to.deep.equal(cache.accountsById.get(id));
-                    expect(account).to.deep.equal(cache.accountsByName.get(accountName));
+                    expect(id).to.equal(cache.accountsByName.get(accountName));
                 } catch (e) {
                     throw e;
                 }

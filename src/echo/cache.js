@@ -16,6 +16,7 @@ class Cache {
 
 		this.objectsById = new Map();
 
+		this.fullAccounts = new Map();
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
 		this.accountsIdByKey = Map();
@@ -50,7 +51,6 @@ class Cache {
 
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
-		this.fetchingGetFullAccounts = new Map();
 
 		this.chainProperties = null;
 		this.globalProperties = null;

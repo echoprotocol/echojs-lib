@@ -1,5 +1,5 @@
-/* eslint-disable no-continue,max-len,no-await-in-loop */
-import { Map, List, Set, fromJS } from 'immutable';
+/* eslint-disable no-continue,max-len,no-await-in-loop,camelcase */
+import { Map, List, fromJS } from 'immutable';
 
 import {
 	isArray,
@@ -136,69 +136,6 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Array} array
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @returns {Promise.<List.<Map>>}
-     * @private
-     */
-	async _getAccountDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams = []) {
-		const { length } = array;
-
-		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
-
-		for (let i = 0; i < length; i += 1) {
-			const key = array[i];
-
-			if (!force) {
-				const cacheValue = this.cache[cacheName].get(key);
-
-				if (cacheValue) {
-					resultArray[i] = cacheValue;
-					continue;
-				}
-			}
-
-			requestedObjectsKeys.push(key);
-		}
-
-		let requestedObjects;
-
-		try {
-			requestedObjects = await this.wsApi.database[methodName](requestedObjectsKeys);
-
-			for (let i = 0; i < length; i += 1) {
-				if (resultArray[i]) continue;
-
-				const key = requestedObjectsKeys.shift();
-				let requestedObject = requestedObjects.shift();
-
-				if (!requestedObject) {
-					resultArray[i] = null;
-					continue;
-				}
-
-				requestedObject = fromJS(requestedObject);
-				requestedObject = await this._addHistory(requestedObject);
-				requestedObject = this._addOrders(requestedObject);
-				resultArray[i] = requestedObject;
-
-				this.cache.setInMap(cacheName, key, requestedObject);
-				cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
-			}
-
-			return new List(resultArray);
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
 	 *
      * @param {*} key
      * @param {String} cacheName
@@ -239,47 +176,6 @@ class API {
 
 	/**
      *
-     * @param {*} key
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @returns {Promise.<*>}
-     * @private
-     */
-	async _getSingleAccountDataWithMultiSave(key, cacheName, methodName, force = false, cacheParams = []) {
-		if (!force) {
-			const cacheValue = this.cache[cacheName].get(key);
-
-			if (cacheValue) {
-				return cacheValue;
-			}
-		}
-
-		try {
-			let requestedObject = await this.wsApi.database[methodName](key);
-
-			if (!requestedObject) {
-				return requestedObject;
-			}
-
-			requestedObject = fromJS(requestedObject);
-			requestedObject = await this._addHistory(requestedObject);
-			requestedObject = this._addOrders(requestedObject);
-
-			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
-
-			this.cache.setInMap(cacheName, key, requestedObject);
-
-			return requestedObject;
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-     *
      * @param {String} key
      * @param {String} cacheName
      * @param {String} methodName
@@ -299,13 +195,14 @@ class API {
 		}
 
 		try {
+
 			let requestedObject = await this.wsApi.database[methodName](...params);
 
 			if (!requestedObject) {
 				return requestedObject;
 			}
 
-			requestedObject = new Map(requestedObject);
+			requestedObject = fromJS(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 
@@ -375,24 +272,6 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Map} requestedObject
-     *  @returns {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>}>}
-     * @private
-     */
-	_addOrders(requestedObject) {
-
-		if (!requestedObject.has('limit_orders')) {
-			requestedObject = requestedObject.set('limit_orders', new Set());
-		}
-		if (!requestedObject.has('call_orders')) {
-			requestedObject = requestedObject.set('call_orders', new Set());
-		}
-
-		return requestedObject;
-	}
-
-	/**
 	 *
      * @param {Array} array
      * @param {String} cacheName
@@ -444,11 +323,8 @@ class API {
 				if (isAccountId(key)) {
 					const nameKey = requestedObject.get('name');
 
-					requestedObject = await this._addHistory(requestedObject);
-					requestedObject = this._addOrders(requestedObject);
-
 					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
-						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, key);
 
 				} else if (isAssetId(key)) {
 					const nameKey = requestedObject.get('symbol');
@@ -691,13 +567,60 @@ class API {
      *  @returns {Promise.<List.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
      */
 	async getAccounts(accountIds, force = false) {
-		if (!isArray(accountIds)) return Promise.reject(new Error('Account ids should be an array'));
-		if (!accountIds.every((id) => isAccountId(id))) return Promise.reject(new Error('Accounts should contain valid account ids'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isArray(accountIds)) throw new Error('Account ids should be an array');
+		if (!accountIds.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
-		const cacheParams = [{ param: 'name', cache: CacheMaps.ACCOUNTS_BY_NAME }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
+		const { length } = accountIds;
 
-		return this._getAccountDataWithMultiSave(accountIds, CacheMaps.ACCOUNTS_BY_ID, 'getAccounts', force, cacheParams);
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
+
+		for (let i = 0; i < length; i += 1) {
+			const key = accountIds[i];
+
+			if (!force) {
+				const cacheValue = this.cache.objectsById.get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjectsKeys.push(key);
+		}
+
+		let requestedObjects;
+
+		try {
+			requestedObjects = await this.wsApi.database.getAccounts(requestedObjectsKeys);
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+
+				let requestedObject = requestedObjects.shift();
+
+				if (!requestedObject) {
+					resultArray[i] = null;
+					continue;
+				}
+
+				requestedObject = fromJS(requestedObject);
+				resultArray[i] = requestedObject;
+
+				const idKey = requestedObject.get('id');
+				const nameKey = requestedObject.get('name');
+
+				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+			}
+
+			return new List(resultArray);
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	/**
@@ -725,11 +648,13 @@ class API {
 			let cacheValue = null;
 
 			if (!force) {
-				if (isAccountId(key)) {
-					cacheValue = this.cache.accountsById.get(key);
-				} else {
-					cacheValue = this.cache.accountsByName.get(key);
+				let id = key;
+
+				if (!isAccountId(key)) {
+					id = this.cache.accountsByName.get(key);
 				}
+
+				cacheValue = this.cache.fullAccounts.get(id);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue;
@@ -742,35 +667,64 @@ class API {
 
 		try {
 			requestedObjects = await this.wsApi.database.getFullAccounts(requestedObjects, true);
+
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+
+				let requestedObject = requestedObjects.shift();
+
+				if (!requestedObject || !requestedObject[1] || !requestedObject[1].account) {
+					resultArray[i] = null;
+					continue;
+				}
+
+				const { account } = requestedObject[1];
+				const immutableAccount = fromJS(account);
+				delete requestedObject[1].account;
+
+				const requestArray = [
+					...requestedObject[1].call_orders.map(({ id }) => id),
+					...requestedObject[1].limit_orders.map(({ id }) => id),
+					...requestedObject[1].balances.map(({ id }) => id),
+				];
+
+				const balances = new Map().withMutations((map) => {
+					requestedObject[1].balances.map(({ id, asset_type }) => map.set(asset_type, id));
+				});
+
+				const limitOrders = new Set(requestedObject[1].limit_orders.map(({ id }) => id));
+				const callOrders = new Set(requestedObject[1].call_orders.map(({ id }) => id));
+				const proposals = new Set(requestedObject[1].proposals.map(({ id }) => id));
+
+				requestedObject = fromJS({ ...account, ...requestedObject[1] });
+				requestedObject = await this._addHistory(requestedObject);
+
+				requestedObject = requestedObject.withMutations((map) => {
+					map
+						.set('balances', balances)
+						.set('limit_orders', limitOrders)
+						.set('call_orders', callOrders)
+						.set('proposals', proposals);
+				});
+
+				resultArray[i] = requestedObject;
+
+				await this.getObjects(requestArray);
+
+				const nameKey = requestedObject.get('name');
+				const idKey = requestedObject.get('id');
+
+				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, immutableAccount)
+					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, immutableAccount)
+					.setInMap(CacheMaps.FULL_ACCOUNTS, idKey, requestedObject)
+					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+			}
+
+			return new List(resultArray);
 		} catch (error) {
 			throw error;
 		}
-
-		for (let i = 0; i < length; i += 1) {
-			if (resultArray[i]) continue;
-
-			let requestedObject = requestedObjects.shift();
-
-			if (!requestedObject || !requestedObject[1] || !requestedObject[1].account) {
-				resultArray[i] = null;
-				continue;
-			}
-
-			requestedObject = requestedObject[1].account;
-			requestedObject = fromJS(requestedObject);
-			requestedObject = await this._addHistory(requestedObject);
-			requestedObject = this._addOrders(requestedObject);
-			resultArray[i] = requestedObject;
-
-			const nameKey = requestedObject.get('name');
-			const idKey = requestedObject.get('id');
-
-			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, requestedObject);
-		}
-
-		return new List(resultArray);
 	}
 
 	/**
@@ -780,12 +734,40 @@ class API {
      *
      *  @return {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>}
      */
-	getAccountByName(accountName, force = false) {
-		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-		const cacheParams = [{ param: 'id', cache: CacheMaps.ACCOUNTS_BY_ID }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
+	async getAccountByName(accountName, force = false) {
+		if (!isAccountName(accountName)) throw new Error('Account name is invalid');
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
-		return this._getSingleAccountDataWithMultiSave(accountName, CacheMaps.ACCOUNTS_BY_NAME, 'getAccountByName', force, cacheParams);
+		if (!force) {
+			const id = this.cache.accountsByName.get(accountName);
+
+			const cacheValue = this.cache.objectsById.get(id);
+
+			if (cacheValue) {
+				return cacheValue;
+			}
+		}
+
+		try {
+			let requestedObject = await this.wsApi.database.getAccountByName(accountName);
+
+			if (!requestedObject) {
+				return requestedObject;
+			}
+
+			requestedObject = fromJS(requestedObject);
+
+			const idKey = requestedObject.get('id');
+			const nameKey = requestedObject.get('name');
+
+			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
+				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
+				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+
+			return requestedObject;
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	/**
@@ -814,9 +796,66 @@ class API {
 		if (!accountNames.every((id) => isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'id', cache: CacheMaps.ACCOUNTS_BY_ID }, { param: 'id', cache: CacheMaps.OBJECTS_BY_ID }];
+		const { length } = accountNames;
 
-		return this._getAccountDataWithMultiSave(accountNames, CacheMaps.ACCOUNTS_BY_NAME, 'lookupAccountNames', force, cacheParams);
+		const resultArray = new Array(length).fill(null);
+		const requestedObjectsKeys = [];
+
+		for (let i = 0; i < length; i += 1) {
+			const key = accountNames[i];
+
+			if (!force) {
+				const id = this.cache.accountsByName.get(key);
+
+				const cacheValue = this.cache.objectsById.get(id);
+
+				if (cacheValue) {
+					return cacheValue;
+				}
+			}
+
+			if (!force) {
+				const cacheValue = this.cache.objectsById.get(key);
+
+				if (cacheValue) {
+					resultArray[i] = cacheValue;
+					continue;
+				}
+			}
+
+			requestedObjectsKeys.push(key);
+		}
+
+		let requestedObjects;
+
+		try {
+			requestedObjects = await this.wsApi.database.lookupAccountNames(requestedObjectsKeys);
+
+			for (let i = 0; i < length; i += 1) {
+				if (resultArray[i]) continue;
+
+				let requestedObject = requestedObjects.shift();
+
+				if (!requestedObject) {
+					resultArray[i] = null;
+					continue;
+				}
+
+				requestedObject = fromJS(requestedObject);
+				resultArray[i] = requestedObject;
+
+				const idKey = requestedObject.get('id');
+				const nameKey = requestedObject.get('name');
+
+				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+			}
+
+			return new List(resultArray);
+		} catch (error) {
+			throw error;
+		}
 	}
 
 	/** @typedef {String} AccountName */

@@ -16,7 +16,7 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-	describe('echorand', () => {
+	describe.skip('echorand', () => {
         describe('setEchorandSubscribe', () => {
             it('is not a function', async () => {
                 try {
@@ -68,7 +68,7 @@ describe('SUBSCRIBER', () => {
         });
 	});
 
-    describe('block', () => {
+    describe.skip('block', () => {
         describe('setBlockApplySubscribe', () => {
             it('is not a function', async () => {
                 try {
@@ -172,18 +172,19 @@ describe('SUBSCRIBER', () => {
             }).timeout(30 * 1000);
 
 
-            it.skip('test', (done) => {
+            it('test', (done) => {
                 let isCalled = false;
 
                 echo.subscriber.setAccountSubscribe((result) => {
+                    console.log(result);
                     expect(result).to.be.an('object').that.is.not.empty;
 
                     if (!isCalled) {
                         done();
                         isCalled = true;
                     }
-                }, ['1.2.1']);
-            }).timeout(30 * 1000);
+                }, ['1.2.16']);
+            }).timeout(300 * 1000);
 
         });
 
@@ -196,7 +197,7 @@ describe('SUBSCRIBER', () => {
         });
 	});
 
-    describe('global', () => {
+    describe.skip('global', () => {
         describe('setGlobalSubscribe', () => {
             it('test', (done) => {
                 let isCalled = false;
