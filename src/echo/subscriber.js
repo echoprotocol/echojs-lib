@@ -65,6 +65,7 @@ class Subscriber extends EventEmitter {
 			echorand: [],
 			block: [],
 			transaction: [],
+			market: {}, // [base_quote]: []
 			connect: [],
 			disconnect: [],
 		};
@@ -87,17 +88,10 @@ class Subscriber extends EventEmitter {
 			await this._setPendingTransactionCallback();
 		}
 
-		// if (this.subscribers.connect.length) {
-		// 	this.subscribers.connect.forEach((callback) => {
-		// 		this._ws.on(STATUS.OPEN, callback);
-		// 	});
-		// }
-		//
-		// if (this.subscribers.disconnect.length) {
-		// 	this.subscribers.disconnect.forEach((callback) => {
-		// 		this._ws.on(STATUS.CLOSE, callback);
-		// 	});
-		// }
+		Object.keys(this.subscribers.market).forEach((key) => {
+			const [base, quote] = key.split('_');
+			this._subscribeToMarket(base, quote);
+		});
 	}
 
 	_updateObject(object) {
@@ -463,6 +457,7 @@ class Subscriber extends EventEmitter {
 			committeeMember: [],
 			echorand: [],
 			block: [],
+			market: {},
 			connect: [],
 			disconnect: [],
 
@@ -660,6 +655,87 @@ class Subscriber extends EventEmitter {
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 
+	}
+
+	_marketUpdate(base, quote, result) {
+		const callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		callbacks.forEach((callback) => callback(result));
+	}
+
+	_subscribeToMarket(base, quote) {
+		this._wsApi.database.subscribeToMarket(
+			this._marketUpdate.bind(this, base, quote),
+			base,
+			quote,
+		);
+	}
+
+	_unsubscribeFromMarket(base, quote) {
+		this._wsApi.database.unsubscribeFromMarket(base, quote);
+	}
+
+	/**
+	 *  @method setMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async setMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) {
+			callbacks = [];
+			await this._subscribeToMarket(base, quote);
+		}
+
+		callbacks.push(callback);
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
+	}
+
+	/**
+	 *  @method removeMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async removeMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) { return; }
+
+		callbacks = callbacks.filter((c) => c !== callback);
+
+		if (!callbacks.length) {
+			await this._unsubscribeFromMarket(base, quote);
+			delete this.subscribers.market[`${base}_${quote}`];
+			return;
+		}
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
 }
