@@ -48,6 +48,7 @@ class Transaction {
 	/** @type {Api} */
 	get api() { return this._api; }
 
+	/** @param {Api} value */
 	set api(value) {
 		if (!(value instanceof Api)) throw new Error('value is not a Api instance');
 		/**
@@ -60,6 +61,7 @@ class Transaction {
 	/** @type {number|undefined} */
 	get expiration() { return this._expiration; }
 
+	/** @param {number|undefined} value */
 	set expiration(value) {
 		if (typeof value !== 'number') throw new Error('expiration is not a number');
 		// TODO: more validators

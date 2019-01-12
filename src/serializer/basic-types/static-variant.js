@@ -5,13 +5,14 @@ import { validateUnsignedSafeInteger } from '../../utils/validators';
 
 class StaticVariantType extends Type {
 
-	get types() { return { ...this._types }; }
-
 	/**
 	 * @description readonly is used for outscope. it used as non-readonly in operations.js to avoid looping
 	 * @readonly
 	 * @type {_StaticVariantSubType}
 	 */
+	get types() { return { ...this._types }; }
+
+	/** @param {_StaticVariantSubType} types */
 	set types(types) {
 		if (!types || typeof types !== 'object') throw new Error('types variable is not an object');
 		if (Array.isArray(types)) types = { ...types };
