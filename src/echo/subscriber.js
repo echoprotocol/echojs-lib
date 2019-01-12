@@ -66,6 +66,7 @@ class Subscriber extends EventEmitter {
 			block: [],
 			transaction: [],
 			market: {}, // [base_quote]: []
+			logs: {},	// [contractId]: []
 			connect: [],
 			disconnect: [],
 		};
@@ -458,6 +459,7 @@ class Subscriber extends EventEmitter {
 			echorand: [],
 			block: [],
 			market: {},
+			logs: {},
 			connect: [],
 			disconnect: [],
 
@@ -736,6 +738,66 @@ class Subscriber extends EventEmitter {
 		}
 
 		this.subscribers.market[`${base}_${quote}`] = callbacks;
+	}
+
+	_contractLogsUpdate(contractId, result) {
+		const callbacks = this.subscribers.logs[contractId];
+
+		callbacks.forEach((callback) => callback(result));
+	}
+
+	async _subscribeToContractLogs(contractId, fromBlock) {
+		await this._wsApi.database.subscribeContractLogs(
+			this._contractLogsUpdate.bind(this, contractId),
+			contractId,
+			fromBlock,
+		);
+	}
+
+	/**
+	 *  @method setContractLogsSubscribe
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Function} callback
+	 *  @param  {Number} [fromBlock]
+	 *  @param  {Number} [toBlock]
+	 *
+	 *  @return {undefined}
+	 */
+	async setContractLogsSubscribe(contractId, callback, fromBlock, toBlock) {
+		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
+
+		// get blocks in interval
+		if (fromBlock) {
+			const logs = await this._wsApi.database.getContractLogs(
+				contractId,
+				fromBlock,
+				toBlock || globalInfo.head_block_number,
+			);
+			callback(logs);
+		}
+
+		// set subscriber from current block
+		if (!this.subscribers.logs[contractId]) {
+			this.subscribers.logs[contractId] = [];
+			await this._subscribeToContractLogs(contractId, globalInfo.head_block_number);
+		}
+
+		// push to callbacks
+		this.subscribers.logs[contractId].push(callback);
+	}
+
+	/**
+	 *  @method removeMarketSubscribe
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeContractLogsSubscribe(contractId, callback) {
+		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
+			.filter((c) => (c !== callback));
 	}
 
 }
