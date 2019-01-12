@@ -195,6 +195,52 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
+	describe('setMarketSubscribe', () => {
+		it('invalid asset', async () => {
+			try {
+				await echo.subscriber.setMarketSubscribe(1, 2, () => {});
+			} catch (err) {
+				expect(err.message).to.equal('Invalid asset ID');
+			}
+		});
+
+		it('test', async () => {
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', () => {});
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(1);
+		});
+	});
+
+	describe('removeMarketSubscribe', () => {
+
+		it('invalid asset',  async () => {
+			try {
+				const callback = () => {};
+				await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+				await echo.subscriber.removeMarketSubscribe(1, 2, callback);
+			} catch (err) {
+				expect(err.message).to.equal('Invalid asset ID');
+			}
+		});
+
+		it('not such subscription', async () => {
+			const callback = () => {};
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+
+			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
+			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.2', callback);
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length);
+		});
+
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+
+			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
+			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.1', callback);
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length - 1);
+		});
+	});
+
 	after(async () => {
 		await echo.disconnect();
 	});
