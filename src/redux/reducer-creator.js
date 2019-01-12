@@ -1,4 +1,3 @@
-import { createModule } from 'redux-modules';
 import { Map } from 'immutable';
 
 let DEFAULT_FIELDS = Map({
@@ -54,35 +53,23 @@ let DEFAULT_FIELDS = Map({
 
 /**
  *
- * @param {String} reducerName
  * @param {Object|undefined} caches
  * @returns {*}
  */
-export default (reducerName, caches) => {
+export default (caches) => {
 	if (caches) {
 		DEFAULT_FIELDS = caches;
 	}
 
-	return createModule({
-		name: reducerName,
-		initialState: DEFAULT_FIELDS,
-		transformations: {
-			set: {
-				reducer: (state, { payload }) => {
-
-					if (!state.has(payload.field)) {
-						return state;
-					}
-
-					state = state.set(payload.field, payload.value);
-
-					return state;
-				},
-			},
-
-			reset: {
-				reducer: () => DEFAULT_FIELDS,
-			},
-		},
-	});
+	return (state = DEFAULT_FIELDS, action) => {
+		const { payload } = action;
+		switch (action.type) {
+			case 'SET':
+				return state.has(payload.field) ? state.set(payload.field, payload.value) : state;
+			case 'RESET':
+				return DEFAULT_FIELDS;
+			default:
+				return state;
+		}
+	};
 };

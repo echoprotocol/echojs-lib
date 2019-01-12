@@ -83,7 +83,7 @@ class Cache {
 		if (!this.isUsed) {
 			this[field] = value;
 			if (this.redux.store && this.redux.reducer) {
-            	this.redux.store.dispatch(this.redux.reducer.set({ field, value }));
+				this.redux.store.dispatch({ type: 'SET', payload: { field, value } });
 			}
 		}
 		return this;
@@ -121,8 +121,7 @@ class Cache {
 			}, {}));
 		}
 
-		const reducer = reducerCreator(reducerName, reducerFields);
-
+		const reducer = reducerCreator(reducerFields);
 
 
 		this.redux = {
