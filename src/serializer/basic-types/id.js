@@ -12,10 +12,14 @@ class IdType extends Type {
 
 	/**
 	 * @readonly
-	 * @type {number}
+	 * @type {number|Array<number>}
 	 */
 	get objectTypeId() { return this._objectTypeId; }
 
+	/**
+	 * @param {number} reservedSpaceId
+	 * @param {number|Array<number>} objectTypeId
+	 */
 	constructor(reservedSpaceId, objectTypeId) {
 		super();
 		validateUnsignedSafeInteger(reservedSpaceId);
@@ -24,7 +28,10 @@ class IdType extends Type {
 		 * @type {number}
 		 */
 		this._reservedSpaceId = reservedSpaceId;
-		validateUnsignedSafeInteger(objectTypeId);
+		if (typeof objectTypeId === 'number') validateUnsignedSafeInteger(objectTypeId);
+		else if (!Array.isArray(objectTypeId) || !objectTypeId.every(validateUnsignedSafeInteger)) {
+			throw new Error('objectTypeId is not a number or array of numbers');
+		}
 		/**
 		 * @private
 		 * @type {number}
@@ -57,4 +64,9 @@ class IdType extends Type {
 
 }
 
+/**
+ * @param {number} reservedSpaceId
+ * @param {number} objectTypeId
+ * @returns {IdType}
+ */
 export default (reservedSpaceId, objectTypeId) => new IdType(reservedSpaceId, objectTypeId);

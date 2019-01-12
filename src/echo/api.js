@@ -30,6 +30,7 @@ import { operationById } from './operations';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
+import { ECHO_ASSET_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
@@ -1347,7 +1348,7 @@ class API {
      *
      *  @return {Promise.<Array<{asset_id:String,amount:Number}>>}
      */
-	getRequiredFees(operations, assetId = '1.3.0') {
+	getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
 		for (const operation of operations) {
 			const [operationId] = operation;

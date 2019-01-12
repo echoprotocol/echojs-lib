@@ -23,15 +23,19 @@ export function BigNumberToLong(bn, unsigned) {
 /**
  * @param {string|number} address
  * @param {number} reservedSpaceId
- * @param {number} objectTypeId
+ * @param {number|Array<number>} objectTypeId
  * @returns {number}
  */
 export function toId(address, reservedSpaceId, objectTypeId) {
 	if (typeof address === 'number') return address;
 	if (typeof address !== 'string') throw new Error('invalid id type');
 	if (!idRegex.test(address)) throw new Error('invalid id format');
+	// TODO: use BigNumber for id
 	const [actualReservedSpaceId, actualObjectTypeId, id] = address.split('.').map((str) => Number.parseInt(str, 10));
 	if (actualReservedSpaceId !== reservedSpaceId) throw new Error('invalid reservedSpaceId');
-	if (actualObjectTypeId !== objectTypeId) throw new Error('invalid objectTypeId');
+	if (typeof objectTypeId === 'number') {
+		if (actualObjectTypeId !== objectTypeId) throw new Error('invalid objectTypeId');
+	} else if (!Array.isArray(objectTypeId)) throw new Error('invalid objectTypeId type');
+	else if (!objectTypeId.includes(actualObjectTypeId)) throw new Error('invalid objectTypeId');
 	return id;
 }

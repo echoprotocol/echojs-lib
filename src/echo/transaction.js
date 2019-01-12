@@ -10,6 +10,7 @@ import PublicKey from '../crypto/public-key';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
+import { ECHO_ASSET_ID } from '../constants';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -141,7 +142,7 @@ class Transaction {
 	 * @param {string} [assetId='1.3.0']
 	 * @returns {Promise<void>}
 	 */
-	async setRequiredFees(assetId = '1.3.0') {
+	async setRequiredFees(assetId = ECHO_ASSET_ID) {
 		this.checkNotFinalized();
 		const operationTypes = this._operations;
 		if (operationTypes.length === 0) throw new Error('no operations');
@@ -149,7 +150,7 @@ class Transaction {
 		const operationsByNotDefaultFee = new Map();
 		const defaultAssetOperations = [];
 		const addOperationToAsset = (notDefaultAssetId, operation) => {
-			if (notDefaultAssetId === '1.3.0') {
+			if (notDefaultAssetId === ECHO_ASSET_ID) {
 				defaultAssetOperations.push(operation);
 				return;
 			}
@@ -271,7 +272,7 @@ class Transaction {
 			ref_block_num: 0,
 			ref_block_prefix: 0,
 			expiration: this.expiration === undefined ? 0 : this.expiration,
-			operations: this.operations.map(([id, op]) => [id, { fee: { asset_id: '1.3.0', amount: 0 }, ...op }]),
+			operations: this.operations.map(([id, op]) => [id, { fee: { asset_id: ECHO_ASSET_ID, amount: 0 }, ...op }]),
 			extensions: [],
 		});
 		const [publicKeys, addresses] = await Promise.all([

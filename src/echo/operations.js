@@ -83,7 +83,8 @@ import {
 	TRANSFER_FROM_BLIND,
 	ASSET_SETTLE_CANCEL,
 	ASSET_CLAIM_FEES,
-	CONTRACT,
+	CREATE_CONTRACT,
+	CALL_CONTRACT,
 	CONTRACT_TRANSFER,
 } from '../constants/operations-ids';
 
@@ -98,6 +99,7 @@ import {
 	VESTING_BALANCE,
 	BALANCE,
 	FORCE_SETTLEMENT,
+	CONTRACT,
 } from '../constants/object-types';
 
 /** @typedef {import('../serializer/operation').Operation} Operation */
@@ -467,21 +469,30 @@ export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
 	extensions: optional(empty),
 });
 
-export const contract = operation(CONTRACT, {
+export const createContract = operation(CREATE_CONTRACT, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
-	receiver: optional(protocolId(CONTRACT)),
-	asset_id: protocolId(ASSET),
-	value: uint64,
+	value: asset,
 	gasPrice: uint64,
 	gas: uint64,
 	code: string,
+	supported_asset_id: optional(protocolId(ASSET)),
+});
+
+export const callContract = operation(CALL_CONTRACT, {
+	fee: asset,
+	registrar: protocolId(ACCOUNT),
+	value: asset,
+	gasPrice: uint64,
+	gas: uint64,
+	code: string,
+	callee: protocolId(CONTRACT),
 });
 
 export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	fee: asset,
 	from: protocolId(CONTRACT),
-	to: protocolId(CONTRACT),
+	to: protocolId([ACCOUNT, CONTRACT]),
 	amount: asset,
 	extensions: optional(empty),
 });
