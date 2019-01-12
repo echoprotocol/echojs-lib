@@ -10,7 +10,7 @@ import PublicKey from '../crypto/public-key';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
-import { ECHO_ASSET_ID } from '../constants';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -226,7 +226,7 @@ class Transaction {
 		this.checkNotFinalized();
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
 		if (!this.hasAllFees) await this.setRequiredFees();
-		const [dynamicGlobalChainData] = await this.api.getObjects(['2.1.0']);
+		const [dynamicGlobalChainData] = await this.api.getObjects([DYNAMIC_GLOBAL_OBJECT_ID]);
 		if (this.expiration === undefined) {
 			const headBlockTimeSeconds = Math.ceil(new Date(`${dynamicGlobalChainData.time}Z`).getTime() / 1000);
 			const nowSeconds = Math.ceil(new Date().getTime() / 1000);
