@@ -298,6 +298,10 @@ class Transaction {
 		});
 	}
 
+	/**
+	 * @param {()=>* =} wasBroadcastedCallback
+	 * @returns {Promise<*>}
+	 */
 	async broadcast(wasBroadcastedCallback) {
 		if (!this.finalized) await this.sign();
 		return this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
