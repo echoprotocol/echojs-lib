@@ -1,19 +1,28 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
 
 import { Echo } from '../index';
+
+chai.use(spies);
 
 describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
-		await echo.connect('ws://195.201.164.54:6311', {
-			connectionTimeout: 15000,
-			maxRetries: 5,
-			pingTimeout: 3000,
-			pingInterval: 20000,
-			debug: false,
-			apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']
-		});
+		await echo.connect(
+			'ws://195.201.164.54:6311',
+			{
+				apis: [
+					'database',
+					'network_broadcast',
+					'history',
+					'registration',
+					'asset',
+					'login',
+					'network_node',
+				],
+			},
+		);
 	});
 
 	describe('echorand', () => {
@@ -26,7 +35,7 @@ describe('SUBSCRIBER', () => {
                 }
             });
 
-            it('reconnect', (done) => {
+            it.skip('reconnect', (done) => {
                 let isCalled = false;
                 let isReconnected = false;
 
@@ -44,11 +53,11 @@ describe('SUBSCRIBER', () => {
             it('test', (done) => {
                 let isCalled = false;
 
-                echo.subscriber.setEchorandSubscribe((result) => {
-                    expect(result).to.be.an('array').that.is.not.empty;
-                    expect(result[0]).to.be.an('object').that.is.not.empty;
-                    expect(result[0].type).to.be.a('string');
-                    expect(result[0].round).to.be.a('number');
+			echo.subscriber.setEchorandSubscribe((result) => {
+				expect(result).to.be.an('array').that.is.not.empty;
+				expect(result[0]).to.be.an('object').that.is.not.empty;
+				expect(result[0].type).to.be.a('string');
+				expect(result[0].round).to.be.a('number');
 
                     if (!isCalled) {
                         done();
@@ -78,7 +87,7 @@ describe('SUBSCRIBER', () => {
                 }
             });
 
-            it('reconnect', (done) => {
+            it.skip('reconnect', (done) => {
                 let isCalled = false;
                 let isReconnected = false;
 
@@ -229,6 +238,161 @@ describe('SUBSCRIBER', () => {
         });
     });
 
+
+	describe('setPendingTransactionSubscribe', () => {
+		it('is not a function', async () => {
+			try {
+				await echo.subscriber.setPendingTransactionSubscribe(1);
+			} catch (err) {
+				expect(err.message).to.equal('Callback is not a function');
+			}
+		});
+
+		it('test', (done) => {
+			/* callback test will be available, when transaction builder will be merged */
+			// let isCalled = false;
+
+			expect(echo.subscriber.subscriptions.transaction).to.be.false;
+			expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.empty;
+
+			echo.subscriber.setPendingTransactionSubscribe((result) => {
+				// expect(result).to.be.an('array').that.is.not.empty;
+				// expect(result[0]).to.be.an('object').that.is.not.empty;
+				// expect(result[0].type).to.be.a('number');
+				// expect(result[0].round).to.be.a('number');
+				//
+				// if (!isCalled) {
+				// 	done();
+				// 	isCalled = true;
+				// }
+			}).then(() => {
+				expect(echo.subscriber.subscriptions.transaction).to.be.true;
+				expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.not.empty;
+				done();
+			});
+		}).timeout(30 * 1000);
+
+	});
+
+	describe('removePendingTransactionSubscribe', () => {
+		it('test', async () => {
+			const { length } = echo.subscriber.subscribers.transaction;
+
+			const callback = () => {};
+			await echo.subscriber.setPendingTransactionSubscribe(callback);
+			echo.subscriber.removePendingTransactionSubscribe(callback);
+
+			expect(echo.subscriber.subscribers.transaction.length).to.equal(length);
+		});
+	});
+
+	describe.skip('setStatusSubscribe', () => {
+		it('status - connect', async () => {
+			const spy = chai.spy(() => {});
+
+			echo.subscriber.setStatusSubscribe('connect', spy);
+			await echo.reconnect();
+			expect(spy).to.have.been.called(1);
+		});
+
+		it('status - disconnect', async () => {
+			const spy = chai.spy(() => {});
+
+			echo.subscriber.setStatusSubscribe('disconnect', spy);
+			await echo.reconnect();
+			expect(spy).to.have.been.called(1);
+		});
+
+	});
+
+	describe.skip('removeStatusSubscribe', () => {
+
+		it('status - connect',  async () => {
+			const spy = chai.spy(() => {});
+
+			const { length } = echo.subscriber.subscribers.connect;
+			echo.subscriber.setStatusSubscribe('connect', spy);
+			echo.subscriber.removeStatusSubscribe('connect', spy);
+			await echo.reconnect();
+			expect(echo.subscriber.subscribers.connect.length).to.equal(length);
+			expect(spy).to.not.have.been.called();
+		});
+
+		it('status - disconnect', async () => {
+			const spy = chai.spy(() => {});
+
+			const { length } = echo.subscriber.subscribers.disconnect;
+			echo.subscriber.setStatusSubscribe('disconnect', spy);
+			echo.subscriber.removeStatusSubscribe('disconnect', spy);
+			await echo.reconnect();
+			expect(echo.subscriber.subscribers.disconnect.length).to.equal(length);
+			expect(spy).to.not.have.been.called();
+		});
+	});
+
+	describe('setMarketSubscribe', () => {
+		it('invalid asset', async () => {
+			try {
+				await echo.subscriber.setMarketSubscribe(1, 2, () => {});
+			} catch (err) {
+				expect(err.message).to.equal('Invalid asset ID');
+			}
+		});
+
+		it('test', async () => {
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', () => {});
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(1);
+		});
+	});
+
+	describe('removeMarketSubscribe', () => {
+
+		it('invalid asset',  async () => {
+			try {
+				const callback = () => {};
+				await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+				await echo.subscriber.removeMarketSubscribe(1, 2, callback);
+			} catch (err) {
+				expect(err.message).to.equal('Invalid asset ID');
+			}
+		});
+
+		it('not such subscription', async () => {
+			const callback = () => {};
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+
+			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
+			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.2', callback);
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length);
+		});
+
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+
+			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
+			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.1', callback);
+			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length - 1);
+		});
+	});
+
+	describe('setContractLogsSubscribe', () => {
+		it('test', async () => {
+			await echo.subscriber.setContractLogsSubscribe('1.16.0', () => {});
+			expect(echo.subscriber.subscribers.logs['1.16.0'].length).to.equal(1);
+		});
+	});
+
+	describe('removeContractLogsSubscribe', () => {
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setContractLogsSubscribe('1.16.0', callback);
+
+			const { length } = echo.subscriber.subscribers.logs['1.16.0'];
+			await echo.subscriber.removeContractLogsSubscribe('1.16.0', callback);
+			expect(echo.subscriber.subscribers.logs['1.16.0'].length).to.equal(length - 1);
+		});
+	});
 
 	after(async () => {
 		await echo.disconnect();

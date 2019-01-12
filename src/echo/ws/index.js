@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
 import { validateUrl, validateOptionsError } from '../../utils/validator';
-import { CHAIN_APIS, DEFAULT_CHAIN_APIS } from '../../constants/ws-constants';
+import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
 
 class WS extends EventEmitter {
 
@@ -43,9 +43,6 @@ class WS extends EventEmitter {
 		try {
 			await this._ws_rpc.login('', '');
 			await Promise.all(initPromises);
-			this._connected = true;
-			if (this.onOpenCb) this.onOpenCb('open');
-			this.emit('open');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 		}
@@ -56,6 +53,11 @@ class WS extends EventEmitter {
      */
 	async _onOpen() {
 		if (!this._ws_rpc) return;
+
+		this._connected = true;
+		if (this.onOpenCb) this.onOpenCb('open');
+		this.emit(STATUS.OPEN);
+
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
 			return;
@@ -72,7 +74,7 @@ class WS extends EventEmitter {
 		this._connected = false;
 		if (this.onCloseCb) this.onCloseCb('close');
 
-		this.emit('close');
+		this.emit(STATUS.CLOSE);
 	}
 
 	/**
@@ -82,7 +84,7 @@ class WS extends EventEmitter {
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
 
-		this.emit('error');
+		this.emit(STATUS.ERROR);
 	}
 
 	/**

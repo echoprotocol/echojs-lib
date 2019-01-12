@@ -2,6 +2,8 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
+import { STATUS } from '../constants/ws-constants';
+
 import {
 	isFunction,
 	isObjectId,
@@ -42,20 +44,21 @@ class Subscriber extends EventEmitter {
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
 	 *  @param {API} api
+	 *  @param {WS} ws
 	 */
-	constructor(cache, wsApi, api) {
+	constructor(cache, wsApi, api, ws) {
 		super();
 
 		this.cache = cache;
 		this._wsApi = wsApi;
 		this._api = api;
+		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
 			echorand: false,
 			block: false,
-			connect: false,
-			disconnect: false,
+			transaction: false,
 		};
 
 		this.subscribers = {
@@ -65,6 +68,9 @@ class Subscriber extends EventEmitter {
 			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
+			transaction: [],
+			market: {}, // [base_quote]: []
+			logs: {},	// [contractId]: []
 			connect: [],
 			disconnect: [],
 		};
@@ -90,6 +96,64 @@ class Subscriber extends EventEmitter {
 		if (this.subscribers.account.length !== 0) {
 			await this._setAccountSubscribe();
 		}
+
+		if (this.subscriptions.transaction) {
+			await this._setPendingTransactionCallback();
+		}
+
+		Object.keys(this.subscribers.market).forEach((key) => {
+			const [base, quote] = key.split('_');
+			this._subscribeToMarket(base, quote);
+		});
+	}
+
+	/**
+	 *  @method reset
+	 *
+	 *  @return {undefined}
+	 */
+	reset() {
+		this.subscriptions = {
+			account: false,
+			echorand: false,
+			block: false,
+			transaction: false,
+		};
+
+		this.subscribers = {
+			global: [],
+			account: [],
+			witness: [],
+			committeeMember: [],
+			echorand: [],
+			block: [],
+			transaction: [],
+			market: {},
+			logs: {},
+			connect: [],
+			disconnect: [],
+		};
+	}
+
+	/**
+	 *  @method cancelAllSubscribers
+	 *
+	 *  @return {undefined}
+	 */
+	cancelAllSubscribers() {
+		this.subscribers = {
+			global: [],
+			account: [],
+			witness: [],
+			committeeMember: [],
+			echorand: [],
+			block: [],
+			transaction: [],
+			market: {},
+			logs: {},
+			connect: [],
+			disconnect: [],
+		};
 	}
 
 	_updateObject(object) {
@@ -476,34 +540,6 @@ class Subscriber extends EventEmitter {
 		this.options = options;
 	}
 
-	/**
-	 *  @method reset
-	 *
-	 *  @return {undefined}
-	 */
-	reset() {
-		this.subscriptions = {
-			global: false,
-			account: false,
-			echorand: false,
-			block: false,
-			connect: false,
-			disconnect: false,
-		};
-
-		this.subscribers = {
-			global: [],
-			account: [],
-			witness: [],
-			committeeMember: [],
-			echorand: [],
-			block: [],
-			connect: [],
-			disconnect: [],
-
-		};
-	}
-
 	onAllUpdates() {}
 
 	onAccountUpdate() {}
@@ -585,6 +621,60 @@ class Subscriber extends EventEmitter {
      */
 	removeGlobalSubscribe(callback) {
 		this.subscribers.global = this.subscribers.global.filter((c) => c !== callback);
+	}
+
+	/**
+     *  @method _pendingTransactionUpdate
+     *
+     *  @param  {Array} result
+     *
+     *  @return {undefined}
+     */
+	_pendingTransactionUpdate(result) {
+		this.subscribers.transaction.forEach((callback) => {
+			callback(result);
+		});
+	}
+
+	/**
+     *  @method _setPendingTransactionCallback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async _setPendingTransactionCallback() {
+		await this._wsApi.database
+			.setPendingTransactionCallback(this._pendingTransactionUpdate.bind(this));
+		this.subscriptions.transaction = true;
+	}
+
+	/**
+     *  @method setPendingTransactionSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async setPendingTransactionSubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.transaction.push(callback);
+
+		if (!this.subscriptions.transaction) {
+			await this._setPendingTransactionCallback();
+		}
+	}
+
+	/**
+     *  @method removePendingTransactionSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removePendingTransactionSubscribe(callback) {
+		this.subscribers.transaction = this.subscribers.transaction.filter((c) => c !== callback);
 	}
 
 	/**
@@ -696,7 +786,7 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *
+     *
      * @param {Map} obj
      * @private
      */
@@ -711,9 +801,201 @@ class Subscriber extends EventEmitter {
 			}
 		}
 	}
-	onConnect() {}
 
-	onDisconnect() {}
+	/**
+	 *  @method setStatusSubscribe
+	 *
+	 *  @param  {String} status from enum ['connect', 'disconnect']
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	setStatusSubscribe(status, callback) {
+		if (!['connect', 'disconnect'].includes(status)) {
+			throw new Error('Invalid status');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (status === 'connect') {
+			this._ws.on(STATUS.OPEN, callback);
+			this.subscribers.connect.push(callback);
+		} else {
+			this._ws.on(STATUS.CLOSE, callback);
+			this.subscribers.disconnect.push(callback);
+		}
+
+	}
+
+	/**
+	 *  @method removeStatusSubscribe
+	 *
+	 *  @param  {String} status from enum ['connect', 'disconnect']
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeStatusSubscribe(status, callback) {
+		if (!['connect', 'disconnect'].includes(status)) {
+			throw new Error('Invalid status');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (status === 'connect') {
+			this._ws.off(STATUS.OPEN, callback);
+			this.subscribers.connect = this.subscribers.connect.filter((c) => c !== callback);
+		} else {
+			this._ws.off(STATUS.CLOSE, callback);
+			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
+		}
+
+	}
+
+	_marketUpdate(base, quote, result) {
+		const callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		callbacks.forEach((callback) => callback(result));
+	}
+
+	_subscribeToMarket(base, quote) {
+		this._wsApi.database.subscribeToMarket(
+			this._marketUpdate.bind(this, base, quote),
+			base,
+			quote,
+		);
+	}
+
+	_unsubscribeFromMarket(base, quote) {
+		this._wsApi.database.unsubscribeFromMarket(base, quote);
+	}
+
+	/**
+	 *  @method setMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async setMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) {
+			callbacks = [];
+			await this._subscribeToMarket(base, quote);
+		}
+
+		callbacks.push(callback);
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
+	}
+
+	/**
+	 *  @method removeMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async removeMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) { return; }
+
+		callbacks = callbacks.filter((c) => c !== callback);
+
+		if (!callbacks.length) {
+			await this._unsubscribeFromMarket(base, quote);
+			delete this.subscribers.market[`${base}_${quote}`];
+			return;
+		}
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
+	}
+
+	_contractLogsUpdate(contractId, result) {
+		const callbacks = this.subscribers.logs[contractId];
+
+		callbacks.forEach((callback) => callback(result));
+	}
+
+	async _subscribeToContractLogs(contractId, fromBlock) {
+		await this._wsApi.database.subscribeContractLogs(
+			this._contractLogsUpdate.bind(this, contractId),
+			contractId,
+			fromBlock,
+		);
+	}
+
+	/**
+	 *  @method setContractLogsSubscribe
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Function} callback
+	 *  @param  {Number} [fromBlock]
+	 *  @param  {Number} [toBlock]
+	 *
+	 *  @return {undefined}
+	 */
+	async setContractLogsSubscribe(contractId, callback, fromBlock, toBlock) {
+		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
+
+		// get blocks in interval
+		if (fromBlock) {
+			const logs = await this._wsApi.database.getContractLogs(
+				contractId,
+				fromBlock,
+				toBlock || globalInfo.head_block_number,
+			);
+			callback(logs);
+		}
+
+		// set subscriber from current block
+		if (!this.subscribers.logs[contractId]) {
+			this.subscribers.logs[contractId] = [];
+			await this._subscribeToContractLogs(contractId, globalInfo.head_block_number);
+		}
+
+		// push to callbacks
+		this.subscribers.logs[contractId].push(callback);
+	}
+
+	/**
+	 *  @method removeMarketSubscribe
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeContractLogsSubscribe(contractId, callback) {
+		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
+			.filter((c) => (c !== callback));
+	}
 
 }
 
