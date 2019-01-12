@@ -95,6 +95,55 @@ class Subscriber extends EventEmitter {
 		});
 	}
 
+	/**
+	 *  @method reset
+	 *
+	 *  @return {undefined}
+	 */
+	reset() {
+		this.subscriptions = {
+			account: false,
+			echorand: false,
+			block: false,
+			transaction: false,
+		};
+
+		this.subscribers = {
+			global: [],
+			account: [],
+			witness: [],
+			committeeMember: [],
+			echorand: [],
+			block: [],
+			transaction: [],
+			market: {},
+			logs: {},
+			connect: [],
+			disconnect: [],
+		};
+	}
+
+	/**
+	 *  @method cancelAllSubscribers
+	 *
+	 *  @return {undefined}
+	 */
+	cancelAllSubscribers() {
+		this.subscribers = {
+			global: [],
+			account: [],
+			witness: [],
+			committeeMember: [],
+			echorand: [],
+			block: [],
+			transaction: [],
+			market: {},
+			logs: {},
+			connect: [],
+			disconnect: [],
+		};
+	}
+
 	_updateObject(object) {
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
@@ -434,36 +483,6 @@ class Subscriber extends EventEmitter {
 	 */
 	setOptions(options) {
 		this.options = options;
-	}
-
-	/**
-	 *  @method reset
-	 *
-	 *  @return {undefined}
-	 */
-	reset() {
-		this.subscriptions = {
-			global: false,
-			account: false,
-			echorand: false,
-			block: false,
-			connect: false,
-			disconnect: false,
-		};
-
-		this.subscribers = {
-			global: [],
-			account: [],
-			witness: [],
-			committeeMember: [],
-			echorand: [],
-			block: [],
-			market: {},
-			logs: {},
-			connect: [],
-			disconnect: [],
-
-		};
 	}
 
 	onAllUpdates() {}
