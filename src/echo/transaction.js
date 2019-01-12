@@ -111,13 +111,8 @@ class Transaction {
 		this._expiration = undefined;
 	}
 
-	checkNotFinalized() {
-		if (this.finalized) throw new Error('already finalized');
-	}
-
-	checkFinalized() {
-		if (!this.finalized) throw new Error('transaction is not finalized');
-	}
+	checkNotFinalized() { if (this.finalized) throw new Error('already finalized'); }
+	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
 
 	/**
 	 * @param {string} name

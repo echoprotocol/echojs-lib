@@ -29,8 +29,9 @@ class IdType extends Type {
 		 */
 		this._reservedSpaceId = reservedSpaceId;
 		if (typeof objectTypeId === 'number') validateUnsignedSafeInteger(objectTypeId);
-		else if (!Array.isArray(objectTypeId) || !objectTypeId.every(validateUnsignedSafeInteger)) {
-			throw new Error('objectTypeId is not a number or array of numbers');
+		else if (!Array.isArray(objectTypeId)) throw new Error('objectTypeId is not a number or array of numbers');
+		else {
+			for (const objectIdSingleType of objectTypeId) validateUnsignedSafeInteger(objectIdSingleType);
 		}
 		/**
 		 * @private
@@ -52,9 +53,7 @@ class IdType extends Type {
 	 * @param {string|number} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
-	appendToByteBuffer(value, bytebuffer) {
-		bytebuffer.writeVarint32(this.toId(value));
-	}
+	appendToByteBuffer(value, bytebuffer) { bytebuffer.writeVarint32(this.toId(value)); }
 
 	/**
 	 * @param {string|number} value

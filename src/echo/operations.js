@@ -543,8 +543,9 @@ export const operationByName = {
 	transferFromBlind,
 	assetSettleCancel,
 	assetClaimFees,
+	createContract,
+	callContract,
 	contractTransfer,
-	contract,
 };
 
 /** @type {Array<Operation>} */
