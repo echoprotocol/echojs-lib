@@ -1,3 +1,4 @@
+/* eslint-disable max-len,no-continue */
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
@@ -23,6 +24,7 @@ import {
 	isWorkerId,
 	isBitAssetId,
 	isProposalId,
+	isArray,
 } from '../utils/validator';
 
 import {
@@ -31,6 +33,8 @@ import {
 	CLOSE_CALL_ORDER,
 	BITASSET_UPDATE,
 } from '../constants';
+
+import * as CacheMaps from '../constants/cache-maps';
 
 class Subscriber extends EventEmitter {
 
@@ -83,6 +87,14 @@ class Subscriber extends EventEmitter {
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
+		}
+
+		if (this.subscriptions.block) {
+			await this._setBlockApplyCallback();
+		}
+
+		if (this.subscribers.account.length !== 0) {
+			await this._setAccountSubscribe();
 		}
 
 		if (this.subscriptions.transaction) {
@@ -154,7 +166,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		const subscribedAccounts = this.subscribers.account.reduce(
-			(arr, { ids }) => arr.concat(ids),
+			(arr, { accounts }) => arr.concat(accounts),
 			[],
 		);
 		const subscribedWitnesses = this.subscribers.witness.reduce(
@@ -213,28 +225,33 @@ class Subscriber extends EventEmitter {
 
 		// check if dynamic global object
 		if (isDynamicGlobalObjectId(object.id)) {
-			this.cache.set('dynamicGlobalProperties', new Map(object));
+			this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, new Map(object));
 		}
 
 		// get object from cache by id -> update or create
 		let obj = this.cache.objectsById.get(object.id);
 		const previous = obj || new Map();
 		obj = obj ? obj.mergeDeep(new Map(object)) : new Map(object);
-		this.cache.setInMap('objectsById', object.id, obj);
+		this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj);
 
 		// update dependencies by id type
 		if (isAccountBalanceId(object.id)) {
-			let owner = this.cache.objectsById.get(object.owner);
+			let owner = this.cache.fullAccounts.get(object.owner);
 			if (!owner) {
 				return null;
 			}
 
 			const balances = owner.get('balances');
+
 			if (!balances) {
 				owner = owner.set('balances', new Map());
 			}
+
 			owner = owner.setIn(['balances', object.asset_type], object.id);
-			this.cache.setInMap('objectsById', object.owner, owner);
+			this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, object.owner, owner)
+				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, fromJS(object));
+
+			this._notifyAccountSubscribers(owner);
 		}
 
 		if (isAccountStatisticsId(object.id)) {
@@ -242,7 +259,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					this._api.fetchFullAccounts([object.owner], true, true);
+					this._api.getFullAccounts([object.owner], true, true);
 				}
 			} catch (err) {
 				//
@@ -250,13 +267,17 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isWitnessId(object.id)) {
-			this.cache.setInMap('witnessByAccountId', object.witness_account, obj);
-			this.cache.setInMap('objectsByVoteId', object.vote_id, obj);
+			this.cache.setInMap(CacheMaps.WITNESS_BY_ACCOUNT_ID, object.witness_account, obj)
+				.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
 		}
 
 		if (isCommitteeMemberId(object.id)) {
-			this.cache.setInMap('committeeMembersByAccount', object.committee_member_account, obj);
-			this.cache.setInMap('objectsByVoteId', object.vote_id, obj);
+			this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, object.committee_member_account, obj)
+				.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
+				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
 		}
 
 		if (isAccountId(object.id)) {
@@ -269,17 +290,26 @@ class Subscriber extends EventEmitter {
 			obj = obj.set('blacklisted_accounts', fromJS(object.blacklisted_accounts));
 
 			if (this.cache.objectsById.get(object.id)) {
-				this.cache.setInMap('objectsById', object.id, obj);
+
+				const mutableObj = obj.withMutations((map) => {
+					map.deleteAll(['statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name', 'votes', 'balances',
+						'vesting_balances', 'limit_orders', 'call_orders', 'settle_orders', 'proposals', 'assets', 'withdraws',
+					]);
+				});
+
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, mutableObj)
+					.setInMap(CacheMaps.ACCOUNTS_BY_ID, object.id, mutableObj);
 			}
 
-			if (this.cache.accountsByName.get(object.name)) {
-				this.cache.setInMap('accountsByName', object.name, obj);
+			if (this.cache.fullAccounts.has(object.id)) {
+				const mutableObj = this.cache.fullAccounts.get(object.id).mergeDeep(obj);
+				this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, object.id, mutableObj);
 			}
+
+			this._notifyAccountSubscribers(obj);
 		}
 
 		if (isAssetId(object.id)) {
-			this.cache.setInMap('assetBySymbol', object.symbol, obj);
-
 			const dynamic = obj.get('dynamic');
 			if (!dynamic) {
 				let dad = this.cache.objectsById.get(object.dynamic_asset_data_id);
@@ -292,10 +322,10 @@ class Subscriber extends EventEmitter {
 					dad = dad.set('asset_id', object.id);
 				}
 
-				this.cache.setInMap('objectsById', object.dynamic_asset_data_id, dad);
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.dynamic_asset_data_id, dad)
+					.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, object.dynamic_asset_data_id, dad);
 
 				obj = obj.set('dynamic', dad);
-				this.cache.setInMap('objectsById', object.id, obj);
 			}
 
 			const bitasset = obj.get('bitasset');
@@ -309,11 +339,16 @@ class Subscriber extends EventEmitter {
 				if (!bad.get('asset_id')) {
 					bad = bad.set('asset_id', object.id);
 				}
-				this.cache.setInMap('objectsById', object.bitasset_data_id, bad);
+
+				this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.bitasset_data_id, bad)
+					.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, object.bitasset_data_id, bad);
 
 				obj = obj.set('bitasset', bad);
-				this.cache.setInMap('objectsById', object.id, obj);
 			}
+
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
+				.setInMap(CacheMaps.ASSET_BY_ASSET_ID, object.id, obj)
+				.setInMap(CacheMaps.ASSET_BY_SYMBOL, object.symbol, obj);
 		}
 
 		if (isDynamicAssetDataId(object.id)) {
@@ -322,14 +357,21 @@ class Subscriber extends EventEmitter {
 				let asset = this.cache.objectsById.get(assetId);
 				if (asset && asset.set) {
 					asset = asset.set('dynamic', obj);
-					this.cache.setInMap('objectsById', assetId, asset);
+
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, assetId, asset)
+						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
 				}
 			}
+
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
+				.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, object.id, obj);
+
 		}
 
 		if (isWorkerId(object.id)) {
-			this.cache.setInMap('objectsByVoteId', object.vote_for, obj);
-			this.cache.setInMap('objectsByVoteId', object.vote_against, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_for, obj);
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_against, obj);
 		}
 
 		if (isBitAssetId(object.id)) {
@@ -340,15 +382,21 @@ class Subscriber extends EventEmitter {
 				if (asset) {
 					asset = asset.set('bitasset', obj);
 					this.emit(BITASSET_UPDATE, asset);
-					this.cache.setInMap('objectsById', assetId, asset);
+
+					this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, assetId, asset)
+						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
+						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
 				}
 			}
+
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
+				.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, object.id, obj);
 		}
 
 		if (isCallOrderId(object.id)) {
 			this.emit(UPDATE_CALL_ORDER, object);
 
-			let account = this.cache.objectsById.get(object.borrower);
+			let account = this.cache.fullAccounts.get(object.borrower);
 
 			if (account) {
 				if (!account.has('call_orders')) {
@@ -357,44 +405,51 @@ class Subscriber extends EventEmitter {
 				const callOrders = account.get('call_orders');
 				if (!callOrders.has(object.id)) {
 					account = account.set('call_orders', callOrders.add(object.id));
-					this.cache.setInMap('objectsById', account.get('id'), account);
+					this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account)
+						.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, fromJS(object));
 
 					// Force subscription to the object in the witness node by calling get_objects
 					this._api.getObjects([object.id]);
+					this._notifyAccountSubscribers(account);
 				}
 			}
 		}
 
 		if (isLimitOrderId(object.id)) {
-			let account = this.cache.objectsById.get(object.seller);
+			let account = this.cache.fullAccounts.get(object.seller);
 
 			if (account) {
 
-				if (!account.has('orders')) {
-					account = account.set('orders', new Set());
+				if (!account.has('limit_orders')) {
+					account = account.set('limit_orders', new Set());
 				}
-				const limitOrders = account.get('orders');
+				const limitOrders = account.get('limit_orders');
 
 				if (!limitOrders.has(object.id)) {
-					account = account.set('orders', limitOrders.add(object.id));
-					this.cache.setInMap('objectsById', account.get('id'), account);
+					account = account.set('limit_orders', limitOrders.add(object.id));
+					this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account)
+						.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, fromJS(object));
 
 					// Force subscription to the object in the witness node by calling get_objects
 					this._api.getObjects([object.id]);
+					this._notifyAccountSubscribers(account);
 				}
 			}
 		}
 
 		if (isProposalId(object.id)) {
 			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
-				let impactedAccount = this.cache.objectsById.get(id);
+				let impactedAccount = this.cache.fullAccounts.get(id);
 				if (impactedAccount) {
 					let proposals = impactedAccount.get('proposals', new Set());
 
 					if (!proposals.includes(object.id)) {
 						proposals = proposals.add(object.id);
 						impactedAccount = impactedAccount.set('proposals', proposals);
+
+						this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, impactedAccount.get('id'), impactedAccount);
 						this._updateObject(impactedAccount.toJS());
+						this._notifyAccountSubscribers(impactedAccount);
 					}
 				}
 			});
@@ -413,12 +468,12 @@ class Subscriber extends EventEmitter {
 
 		if (isLimitOrderId(id)) {
 			// get account from objects by seller param
-			let account = this.cache.objectsById.get(obj.get('seller'));
+			let account = this.cache.fullAccounts.get(obj.get('seller'));
 			// if account get orders, delete this order
-			if (account && account.has('orders') && account.get('orders').has(obj)) {
-				const limitOrders = account.get('orders');
-				account = account.set('orders', limitOrders.delete(obj));
-				this.cache.setInMap('objectsById', account.get('id'), account);
+			if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
+				const limitOrders = account.get('limit_orders');
+				account = account.set('limit_orders', limitOrders.delete(obj));
+				this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account);
 			}
 
 			type = CANCEL_LIMIT_ORDER;
@@ -426,19 +481,19 @@ class Subscriber extends EventEmitter {
 
 		if (isCallOrderId(id)) {
 			// get account from objects by borrower param
-			let account = this.cache.objectsById.get(obj.get('borrower'));
+			let account = this.cache.fullAccounts.get(obj.get('borrower'));
 			// if account get call_orders, delete this order
 			if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
 				const callOrders = account.get('call_orders');
 				account = account.set('call_orders', callOrders.delete(obj));
-				this.cache.setInMap('objectsById', account.get('id'), account);
+				this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account);
 			}
 
 			type = CLOSE_CALL_ORDER;
 		}
 
 		// delete from objects
-		this.cache.setInMap('objectsById', id, null);
+		this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, id, null);
 
 		// return type
 		return type;
@@ -543,12 +598,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method setGlobalSubscribe
-	 *
-	 *  @param  {Function} callback
-	 *
-	 *  @return {Promise.<undefined>}
-	 */
+     *  @method setGlobalSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
 	setGlobalSubscribe(callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -558,23 +613,23 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method removeGlobalSubscribe
-	 *
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
+     *  @method removeGlobalSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
 	removeGlobalSubscribe(callback) {
 		this.subscribers.global = this.subscribers.global.filter((c) => c !== callback);
 	}
 
 	/**
-	 *  @method _pendingTransactionUpdate
-	 *
-	 *  @param  {Array} result
-	 *
-	 *  @return {undefined}
-	 */
+     *  @method _pendingTransactionUpdate
+     *
+     *  @param  {Array} result
+     *
+     *  @return {undefined}
+     */
 	_pendingTransactionUpdate(result) {
 		this.subscribers.transaction.forEach((callback) => {
 			callback(result);
@@ -582,10 +637,10 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	*  @method _setPendingTransactionCallback
-	*
-	*  @return {Promise.<undefined>}
-	*/
+     *  @method _setPendingTransactionCallback
+     *
+     *  @return {Promise.<undefined>}
+     */
 	async _setPendingTransactionCallback() {
 		await this._wsApi.database
 			.setPendingTransactionCallback(this._pendingTransactionUpdate.bind(this));
@@ -593,12 +648,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method setPendingTransactionSubscribe
-	 *
-	 *  @param  {Function} callback
-	 *
-	 *  @return {Promise.<undefined>}
-	 */
+     *  @method setPendingTransactionSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
 	async setPendingTransactionSubscribe(callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -612,17 +667,140 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method removePendingTransactionSubscribe
-	 *
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
+     *  @method removePendingTransactionSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
 	removePendingTransactionSubscribe(callback) {
 		this.subscribers.transaction = this.subscribers.transaction.filter((c) => c !== callback);
 	}
 
-	onBlockApply() {}
+	/**
+     *  @method _blockApplyUpdate
+     *
+     *  @param  {Array} result
+     *
+     *  @return {undefined}
+     */
+	_blockApplyUpdate(result) {
+		this.subscribers.block.forEach((callback) => {
+			callback(result);
+		});
+	}
+
+
+	/**
+     *  @method _setBlockApplyCallback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async _setBlockApplyCallback() {
+		await this._wsApi.database.setBlockAppliedCallback(this._blockApplyUpdate.bind(this));
+		this.subscriptions.block = true;
+	}
+
+	/**
+     *  @method setBlockApplySubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async setBlockApplySubscribe(callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		this.subscribers.block.push(callback);
+
+		if (!this.subscriptions.block) {
+			await this._setBlockApplyCallback();
+		}
+	}
+
+	/**
+     *  @method removeBlockApplySubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removeBlockApplySubscribe(callback) {
+		this.subscribers.block = this.subscribers.block.filter((c) => c !== callback);
+	}
+
+	/**
+     *  @method _setAccountSubscribe
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async _setAccountSubscribe() {
+
+		const array = this.subscribers.account.reduce((accum, { accounts }) => {
+			accum.push(...accounts);
+			return accum;
+		}, []);
+
+		const result = new Set(array);
+
+		if (result.size === 0) {
+			return;
+		}
+
+		await this._api.getFullAccounts(result.toArray());
+	}
+
+	/**
+     *  @method setAccountSubscribe
+     *
+     *  @param  {Function} callback
+     *  @param  {Array.<String>} accounts
+     *
+     *  @return {Promise.<undefined>}
+     */
+	async setAccountSubscribe(callback, accounts) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (!isArray(accounts)) throw new Error('Accounts should be an array');
+		if (accounts.length < 1) throw new Error('Accounts length should be more then 0');
+		if (!accounts.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
+
+		await this._api.getFullAccounts(accounts);
+
+		this.subscribers.account.push({ callback, accounts });
+	}
+
+	/**
+     *  @method removeAccountSubscribe
+     *
+     *  @param  {Function} callback
+     *
+     *  @return {undefined}
+     */
+	removeAccountSubscribe(callback) {
+		this.subscribers.account = this.subscribers.account.filter(({ callback: innerCallback }) => innerCallback !== callback);
+	}
+
+	/**
+     *
+     * @param {Map} obj
+     * @private
+     */
+	_notifyAccountSubscribers(obj) {
+		const { length } = this.subscribers.account;
+
+		for (let i = 0; i < length; i += 1) {
+
+			if (this.subscribers.account[i].accounts.includes(obj.get('id'))) {
+				this.subscribers.account[i].callback(obj);
+				continue;
+			}
+		}
+	}
 
 	/**
 	 *  @method setStatusSubscribe

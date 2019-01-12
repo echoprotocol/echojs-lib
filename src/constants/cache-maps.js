@@ -36,7 +36,7 @@ export const ACCOUNT_REFERENCES_BY_ACCOUNT_ID = 'accountReferencesByAccountId';
 
 export const BALANCE_OBJECTS_BY_BALANCE_ID = 'balanceObjectsByBalanceId';
 export const GET_ACCOUNT_REFS_OF_ACCOUNTS_CALLS = 'getAccountRefsOfAccountsCalls';
-export const FETCHING_GET_FULL_ACCOUNTS = 'fetchingGetFullAccounts';
+export const FULL_ACCOUNTS = 'fullAccounts';
 
 export const BIT_ASSETS_BY_BIT_ASSET_ID = 'bitAssetsByBitAssetId';
 export const DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID = 'dynamicAssetDataByDynamicAssetDataId';

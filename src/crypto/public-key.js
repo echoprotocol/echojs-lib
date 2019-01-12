@@ -5,7 +5,7 @@ import { encode, decode } from 'bs58';
 import assert from 'assert';
 import deepEqual from 'deep-equal';
 
-import { CHAIN_CONFIG } from '../constants';
+import CHAIN_CONFIG from '../constants/chain-config';
 import { sha256, sha512, ripemd160 } from './hash';
 
 const secp256k1 = getCurveByName('secp256k1');
