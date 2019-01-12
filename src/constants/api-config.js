@@ -30,3 +30,5 @@ export const CONTRACT_HISTORY_MAX_LIMIT = 100;
 
 export const START_OPERATION_HISTORY_ID = '1.11.0';
 export const STOP_OPERATION_HISTORY_ID = '1.11.0';
+
+export const EXPIRATION_MAX_LAG_SECONDS = 30;
