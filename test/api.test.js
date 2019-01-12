@@ -267,6 +267,8 @@ describe('API', () => {
                     const witnessVoteId = objects[2].vote_id;
 
                     expect(objects).to.be.an('array');
+
+                    console.log(objects[0])
                     expect(objects).to.deep.include(cache.objectsById.get(assetId));
                     expect(objects).to.deep.include(cache.objectsById.get(accountId));
                     expect(objects).to.deep.include(cache.objectsById.get(witnessId));
