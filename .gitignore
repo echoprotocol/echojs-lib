@@ -68,3 +68,4 @@ apidoc
 .idea/
 
 dist/
+lib/

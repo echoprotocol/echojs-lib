@@ -6,6 +6,8 @@
 	"scripts": {
 		"test": "mocha --require babel-core/register --require babel-polyfill --exit",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
+		"build": "babel src --out-dir dist",
+		"prepublishOnly": "build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
 		"lint:fix": "npm run lint -- --fix"
