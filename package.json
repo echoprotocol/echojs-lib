@@ -4,8 +4,9 @@
   "description": "Pure JavaScript ECHO library for node.js",
   "main": "./index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register test/**/*.js",
+    "test": "mocha --compilers js:babel-core/register --require babel-polyfill test/**/*.js",
     "test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
+    "test-redux": "mocha --compilers js:babel-core/register --require babel-polyfill test/redux.test.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"
@@ -28,6 +29,7 @@
     "crypto-js": "^3.1.9-1",
     "deep-equal": "^1.0.1",
     "ecurve": "^1.0.6",
+    "ed25519": "0.0.4",
     "events": "^3.0.0",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
@@ -40,11 +42,13 @@
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "redux": "^4.0.1"
   }
 }

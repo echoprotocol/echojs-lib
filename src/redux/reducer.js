@@ -1,5 +1,7 @@
 import { Map } from 'immutable';
 
+import { isArray, isString, isVoid } from '../utils/validator';
+
 let DEFAULT_FIELDS = Map({
 	subbedAccounts: new Map(),
 	subbedWitnesses: new Map(),
@@ -53,20 +55,31 @@ let DEFAULT_FIELDS = Map({
 
 /**
  *
- * @param {Object|undefined} caches
- * @returns {*}
+ * @param {Array|undefined|null} caches
+ * @returns {Function}
  */
 export default (caches) => {
-	if (caches) {
-		DEFAULT_FIELDS = caches;
+
+	if (!isVoid(caches)) {
+		if (isArray(caches) && caches.every((c) => isString(c))) {
+			DEFAULT_FIELDS = new Map(caches.reduce((obj, c) => {
+
+				if (DEFAULT_FIELDS.has(c)) {
+					obj[c] = DEFAULT_FIELDS.get(c);
+				}
+
+				return obj;
+			}, {}));
+		} else {
+			throw new Error('Caches is invalid');
+		}
 	}
 
-	return (state = DEFAULT_FIELDS, action) => {
-		const { payload } = action;
-		switch (action.type) {
-			case 'SET':
+	return (state = DEFAULT_FIELDS, { type, payload = {} }) => {
+		switch (type) {
+			case 'ECHO_SET_CACHE':
 				return state.has(payload.field) ? state.set(payload.field, payload.value) : state;
-			case 'RESET':
+			case 'ECHO_RESET_CACHE':
 				return DEFAULT_FIELDS;
 			default:
 				return state;
