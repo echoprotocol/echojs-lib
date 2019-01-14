@@ -1,4 +1,3 @@
-import "babel-polyfill";
 import { expect } from 'chai';
 import WS from '../src/echo/ws'
 import WSAPI from '../src/echo/ws-api'
@@ -6,7 +5,6 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 import { inspect } from 'util';
-import pk from '../src/crypto/private-key';
 
 import echo, { constants } from '../index';
 
@@ -299,6 +297,7 @@ describe('API', () => {
                     const assets = await api.lookupAssetSymbols([assetKey]);
 
                     expect(assets).to.be.an('array');
+
                     expect(assets[0]).to.deep.equal(cache.assetByAssetId.get(assetId).toJS());
                     expect(assets[0]).to.deep.equal(cache.objectsById.get(assetId).toJS());
                     expect(assets[0]).to.deep.equal(cache.assetBySymbol.get(assetKey).toJS());
