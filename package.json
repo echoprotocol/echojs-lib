@@ -2,11 +2,11 @@
 	"name": "echojs-lib",
 	"version": "1.0.0",
 	"description": "Pure JavaScript ECHO library for node.js",
-	"main": "./index.js",
+	"main": "./lib/index.js",
 	"scripts": {
 		"test": "mocha --require babel-core/register --require babel-polyfill --exit",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
-		"build": "babel src --out-dir dist",
+		"build": "babel src --out-dir lib",
 		"prepublishOnly": "build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
