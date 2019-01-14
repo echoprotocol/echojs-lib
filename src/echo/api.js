@@ -64,11 +64,9 @@ class API {
 		}
 
 		try {
-			let requestedObject = await this.wsApi.database[methodName]();
+			const requestedObject = await this.wsApi.database[methodName]();
 
-			requestedObject = new Map(requestedObject);
-
-			this.cache.set(cacheName, requestedObject);
+			this.cache.set(cacheName, new Map(requestedObject));
 
 			return requestedObject;
 		} catch (error) {
@@ -100,7 +98,7 @@ class API {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -126,14 +124,14 @@ class API {
 				continue;
 			}
 
-			requestedObject = new Map(requestedObject);
 			resultArray[i] = requestedObject;
+			requestedObject = new Map(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
 		}
 
-		return new List(resultArray);
+		return resultArray;
 	}
 
 	/**
@@ -152,7 +150,7 @@ class API {
 			const cacheValue = this.cache[cacheName].get(key);
 
 			if (cacheValue) {
-				return cacheValue;
+				return cacheValue.toJS();
 			}
 		}
 
@@ -169,7 +167,7 @@ class API {
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 
-			return requestedObject;
+			return requestedObject.toJS();
 		} catch (error) {
 			throw error;
 		}
@@ -1374,7 +1372,7 @@ class API {
 				const cacheValue = this.cache[CacheMaps.OBJECTS_BY_VOTE_ID].get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1422,10 +1420,10 @@ class API {
 
 			}
 
-			resultArray[i] = requestedObject;
+			resultArray[i] = requestedObject.toJS();
 		}
 
-		return new List(resultArray);
+		return resultArray;
 	}
 
 	/**
