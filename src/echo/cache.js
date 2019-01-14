@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len,no-continue,no-restricted-syntax */
 import { Map } from 'immutable';
 
 import { isFunction, isObject, isVoid } from '../utils/validator';
@@ -66,10 +66,17 @@ class Cache {
 		this.dynamicGlobalProperties = new Map();
 
 		this._resetRedux();
+	}
 
-		this.redux = {
-			store: null,
-		};
+	_copyCacheToRedux() {
+		if (!this.redux.store) return;
+
+		const keys = Object.keys(this);
+
+		for (const field of keys) {
+			const value = this[field];
+			this.redux.store.dispatch({ type: 'ECHO_SET_CACHE', payload: { field, value } });
+		}
 	}
 
 	setInMap(map, key, value) {
@@ -102,9 +109,12 @@ class Cache {
 	setStore({ store }) {
 		if (isVoid(store)) return;
 
-		if (!isObject(store) || !isFunction(store.getState) || isVoid(store.getState())) throw new Error('Expected the state to be available');
+		if (!isObject(store) || !isFunction(store.getState) || !isFunction(store.dispatch) || isVoid(store.getState())) {
+			throw new Error('Expected the state and dispatch to be available');
+		}
 
 		this.redux.store = store;
+		this._copyCacheToRedux();
 	}
 
 	setOptions(options) {

@@ -148,6 +148,27 @@ describe('redux', () => {
 
             expect(cache.getIn(['objectsById', id])).to.deep.equal(account);
         });
+
+        it('state does update after store set', async () => {
+            const caches = ['objectsById'];
+
+            const store = createStore(
+                combineReducers({
+                    defaultReducer,
+                    cache: cacheReducer(caches),
+                })
+            );
+
+            const id = '1.2.0';
+
+            const account = await echo.api.getObject(id);
+
+            echo.syncCacheWithStore(store);
+
+            const { cache } = store.getState();
+
+            expect(cache.getIn(['objectsById', id])).to.deep.equal(account);
+        });
     });
 });
 
