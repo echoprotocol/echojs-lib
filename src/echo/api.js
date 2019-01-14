@@ -1803,6 +1803,63 @@ class API {
 	}
 
 	/**
+	 *  @method broadcastTransaction
+	 * 	Broadcast a transaction to the network.
+	 *
+	 * 	@param  {Object} tr
+	 *  @param  {Number} tr.ref_block_num
+	 *  @param  {Number} tr.ref_block_prefix
+	 *  @param  {Array} tr.operations
+	 *  @param  {Array} tr.signatures
+	 *
+	 *  @return {Promise}
+	 */
+	broadcastTransaction(tr) {
+		if (!tr) {
+			return Promise.reject(new Error('Transaction is required'));
+		}
+
+		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
+			return Promise.reject(new Error('Invalid transaction'));
+		}
+
+		return this.wsApi.network.broadcastTransaction(tr);
+	}
+
+	/**
+	 *  @method broadcastBlock
+	 * 	Broadcast a block to the network.
+	 *
+	 *  @param  {Object} block
+	 *  @param  {Number} block.previous  [previous block id]
+	 *  @param  {Number} block.timestamp  [block timestamp]
+	 *  @param  {String} block.witness  [witness id]
+	 *  @param  {String} block.transaction_merkle_root  [merkle root]
+	 *  @param  {String} block.state_root_hash  [hash]
+	 *  @param  {String} block.result_root_hash  [result hash]
+	 *  @param  {String} block.witness_signature  [witness signature]
+	 *  @param  {String} block.ed_signature  [eddsa signature]
+	 *  @param  {Array} block.verifications  [{witness-id, witness-signature}]
+	 *  @param  {Number} block.round  [round id]
+	 *  @param  {Number} block.rand  [rand]
+	 *  @param  {String} block.cert  [certificate]
+	 *  @param  {Array} block.transactions
+	 *
+	 *  @return {Promise}
+	 */
+	broadcastBlock(block) {
+		if (!block) {
+			return Promise.reject(new Error('Block is required'));
+		}
+
+		if (!block.previous || !block.timestamp || !block.witness) {
+			return Promise.reject(new Error('Invalid block'));
+		}
+
+		return this.wsApi.network.broadcastBlock(block);
+	}
+
+	/**
 	*  @method getAssetHolders
 	*  Retrieve the information about the holders of the specified asset.
 	*
