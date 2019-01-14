@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --require babel-polyfill test/**/*.js",
     "test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
+    "test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"
@@ -19,6 +20,7 @@
   "dependencies": {
     "assert": "^1.4.1",
     "bigi": "^1.4.2",
+    "bignumber.js": "^8.0.1",
     "bs58": "^4.0.1",
     "buffer": "^5.2.1",
     "bytebuffer": "^5.0.1",
@@ -30,6 +32,7 @@
     "ecurve": "^1.0.6",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
+    "tweetnacl": "^1.0.0",
     "ws": "^6.1.2"
   },
   "devDependencies": {
@@ -40,9 +43,13 @@
     "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
     "eslint": "^4.18.2",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
     "mocha": "^5.2.0"
   }
 }

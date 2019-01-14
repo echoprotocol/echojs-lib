@@ -19,8 +19,12 @@ class Echo {
 
 		try {
 			await this._ws.connect(address, options);
-			if (this._isInitModules) return;
-			this._initModules();
+
+			if (this._isInitModules) {
+				return;
+			}
+
+			await this._initModules();
 
 			this.cache.setOptions(options);
 			this.api.setOptions(options);
@@ -31,24 +35,29 @@ class Echo {
 
 	}
 
-	_initModules() {
+	async _initModules() {
 		this._isInitModules = true;
 
 		this._wsApi = new WSAPI(this._ws);
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi);
+		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
+
+		await this.subscriber.init();
+
+		this._ws.on('open', async () => {
+			await this.subscriber.init();
+		});
 	}
 
-	reconnect() {
-		this._ws.reconnect();
+	async reconnect() {
+		await this._ws.reconnect();
 	}
 
-	disconnect() {
-		this.api.reset();
+	async disconnect() {
 		this.subscriber.reset();
-		this._ws.close();
+		await this._ws.close();
 	}
 
 }

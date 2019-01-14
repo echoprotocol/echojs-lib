@@ -162,7 +162,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getFullAccounts(accountNamesOrIds, subscribe) {
-		return this.db.exec('get_full_accounts', [accountNameOrIds, subscribe]);
+		return this.db.exec('get_full_accounts', [accountNamesOrIds, subscribe]);
 	}
 
 	/**
@@ -297,7 +297,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
-		return this.db.exec('get_order_book', [baseAssetId, quoteAssetId, depth]);
+		return this.db.exec('get_order_book', [baseAssetName, quoteAssetName, depth]);
 	}
 
 	/**
@@ -359,13 +359,13 @@ class DatabaseAPI {
 	/**
 	 *  @method unsubscribeFromMarket
 	 *
-	 *  @param  {String} baseAssetName
-	 *  @param  {String} quoteAssetName
+	 *  @param  {String} baseAssetId
+	 *  @param  {String} quoteAssetId
 	 *
 	 *  @return {Promise}
 	 */
-	unsubscribeFromMarket(baseAssetName, quoteAssetName) {
-		return this.db.exec('subscribe_to_market', [baseAssetName, quoteAssetName]);
+	unsubscribeFromMarket(baseAssetId, quoteAssetId) {
+		return this.db.exec('unsubscribe_to_market', [baseAssetId, quoteAssetId]);
 	}
 
 	/**
@@ -539,6 +539,17 @@ class DatabaseAPI {
 	 */
 	getPotentialSignatures(transaction) {
 		return this.db.exec('get_potential_signatures', [transaction]);
+	}
+
+	/**
+     *  @method getPotentialAddressSignatures
+     *
+     *  @param  {Object} transaction
+     *
+     *  @return {Promise}
+     */
+	getPotentialAddressSignatures(transaction) {
+		return this.db.exec('get_potential_address_signatures', [transaction]);
 	}
 
 	/**
