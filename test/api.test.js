@@ -8,10 +8,61 @@ import API from '../src/echo/api'
 import { inspect } from 'util';
 import pk from '../src/crypto/private-key';
 
+import echo, { constants } from '../index';
+
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
 const url = 'ws://195.201.164.54:6311';
 
 describe('API', () => {
+	describe('ASSET API', () => {
+		before(async () => {
+			await echo.connect(url, {
+				connectionTimeout: 5000,
+				maxRetries: 5,
+				pingTimeout: 3000,
+				pingInterval: 3000,
+				debug: false,
+				apis: constants.WS_CONSTANTS.CHAIN_APIS,
+			});
+		});
+
+		describe('- get asset holders (start = 1, limit = 1)', () => {
+			it('test', async () => {
+				const result = await echo.api.getAssetHolders(constants.CORE_ASSET_ID, 1, 1);
+
+				expect(result).to.be.an('array').that.is.not.empty;
+				expect(result[0]).to.be.an('object').that.is.not.empty;
+				expect(result[0].name).to.be.a('string');
+				expect(result[0].account_id).to.be.a('string');
+				expect(result[0].amount).to.be.a('string');
+			});
+		});
+
+		describe('- get asset holders count', () => {
+			it('test', async () => {
+				const result = await echo.api.getAssetHoldersCount(constants.CORE_ASSET_ID);
+
+				expect(result).to.be.a('number');
+			});
+		});
+
+		describe('- get all asset holders', () => {
+			it('test', async () => {
+				const result = await echo.api.getAllAssetHolders();
+
+				expect(result).to.be.an('array').that.is.not.empty;
+				expect(result[0]).to.be.an('object').that.is.not.empty;
+				expect(result[0].asset_id).to.be.a('string');
+				expect(result[0].count).to.be.a('number');
+			});
+		});
+
+		after(() => {
+			echo.disconnect();
+		});
+
+	});
+
     describe('database', () => {
         const ws = new WS();
         beforeEach(async () => {

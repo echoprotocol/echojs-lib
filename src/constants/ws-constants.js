@@ -11,3 +11,14 @@ export const STATUS = {
 	ERROR: 'error',
 	CLOSE: 'close',
 };
+
+export default {
+	CONNECTION_TIMEOUT,
+	MAX_RETRIES,
+	PING_TIMEOUT,
+	PING_INTERVAL,
+	DEBUG,
+	CHAIN_APIS,
+	DEFAULT_CHAIN_APIS,
+	STATUS,
+};
