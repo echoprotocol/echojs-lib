@@ -236,12 +236,12 @@ describe('API', () => {
                     const accountId2 = '1.2.6';
                     const accounts = await api.getAccounts([accountId1, accountId2]);
 
-                    expect(accounts).to.be.an('object');
+                    expect(accounts).to.be.an('array');
 
-                    expect(accounts.get(0)).to.deep.equal(cache.accountsById.get(accountId1));
-                    expect(accounts.get(0)).to.deep.equal(cache.objectsById.get(accountId1));
-                    expect(accounts.get(1)).to.deep.equal(cache.accountsById.get(accountId2));
-                    expect(accounts.get(1)).to.deep.equal(cache.objectsById.get(accountId2));
+                    expect(accounts[0]).to.deep.equal(cache.accountsById.get(accountId1).toJS());
+                    expect(accounts[0]).to.deep.equal(cache.objectsById.get(accountId1).toJS());
+                    expect(accounts[1]).to.deep.equal(cache.accountsById.get(accountId2).toJS());
+                    expect(accounts[1]).to.deep.equal(cache.objectsById.get(accountId2).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -258,13 +258,13 @@ describe('API', () => {
 
                     const accounts = await api.getFullAccounts([accountId1, accountId2]);
 
-                    expect(accounts).to.be.an('object');
+                    expect(accounts).to.be.an('array');
 
-                    expect(accounts.get(0)).to.deep.equal(cache.fullAccounts.get(accountId1));
+                    expect(accounts[0]).to.deep.equal(cache.fullAccounts.get(accountId1).toJS());
                     expect(cache.accountsById.get(accountId1)).to.be.an('object');
                     expect(cache.objectsById.get(accountId1)).to.be.an('object');
 
-                    expect(accounts.get(1)).to.deep.equal(cache.fullAccounts.get(accountId2));
+                    expect(accounts[1]).to.deep.equal(cache.fullAccounts.get(accountId2).toJS());
                     expect(cache.accountsById.get(accountId2)).to.be.an('object');
                     expect(cache.objectsById.get(accountId2)).to.be.an('object');
                 } catch (e) {
@@ -298,10 +298,11 @@ describe('API', () => {
                     const assetId = '1.3.0';
                     const assets = await api.lookupAssetSymbols([assetKey]);
 
-                    expect(assets).to.be.an('object');
-                    expect(assets.get(0)).to.deep.equal(cache.assetByAssetId.get(assetId));
-                    expect(assets.get(0)).to.deep.equal(cache.objectsById.get(assetId));
-                    expect(assets.get(0)).to.deep.equal(cache.assetBySymbol.get(assetKey));
+                    expect(assets).to.be.an('array');
+                    console.log('assets', assets[0], cache.assetByAssetId.get(assetId).toJS())
+                    expect(assets[0]).to.deep.equal(cache.assetByAssetId.get(assetId).toJS());
+                    expect(assets[0]).to.deep.equal(cache.objectsById.get(assetId).toJS());
+                    expect(assets[0]).to.deep.equal(cache.assetBySymbol.get(assetKey).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -318,9 +319,9 @@ describe('API', () => {
 
                     const assets = await api.getAssets([assetId1]);
 
-                    expect(assets).to.be.an('object');
-                    expect(assets.get(0)).to.deep.equal(cache.assetByAssetId.get(assetId1));
-                    expect(assets.get(0)).to.deep.equal(cache.objectsById.get(assetId1));
+                    expect(assets).to.be.an('array');
+                    expect(assets[0]).to.deep.equal(cache.assetByAssetId.get(assetId1).toJS());
+                    expect(assets[0]).to.deep.equal(cache.objectsById.get(assetId1).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -340,22 +341,22 @@ describe('API', () => {
 
                     const objects = await api.getObjects([accountId, assetId, witnessId]);
 
-                    const accountName = objects.get(0).get('name');
-                    const witnessAccountId = objects.get(2).get('witness_account');
-                    const witnessVoteId = objects.get(2).get('vote_id');
+                    const accountName = objects[0].name;
+                    const witnessAccountId = objects[2].witness_account;
+                    const witnessVoteId = objects[2].vote_id;
 
-                    expect(objects).to.be.an('object');
+                    expect(objects).to.be.an('array');
 
-                    expect(objects.get(0)).to.deep.equal(cache.accountsById.get(accountId));
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(accountId));
+                    expect(objects[0]).to.deep.equal(cache.accountsById.get(accountId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(accountId).toJS());
                     expect(accountId).to.equal(cache.accountsByName.get(accountName));
-                    expect(objects.get(1)).to.deep.equal(cache.objectsById.get(assetId));
-                    expect(objects.get(1)).to.deep.equal(cache.assetByAssetId.get(assetId));
-                    expect(objects.get(1)).to.deep.equal(cache.assetBySymbol.get(assetSymbol));
-                    expect(objects.get(2)).to.deep.equal(cache.objectsById.get(witnessId));
-                    expect(objects.get(2)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
-                    expect(objects.get(2)).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId));
-                    expect(objects.get(2)).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId));
+                    expect(objects[1]).to.deep.equal(cache.objectsById.get(assetId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.assetByAssetId.get(assetId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.assetBySymbol.get(assetSymbol).toJS());
+                    expect(objects[2]).to.deep.equal(cache.objectsById.get(witnessId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.witnessByWitnessId.get(witnessId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -393,10 +394,10 @@ describe('API', () => {
 
                     expect(account).to.exist;
 
-                    const id = account.get('id');
+                    const { id } = account;
 
-                    expect(account).to.deep.equal(cache.objectsById.get(id));
-                    expect(account).to.deep.equal(cache.accountsById.get(id));
+                    expect(account).to.deep.equal(cache.objectsById.get(id).toJS());
+                    expect(account).to.deep.equal(cache.accountsById.get(id).toJS());
                     expect(id).to.equal(cache.accountsByName.get(accountName));
                 } catch (e) {
                     throw e;
@@ -431,7 +432,7 @@ describe('API', () => {
                     const api = new API(cache, wsApi);
 
                     const contracts = await api.getAllContracts();
-                    expect(contracts).to.be.an('object');
+                    expect(contracts).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }
@@ -447,7 +448,7 @@ describe('API', () => {
                     const lowerBoundName = 't';
 
                     const accounts = await api.lookupAccounts(lowerBoundName);
-                    expect(accounts).to.be.an('object');
+                    expect(accounts).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }
@@ -463,7 +464,7 @@ describe('API', () => {
                     const lowerBoundSymbol = 'E';
 
                     const assets = await api.listAssets(lowerBoundSymbol);
-                    expect(assets).to.be.an('object');
+                    expect(assets).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }
@@ -692,7 +693,7 @@ describe('API', () => {
                     const accountId = '1.2.2';
 
                     const history = await api.getAccountHistory(accountId);
-                    expect(history).to.be.an('object');
+                    expect(history).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }
@@ -711,7 +712,7 @@ describe('API', () => {
                     const limit = 10;
 
                     const history = await api.getRelativeAccountHistory(accountId, stop, limit, start);
-                    expect(history).to.be.an('object');
+                    expect(history).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }
@@ -731,7 +732,7 @@ describe('API', () => {
                     const limit = 10;
 
                     const history = await api.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
-                    expect(history).to.be.an('object');
+                    expect(history).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }

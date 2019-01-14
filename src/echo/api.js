@@ -197,15 +197,13 @@ class API {
 
 		try {
 
-			let requestedObject = await this.wsApi.database[methodName](...params);
+			const requestedObject = await this.wsApi.database[methodName](...params);
 
 			if (!requestedObject) {
 				return requestedObject;
 			}
 
-			requestedObject = fromJS(requestedObject);
-
-			this.cache.setInMap(cacheName, key, requestedObject);
+			this.cache.setInMap(cacheName, key, fromJS(requestedObject));
 
 			return requestedObject;
 		} catch (error) {
@@ -294,7 +292,7 @@ class API {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -363,11 +361,11 @@ class API {
 
 				}
 
-				resultArray[i] = requestedObject;
+				resultArray[i] = requestedObject.toJS();
 				this.cache.setInMap(cacheName, key, requestedObject);
 			}
 
-			return new List(resultArray);
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
@@ -399,7 +397,7 @@ class API {
 		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectIds should be a array'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return (await this.getObjects([objectId], force)).first();
+		return (await this.getObjects([objectId], force))[0];
 	}
 
 	/**
@@ -607,8 +605,8 @@ class API {
 					continue;
 				}
 
-				requestedObject = fromJS(requestedObject);
 				resultArray[i] = requestedObject;
+				requestedObject = fromJS(requestedObject);
 
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('name');
@@ -618,7 +616,7 @@ class API {
 					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
-			return new List(resultArray);
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
@@ -709,7 +707,7 @@ class API {
 						.set('proposals', proposals);
 				});
 
-				resultArray[i] = requestedObject;
+				resultArray[i] = requestedObject.toJS();
 
 				await this.getObjects(requestArray);
 
@@ -722,7 +720,7 @@ class API {
 					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
-			return new List(resultArray);
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
@@ -750,19 +748,17 @@ class API {
 		}
 
 		try {
-			let requestedObject = await this.wsApi.database.getAccountByName(accountName);
+			const requestedObject = await this.wsApi.database.getAccountByName(accountName);
 
 			if (!requestedObject) {
 				return requestedObject;
 			}
 
-			requestedObject = fromJS(requestedObject);
+			const idKey = requestedObject.id;
+			const nameKey = requestedObject.name;
 
-			const idKey = requestedObject.get('id');
-			const nameKey = requestedObject.get('name');
-
-			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
+			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, fromJS(requestedObject))
+				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, fromJS(requestedObject))
 				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
 
 			return requestedObject;
@@ -842,8 +838,8 @@ class API {
 					continue;
 				}
 
-				requestedObject = fromJS(requestedObject);
 				resultArray[i] = requestedObject;
+				requestedObject = fromJS(requestedObject);
 
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('name');
@@ -853,7 +849,7 @@ class API {
 					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
-			return new List(resultArray);
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
@@ -874,7 +870,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
 
 		const result = await this.wsApi.database.lookupAccounts(lowerBoundName, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -931,7 +927,7 @@ class API {
 		if (!balanceIds.every((id) => isBalanceId(id))) throw new Error('Balance ids should contain valid balance ids');
 
 		const result = this.wsApi.database.getVestedBalances(balanceIds);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -944,7 +940,7 @@ class API {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
 		const result = this.wsApi.database.getVestingBalances(accountId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -972,7 +968,7 @@ class API {
 				const cacheValue = this.cache.assetByAssetId.get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -996,7 +992,7 @@ class API {
 
 				requestedObject = fromJS(requestedObject);
 				requestedObject = await this._addAssetExtraFields(requestedObject, force);
-				resultArray[i] = requestedObject;
+				resultArray[i] = requestedObject.toJS();
 
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('symbol');
@@ -1006,7 +1002,7 @@ class API {
 					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
 			}
 
-			return new List(resultArray);
+			return resultArray;
 		} catch (error) {
 			throw error;
 		}
@@ -1025,7 +1021,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`);
 
 		const result = await this.wsApi.database.listAssets(lowerBoundSymbol, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1059,7 +1055,7 @@ class API {
 				}
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1085,7 +1081,7 @@ class API {
 
 			requestedObject = fromJS(requestedObject);
 			requestedObject = await this._addAssetExtraFields(requestedObject, force);
-			resultArray[i] = requestedObject;
+			resultArray[i] = requestedObject.toJS();
 
 			const idKey = requestedObject.get('id');
 			const nameKey = requestedObject.get('symbol');
@@ -1095,7 +1091,7 @@ class API {
 				.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
 		}
 
-		return new List(resultArray);
+		return resultArray;
 	}
 
 	/**
@@ -1112,7 +1108,7 @@ class API {
 		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) throw new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`);
 
 		const result = await this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1129,7 +1125,7 @@ class API {
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
 		const result = await this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1144,7 +1140,7 @@ class API {
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
 		const result = await this.wsApi.database.getCallOrders(assetId, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1159,7 +1155,7 @@ class API {
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
 		const result = await this.wsApi.database.getSettleOrders(assetId, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1172,7 +1168,7 @@ class API {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
 		const result = await this.wsApi.database.getMarginPositions(accountId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1188,7 +1184,7 @@ class API {
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 
 		const result = await this.wsApi.database.getTicker(baseAssetName, quoteAssetName);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1204,7 +1200,7 @@ class API {
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 
 		const result = await this.wsApi.database.get24Volume(baseAssetName, quoteAssetName);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1226,7 +1222,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`);
 
 		const result = await this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1277,7 +1273,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`);
 
 		const result = await this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1337,7 +1333,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
 
 		const result = await this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1351,7 +1347,7 @@ class API {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
 		const result = await this.wsApi.database.getWorkersByAccount(accountId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1444,7 +1440,7 @@ class API {
 
 		// transaction is signed
 		const result = await this.wsApi.database.getTransactionHex(transaction);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1461,7 +1457,7 @@ class API {
 		if (!availableKeys.every((key) => isPublicKey(key))) throw new Error('\'Available keys should contain valid public keys');
 
 		const result = await this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1475,7 +1471,7 @@ class API {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
 		const result = await this.wsApi.database.getPotentialSignatures(transaction);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1489,7 +1485,7 @@ class API {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
 		const result = await this.wsApi.database.getPotentialAddressSignatures(transaction);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1503,7 +1499,7 @@ class API {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
 		const result = await this.wsApi.database.verifyAuthority(transaction);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1520,7 +1516,7 @@ class API {
 		if (!signers.every((key) => isPublicKey(key))) throw new Error('Signers should contain valid public keys');
 
 		const result = await this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1535,7 +1531,7 @@ class API {
 
 		// signed transaction
 		const result = await this.wsApi.database.validateTransaction(transaction);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1552,7 +1548,7 @@ class API {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 
 		const result = await this.wsApi.database.getRequiredFees(operations, assetId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1566,7 +1562,7 @@ class API {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) throw new Error('AccountNameOrId is invalid');
 
 		const result = await this.wsApi.database.getProposedTransactions(accountNameOrId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1577,7 +1573,7 @@ class API {
 	async getAllContracts() {
 
 		const result = await this.wsApi.database.getAllContracts();
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1596,7 +1592,7 @@ class API {
 		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
 
 		const result = await this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1646,7 +1642,7 @@ class API {
 		if (!isBytecode(bytecode)) throw new Error('Bytecode is invalid');
 
 		const result = await this.wsApi.database.callContractNoChangingState(contractId, accountId, assetId, bytecode);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1677,7 +1673,7 @@ class API {
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
 		const result = await this.wsApi.database.getContractBalances(contractId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1691,7 +1687,7 @@ class API {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
 		const result = await this.wsApi.database.getRecentTransactionById(transactionId);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1712,7 +1708,7 @@ class API {
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
 
 		const result = await this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1733,7 +1729,7 @@ class API {
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
 		const result = await this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1755,7 +1751,7 @@ class API {
 		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
 		const result = await this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1778,7 +1774,7 @@ class API {
 		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
 
 		const result = await this.wsApi.history.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
@@ -1799,7 +1795,7 @@ class API {
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
 		const result = await this.wsApi.history.getContractHistory(contractId, stop, limit, start);
-		return fromJS(result);
+		return result;
 	}
 
 	/**
