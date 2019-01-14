@@ -5,6 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --require babel-polyfill test/**/*.js",
+    "test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
     "test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
     "test-redux": "mocha --compilers js:babel-core/register --require babel-polyfill test/redux.test.js",
     "lint": "eslint .",
@@ -29,17 +30,19 @@
     "crypto-js": "^3.1.9-1",
     "deep-equal": "^1.0.1",
     "ecurve": "^1.0.6",
-    "ed25519": "0.0.4",
-    "events": "^3.0.0",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
     "tweetnacl": "^1.0.0",
-    "ws": "^6.1.2"
+    "ws": "^6.1.2",
+    "events": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-latest": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",

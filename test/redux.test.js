@@ -146,7 +146,7 @@ describe('redux', () => {
 
             const { cache } = store.getState();
 
-            expect(cache.getIn(['objectsById', id])).to.deep.equal(account);
+            expect(cache.getIn(['objectsById', id]).toJS()).to.deep.equal(account);
         });
 
         it('state does update after store set', async () => {
@@ -167,7 +167,7 @@ describe('redux', () => {
 
             const { cache } = store.getState();
 
-            expect(cache.getIn(['objectsById', id])).to.deep.equal(account);
+            expect(cache.getIn(['objectsById', id]).toJS()).to.deep.equal(account);
         });
     });
 });
