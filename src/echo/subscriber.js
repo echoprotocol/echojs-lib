@@ -801,7 +801,7 @@ class Subscriber extends EventEmitter {
 
 		for (let i = 0; i < length; i += 1) {
 			if (this.subscribers.account[i].accounts.includes(obj.get('id'))) {
-				this.subscribers.account[i].callback(obj);
+				this.subscribers.account[i].callback(obj.toJS());
 			}
 		}
 	}
