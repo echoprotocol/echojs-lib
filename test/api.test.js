@@ -6,7 +6,6 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 import { inspect } from 'util';
-import pk from '../src/crypto/private-key';
 
 import echo, { constants } from '../index';
 
