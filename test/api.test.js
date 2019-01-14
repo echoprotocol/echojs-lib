@@ -89,7 +89,7 @@ describe('API', () => {
                         // expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_accounts');
                         // expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_assets');
 
-                        expect(chainProperties).to.deep.equal(cache.chainProperties);
+                        expect(chainProperties).to.deep.equal(cache.chainProperties.toJS());
                     } catch (e) {
                         throw e;
                     }
@@ -138,7 +138,7 @@ describe('API', () => {
                         // expect(globalProperties).to.have.nested.property('parameters.max_authority_depth');
                         // expect(globalProperties).to.have.nested.property('parameters.extensions');
 
-                        expect(globalProperties).to.deep.equal(cache.globalProperties);
+                        expect(globalProperties).to.deep.equal(cache.globalProperties.toJS());
                     } catch (e) {
                         throw e;
                     }
@@ -154,7 +154,7 @@ describe('API', () => {
                         const config =  await api.getConfig();
 
                         expect(config).to.be.an('object');
-                        expect(config).to.deep.equal(cache.config);
+                        expect(config).to.deep.equal(cache.config.toJS());
                     } catch (e) {
                         throw e;
                     }
@@ -185,7 +185,7 @@ describe('API', () => {
                         const dynamicGlobalProperties = await api.getDynamicGlobalProperties();
 
                         expect(dynamicGlobalProperties).to.be.an('object');
-                        expect(dynamicGlobalProperties).to.deep.equal(cache.dynamicGlobalProperties);
+                        expect(dynamicGlobalProperties).to.deep.equal(cache.dynamicGlobalProperties.toJS());
                     } catch (e) {
                         throw e;
                     }
@@ -202,7 +202,7 @@ describe('API', () => {
                     const blockNumber = 20;
                     const block =  await api.getBlock(blockNumber);
 
-                    expect(block).to.deep.equal(cache.blocks.get(blockNumber));
+                    expect(block).to.deep.equal(cache.blocks.get(blockNumber).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -218,7 +218,7 @@ describe('API', () => {
                     const transactionIndex = 0;
                     const transaction = await api.getTransaction(blockNumber, transactionIndex);
 
-                    expect(transaction).to.deep.equal(cache.transactionsByBlockAndIndex.get(`${blockNumber}:${transactionIndex}`));
+                    expect(transaction).to.deep.equal(cache.transactionsByBlockAndIndex.get(`${blockNumber}:${transactionIndex}`).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -371,9 +371,9 @@ describe('API', () => {
 
                     const objects = await api.getCommitteeMembers([committeeMember]);
 
-                    expect(objects).to.be.an('object');
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(committeeMember));
-                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeMember));
+                    expect(objects).to.be.an('array');
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(committeeMember).toJS());
+                    expect(objects[0]).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeMember).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -413,10 +413,10 @@ describe('API', () => {
 
                     const objects = await api.getWitnesses([witnessId]);
 
-                    expect(objects).to.be.an('object');
+                    expect(objects).to.be.an('array');
 
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(witnessId));
-                    expect(objects.get(0)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(witnessId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.witnessByWitnessId.get(witnessId).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -478,7 +478,7 @@ describe('API', () => {
                     const blockNumber = 200;
                     const blockHeader =  await api.getBlockHeader(blockNumber);
 
-                    expect(blockHeader).to.deep.equal(cache.blockHeadersByBlockNumber.get(blockNumber));
+                    expect(blockHeader).to.deep.equal(cache.blockHeadersByBlockNumber.get(blockNumber).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -547,24 +547,24 @@ describe('API', () => {
 
                     const objects = await api.lookupVoteIds([committeeVoteId, witnessVoteId]);
 
-                    expect(objects).to.be.an('object');
+                    expect(objects).to.be.an('array');
 
-                    const committeeAccountId = objects.get(0).get('committee_member_account');
-                    const committeeId = objects.get(0).get('id');
+                    const committeeAccountId = objects[0].committee_member_account;
+                    const committeeId = objects[0].id;
 
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(committeeId));
-                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeId));
-                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByAccountId.get(committeeAccountId));
-                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(committeeVoteId));
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(committeeId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.committeeMembersByAccountId.get(committeeAccountId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.objectsByVoteId.get(committeeVoteId).toJS());
 
 
-                    const witnessAccountId = objects.get(1).get('witness_account');
-                    const witnessId = objects.get(1).get('id');
+                    const witnessAccountId = objects[1].witness_account;
+                    const witnessId = objects[1].id;
 
-                    expect(objects.get(1)).to.deep.equal(cache.objectsById.get(witnessId));
-                    expect(objects.get(1)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
-                    expect(objects.get(1)).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId));
-                    expect(objects.get(1)).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId));
+                    expect(objects[1]).to.deep.equal(cache.objectsById.get(witnessId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.witnessByWitnessId.get(witnessId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId).toJS());
 
                 } catch (e) {
                     throw e;
@@ -582,15 +582,15 @@ describe('API', () => {
 
                     const objects = await api.getCommitteeMembers([id]);
 
-                    expect(objects).to.be.an('object');
+                    expect(objects).to.be.an('array');
 
-                    const accountId = objects.get(0).get('committee_member_account');
-                    const voteId = objects.get(0).get('vote_id');
+                    const accountId = objects[0].committee_member_account;
+                    const voteId = objects[0].vote_id;
 
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(id));
-                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id));
-                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByAccountId.get(accountId));
-                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(id).toJS());
+                    expect(objects[0]).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id).toJS());
+                    expect(objects[0]).to.deep.equal(cache.committeeMembersByAccountId.get(accountId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.objectsByVoteId.get(voteId).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -609,13 +609,13 @@ describe('API', () => {
 
                     expect(object).to.be.an('object');
 
-                    const id = object.get('id');
-                    const voteId = object.get('vote_id');
+                    const id = object.id;
+                    const voteId = object.vote_id;
 
-                    expect(object).to.deep.equal(cache.objectsById.get(id));
-                    expect(object).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id));
-                    expect(object).to.deep.equal(cache.committeeMembersByAccountId.get(accountId));
-                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                    expect(object).to.deep.equal(cache.objectsById.get(id).toJS());
+                    expect(object).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id).toJS());
+                    expect(object).to.deep.equal(cache.committeeMembersByAccountId.get(accountId).toJS());
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -632,15 +632,15 @@ describe('API', () => {
 
                     const objects = await api.getWitnesses([id]);
 
-                    expect(objects).to.be.an('object');
+                    expect(objects).to.be.an('array');
 
-                    const accountId = objects.get(0).get('witness_account');
-                    const voteId = objects.get(0).get('vote_id');
+                    const accountId = objects[0].witness_account;
+                    const voteId = objects[0].vote_id;
 
-                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(id));
-                    expect(objects.get(0)).to.deep.equal(cache.witnessByWitnessId.get(id));
-                    expect(objects.get(0)).to.deep.equal(cache.witnessByAccountId.get(accountId));
-                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(id).toJS());
+                    expect(objects[0]).to.deep.equal(cache.witnessByWitnessId.get(id).toJS());
+                    expect(objects[0]).to.deep.equal(cache.witnessByAccountId.get(accountId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.objectsByVoteId.get(voteId).toJS());
                 } catch (e) {
                     throw e;
                 }
@@ -659,13 +659,13 @@ describe('API', () => {
 
                     expect(object).to.be.an('object');
 
-                    const id = object.get('id');
-                    const voteId = object.get('vote_id');
+                    const id = object.id;
+                    const voteId = object.vote_id;
 
-                    expect(object).to.deep.equal(cache.objectsById.get(id));
-                    expect(object).to.deep.equal(cache.witnessByWitnessId.get(id));
-                    expect(object).to.deep.equal(cache.witnessByAccountId.get(accountId));
-                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                    expect(object).to.deep.equal(cache.objectsById.get(id).toJS());
+                    expect(object).to.deep.equal(cache.witnessByWitnessId.get(id).toJS());
+                    expect(object).to.deep.equal(cache.witnessByAccountId.get(accountId).toJS());
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId).toJS());
                 } catch (e) {
                     throw e;
                 }

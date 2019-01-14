@@ -185,7 +185,6 @@ describe('SUBSCRIBER', () => {
                 let isCalled = false;
 
                 echo.subscriber.setAccountSubscribe((result) => {
-                    console.log(result);
                     expect(result).to.be.an('object').that.is.not.empty;
 
                     if (!isCalled) {
