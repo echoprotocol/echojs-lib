@@ -297,7 +297,7 @@ describe('API', () => {
                     const assets = await api.lookupAssetSymbols([assetKey]);
 
                     expect(assets).to.be.an('array');
-                    console.log('assets', assets[0], cache.assetByAssetId.get(assetId).toJS())
+
                     expect(assets[0]).to.deep.equal(cache.assetByAssetId.get(assetId).toJS());
                     expect(assets[0]).to.deep.equal(cache.objectsById.get(assetId).toJS());
                     expect(assets[0]).to.deep.equal(cache.assetBySymbol.get(assetKey).toJS());
