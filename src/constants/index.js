@@ -5,9 +5,18 @@ const ECHORAND_TYPES = {
 	BLOCK_NOTIFICATION: 2,
 };
 
+const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
+const UPDATE_CALL_ORDER = 'update-call-order';
+const CLOSE_CALL_ORDER = 'close-call-order';
+const BITASSET_UPDATE = 'bitasset-update';
+
 export default {
 	START_OPERATION_ID,
 	ECHORAND_TYPES,
+	CANCEL_LIMIT_ORDER,
+	UPDATE_CALL_ORDER,
+	CLOSE_CALL_ORDER,
+	BITASSET_UPDATE,
 };
 
 export { default as CHAIN_TYPES } from './chain-types';

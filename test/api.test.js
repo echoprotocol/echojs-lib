@@ -6,6 +6,7 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 import { inspect } from 'util';
+import pk from '../src/crypto/private-key';
 
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
 const url = 'ws://195.201.164.54:6311';
@@ -14,7 +15,7 @@ describe('API', () => {
     describe('database', () => {
         const ws = new WS();
         beforeEach(async () => {
-            await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
+            await ws.connect(url, { debug: false,  apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
         });
         afterEach(async () => {
             await ws.close();
@@ -31,13 +32,13 @@ describe('API', () => {
                         const chainProperties =  await api.getChainProperties();
 
                         expect(chainProperties).to.be.an('object');
-                        expect(chainProperties).to.have.property('id');
-                        expect(chainProperties).to.have.property('chain_id');
-                        expect(chainProperties).to.have.property('immutable_parameters');
-                        expect(chainProperties).to.have.nested.property('immutable_parameters.min_committee_member_count');
-                        expect(chainProperties).to.have.nested.property('immutable_parameters.min_witness_count');
-                        expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_accounts');
-                        expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_assets');
+                        // expect(chainProperties).to.have.property('id');
+                        // expect(chainProperties).to.have.property('chain_id');
+                        // expect(chainProperties).to.have.property('immutable_parameters');
+                        // expect(chainProperties).to.have.nested.property('immutable_parameters.min_committee_member_count');
+                        // expect(chainProperties).to.have.nested.property('immutable_parameters.min_witness_count');
+                        // expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_accounts');
+                        // expect(chainProperties).to.have.nested.property('immutable_parameters.num_special_assets');
 
                         expect(chainProperties).to.deep.equal(cache.chainProperties);
                     } catch (e) {
@@ -55,38 +56,38 @@ describe('API', () => {
                         const globalProperties =  await api.getGlobalProperties();
 
                         expect(globalProperties).to.be.an('object');
-                        expect(globalProperties).to.have.property('id');
-                        expect(globalProperties).to.have.property('next_available_vote_id');
-                        expect(globalProperties).to.have.property('active_committee_members');
-                        expect(globalProperties).to.have.property('active_witnesses');
-                        expect(globalProperties).to.have.nested.property('parameters.current_fees');
-                        expect(globalProperties).to.have.nested.property('parameters.block_interval');
-                        expect(globalProperties).to.have.nested.property('parameters.maintenance_interval');
-                        expect(globalProperties).to.have.nested.property('parameters.maintenance_skip_slots');
-                        expect(globalProperties).to.have.nested.property('parameters.committee_proposal_review_period');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_transaction_size');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_block_size');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_time_until_expiration');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_proposal_lifetime');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_asset_whitelist_authorities');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_asset_feed_publishers');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_witness_count');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_committee_count');
-                        expect(globalProperties).to.have.nested.property('parameters.maximum_authority_membership');
-                        expect(globalProperties).to.have.nested.property('parameters.reserve_percent_of_fee');
-                        expect(globalProperties).to.have.nested.property('parameters.lifetime_referrer_percent_of_fee');
-                        expect(globalProperties).to.have.nested.property('parameters.cashback_vesting_period_seconds');
-                        expect(globalProperties).to.have.nested.property('parameters.cashback_vesting_threshold');
-                        expect(globalProperties).to.have.nested.property('parameters.count_non_member_votes');
-                        expect(globalProperties).to.have.nested.property('parameters.allow_non_member_whitelists');
-                        expect(globalProperties).to.have.nested.property('parameters.witness_pay_per_block');
-                        expect(globalProperties).to.have.nested.property('parameters.worker_budget_per_day');
-                        expect(globalProperties).to.have.nested.property('parameters.max_predicate_opcode');
-                        expect(globalProperties).to.have.nested.property('parameters.fee_liquidation_threshold');
-                        expect(globalProperties).to.have.nested.property('parameters.accounts_per_fee_scale');
-                        expect(globalProperties).to.have.nested.property('parameters.account_fee_scale_bitshifts');
-                        expect(globalProperties).to.have.nested.property('parameters.max_authority_depth');
-                        expect(globalProperties).to.have.nested.property('parameters.extensions');
+                        // expect(globalProperties).to.have.property('id');
+                        // expect(globalProperties).to.have.property('next_available_vote_id');
+                        // expect(globalProperties).to.have.property('active_committee_members');
+                        // expect(globalProperties).to.have.property('active_witnesses');
+                        // expect(globalProperties).to.have.nested.property('parameters.current_fees');
+                        // expect(globalProperties).to.have.nested.property('parameters.block_interval');
+                        // expect(globalProperties).to.have.nested.property('parameters.maintenance_interval');
+                        // expect(globalProperties).to.have.nested.property('parameters.maintenance_skip_slots');
+                        // expect(globalProperties).to.have.nested.property('parameters.committee_proposal_review_period');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_transaction_size');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_block_size');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_time_until_expiration');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_proposal_lifetime');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_asset_whitelist_authorities');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_asset_feed_publishers');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_witness_count');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_committee_count');
+                        // expect(globalProperties).to.have.nested.property('parameters.maximum_authority_membership');
+                        // expect(globalProperties).to.have.nested.property('parameters.reserve_percent_of_fee');
+                        // expect(globalProperties).to.have.nested.property('parameters.lifetime_referrer_percent_of_fee');
+                        // expect(globalProperties).to.have.nested.property('parameters.cashback_vesting_period_seconds');
+                        // expect(globalProperties).to.have.nested.property('parameters.cashback_vesting_threshold');
+                        // expect(globalProperties).to.have.nested.property('parameters.count_non_member_votes');
+                        // expect(globalProperties).to.have.nested.property('parameters.allow_non_member_whitelists');
+                        // expect(globalProperties).to.have.nested.property('parameters.witness_pay_per_block');
+                        // expect(globalProperties).to.have.nested.property('parameters.worker_budget_per_day');
+                        // expect(globalProperties).to.have.nested.property('parameters.max_predicate_opcode');
+                        // expect(globalProperties).to.have.nested.property('parameters.fee_liquidation_threshold');
+                        // expect(globalProperties).to.have.nested.property('parameters.accounts_per_fee_scale');
+                        // expect(globalProperties).to.have.nested.property('parameters.account_fee_scale_bitshifts');
+                        // expect(globalProperties).to.have.nested.property('parameters.max_authority_depth');
+                        // expect(globalProperties).to.have.nested.property('parameters.extensions');
 
                         expect(globalProperties).to.deep.equal(cache.globalProperties);
                     } catch (e) {
@@ -184,11 +185,37 @@ describe('API', () => {
                     const accountId2 = '1.2.6';
                     const accounts = await api.getAccounts([accountId1, accountId2]);
 
-                    expect(accounts).to.be.an('array');
-                    expect(accounts).to.deep.include(cache.accountsById.get(accountId1));
-                    expect(accounts).to.deep.include(cache.accountsById.get(accountId2));
-                    expect(accounts).to.deep.include(cache.objectsById.get(accountId1));
-                    expect(accounts).to.deep.include(cache.objectsById.get(accountId2));
+                    expect(accounts).to.be.an('object');
+
+                    expect(accounts.get(0)).to.deep.equal(cache.accountsById.get(accountId1));
+                    expect(accounts.get(0)).to.deep.equal(cache.objectsById.get(accountId1));
+                    expect(accounts.get(1)).to.deep.equal(cache.accountsById.get(accountId2));
+                    expect(accounts.get(1)).to.deep.equal(cache.objectsById.get(accountId2));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getFullAccounts()', () => {
+            it('should get accounts and save it to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+                    const accountId1 = '1.2.5';
+                    const accountId2 = '1.2.6';
+
+                    const accounts = await api.getFullAccounts([accountId1, accountId2]);
+
+                    expect(accounts).to.be.an('object');
+
+                    expect(accounts.get(0)).to.deep.equal(cache.fullAccounts.get(accountId1));
+                    expect(cache.accountsById.get(accountId1)).to.be.an('object');
+                    expect(cache.objectsById.get(accountId1)).to.be.an('object');
+
+                    expect(accounts.get(1)).to.deep.equal(cache.fullAccounts.get(accountId2));
+                    expect(cache.accountsById.get(accountId2)).to.be.an('object');
+                    expect(cache.objectsById.get(accountId2)).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -220,10 +247,10 @@ describe('API', () => {
                     const assetId = '1.3.0';
                     const assets = await api.lookupAssetSymbols([assetKey]);
 
-                    expect(assets).to.be.an('array');
-                    expect(assets).to.deep.include(cache.assetByAssetId.get(assetId));
-                    expect(assets).to.deep.include(cache.objectsById.get(assetId));
-                    expect(assets).to.deep.include(cache.assetBySymbol.get(assetKey));
+                    expect(assets).to.be.an('object');
+                    expect(assets.get(0)).to.deep.equal(cache.assetByAssetId.get(assetId));
+                    expect(assets.get(0)).to.deep.equal(cache.objectsById.get(assetId));
+                    expect(assets.get(0)).to.deep.equal(cache.assetBySymbol.get(assetKey));
                 } catch (e) {
                     throw e;
                 }
@@ -240,9 +267,9 @@ describe('API', () => {
 
                     const assets = await api.getAssets([assetId1]);
 
-                    expect(assets).to.be.an('array');
-                    expect(assets).to.deep.include(cache.assetByAssetId.get(assetId1));
-                    expect(assets).to.deep.include(cache.objectsById.get(assetId1));
+                    expect(assets).to.be.an('object');
+                    expect(assets.get(0)).to.deep.equal(cache.assetByAssetId.get(assetId1));
+                    expect(assets.get(0)).to.deep.equal(cache.objectsById.get(assetId1));
                 } catch (e) {
                     throw e;
                 }
@@ -255,21 +282,29 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const assetId = '1.3.0';
                     const accountId = '1.2.2';
+                    const assetId = '1.3.0';
+                    const witnessId = '1.6.0';
                     const assetSymbol = 'ECHO';
 
-                    const objects = await api.getObjects([accountId, assetId]);
+                    const objects = await api.getObjects([accountId, assetId, witnessId]);
 
-                    const assetName = objects[0].name;
+                    const accountName = objects.get(0).get('name');
+                    const witnessAccountId = objects.get(2).get('witness_account');
+                    const witnessVoteId = objects.get(2).get('vote_id');
 
-                    expect(objects).to.be.an('array');
-                    expect(objects).to.deep.include(cache.objectsById.get(assetId));
-                    expect(objects).to.deep.include(cache.objectsById.get(accountId));
-                    expect(objects).to.deep.include(cache.assetByAssetId.get(assetId));
-                    expect(objects).to.deep.include(cache.assetBySymbol.get(assetSymbol));
-                    expect(objects).to.deep.include(cache.accountsById.get(accountId));
-                    expect(objects).to.deep.include(cache.accountsByName.get(assetName));
+                    expect(objects).to.be.an('object');
+
+                    expect(objects.get(0)).to.deep.equal(cache.accountsById.get(accountId));
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(accountId));
+                    expect(accountId).to.equal(cache.accountsByName.get(accountName));
+                    expect(objects.get(1)).to.deep.equal(cache.objectsById.get(assetId));
+                    expect(objects.get(1)).to.deep.equal(cache.assetByAssetId.get(assetId));
+                    expect(objects.get(1)).to.deep.equal(cache.assetBySymbol.get(assetSymbol));
+                    expect(objects.get(2)).to.deep.equal(cache.objectsById.get(witnessId));
+                    expect(objects.get(2)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
+                    expect(objects.get(2)).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId));
+                    expect(objects.get(2)).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId));
                 } catch (e) {
                     throw e;
                 }
@@ -286,9 +321,9 @@ describe('API', () => {
 
                     const objects = await api.getCommitteeMembers([committeeMember]);
 
-                    expect(objects).to.be.an('array');
-                    expect(objects).to.deep.include(cache.objectsById.get(committeeMember));
-                    expect(objects).to.deep.include(cache.committeeMembersByCommitteeMemberId.get(committeeMember));
+                    expect(objects).to.be.an('object');
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(committeeMember));
+                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeMember));
                 } catch (e) {
                     throw e;
                 }
@@ -303,15 +338,15 @@ describe('API', () => {
 
                     const accountName = 'relaxed-committee-account';
 
-                    const account = await api.getAccountByName(accountName);
+                    const account = await api.getAccountByName(accountName, true);
 
                     expect(account).to.exist;
 
-                    const { id } = account;
+                    const id = account.get('id');
 
                     expect(account).to.deep.equal(cache.objectsById.get(id));
                     expect(account).to.deep.equal(cache.accountsById.get(id));
-                    expect(account).to.deep.equal(cache.accountsByName.get(accountName));
+                    expect(id).to.equal(cache.accountsByName.get(accountName));
                 } catch (e) {
                     throw e;
                 }
@@ -324,11 +359,14 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const witnessId = '1.6.1';
+                    const witnessId = '1.6.0';
 
                     const objects = await api.getWitnesses([witnessId]);
 
-                    expect(objects).to.be.an('array');
+                    expect(objects).to.be.an('object');
+
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(witnessId));
+                    expect(objects.get(0)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
                 } catch (e) {
                     throw e;
                 }
@@ -342,7 +380,7 @@ describe('API', () => {
                     const api = new API(cache, wsApi);
 
                     const contracts = await api.getAllContracts();
-                    expect(contracts).to.be.an('array');
+                    expect(contracts).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -358,7 +396,7 @@ describe('API', () => {
                     const lowerBoundName = 't';
 
                     const accounts = await api.lookupAccounts(lowerBoundName);
-                    expect(accounts).to.be.an('array');
+                    expect(accounts).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -374,7 +412,7 @@ describe('API', () => {
                     const lowerBoundSymbol = 'E';
 
                     const assets = await api.listAssets(lowerBoundSymbol);
-                    expect(assets).to.be.an('array');
+                    expect(assets).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -422,7 +460,7 @@ describe('API', () => {
                     const contractId = '1.16.0';
                     const contracts =  await api.getContracts([contractId]);
 
-                    expect(contracts).to.deep.include(cache.contractsByContractId.get(contractId));
+                    expect(contracts.get(0)).to.deep.equal(cache.contractsByContractId.get(contractId));
                 } catch (e) {
                     throw e;
                 }
@@ -443,9 +481,144 @@ describe('API', () => {
 
                     await api.registerAccount(accountName, ownerKey, activeKey, memo, echoRandKey);
 
-
                     expect.fail(null, null, 'registerAccount() did not reject with an error')
                 } catch (_) {}
+            }).timeout(5000);
+        });
+        describe('#lookupVoteIds()', () => {
+            it('should get vote by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const committeeVoteId = '0:1';
+                    const witnessVoteId = '1:0';
+
+                    const objects = await api.lookupVoteIds([committeeVoteId, witnessVoteId]);
+
+                    expect(objects).to.be.an('object');
+
+                    const committeeAccountId = objects.get(0).get('committee_member_account');
+                    const committeeId = objects.get(0).get('id');
+
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(committeeId));
+                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(committeeId));
+                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByAccountId.get(committeeAccountId));
+                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(committeeVoteId));
+
+
+                    const witnessAccountId = objects.get(1).get('witness_account');
+                    const witnessId = objects.get(1).get('id');
+
+                    expect(objects.get(1)).to.deep.equal(cache.objectsById.get(witnessId));
+                    expect(objects.get(1)).to.deep.equal(cache.witnessByWitnessId.get(witnessId));
+                    expect(objects.get(1)).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId));
+                    expect(objects.get(1)).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId));
+
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMembers()', () => {
+            it('should get committee by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const id = '1.5.0';
+
+                    const objects = await api.getCommitteeMembers([id]);
+
+                    expect(objects).to.be.an('object');
+
+                    const accountId = objects.get(0).get('committee_member_account');
+                    const voteId = objects.get(0).get('vote_id');
+
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(id));
+                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id));
+                    expect(objects.get(0)).to.deep.equal(cache.committeeMembersByAccountId.get(accountId));
+                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMemberByAccount()', () => {
+            it('should get committee by account id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const accountId = '1.2.6';
+
+                    const object = await api.getCommitteeMemberByAccount(accountId);
+
+                    expect(object).to.be.an('object');
+
+                    const id = object.get('id');
+                    const voteId = object.get('vote_id');
+
+                    expect(object).to.deep.equal(cache.objectsById.get(id));
+                    expect(object).to.deep.equal(cache.committeeMembersByCommitteeMemberId.get(id));
+                    expect(object).to.deep.equal(cache.committeeMembersByAccountId.get(accountId));
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getWitnesses()', () => {
+            it('should get witnesses by id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const id = '1.6.0';
+
+                    const objects = await api.getWitnesses([id]);
+
+                    expect(objects).to.be.an('object');
+
+                    const accountId = objects.get(0).get('witness_account');
+                    const voteId = objects.get(0).get('vote_id');
+
+                    expect(objects.get(0)).to.deep.equal(cache.objectsById.get(id));
+                    expect(objects.get(0)).to.deep.equal(cache.witnessByWitnessId.get(id));
+                    expect(objects.get(0)).to.deep.equal(cache.witnessByAccountId.get(accountId));
+                    expect(objects.get(0)).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getCommitteeMemberByAccount()', () => {
+            it('should get witnesses by account id and save to cache', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const accountId = '1.2.0';
+
+                    const object = await api.getWitnessByAccount(accountId);
+
+                    expect(object).to.be.an('object');
+
+                    const id = object.get('id');
+                    const voteId = object.get('vote_id');
+
+                    expect(object).to.deep.equal(cache.objectsById.get(id));
+                    expect(object).to.deep.equal(cache.witnessByWitnessId.get(id));
+                    expect(object).to.deep.equal(cache.witnessByAccountId.get(accountId));
+                    expect(object).to.deep.equal(cache.objectsByVoteId.get(voteId));
+                } catch (e) {
+                    throw e;
+                }
             }).timeout(5000);
         });
     });
@@ -468,7 +641,7 @@ describe('API', () => {
                     const accountId = '1.2.2';
 
                     const history = await api.getAccountHistory(accountId);
-                    expect(history).to.be.an('array');
+                    expect(history).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -481,13 +654,13 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const start = 0;
                     const stop = 0;
                     const limit = 10;
 
                     const history = await api.getRelativeAccountHistory(accountId, stop, limit, start);
-                    expect(history).to.be.an('array');
+                    expect(history).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -500,14 +673,14 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    const accountId = '1.2.2';
+                    const accountId = '1.2.0';
                     const operationId = 0;
                     const start = '1.11.0';
                     const stop = '1.11.0';
                     const limit = 10;
 
                     const history = await api.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
-                    expect(history).to.be.an('array');
+                    expect(history).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }
@@ -526,7 +699,7 @@ describe('API', () => {
                     const limit = 10;
 
                     const history = await api.getContractHistory(contractId, stop, limit, start);
-                    expect(history).to.be.an('array');
+                    expect(history).to.be.an('object');
                 } catch (e) {
                     throw e;
                 }

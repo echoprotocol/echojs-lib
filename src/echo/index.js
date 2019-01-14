@@ -43,11 +43,11 @@ class Echo {
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi);
+		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
 
 		await this.subscriber.init();
 
-		this._ws.onOpenCb = (async () => {
+		this._ws.on('open', async () => {
 			await this.subscriber.init();
 		});
 	}

@@ -359,13 +359,13 @@ class DatabaseAPI {
 	/**
 	 *  @method unsubscribeFromMarket
 	 *
-	 *  @param  {String} baseAssetName
-	 *  @param  {String} quoteAssetName
+	 *  @param  {String} baseAssetId
+	 *  @param  {String} quoteAssetId
 	 *
 	 *  @return {Promise}
 	 */
-	unsubscribeFromMarket(baseAssetName, quoteAssetName) {
-		return this.db.exec('subscribe_to_market', [baseAssetName, quoteAssetName]);
+	unsubscribeFromMarket(baseAssetId, quoteAssetId) {
+		return this.db.exec('unsubscribe_to_market', [baseAssetId, quoteAssetId]);
 	}
 
 	/**

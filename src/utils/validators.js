@@ -31,11 +31,11 @@ const urlRegex = new RegExp(
 );
 export const idRegex = /^(0|([1-9]\d*\.)){2}(0|([1-9]\d*))$/;
 
-const accountIdRegex = /^1\.2\.[1-9]\d*$/;
+const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
 const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
-const committeeMemberIdRegex = /^1\.5\.[1-9]\d*$/;
-const witnessIdRegex = /^1\.6\.[1-9]\d*$/;
+const committeeMemberIdRegex = /^1\.5\.(0|[1-9]\d*)$/;
+const witnessIdRegex = /^1\.6\.(0|[1-9]\d*)$/;
 const limitOrderIdRegex = /^1\.7\.[1-9]\d*$/;
 const callOrderIdRegex = /^1\.8\.[1-9]\d*$/;
 const customIdRegex = /^1\.9\.[1-9]\d*$/;
@@ -48,9 +48,14 @@ const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
 const contractIdRegex = /^1\.16\.(0|[1-9]\d*)$/;
 const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
 
+const dynamicGlobalObjectIdRegex = /^2.1.0$/;
 const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
 const bitAssetIdRegex = /^2\.4\.(0|[1-9]\d*)$/;
 const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;
+const accountStatisticsIdRegex = /^2\.6\.[1-9]\d*$/;
+const transactionIdRegex = /^2\.7\.[1-9]\d*$/;
+const blockSummaryIdRegex = /^2\.8\.[1-9]\d*$/;
+const accountTransactionHistoryIdRegex = /^2\.9\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F]{8}([\da-fA-F]{64})*$/;
@@ -168,6 +173,15 @@ export const isAssetName = (v) =>
 export const isBitAssetId = (v) => isString(v) && bitAssetIdRegex.test(v);
 
 export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRegex.test(v);
+
+
+export const isAccountStatisticsId = (v) => isString(v) && accountStatisticsIdRegex.test(v);
+export const isTransactionId = (v) => isString(v) && transactionIdRegex.test(v);
+export const isBlockSummaryId = (v) => isString(v) && blockSummaryIdRegex.test(v);
+export const isAccountTransactionHistoryId = (v) => (
+	isString(v) && accountTransactionHistoryIdRegex.test(v)
+);
+export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObjectIdRegex.test(v);
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 

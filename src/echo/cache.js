@@ -16,12 +16,16 @@ class Cache {
 
 		this.objectsById = new Map();
 
+		this.fullAccounts = new Map();
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
 		this.accountsIdByKey = Map();
 
 		this.assetByAssetId = new Map();
 		this.assetBySymbol = new Map();
+
+		this.dynamicAssetDataByDynamicAssetDataId = new Map();
+		this.bitAssetsByBitAssetId = new Map();
 
 		this.contractsByContractId = new Map();
 		this.fullContractsByContractId = new Map();
@@ -35,21 +39,18 @@ class Cache {
 		this.witnessByAccountId = new Map();
 		this.witnessByWitnessId = new Map();
 
-		this.committeeMembersByAccount = new Map();
+		this.committeeMembersByAccountId = new Map();
 		this.committeeMembersByCommitteeMemberId = new Map();
+
+		this.objectsByVoteId = new Map();
 
 		this.accountsBalanceByAccountId = new Map();
 		this.accountsBalanceByAccountName = new Map();
 
 		this.accountReferencesByAccountId = new Map();
 
-		this.bitAssetsByBitAssetId = new Map();
-		this.dynamicAssetDataByDynamicAssetDataId = new Map();
-
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
-		this.objectsByVoteId = new Map();
-		this.fetchingGetFullAccounts = new Map();
 
 		this.chainProperties = null;
 		this.globalProperties = null;
