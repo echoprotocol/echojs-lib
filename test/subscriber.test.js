@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { expect } from 'chai';
 
-import echo, { constants } from '../index';
+import echo, { constants } from '../src';
 
 describe('SUBSCRIBER', () => {
 	before(async () => {

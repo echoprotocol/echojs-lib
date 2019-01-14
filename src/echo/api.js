@@ -34,6 +34,7 @@ import { ECHO_ASSET_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
+import { isOperationId } from '../../lib/utils/validators';
 
 class API {
 
