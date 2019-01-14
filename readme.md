@@ -1,4 +1,3 @@
-
 # Echojs-lib (echojs-lib)
 
 Pure JavaScript ECHO library for node.js and browsers. Can be used to construct, sign and broadcast transactions in JavaScript, and to easily obtain data from the blockchain via public apis.
@@ -79,7 +78,7 @@ console.log(echo.cache.objectsById);
 #### Redux
 We provide redux store update automaticly
 ```javascript
-import echo, { cacheReducer } from "echojs-lib";
+import echo, { reducer } from "echojs-lib";
 import { combineReducers, createStore } from 'redux';
 
 const caches = ['objectsById'] // array of caches you want to follow
@@ -87,7 +86,7 @@ const caches = ['objectsById'] // array of caches you want to follow
 const store = createStore(
                 combineReducers({
                     ...reducers,
-                    cache: cacheReducer(caches), // return reducer
+                    cache: reducer(caches), // return reducer
                 })
            );
 
