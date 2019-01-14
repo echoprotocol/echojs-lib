@@ -1,4 +1,3 @@
-/* eslint-disable max-len,no-continue */
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
@@ -274,7 +273,8 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isCommitteeMemberId(object.id)) {
-			this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, object.committee_member_account, obj)
+			this.cache
+				.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, object.committee_member_account, obj)
 				.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, object.id, obj)
 				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
 				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
@@ -323,7 +323,11 @@ class Subscriber extends EventEmitter {
 				}
 
 				this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.dynamic_asset_data_id, dad)
-					.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, object.dynamic_asset_data_id, dad);
+					.setInMap(
+						CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID,
+						object.dynamic_asset_data_id,
+						dad,
+					);
 
 				obj = obj.set('dynamic', dad);
 			}
@@ -782,7 +786,8 @@ class Subscriber extends EventEmitter {
      *  @return {undefined}
      */
 	removeAccountSubscribe(callback) {
-		this.subscribers.account = this.subscribers.account.filter(({ callback: innerCallback }) => innerCallback !== callback);
+		this.subscribers.account = this.subscribers.account
+			.filter(({ callback: innerCallback }) => innerCallback !== callback);
 	}
 
 	/**
@@ -794,10 +799,8 @@ class Subscriber extends EventEmitter {
 		const { length } = this.subscribers.account;
 
 		for (let i = 0; i < length; i += 1) {
-
 			if (this.subscribers.account[i].accounts.includes(obj.get('id'))) {
 				this.subscribers.account[i].callback(obj);
-				continue;
 			}
 		}
 	}

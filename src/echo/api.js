@@ -2,6 +2,7 @@
 import { Map, List, fromJS } from 'immutable';
 
 import {
+	isNumber,
 	isArray,
 	isObjectId,
 	isBoolean,
@@ -1799,6 +1800,117 @@ class API {
 
 		const result = await this.wsApi.history.getContractHistory(contractId, stop, limit, start);
 		return fromJS(result);
+	}
+
+	/**
+	 *  @method broadcastTransaction
+	 * 	Broadcast a transaction to the network.
+	 *
+	 * 	@param  {Object} tr
+	 *  @param  {Number} tr.ref_block_num
+	 *  @param  {Number} tr.ref_block_prefix
+	 *  @param  {Array} tr.operations
+	 *  @param  {Array} tr.signatures
+	 *
+	 *  @return {Promise}
+	 */
+	broadcastTransaction(tr) {
+		if (!tr) {
+			return Promise.reject(new Error('Transaction is required'));
+		}
+
+		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
+			return Promise.reject(new Error('Invalid transaction'));
+		}
+
+		return this.wsApi.network.broadcastTransaction(tr);
+	}
+
+	/**
+	 *  @method broadcastBlock
+	 * 	Broadcast a block to the network.
+	 *
+	 *  @param  {Object} block
+	 *  @param  {Number} block.previous  [previous block id]
+	 *  @param  {Number} block.timestamp  [block timestamp]
+	 *  @param  {String} block.witness  [witness id]
+	 *  @param  {String} block.transaction_merkle_root  [merkle root]
+	 *  @param  {String} block.state_root_hash  [hash]
+	 *  @param  {String} block.result_root_hash  [result hash]
+	 *  @param  {String} block.witness_signature  [witness signature]
+	 *  @param  {String} block.ed_signature  [eddsa signature]
+	 *  @param  {Array} block.verifications  [{witness-id, witness-signature}]
+	 *  @param  {Number} block.round  [round id]
+	 *  @param  {Number} block.rand  [rand]
+	 *  @param  {String} block.cert  [certificate]
+	 *  @param  {Array} block.transactions
+	 *
+	 *  @return {Promise}
+	 */
+	broadcastBlock(block) {
+		if (!block) {
+			return Promise.reject(new Error('Block is required'));
+		}
+
+		if (!block.previous || !block.timestamp || !block.witness) {
+			return Promise.reject(new Error('Invalid block'));
+		}
+
+		return this.wsApi.network.broadcastBlock(block);
+	}
+
+	/**
+	*  @method getAssetHolders
+	*  Retrieve the information about the holders of the specified asset.
+	*
+	*  @param {String} assetId   [asset id to retrieve]
+	*  @param {Number} start [account id to start retrieving from]
+	*  @param {Number} limit     [count accounts (max 100)]
+	*
+	*  @return {Promise.<Array.<{name: String, account_id:String, amount: String}>>}
+	*  [ { name: 'init0', account_id: '1.2.6', amount: '100000039900000' } ]
+	*/
+	getAssetHolders(assetId, start, limit = 100) {
+		if (!isAssetId(assetId)) {
+			return Promise.reject(new Error('Invalid Asset ID'));
+		}
+
+		if (!isNumber(start)) {
+			return Promise.reject(new Error('Invalid start account number'));
+		}
+
+		if (!isNumber(limit)) {
+			return Promise.reject(new Error('Invalid limit accounts number'));
+		}
+
+		return this.wsApi.asset.getAssetHolders(assetId, start, limit);
+	}
+
+	/**
+	*  @method getAssetHoldersCount
+	*  Retrieve the number of holders of the provided asset.
+	*
+	*  @param {String} assetId   [asset id to retrieve]
+	*
+	*  @return {Promise.<Number>} result - 8
+	*/
+	getAssetHoldersCount(assetId) {
+		if (!isAssetId(assetId)) {
+			return Promise.reject(new Error('Invalid Asset ID'));
+		}
+
+		return this.wsApi.asset.getAssetHoldersCount(assetId);
+	}
+
+	/**
+	*  @method getAllAssetHolders
+	*  Array of all asset IDs with the number of holders.
+	*
+	* 	@return {Promise.<Array.<{asset_id: String, count: Number}>>}
+	* 	[ { asset_id: '1.3.0', count: 8 } ]
+	*/
+	getAllAssetHolders() {
+		return this.wsApi.asset.getAllAssetHolders();
 	}
 
 	setOptions() {}
