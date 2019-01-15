@@ -6,7 +6,7 @@ import API from '../src/echo/api'
 
 import { inspect } from 'util';
 
-import echo, { constants } from '../index';
+import echo, { constants } from '../src';
 
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
 const url = 'ws://195.201.164.54:6311';

@@ -1,7 +1,7 @@
 /* eslint-disable max-len,no-continue,no-restricted-syntax */
 import { Map } from 'immutable';
 
-import { isFunction, isObject, isVoid } from '../utils/validator';
+import { isFunction, isObject, isVoid } from '../utils/validators';
 
 class Cache {
 
