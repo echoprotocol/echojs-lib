@@ -1,4 +1,3 @@
-
 # Echojs-lib (echojs-lib)
 
 Pure JavaScript ECHO library for node.js and browsers. Can be used to construct, sign and broadcast transactions in JavaScript, and to easily obtain data from the blockchain via public apis.
@@ -24,7 +23,7 @@ const options = {
 	pingInterval: 3000,
 	debug: false,
 	apis: [
-	    'database', 'network_broadcast', 'history', registration', 'asset', 'login', 'network_node'
+	    'database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node'
 	    ]
 };
 
