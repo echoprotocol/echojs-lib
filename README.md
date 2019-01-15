@@ -1,4 +1,3 @@
-
 # Echojs-lib (echojs-lib)
 
 Pure JavaScript ECHO library for node.js and browsers. Can be used to construct, sign and broadcast transactions in JavaScript, and to easily obtain data from the blockchain via public apis.
@@ -19,18 +18,22 @@ import echo from 'echojs-ws';
 const url = 'ws://195.201.164.54:6311';
 const options = {
     connectionTimeout: 5000,
-	maxRetries: 5,
-	pingTimeout: 3000,
-	pingInterval: 3000,
-	debug: false,
-	apis: [
-	    'database', 'network_broadcast', 'history', registration', 'asset', 'login', 'network_node'
-	    ]
+    maxRetries: 5,
+    pingTimeout: 3000,
+    pingInterval: 3000,
+    debug: false,
+    apis: [
+        'database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node'
+    ]
 };
 
-echo.connect(url, options).then(() => {
-    const account = echo.api.getObject('1.2.0');
-});
+try {
+    await echo.connect(url, options);
+    const account = await echo.api.getObject('1.2.0');
+} catch (e) {
+    console.error(e);
+}
+
 ```
 
 ### Api
@@ -44,7 +47,7 @@ try {
     const result = await echo.api.getAssets(['1.3.0']);
     console.log(result);
 } catch (e) {
-    console.warn(e);
+    console.error(e);
 }
 ```
 ## Classes
@@ -1484,12 +1487,12 @@ await tx.broadcast(() => console.log('was broadcasted'));
 
 // or
 await echo
-.createTransaction()
-.addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-.addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-.addSigner(privateKey)
-.addSigner(privateKey)
-.broadcast();
+    .createTransaction()
+    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+    .addSigner(privateKey)
+    .addSigner(privateKey)
+    .broadcast();
 
 ```
 
