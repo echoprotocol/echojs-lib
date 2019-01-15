@@ -2,9 +2,10 @@
 	"name": "echojs-lib",
 	"version": "1.0.0",
 	"description": "Pure JavaScript ECHO library for node.js",
-	"main": "./lib/index.js",
+	"main": "./dist/index.js",
 	"scripts": {
 		"test": "mocha --require babel-core/register --require babel-polyfill --exit",
+	    "test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
 		"build": "babel src --out-dir lib",
 		"prepublishOnly": "build",
@@ -50,6 +51,7 @@
 		"eslint-plugin-import": "^2.9.0",
 		"eslint-plugin-jsx-a11y": "^6.1.2",
 		"eslint-plugin-react": "^7.11.1",
-		"mocha": "^5.2.0"
+		"mocha": "^5.2.0",
+	    "redux": "^4.0.1"
 	}
 }

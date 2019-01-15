@@ -84,6 +84,8 @@ export const isEmpty = (v) => v === null || typeof v === 'undefined' || (typeof 
 
 export const isVoid = (v) => v === null || typeof v === 'undefined';
 
+export const isUndefined = (v) => typeof v === 'undefined';
+
 export const isArray = (v) => Array.isArray(v) && !isEmpty(v.length);
 
 export const isEmptyArray = (v) => Array.isArray(v) && v.length === 0;
