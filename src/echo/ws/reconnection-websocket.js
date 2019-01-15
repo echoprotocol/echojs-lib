@@ -51,7 +51,8 @@ class ReconnectionWebSocket {
 		}
 
 		this._options = {
-			connectionTimeout: typeof options.connectionTimeout === 'undefined' ? CONNECTION_TIMEOUT : options.connectionTimeout,
+			connectionTimeout: typeof options.connectionTimeout === 'undefined' ?
+				CONNECTION_TIMEOUT : options.connectionTimeout,
 			maxRetries: typeof options.maxRetries === 'undefined' ? MAX_RETRIES : options.maxRetries,
 			pingTimeout: typeof options.pingTimeout === 'undefined' ? PING_TIMEOUT : options.pingTimeout,
 			pingInterval: typeof options.pingInterval === 'undefined' ? PING_INTERVAL : options.pingInterval,
@@ -393,7 +394,9 @@ class ReconnectionWebSocket {
 	 * @returns {Promise}
 	 */
 	close() {
-		if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) return Promise.reject(new Error('Socket already close'));
+		if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) {
+			return Promise.reject(new Error('Socket already close'));
+		}
 
 		return new Promise((resolve) => {
 			this._forceClosePromise = resolve;

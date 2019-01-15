@@ -805,7 +805,9 @@ class API {
      */
 	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
-		if (!objectIds.every((id) => isObjectId(id))) return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
+		if (!objectIds.every((id) => isObjectId(id))) {
+			return Promise.reject(new Error('ObjectIds should contain valid valid object ids'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this._getObjectsById(objectIds, CacheMaps.OBJECTS_BY_ID, 'getObjects', force);
@@ -848,7 +850,9 @@ class API {
      * 	@private
      */
 	getDynamicAssetData(dynamicAssetDataId, force = false) {
-		if (!isDynamicAssetDataId(dynamicAssetDataId)) return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
+		if (!isDynamicAssetDataId(dynamicAssetDataId)) {
+			return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this.getObject(dynamicAssetDataId, force);
@@ -893,11 +897,20 @@ class API {
      */
 	getTransaction(blockNum, transactionIndex) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
-		if (!isUInt64(transactionIndex)) return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
+		if (!isUInt64(transactionIndex)) {
+			return Promise.reject(new Error('TransactionIndex should be a non negative integer'));
+		}
 
 		const key = `${blockNum}:${transactionIndex}`;
 
-		return this._getSingleDataByCompositeParams(key, CacheMaps.TRANSACTIONS_BY_BLOCK_AND_INDEX, 'getTransaction', false, blockNum, transactionIndex);
+		return this._getSingleDataByCompositeParams(
+			key,
+			CacheMaps.TRANSACTIONS_BY_BLOCK_AND_INDEX,
+			'getTransaction',
+			false,
+			blockNum,
+			transactionIndex,
+		);
 	}
 
 	/**
@@ -991,7 +1004,9 @@ class API {
      */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
-		if (!keys.every((key) => isPublicKey(key))) return Promise.reject(new Error('Keys should contain valid public keys'));
+		if (!keys.every((key) => isPublicKey(key))) {
+			return Promise.reject(new Error('Keys should contain valid public keys'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this._getArrayDataWithMultiSave(keys, CacheMaps.ACCOUNTS_ID_BY_KEY, 'getKeyReferences', force);
@@ -1070,10 +1085,14 @@ class API {
      *  @return {Promise.<Array.<FullAccount>>}
      */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
-		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
-		if (!accountNamesOrIds.every((key) => isAccountId(key) || isAccountName(key))) return Promise.reject(new Error('Accounts should contain valid account ids or names'));
-		if (!isBoolean(subscribe)) return Promise.reject(new Error('Subscribe should be a boolean'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isArray(accountNamesOrIds)) {
+			throw new Error('Account names or ids should be an array');
+		}
+		if (!accountNamesOrIds.every((key) => isAccountId(key) || isAccountName(key))) {
+			throw new Error('Accounts should contain valid account ids or names');
+		}
+		if (!isBoolean(subscribe)) throw new Error('Subscribe should be a boolean');
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
 		const { length } = accountNamesOrIds;
 
@@ -1217,7 +1236,12 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataWithMultiSave(accountId, CacheMaps.ACCOUNT_REFERENCES_BY_ACCOUNT_ID, 'getAccountReferences', force);
+		return this._getSingleDataWithMultiSave(
+			accountId,
+			CacheMaps.ACCOUNT_REFERENCES_BY_ACCOUNT_ID,
+			'getAccountReferences',
+			force,
+		);
 	}
 
 	/**
@@ -1228,9 +1252,11 @@ class API {
      *  @return {Promise.<Array.<Account>>}
      */
 	async lookupAccountNames(accountNames, force = false) {
-		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
-		if (!accountNames.every((id) => isAccountName(id))) return Promise.reject(new Error('Accounts should contain valid account names'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isArray(accountNames)) throw new Error('Account names should be an array');
+		if (!accountNames.every((id) => isAccountName(id))) {
+			throw new Error('Accounts should contain valid account names');
+		}
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
 		const { length } = accountNames;
 
@@ -1306,7 +1332,9 @@ class API {
      */
 	async lookupAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('Lower bound name should be a string');
-		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
+		}
 
 		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
@@ -1331,10 +1359,19 @@ class API {
 	getAccountBalances(accountId, assetIds, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Asset ids contain valid asset ids'));
+		if (!assetIds.every((id) => isAssetId(id))) {
+			return Promise.reject(new Error('Asset ids contain valid asset ids'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataByCompositeParams(accountId, CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_ID, 'getAccountBalances', force, accountId, assetIds);
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_ID,
+			'getAccountBalances',
+			force,
+			accountId,
+			assetIds,
+		);
 	}
 
 	/**
@@ -1348,10 +1385,19 @@ class API {
 	getNamedAccountBalances(accountName, assetIds, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Asset ids should contain valid asset ids'));
+		if (!assetIds.every((id) => isAssetId(id))) {
+			return Promise.reject(new Error('Asset ids should contain valid asset ids'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataByCompositeParams(accountName, CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_NAME, 'getNamedAccountBalances', force, accountName, assetIds);
+		return this._getSingleDataByCompositeParams(
+			accountName,
+			CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_NAME,
+			'getNamedAccountBalances',
+			force,
+			accountName,
+			assetIds,
+		);
 	}
 
 	/**
@@ -1387,9 +1433,9 @@ class API {
      *  @return {Promise.<Array.<Asset>>}
      */
 	async getAssets(assetIds, force = false) {
-		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
-		if (!assetIds.every((id) => isAssetId(id))) return Promise.reject(new Error('Assets ids should contain valid asset ids'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isArray(assetIds)) throw new Error('Asset ids should be an array');
+		if (!assetIds.every((id) => isAssetId(id))) throw new Error('Assets ids should contain valid asset ids');
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
 		const { length } = assetIds;
 
@@ -1454,7 +1500,9 @@ class API {
      */
 	async listAssets(lowerBoundSymbol, limit = ApiConfig.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) {
+			throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`);
+		}
 
 		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
@@ -1468,7 +1516,9 @@ class API {
      */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
-		if (!symbolsOrIds.every((key) => isAssetId(key) || isAssetName(key))) throw new Error('Symbols or ids should contain valid asset ids or symbol');
+		if (!symbolsOrIds.every((key) => isAssetId(key) || isAssetName(key))) {
+			throw new Error('Symbols or ids should contain valid asset ids or symbol');
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		const { length } = symbolsOrIds;
@@ -1540,7 +1590,9 @@ class API {
 	async getOrderBook(baseAssetName, quoteAssetName, depth = ApiConfig.ORDER_BOOK_DEFAULT_DEPTH) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
-		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) throw new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`);
+		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) {
+			throw new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`);
+		}
 
 		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
@@ -1653,7 +1705,9 @@ class API {
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 		if (!isUInt64(start)) throw new Error('Start should be UNIX timestamp');
 		if (!isUInt64(stop)) throw new Error('Stop should be UNIX timestamp');
-		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`);
+		}
 
 		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
@@ -1668,12 +1722,24 @@ class API {
      */
 	getWitnesses(witnessIds, force = false) {
 		if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
-		if (!witnessIds.every((id) => isWitnessId(id))) return Promise.reject(new Error('Witness ids should contain valid object ids'));
+		if (!witnessIds.every((id) => isWitnessId(id))) {
+			return Promise.reject(new Error('Witness ids should contain valid object ids'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID }, { param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID }, { param: 'witness_account', cache: CacheMaps.WITNESS_BY_ACCOUNT_ID }];
+		const cacheParams = [
+			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
+			{ param: 'witness_account', cache: CacheMaps.WITNESS_BY_ACCOUNT_ID },
+		];
 
-		return this._getArrayDataWithMultiSave(witnessIds, CacheMaps.WITNESS_BY_WITNESS_ID, 'getWitnesses', force, cacheParams);
+		return this._getArrayDataWithMultiSave(
+			witnessIds,
+			CacheMaps.WITNESS_BY_WITNESS_ID,
+			'getWitnesses',
+			force,
+			cacheParams,
+		);
 	}
 
 	/**
@@ -1688,9 +1754,19 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID }, { param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID }, { param: 'id', cache: CacheMaps.WITNESS_BY_WITNESS_ID }];
+		const cacheParams = [
+			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
+			{ param: 'id', cache: CacheMaps.WITNESS_BY_WITNESS_ID },
+		];
 
-		return this._getSingleDataWithMultiSave(accountId, CacheMaps.WITNESS_BY_ACCOUNT_ID, 'getWitnessByAccount', force, cacheParams);
+		return this._getSingleDataWithMultiSave(
+			accountId,
+			CacheMaps.WITNESS_BY_ACCOUNT_ID,
+			'getWitnessByAccount',
+			force,
+			cacheParams,
+		);
 	}
 
 	/**
@@ -1706,7 +1782,9 @@ class API {
 		limit = ApiConfig.LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT,
 	) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`);
+		}
 
 		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
 	}
@@ -1732,12 +1810,24 @@ class API {
      */
 	getCommitteeMembers(committeeMemberIds, force = false) {
 		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
-		if (!committeeMemberIds.every((id) => isCommitteeMemberId(id))) return Promise.reject(new Error('CommitteeMemberIds should contain valid committee ids'));
+		if (!committeeMemberIds.every((id) => isCommitteeMemberId(id))) {
+			return Promise.reject(new Error('CommitteeMemberIds should contain valid committee ids'));
+		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID }, { param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID }, { param: 'committee_member_account', cache: CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID }];
+		const cacheParams = [
+			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
+			{ param: 'committee_member_account', cache: CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID },
+		];
 
-		return this._getArrayDataWithMultiSave(committeeMemberIds, CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, 'getCommitteeMembers', force, cacheParams);
+		return this._getArrayDataWithMultiSave(
+			committeeMemberIds,
+			CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID,
+			'getCommitteeMembers',
+			force,
+			cacheParams,
+		);
 	}
 
 	/**
@@ -1752,9 +1842,19 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		const cacheParams = [{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID }, { param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID }, { param: 'id', cache: CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID }];
+		const cacheParams = [
+			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
+			{ param: 'id', cache: CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID },
+		];
 
-		return this._getSingleDataWithMultiSave(accountId, CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, 'getCommitteeMemberByAccount', force, cacheParams);
+		return this._getSingleDataWithMultiSave(
+			accountId,
+			CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID,
+			'getCommitteeMemberByAccount',
+			force,
+			cacheParams,
+		);
 	}
 
 	/**
@@ -1770,7 +1870,9 @@ class API {
 		limit = ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
 	) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
+		}
 
 		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
@@ -1893,7 +1995,9 @@ class API {
 	async getRequiredSignatures(transaction, availableKeys) {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
-		if (!availableKeys.every((key) => isPublicKey(key))) throw new Error('\'Available keys should contain valid public keys');
+		if (!availableKeys.every((key) => isPublicKey(key))) {
+			throw new Error('\'Available keys should contain valid public keys');
+		}
 
 		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
 	}
@@ -1946,7 +2050,9 @@ class API {
      *  @return {Promise.<*>}
      */
 	async verifyAccountAuthority(accountNameOrId, signers) {
-		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) throw new Error('Account name or id is invalid');
+		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
+			throw new Error('Account name or id is invalid');
+		}
 		if (!isArray(signers)) throw new Error('Signers ids should be an array');
 		if (!signers.every((key) => isPublicKey(key))) throw new Error('Signers should contain valid public keys');
 
@@ -1982,7 +2088,9 @@ class API {
      */
 	async getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) throw new Error('Operations should be an array');
-		if (!operations.every((v) => Operations.some((op) => op.isValid(v)))) throw new Error('Operations should contain valid operations');
+		if (!operations.every((v) => Operations.some((op) => op.isValid(v)))) {
+			throw new Error('Operations should contain valid operations');
+		}
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 
 		return this.wsApi.database.getRequiredFees(operations, assetId);
@@ -1996,7 +2104,9 @@ class API {
      *  @return {Promise.<*>}
      */
 	async getProposedTransactions(accountNameOrId) {
-		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) throw new Error('AccountNameOrId is invalid');
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
+			throw new Error('AccountNameOrId is invalid');
+		}
 
 		return this.wsApi.database.getProposedTransactions(accountNameOrId);
 	}
@@ -2048,7 +2158,12 @@ class API {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataWithMultiSave(resultContractId, CacheMaps.CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID, 'getContractResult', force);
+		return this._getSingleDataWithMultiSave(
+			resultContractId,
+			CacheMaps.CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID,
+			'getContractResult',
+			force,
+		);
 	}
 
 	/**
@@ -2073,7 +2188,12 @@ class API {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getSingleDataWithMultiSave(contractId, CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID, 'getContract', force);
+		return this._getSingleDataWithMultiSave(
+			contractId,
+			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
+			'getContract',
+			force,
+		);
 	}
 
 	/**
@@ -2106,7 +2226,9 @@ class API {
      */
 	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
-		if (!contractIds.every((id) => isContractId(id))) return Promise.reject(new Error('ContractIds should contain valid contract ids'));
+		if (!contractIds.every((id) => isContractId(id))) {
+			return Promise.reject(new Error('ContractIds should contain valid contract ids'));
+		}
 
 		return this._getArrayDataWithMultiSave(contractIds, CacheMaps.CONTRACTS_BY_CONTRACT_ID, 'getContracts', force);
 	}
@@ -2181,7 +2303,9 @@ class API {
 	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT}`);
+		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
 		return this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
@@ -2209,7 +2333,9 @@ class API {
 	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
-		if (!isUInt64(limit) || limit > ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
+		}
 		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
 		return this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
@@ -2240,8 +2366,9 @@ class API {
 		if (!isOperationId(operationId)) throw new Error('Operation id invalid');
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
-
+		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
+		}
 		return this.wsApi.history
 			.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
 	}
@@ -2265,7 +2392,9 @@ class API {
 	) {
 		if (!isContractId(contractId)) throw new Error('Contract is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.CONTRACT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.CONTRACT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > ApiConfig.CONTRACT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${ApiConfig.CONTRACT_HISTORY_MAX_LIMIT}`);
+		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
 		return this.wsApi.history.getContractHistory(contractId, stop, limit, start);

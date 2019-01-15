@@ -103,7 +103,12 @@ class WS extends EventEmitter {
 	async connect(url, options = {}) {
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
-		if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:' && url.indexOf('wss://') < 0) {
+		if (
+			typeof window !== 'undefined' &&
+			window.location &&
+			window.location.protocol === 'https:' &&
+			url.indexOf('wss://') < 0
+		) {
 			throw new Error('Secure domains require wss connection');
 		}
 
