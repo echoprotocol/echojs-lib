@@ -970,10 +970,9 @@ try {
  Array of all asset IDs with the number of holders.() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
-<a name="BlockHeader"></a>
 
 ## BlockHeader : <code>Object</code>
-<a name="Block"></a>
+<a name="BlockHeader"></a>
 ```javascript
 {
 	previous:String,
@@ -987,7 +986,7 @@ try {
 }
 ```
 ## Block : <code>Object</code>
-<a name="Transaction"></a>
+<a name="Block"></a>
 ```javascript
 {
   		previous:String,
@@ -1023,12 +1022,12 @@ try {
   			signatures:Array.<String>,
   			operation_results:Array.<Array>
   		}>
-  	}
+}
 ```
 ## Transaction : <code>Object</code>
-<a name="ChainProperties"></a>
+<a name="Transaction"></a>
 ```javascript
-    {
+{
   			ref_block_num:Number,
   			ref_block_prefix:Number,
   			expiration:String,
@@ -1036,13 +1035,13 @@ try {
   			extensions:Array,
   			signatures:Array.<String>,
   			operation_results:Array.<Array.<*>>
-      }
+}
 ```
 
 ## ChainProperties : <code>Object</code>
-<a name="GlobalProperties"></a>
+<a name="ChainProperties"></a>
 ```javascript
-    {
+{
   			id:String,
             chain_id:String,
             immutable_parameters:{
@@ -1051,13 +1050,13 @@ try {
                 num_special_accounts:Number,
                 num_special_assets:Number
             }
-      }
+}
 ```
 
 ## GlobalProperties : <code>Object</code>
-<a name="Config"></a>
+<a name="GlobalProperties"></a>
 ```javascript
-    {
+{
  	 		id:String,
  	 		parameters:{
  	 			current_fees:{
@@ -1096,10 +1095,10 @@ try {
  	 		next_available_vote_id:Number,
  	 		active_committee_members:Array.<String>,
  	 		active_witnesses:Array.<String>
-      }
+}
 ```
 ## Config : <code>Object</code>
-<a name="DynamicGlobalProperties"></a>
+<a name="Config"></a>
 ```javascript
 {
   		GRAPHENE_SYMBOL:String,
@@ -1177,12 +1176,12 @@ try {
   		GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,
   		GRAPHENE_NULL_ACCOUNT:String,
   		GRAPHENE_TEMP_ACCOUNT:String
-  	}
+}
 ```
 ## DynamicGlobalProperties : <code>Object</code>
-<a name="Witness"></a>
+<a name="DynamicGlobalProperties"></a>
 ```javascript
-	{
+{
   		id:String,
   		head_block_number:Number,
   		head_block_id:String,
@@ -1197,13 +1196,13 @@ try {
   		recent_slots_filled:String,
   		dynamic_flags:Number,
   		last_irreversible_block_num:Number
-  	}
+}
 ```
 
 ## Witness : <code>Object</code>
-<a name="Committee"></a>
+<a name="Witness"></a>
 ```javascript
-	{
+{
   		id:String,
   		witness_account:String,
   		last_aslot:Number,
@@ -1215,48 +1214,213 @@ try {
   		total_missed:Number,
   		last_confirmed_block_num:Number,
   		ed_signing_key:String
-  	}
+}
 ```
 
 ## Committee : <code>Object</code>
-**Kind**: global typedef
-<a name="Account"></a>
-
+<a name="Committee"></a>
+```javascript
+{
+	id:String,
+	committee_member_account:String,
+	vote_id:String,
+	total_votes:Number,
+	url:String
+}
+```
 ## Account : <code>Object</code>
-**Kind**: global typedef
-<a name="AccountHistory"></a>
-
+<a name="Account"></a>
+```javascript
+{
+	id:String,
+	membership_expiration_date:String,
+	registrar:String,
+	referrer:String,
+	lifetime_referrer:String,
+	network_fee_percentage:Number,
+	lifetime_referrer_fee_percentage:Number,
+	referrer_rewards_percentage:Number,
+	name:String,
+	owner:{
+		weight_threshold:Number,
+		account_auths:Array,
+		key_auths:Array,
+		address_auths:Array
+		},
+	active:{
+		weight_threshold:Number,
+		account_auths:Array,
+		key_auths:Array,
+		address_auths:Array
+		},
+	ed_key:String,
+	options:{
+		memo_key:String,
+		voting_account:String,
+		delegating_account:String,
+		num_witness:Number,
+		num_committee:Number,
+		votes:Array,
+		extensions:Array
+	},
+	statistics:String,
+	whitelisting_accounts:Array,
+	blacklisting_accounts:Array,
+	whitelisted_accounts:Array,
+	blacklisted_accounts:Array,
+	owner_special_authority:Array,
+	active_special_authority:Array,
+	top_n_control_flags:Number
+}
+```
 ## AccountHistory : <code>Object</code>
-**Kind**: global typedef
-<a name="FullAccount"></a>
-
+<a name="AccountHistory"></a>
+```javascript
+{
+	id:String,
+	op:Array,
+	result:Array,
+	block_num:Number,
+	trx_in_block:Number,
+	op_in_block:Number,
+	virtual_op:Number
+}
+```
 ## FullAccount : <code>Object</code>
-**Kind**: global typedef
-<a name="Asset"></a>
-
+<a name="FullAccount"></a>
+```javascript
+{
+	id:String,
+	membership_expiration_date:String,
+	registrar:String,
+	referrer:String,
+	lifetime_referrer:String,
+	network_fee_percentage:Number,
+	lifetime_referrer_fee_percentage:Number,
+	referrer_rewards_percentage:Number,
+	name:String,
+	owner:{
+		weight_threshold:Number,
+		account_auths:Array,
+		key_auths:Array,
+		address_auths:Array
+		},
+	active:{
+		weight_threshold:Number,
+		account_auths:Array,
+		key_auths:Array,
+		address_auths:Array
+		},
+	ed_key:String,
+	options:{
+		memo_key:String,
+		voting_account:String,
+		delegating_account:String,
+		num_witness:Number,
+		num_committee:Number,
+		votes:Array,
+		extensions:Array
+	},
+	statistics:String,
+	whitelisting_accounts:Array,
+	blacklisting_accounts:Array,
+	whitelisted_accounts:Array,
+	blacklisted_accounts:Array,
+	owner_special_authority:Array,
+	active_special_authority:Array,
+	top_n_control_flags:Number,
+	history:Array.<AccountHistory>,
+	balances:Object,
+	limit_orders:Object,
+	call_orders:Object,
+	proposals:Object
+}
+```
 ## Asset : <code>Object</code>
-**Kind**: global typedef
-<a name="Vote"></a>
-
+<a name="Asset"></a>
+```javascript
+{
+	id:String,
+	symbol:String,
+	precision:Number,
+	issuer:String,
+	options:{
+		max_supply:String,
+		market_fee_percent:Number,
+		max_market_fee:String,
+		issuer_permissions:Number,
+		flags:Number,
+		core_exchange_rate:Object,
+		whitelist_authorities:Array,
+		blacklist_authorities:Array,
+		whitelist_markets:Array,
+		blacklist_markets:Array,
+		description:String,
+		extensions:Array
+	},
+	dynamic_asset_data_id:String,
+	dynamic:Object,
+	bitasset:(Object|undefined)
+}
+```
 ## Vote : <code>Object</code>
-**Kind**: global typedef
-<a name="ContractLogs"></a>
-
+<a name="Vote"></a>
+```javascript
+{
+	id:String,
+	committee_member_account:(String|undefined),
+	witness_account:(String|undefined),
+	vote_id:String,
+	total_votes:Number,
+	url:String,
+	last_aslot:(Number|undefined),
+	signing_key:(String|undefined),
+	pay_vb:(String|undefined),
+	total_missed:(Number|undefined),
+	last_confirmed_block_num:(Number|undefined),
+	ed_signing_key:(String|undefined)
+}
+```
 ## ContractLogs : <code>Object</code>
-**Kind**: global typedef
-<a name="ContractResult"></a>
-
+<a name="ContractLogs"></a>
+```javascript
+{
+	address:String,
+	log:Array.<String>,
+	data:String
+}
+```
 ## ContractResult : <code>Object</code>
-**Kind**: global typedef
-<a name="AccountName"></a>
-
+<a name="ContractResult"></a>
+```javascript
+{
+	exec_res:{
+		excepted:String,
+		new_address:String,
+		output:String,
+		code_deposit:String,
+		gas_refunded:String,
+		deposit_size:Number,
+		gas_for_deposit:String
+	},
+	tr_receipt:{
+		status_code:String,
+		gas_used:String,
+		bloom:String,
+		log:Array
+	}
+}
+```
 ## AccountName : <code>String</code>
-**Kind**: global typedef
-<a name="AccountId"></a>
-
+<a name="AccountName"></a>
+```javascript
+String
+```
 ## AccountId : <code>String</code>
-**Kind**: global typedef
-
+<a name="AccountId"></a>
+```javascript
+String
+```
 #### Subscriber
 This library provides subscriber module to notify subscribers about changes.
 ```javascript
