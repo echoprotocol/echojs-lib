@@ -297,7 +297,7 @@ class API {
      * @param {*} key
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force
+     * @param {Boolean} force [make rpc request, instead cache checking]
      * @param {Array} cacheParams
      *
      * @return {Promise.<Object>}
@@ -337,7 +337,7 @@ class API {
      * @param {String} key
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force
+     * @param {Boolean} force [make rpc request, instead cache checking]
      * @param {...Array} params
      *
      * @return {Promise.<Object>}
@@ -371,7 +371,7 @@ class API {
 	/**
 	 *
      * @param {Map} requestedObject
-     * @param {Boolean} force
+     * @param {Boolean} force [make rpc request, instead cache checking]
      * @return {
      *  	Promise.<{Asset}>
      * }
@@ -434,7 +434,7 @@ class API {
      * @param {Array} array
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force
+     * @param {Boolean} force [make rpc request, instead cache checking]
      * @return {Promise.<Array.<*>>}
      * @private
      */
@@ -534,7 +534,7 @@ class API {
 	/**
      *  @method getObjects
      *  @param  {Array<String>} objectIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Object>>}
      */
@@ -549,7 +549,7 @@ class API {
 	/**
      *  @method getObject
      *  @param  {String} objectId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Object>}
      */
@@ -563,7 +563,7 @@ class API {
 	/**
 	 *
      * 	@param {String} bitAssetId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      * 	@return  {Promise.<Object>}
      * 	@private
      */
@@ -578,7 +578,7 @@ class API {
 	/**
      *
      * 	@param {String} dynamicAssetDataId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      * 	@return  {Promise.<Object>}
      * 	@private
      */
@@ -688,7 +688,7 @@ class API {
 
 	/**
      *  @method getChainProperties
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {
      *  	Promise.<{
@@ -763,7 +763,7 @@ class API {
 
 	/**
      *  @method getConfig
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {
      *  	Promise.<{
@@ -853,7 +853,7 @@ class API {
 
 	/**
      *  @method getChainId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<String>}
      */
@@ -910,7 +910,7 @@ class API {
 	/**
      *  @method getKeyReferences
      *  @param  {List<String>} keys [public keys]
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<*>>}
      */
@@ -925,7 +925,7 @@ class API {
 	/**
      *  @method getAccounts
      *  @param  {Array<String>} accountIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Account>>}
      */
@@ -1093,7 +1093,7 @@ class API {
 	/**
      *  @method getAccountByName
      *  @param  {String} accountName
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Account>}
      */
@@ -1134,7 +1134,7 @@ class API {
 	/**
      *  @method getAccountReferences
      *  @param  {String} accountId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Object>}
      */
@@ -1148,7 +1148,7 @@ class API {
 	/**
      *  @method lookupAccountNames
      *  @param  {Array<String>} accountNames
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Account>>}
      */
@@ -1249,7 +1249,7 @@ class API {
      *  @method getAccountBalances
      *  @param  {String} accountId
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Object>}
      */
@@ -1266,7 +1266,7 @@ class API {
      *  @method getNamedAccountBalances
      *  @param  {String} accountName
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Object>}
      */
@@ -1307,7 +1307,7 @@ class API {
 	/**
      *  @method getAssets
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Asset>>}
      */
@@ -1387,7 +1387,7 @@ class API {
 	/**
      *  @method lookupAssetSymbols
      *  @param  {Array<String>} symbolsOrIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Asset>>}
      */
@@ -1587,7 +1587,7 @@ class API {
      *  @method getWitnesses
      *
      *  @param  {Array<String>} witnessIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array.<Witness>>}
      */
@@ -1605,7 +1605,7 @@ class API {
      *  @method getWitnessByAccount
      *
      *  @param  {String} accountId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Witness>}
      */
@@ -1649,7 +1649,7 @@ class API {
      *  @method getCommitteeMembers
      *
      *  @param  {Array<String>} committeeMemberIds
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {
      *  	Promise.<Array.<Committee>>
@@ -1669,7 +1669,7 @@ class API {
      *  @method getCommitteeMemberByAccount
      *
      *  @param  {String} accountId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Committee>}
      */
@@ -1982,7 +1982,7 @@ class API {
      *  @method getContractResult
      *
      *  @param  {String} resultContractId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {
      *  	Promise.<{
@@ -2015,7 +2015,7 @@ class API {
      *  @method getContract
      *
      *  @param  {String} contractId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {
      *  	Promise.<{
@@ -2060,7 +2060,7 @@ class API {
      *  @method getContracts
      *
      *  @param  {Array<String>} contractIds
-	 *  @param {Boolean} force
+	 *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
      */
@@ -2075,7 +2075,7 @@ class API {
      *  @method getContractBalances
      *
      *  @param  {String} contractId
-     *  @param {Boolean} force
+     *  @param {Boolean} force [make rpc request, instead cache checking]
      *
      *  @return {Promise.<Object>}
      */
