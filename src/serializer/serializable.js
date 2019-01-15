@@ -29,11 +29,8 @@ class Serializable extends Type {
 		if (typeof value !== 'object' || value === null) throw new Error('serializable object is not a object');
 		for (const key in value) {
 			if (!Object.prototype.hasOwnProperty.call(value, key)) continue;
-			if (!this.types[key]) throw new Error(`unknown property ${key}`);
-		}
-		for (const key in this.types) {
-			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
 			const type = this.types[key];
+			if (!type) throw new Error(`unknown property ${key}`);
 			type.validate(value[key]);
 		}
 	}

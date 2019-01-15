@@ -2,12 +2,16 @@ import { strictEqual, ok } from 'assert';
 import BigNumber from 'bignumber.js';
 import ByteBuffer from 'bytebuffer';
 
-import echo from '../../';
+import { Echo } from '../../src';
 import { transfer } from '../../src/echo/operations';
 import PublicKey from '../../src/crypto/public-key';
 import Transaction from '../../src/echo/transaction';
 
+const echo = new Echo();
+
 describe('transfer', () => {
+	before(() => echo.connect('ws://195.201.164.54:6311'));
+
 	// describe('failure creation', () => { });
 	describe('successful validation', () => {
 		it('full object', () => {
@@ -27,7 +31,7 @@ describe('transfer', () => {
 	});
 	describe('converting to bytebuffer', () => {
 		it('minimal object', () => {
-			const transaction = new Transaction(echo);
+			const transaction = new Transaction(echo.api);
 			transaction.addOperation('transfer', {
 				// FIXME: remove optional fee
 				fee: { asset_id: '1.3.1', amount: 20 },

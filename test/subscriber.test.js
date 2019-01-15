@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { Echo } from '../index';
+import echo, { Echo, constants } from '../src';
 
 chai.use(spies);
 

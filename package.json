@@ -3,11 +3,12 @@
 	"version": "1.0.0",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
+	"types": "./types/index.d.ts",
 	"scripts": {
 		"test": "mocha --require babel-core/register --require babel-polyfill --exit",
 	    "test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
-		"build": "babel src --out-dir lib",
+		"build": "npx babel-cli src --out-dir dist",
 		"prepublishOnly": "build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
@@ -41,6 +42,7 @@
 	},
 	"devDependencies": {
 		"babel-core": "^6.26.3",
+		"babel-plugin-transform-runtime": "^6.23.0",
 		"babel-polyfill": "^6.26.0",
 		"babel-preset-latest": "^6.24.1",
 		"babel-preset-stage-3": "^6.24.1",

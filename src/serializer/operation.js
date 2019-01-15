@@ -43,7 +43,18 @@ class Operation extends Type {
 	/** @typedef {number} _OperationId */
 
 	/**
-	 * @param {[_OperationId,Serializable]} value
+	 * @param {{[key:string]:any}} props
+	 * @returns {{[key:string]:any}}
+	 */
+	_withUnrequiredFees(props) {
+		return {
+			...props,
+			fee: { asset_id: ECHO_ASSET_ID, amount: 0, ...props.fee },
+		};
+	}
+
+	/**
+	 * @param {[_OperationId,{[key:string]:any}]} value
 	 * @param {boolean=true} feeIsRequired
 	 */
 	validate(value, feeIsRequired = true) {
@@ -51,14 +62,11 @@ class Operation extends Type {
 		if (value.length !== 2) throw new Error('invalid count of operation elements');
 		const [operationId, operationProps] = value;
 		if (operationId !== this.id) throw new Error('invalid operation id');
-		this.serializable.validate({
-			...operationProps,
-			fee: feeIsRequired ? operationProps.fee : { asset_id: ECHO_ASSET_ID, amount: 0, ...operationProps.fee },
-		});
+		this.serializable.validate(feeIsRequired ? operationProps : this._withUnrequiredFees(operationProps));
 	}
 
 	/**
-	 * @param {[_OperationId,Serializable]} value
+	 * @param {[_OperationId,{[key:string]:any}]} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
@@ -66,10 +74,14 @@ class Operation extends Type {
 		this.serializable.appendToByteBuffer(value[1], bytebuffer);
 	}
 
-	toObject(value) {
-		this.validate(value);
+	/**
+	 * @param {[_OperationId,{[key:string]:any}]} value
+	 * @param {boolean=} feeIsRequired
+	 */
+	toObject(value, feeIsRequired = true) {
+		this.validate(value, feeIsRequired);
 		const [, operationProps] = value;
-		return this.serializable.toObject(operationProps);
+		return this.serializable.toObject(feeIsRequired ? operationProps : this._withUnrequiredFees(operationProps));
 		// return [this.id, this.serializable.toObject(operationProps)];
 	}
 

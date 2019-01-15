@@ -476,6 +476,7 @@ export const createContract = operation(CREATE_CONTRACT, {
 	gasPrice: uint64,
 	gas: uint64,
 	code: string,
+	eth_accuracy: bool,
 	supported_asset_id: optional(protocolId(ASSET)),
 });
 
