@@ -3,8 +3,8 @@ import Echo from './src/echo/';
 
 import constants from './src/constants';
 import crypto from './src/crypto';
-import reducer from './src/redux/reducer';
+import echoReducer from './src/redux/reducer';
 
-export { Echo, constants, crypto, reducer };
+export { Echo, constants, crypto, echoReducer };
 
 export default new Echo();
