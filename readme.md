@@ -48,6 +48,943 @@ try {
 }
 ```
 
+## Classes
+
+<dl>
+<dt><a href="#API">API</a></dt>
+<dd></dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#getObjects">getObjects(objectIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Object&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getObject">getObject(objectId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBlockHeader">getBlockHeader(blockNum)</a> ⇒ <code>Promise.&lt;{previous:String, timestamp:String, witness:String, account:String, transaction_merkle_root:String, state_root_hash:String, result_root_hash:String, extensions:Array}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBlock">getBlock(blockNum)</a> ⇒ <code>Promise.&lt;{previous:String, timestamp:String, witness:String, account:String, transaction_merkle_root:String, state_root_hash:String, result_root_hash:String, extensions:Array, witness_signature:String, ed_signature:String, verifications:Array, round:Number, rand:String, cert: {_rand:String, _block_hash:String, _producer:Number, _signatures:Array.&lt;{_step:Number, _value:Number, _signer:Number, _bba_sign:String}&gt;}, transactions:Array.&lt;{ref_block_num:Number, ref_block_prefix:Number, expiration:String, operations:Array, extensions:Array, signatures:Array.&lt;String&gt;, operation_results:Array.&lt;Array&gt;}&gt;}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getTransaction">getTransaction(blockNum, transactionIndex)</a> ⇒ <code>Promise.&lt;{ref_block_num:Number, ref_block_prefix:Number, expiration:String, operations:Array.&lt;*&gt;, extensions:Array, signatures:Array.&lt;String&gt;, operation_results:Array.&lt;Array.&lt;*&gt;&gt;}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getChainProperties">getChainProperties(force)</a> ⇒ <code>Promise.&lt;{id:String, chain_id:String, immutable_parameters: {min_committee_member_count:Number, min_witness_count:Number, num_special_accounts:Number, num_special_assets:Number}}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getGlobalProperties">getGlobalProperties()</a> ⇒ <code>Promise.&lt;{id:String, parameters: {current_fees: {parameters:Array.&lt;*&gt;, scale:Number}, block_interval:Number, maintenance_interval:Number, maintenance_skip_slots:Number, committee_proposal_review_period:Number, maximum_transaction_size:Number, maximum_block_size:Number, maximum_time_until_expiration:Number, maximum_proposal_lifetime:Number, maximum_asset_whitelist_authorities:Number, maximum_asset_feed_publishers:Number, maximum_witness_count:Number, maximum_committee_count:Number, maximum_authority_membership:Number, reserve_percent_of_fee:Number, network_percent_of_fee:Number, lifetime_referrer_percent_of_fee:Number, cashback_vesting_period_seconds:Number, cashback_vesting_threshold:Number, count_non_member_votes:Boolean, allow_non_member_whitelists:Boolean, witness_pay_per_block:Number, worker_budget_per_day:String, max_predicate_opcode:Number, fee_liquidation_threshold:Number, accounts_per_fee_scale:Number, account_fee_scale_bitshifts:Number, max_authority_depth:Number, extensions:Array}, next_available_vote_id:Number, active_committee_members:Array.&lt;String&gt;, active_witnesses:Array.&lt;String&gt;}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getConfig">getConfig(force)</a> ⇒ <code>Promise.&lt;{GRAPHENE_SYMBOL:String, GRAPHENE_ADDRESS_PREFIX:String, GRAPHENE_ED_PREFIX:String, GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number, GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number, GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number, GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number, GRAPHENE_MAX_SHARE_SUPPLY:String, GRAPHENE_MAX_PAY_RATE:Number, GRAPHENE_MAX_SIG_CHECK_DEPTH:Number, GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number, GRAPHENE_MIN_BLOCK_INTERVAL:Number, GRAPHENE_MAX_BLOCK_INTERVAL:Number, GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number, GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number, GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number, GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number, GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number, GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number, GRAPHENE_MIN_UNDO_HISTORY:Number, GRAPHENE_MAX_UNDO_HISTORY:Number, GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number, GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number, GRAPHENE_BLOCKCHAIN_PRECISION:Number, GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number, GRAPHENE_DEFAULT_TRANSFER_FEE:Number, GRAPHENE_MAX_INSTANCE_ID:String, GRAPHENE_100_PERCENT:Number, GRAPHENE_1_PERCENT:Number, GRAPHENE_MAX_MARKET_FEE_PERCENT:Number, GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number, GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number, GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number, GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number, GRAPHENE_MAX_FEED_PRODUCERS:Number, GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number, GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number, GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number, GRAPHENE_COLLATERAL_RATIO_DENOM:Number, GRAPHENE_MIN_COLLATERAL_RATIO:Number, GRAPHENE_MAX_COLLATERAL_RATIO:Number, GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number, GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number, GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number, GRAPHENE_DEFAULT_MAX_WITNESSES:Number, GRAPHENE_DEFAULT_MAX_COMMITTEE:Number, GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number, GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number, GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number, GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number, GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number, GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number, GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String, GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number, GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number, GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number, GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number, GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number, GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number, GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number, GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number, GRAPHENE_MAX_WORKER_NAME_LENGTH:Number, GRAPHENE_MAX_URL_LENGTH:Number, GRAPHENE_NEAR_SCHEDULE_CTR_IV:String, GRAPHENE_FAR_SCHEDULE_CTR_IV:String, GRAPHENE_CORE_ASSET_CYCLE_RATE:Number, GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number, GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number, GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number, GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY:String, GRAPHENE_MAX_INTEREST_APR:Number, GRAPHENE_COMMITTEE_ACCOUNT:String, GRAPHENE_WITNESS_ACCOUNT:String, GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String, GRAPHENE_NULL_ACCOUNT:String, GRAPHENE_TEMP_ACCOUNT:String}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getChainId">getChainId(force)</a> ⇒ <code>Promise.&lt;String&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getDynamicGlobalProperties">getDynamicGlobalProperties()</a> ⇒ <code>Promise.&lt;{id:String, head_block_number:Number, head_block_id:String, time:String, current_witness:String, next_maintenance_time:String, last_budget_time:String, witness_budget:Number, accounts_registered_this_interval:Number, recently_missed_count:Number, current_aslot:Number, recent_slots_filled:String, dynamic_flags:Number, last_irreversible_block_num:Number}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getKeyReferences">getKeyReferences(keys, force)</a> ⇒ <code>Promise.&lt;Array.&lt;*&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccounts">getAccounts(accountIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getFullAccounts">getFullAccounts(accountNamesOrIds, subscribe, force)</a> ⇒ <code>Promise.&lt;Array.&lt;FullAccount&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccountByName">getAccountByName(accountName, force)</a> ⇒ <code><a href="#Account">Promise.&lt;Account&gt;</a></code></dt>
+<dd></dd>
+<dt><a href="#getAccountReferences">getAccountReferences(accountId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
+<dd></dd>
+<dt><a href="#lookupAccountNames">lookupAccountNames(accountNames, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#lookupAccounts">lookupAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;Array.&lt;AccountName, AccountId&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccountCount">getAccountCount()</a> ⇒ <code>Promise.&lt;Number&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccountBalances">getAccountBalances(accountId, assetIds, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getNamedAccountBalances">getNamedAccountBalances(accountName, assetIds, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getVestedBalances">getVestedBalances(balanceIds)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getVestingBalances">getVestingBalances(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAssets">getAssets(assetIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#listAssets">listAssets(lowerBoundSymbol, limit)</a> ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#lookupAssetSymbols">lookupAssetSymbols(symbolsOrIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getOrderBook">getOrderBook(baseAssetName, quoteAssetName, depth)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getLimitOrders">getLimitOrders(baseAssetId, quoteAssetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getCallOrders">getCallOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getSettleOrders">getSettleOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getMarginPositions">getMarginPositions(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getTicker">getTicker(baseAssetName, quoteAssetName)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#get24Volume">get24Volume(baseAssetName, quoteAssetName)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getTradeHistory">getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getWitnesses">getWitnesses(witnessIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Witness&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getWitnessByAccount">getWitnessByAccount(accountId, force)</a> ⇒ <code><a href="#Witness">Promise.&lt;Witness&gt;</a></code></dt>
+<dd></dd>
+<dt><a href="#lookupWitnessAccounts">lookupWitnessAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getWitnessCount">getWitnessCount()</a> ⇒ <code>Promise.&lt;Number&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getCommitteeMembers">getCommitteeMembers(committeeMemberIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Committee&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getCommitteeMemberByAccount">getCommitteeMemberByAccount(accountId, force)</a> ⇒ <code><a href="#Committee">Promise.&lt;Committee&gt;</a></code></dt>
+<dd></dd>
+<dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getWorkersByAccount">getWorkersByAccount(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#lookupVoteIds">lookupVoteIds(votes, force)</a> ⇒ <code>Promise.&lt;Array.&lt;{id:String, committee_member_account: (String|undefined), witness_account: (String|undefined), vote_id:String, total_votes:Number, url:String, last_aslot: (Number|undefined), signing_key: (String|undefined), pay_vb: (String|undefined), total_missed: (Number|undefined), last_confirmed_block_num: (Number|undefined), ed_signing_key: (String|undefined)}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getTransactionHex">getTransactionHex(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getRequiredSignatures">getRequiredSignatures(transaction, availableKeys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getPotentialSignatures">getPotentialSignatures(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getPotentialAddressSignatures">getPotentialAddressSignatures(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#verifyAuthority">verifyAuthority(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#verifyAccountAuthority">verifyAccountAuthority(accountNameOrId, signers)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#validateTransaction">validateTransaction(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getRequiredFees">getRequiredFees(operations, assetId)</a> ⇒ <code>Promise.&lt;Array.&lt;{asset_id:String, amount:Number}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAllContracts">getAllContracts()</a> ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContractLogs">getContractLogs(contractId, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;{address:String, log:Array.&lt;String&gt;, data:String}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code>Promise.&lt;{exec_res: {excepted:String, new_address:String, output:String, code_deposit:String, gas_refunded:String, deposit_size:Number, gas_for_deposit:String}, tr_receipt: {status_code:String, gas_used:String, bloom:String, log:Array}}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContract">getContract(contractId, force)</a> ⇒ <code>Promise.&lt;{contract_info: {id:String, statistics:String, suicided:Boolean}, code:String, storage:Array.&lt;Array&gt;}&gt;</code></dt>
+<dd></dd>
+<dt><a href="#callContractNoChangingState">callContractNoChangingState(contractId, accountId, assetId, bytecode)</a> ⇒ <code>Promise.&lt;String&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContracts">getContracts(contractIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContractBalances">getContractBalances(contractId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getRecentTransactionById">getRecentTransactionById(transactionId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#registerAccount">registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey)</a> ⇒ <code>Promise.&lt;null&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccountHistory
+ Get operations relevant to the specified account.">getAccountHistory
+ Get operations relevant to the specified account.(accountId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getRelativeAccountHistory
+ Get operations relevant to the specified account referenced
+ by an event numbering specific to the account.">getRelativeAccountHistory
+ Get operations relevant to the specified account referenced
+ by an event numbering specific to the account.(accountId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAccountHistoryOperations
+ Get only asked operations relevant to the specified account.">getAccountHistoryOperations
+ Get only asked operations relevant to the specified account.(accountId, operationId, start, stop, limit)</a> ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getContractHistory
+ Get operations relevant to the specified account.">getContractHistory
+ Get operations relevant to the specified account.(contractId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;*&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#broadcastTransaction
+	Broadcast a transaction to the network.">broadcastTransaction
+	Broadcast a transaction to the network.(tr)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#broadcastBlock
+	Broadcast a block to the network.">broadcastBlock
+	Broadcast a block to the network.(block)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAssetHolders
+ Retrieve the information about the holders of the specified asset.">getAssetHolders
+ Retrieve the information about the holders of the specified asset.(assetId, start, limit)</a> ⇒ <code>Promise.&lt;Array.&lt;{name: String, account_id:String, amount: String}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAssetHoldersCount
+ Retrieve the number of holders of the provided asset.">getAssetHoldersCount
+ Retrieve the number of holders of the provided asset.(assetId)</a> ⇒ <code>Promise.&lt;Number&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getAllAssetHolders
+ Array of all asset IDs with the number of holders.">getAllAssetHolders
+ Array of all asset IDs with the number of holders.()</a> ⇒ <code>Promise.&lt;Array.&lt;{asset_id: String, count: Number}&gt;&gt;</code></dt>
+<dd></dd>
+</dl>
+
+## Typedefs
+
+<dl>
+<dt><a href="#Witness">Witness</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#Committee">Committee</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#Account">Account</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#AccountHistory">AccountHistory</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#FullAccount">FullAccount</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#Asset">Asset</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#AccountName">AccountName</a> : <code>String</code></dt>
+<dd></dd>
+<dt><a href="#AccountId">AccountId</a> : <code>String</code></dt>
+<dd></dd>
+</dl>
+
+<a name="API"></a>
+
+## API
+**Kind**: global class
+<a name="new_API_new"></a>
+
+### new API(cache, wsApi)
+
+| Param | Type |
+| --- | --- |
+| cache | <code>Cache</code> |
+| wsApi | <code>WSAPI</code> |
+
+<a name="getObjects"></a>
+
+## getObjects(objectIds, force) ⇒ <code>Promise.&lt;Array.&lt;Object&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| objectIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getObject"></a>
+
+## getObject(objectId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| objectId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="getBlockHeader"></a>
+
+## getBlockHeader(blockNum) ⇒ <code>Promise.&lt;{previous:String, timestamp:String, witness:String, account:String, transaction\_merkle\_root:String, state\_root\_hash:String, result\_root\_hash:String, extensions:Array}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| blockNum | <code>Number</code> |
+
+<a name="getBlock"></a>
+
+## getBlock(blockNum) ⇒ <code>Promise.&lt;{previous:String, timestamp:String, witness:String, account:String, transaction\_merkle\_root:String, state\_root\_hash:String, result\_root\_hash:String, extensions:Array, witness\_signature:String, ed\_signature:String, verifications:Array, round:Number, rand:String, cert: {\_rand:String, \_block\_hash:String, \_producer:Number, \_signatures:Array.&lt;{\_step:Number, \_value:Number, \_signer:Number, \_bba\_sign:String}&gt;}, transactions:Array.&lt;{ref\_block\_num:Number, ref\_block\_prefix:Number, expiration:String, operations:Array, extensions:Array, signatures:Array.&lt;String&gt;, operation\_results:Array.&lt;Array&gt;}&gt;}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| blockNum | <code>Number</code> |
+
+<a name="getTransaction"></a>
+
+## getTransaction(blockNum, transactionIndex) ⇒ <code>Promise.&lt;{ref\_block\_num:Number, ref\_block\_prefix:Number, expiration:String, operations:Array.&lt;\*&gt;, extensions:Array, signatures:Array.&lt;String&gt;, operation\_results:Array.&lt;Array.&lt;\*&gt;&gt;}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| blockNum | <code>Number</code> |
+| transactionIndex | <code>Number</code> |
+
+<a name="getChainProperties"></a>
+
+## getChainProperties(force) ⇒ <code>Promise.&lt;{id:String, chain\_id:String, immutable\_parameters: {min\_committee\_member\_count:Number, min\_witness\_count:Number, num\_special\_accounts:Number, num\_special\_assets:Number}}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| force | <code>Boolean</code> |
+
+<a name="getGlobalProperties"></a>
+
+## getGlobalProperties() ⇒ <code>Promise.&lt;{id:String, parameters: {current\_fees: {parameters:Array.&lt;\*&gt;, scale:Number}, block\_interval:Number, maintenance\_interval:Number, maintenance\_skip\_slots:Number, committee\_proposal\_review\_period:Number, maximum\_transaction\_size:Number, maximum\_block\_size:Number, maximum\_time\_until\_expiration:Number, maximum\_proposal\_lifetime:Number, maximum\_asset\_whitelist\_authorities:Number, maximum\_asset\_feed\_publishers:Number, maximum\_witness\_count:Number, maximum\_committee\_count:Number, maximum\_authority\_membership:Number, reserve\_percent\_of\_fee:Number, network\_percent\_of\_fee:Number, lifetime\_referrer\_percent\_of\_fee:Number, cashback\_vesting\_period\_seconds:Number, cashback\_vesting\_threshold:Number, count\_non\_member\_votes:Boolean, allow\_non\_member\_whitelists:Boolean, witness\_pay\_per\_block:Number, worker\_budget\_per\_day:String, max\_predicate\_opcode:Number, fee\_liquidation\_threshold:Number, accounts\_per\_fee\_scale:Number, account\_fee\_scale\_bitshifts:Number, max\_authority\_depth:Number, extensions:Array}, next\_available\_vote\_id:Number, active\_committee\_members:Array.&lt;String&gt;, active\_witnesses:Array.&lt;String&gt;}&gt;</code>
+**Kind**: global function
+<a name="getConfig"></a>
+
+## getConfig(force) ⇒ <code>Promise.&lt;{GRAPHENE\_SYMBOL:String, GRAPHENE\_ADDRESS\_PREFIX:String, GRAPHENE\_ED\_PREFIX:String, GRAPHENE\_MIN\_ACCOUNT\_NAME\_LENGTH:Number, GRAPHENE\_MAX\_ACCOUNT\_NAME\_LENGTH:Number, GRAPHENE\_MIN\_ASSET\_SYMBOL\_LENGTH:Number, GRAPHENE\_MAX\_ASSET\_SYMBOL\_LENGTH:Number, GRAPHENE\_MAX\_SHARE\_SUPPLY:String, GRAPHENE\_MAX\_PAY\_RATE:Number, GRAPHENE\_MAX\_SIG\_CHECK\_DEPTH:Number, GRAPHENE\_MIN\_TRANSACTION\_SIZE\_LIMIT:Number, GRAPHENE\_MIN\_BLOCK\_INTERVAL:Number, GRAPHENE\_MAX\_BLOCK\_INTERVAL:Number, GRAPHENE\_DEFAULT\_BLOCK\_INTERVAL:Number, GRAPHENE\_DEFAULT\_MAX\_TRANSACTION\_SIZE:Number, GRAPHENE\_DEFAULT\_MAX\_BLOCK\_SIZE:Number, GRAPHENE\_DEFAULT\_MAX\_TIME\_UNTIL\_EXPIRATION:Number, GRAPHENE\_DEFAULT\_MAINTENANCE\_INTERVAL:Number, GRAPHENE\_DEFAULT\_MAINTENANCE\_SKIP\_SLOTS:Number, GRAPHENE\_MIN\_UNDO\_HISTORY:Number, GRAPHENE\_MAX\_UNDO\_HISTORY:Number, GRAPHENE\_MIN\_BLOCK\_SIZE\_LIMIT:Number, GRAPHENE\_MIN\_TRANSACTION\_EXPIRATION\_LIMIT:Number, GRAPHENE\_BLOCKCHAIN\_PRECISION:Number, GRAPHENE\_BLOCKCHAIN\_PRECISION\_DIGITS:Number, GRAPHENE\_DEFAULT\_TRANSFER\_FEE:Number, GRAPHENE\_MAX\_INSTANCE\_ID:String, GRAPHENE\_100\_PERCENT:Number, GRAPHENE\_1\_PERCENT:Number, GRAPHENE\_MAX\_MARKET\_FEE\_PERCENT:Number, GRAPHENE\_DEFAULT\_FORCE\_SETTLEMENT\_DELAY:Number, GRAPHENE\_DEFAULT\_FORCE\_SETTLEMENT\_OFFSET:Number, GRAPHENE\_DEFAULT\_FORCE\_SETTLEMENT\_MAX\_VOLUME:Number, GRAPHENE\_DEFAULT\_PRICE\_FEED\_LIFETIME:Number, GRAPHENE\_MAX\_FEED\_PRODUCERS:Number, GRAPHENE\_DEFAULT\_MAX\_AUTHORITY\_MEMBERSHIP:Number, GRAPHENE\_DEFAULT\_MAX\_ASSET\_WHITELIST\_AUTHORITIES:Number, GRAPHENE\_DEFAULT\_MAX\_ASSET\_FEED\_PUBLISHERS:Number, GRAPHENE\_COLLATERAL\_RATIO\_DENOM:Number, GRAPHENE\_MIN\_COLLATERAL\_RATIO:Number, GRAPHENE\_MAX\_COLLATERAL\_RATIO:Number, GRAPHENE\_DEFAULT\_MAINTENANCE\_COLLATERAL\_RATIO:Number, GRAPHENE\_DEFAULT\_MAX\_SHORT\_SQUEEZE\_RATIO:Number, GRAPHENE\_DEFAULT\_MARGIN\_PERIOD\_SEC:Number, GRAPHENE\_DEFAULT\_MAX\_WITNESSES:Number, GRAPHENE\_DEFAULT\_MAX\_COMMITTEE:Number, GRAPHENE\_DEFAULT\_MAX\_PROPOSAL\_LIFETIME\_SEC:Number, GRAPHENE\_DEFAULT\_COMMITTEE\_PROPOSAL\_REVIEW\_PERIOD\_SEC:Number, GRAPHENE\_DEFAULT\_NETWORK\_PERCENT\_OF\_FEE:Number, GRAPHENE\_DEFAULT\_LIFETIME\_REFERRER\_PERCENT\_OF\_FEE:Number, GRAPHENE\_DEFAULT\_MAX\_BULK\_DISCOUNT\_PERCENT:Number, GRAPHENE\_DEFAULT\_BULK\_DISCOUNT\_THRESHOLD\_MIN:Number, GRAPHENE\_DEFAULT\_BULK\_DISCOUNT\_THRESHOLD\_MAX:String, GRAPHENE\_DEFAULT\_CASHBACK\_VESTING\_PERIOD\_SEC:Number, GRAPHENE\_DEFAULT\_CASHBACK\_VESTING\_THRESHOLD:Number, GRAPHENE\_DEFAULT\_BURN\_PERCENT\_OF\_FEE:Number, GRAPHENE\_WITNESS\_PAY\_PERCENT\_PRECISION:Number, GRAPHENE\_DEFAULT\_MAX\_ASSERT\_OPCODE:Number, GRAPHENE\_DEFAULT\_FEE\_LIQUIDATION\_THRESHOLD:Number, GRAPHENE\_DEFAULT\_ACCOUNTS\_PER\_FEE\_SCALE:Number, GRAPHENE\_DEFAULT\_ACCOUNT\_FEE\_SCALE\_BITSHIFTS:Number, GRAPHENE\_MAX\_WORKER\_NAME\_LENGTH:Number, GRAPHENE\_MAX\_URL\_LENGTH:Number, GRAPHENE\_NEAR\_SCHEDULE\_CTR\_IV:String, GRAPHENE\_FAR\_SCHEDULE\_CTR\_IV:String, GRAPHENE\_CORE\_ASSET\_CYCLE\_RATE:Number, GRAPHENE\_CORE\_ASSET\_CYCLE\_RATE\_BITS:Number, GRAPHENE\_DEFAULT\_WITNESS\_PAY\_PER\_BLOCK:Number, GRAPHENE\_DEFAULT\_WITNESS\_PAY\_VESTING\_SECONDS:Number, GRAPHENE\_DEFAULT\_WORKER\_BUDGET\_PER\_DAY:String, GRAPHENE\_MAX\_INTEREST\_APR:Number, GRAPHENE\_COMMITTEE\_ACCOUNT:String, GRAPHENE\_WITNESS\_ACCOUNT:String, GRAPHENE\_RELAXED\_COMMITTEE\_ACCOUNT:String, GRAPHENE\_NULL\_ACCOUNT:String, GRAPHENE\_TEMP\_ACCOUNT:String}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| force | <code>Boolean</code> |
+
+<a name="getChainId"></a>
+
+## getChainId(force) ⇒ <code>Promise.&lt;String&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| force | <code>Boolean</code> |
+
+<a name="getDynamicGlobalProperties"></a>
+
+## getDynamicGlobalProperties() ⇒ <code>Promise.&lt;{id:String, head\_block\_number:Number, head\_block\_id:String, time:String, current\_witness:String, next\_maintenance\_time:String, last\_budget\_time:String, witness\_budget:Number, accounts\_registered\_this\_interval:Number, recently\_missed\_count:Number, current\_aslot:Number, recent\_slots\_filled:String, dynamic\_flags:Number, last\_irreversible\_block\_num:Number}&gt;</code>
+**Kind**: global function
+<a name="getKeyReferences"></a>
+
+## getKeyReferences(keys, force) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keys | <code>List.&lt;String&gt;</code> | [public keys] |
+| force | <code>Boolean</code> |  |
+
+<a name="getAccounts"></a>
+
+## getAccounts(accountIds, force) ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getFullAccounts"></a>
+
+## getFullAccounts(accountNamesOrIds, subscribe, force) ⇒ <code>Promise.&lt;Array.&lt;FullAccount&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountNamesOrIds | <code>Array.&lt;String&gt;</code> |
+| subscribe | <code>Boolean</code> |
+| force | <code>Boolean</code> |
+
+<a name="getAccountByName"></a>
+
+## getAccountByName(accountName, force) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountName | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="getAccountReferences"></a>
+
+## getAccountReferences(accountId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="lookupAccountNames"></a>
+
+## lookupAccountNames(accountNames, force) ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountNames | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="lookupAccounts"></a>
+
+## lookupAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;Array.&lt;AccountName, AccountId&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| lowerBoundName | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getAccountCount"></a>
+
+## getAccountCount() ⇒ <code>Promise.&lt;Number&gt;</code>
+**Kind**: global function
+<a name="getAccountBalances"></a>
+
+## getAccountBalances(accountId, assetIds, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+| assetIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getNamedAccountBalances"></a>
+
+## getNamedAccountBalances(accountName, assetIds, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountName | <code>String</code> |
+| assetIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getVestedBalances"></a>
+
+## getVestedBalances(balanceIds) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| balanceIds | <code>Array.&lt;String&gt;</code> |
+
+<a name="getVestingBalances"></a>
+
+## getVestingBalances(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+
+<a name="getAssets"></a>
+
+## getAssets(assetIds, force) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| assetIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="listAssets"></a>
+
+## listAssets(lowerBoundSymbol, limit) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| lowerBoundSymbol | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="lookupAssetSymbols"></a>
+
+## lookupAssetSymbols(symbolsOrIds, force) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| symbolsOrIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getOrderBook"></a>
+
+## getOrderBook(baseAssetName, quoteAssetName, depth) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| baseAssetName | <code>String</code> |
+| quoteAssetName | <code>String</code> |
+| depth | <code>Number</code> |
+
+<a name="getLimitOrders"></a>
+
+## getLimitOrders(baseAssetId, quoteAssetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| baseAssetId | <code>String</code> |
+| quoteAssetId | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getCallOrders"></a>
+
+## getCallOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| assetId | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getSettleOrders"></a>
+
+## getSettleOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| assetId | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getMarginPositions"></a>
+
+## getMarginPositions(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+
+<a name="getTicker"></a>
+
+## getTicker(baseAssetName, quoteAssetName) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| baseAssetName | <code>String</code> |
+| quoteAssetName | <code>String</code> |
+
+<a name="get24Volume"></a>
+
+## get24Volume(baseAssetName, quoteAssetName) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| baseAssetName | <code>String</code> |
+| quoteAssetName | <code>String</code> |
+
+<a name="getTradeHistory"></a>
+
+## getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| baseAssetName | <code>String</code> |
+| quoteAssetName | <code>String</code> |
+| start | <code>Number</code> |
+| stop | <code>Number</code> |
+| limit | <code>Number</code> |
+
+<a name="getWitnesses"></a>
+
+## getWitnesses(witnessIds, force) ⇒ <code>Promise.&lt;Array.&lt;Witness&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| witnessIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getWitnessByAccount"></a>
+
+## getWitnessByAccount(accountId, force) ⇒ [<code>Promise.&lt;Witness&gt;</code>](#Witness)
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="lookupWitnessAccounts"></a>
+
+## lookupWitnessAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| lowerBoundName | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getWitnessCount"></a>
+
+## getWitnessCount() ⇒ <code>Promise.&lt;Number&gt;</code>
+**Kind**: global function
+<a name="getCommitteeMembers"></a>
+
+## getCommitteeMembers(committeeMemberIds, force) ⇒ <code>Promise.&lt;Array.&lt;Committee&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| committeeMemberIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getCommitteeMemberByAccount"></a>
+
+## getCommitteeMemberByAccount(accountId, force) ⇒ [<code>Promise.&lt;Committee&gt;</code>](#Committee)
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="lookupCommitteeMemberAccounts"></a>
+
+## lookupCommitteeMemberAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| lowerBoundName | <code>String</code> |
+| limit | <code>Number</code> |
+
+<a name="getWorkersByAccount"></a>
+
+## getWorkersByAccount(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountId | <code>String</code> |
+
+<a name="lookupVoteIds"></a>
+
+## lookupVoteIds(votes, force) ⇒ <code>Promise.&lt;Array.&lt;{id:String, committee\_member\_account: (String\|undefined), witness\_account: (String\|undefined), vote\_id:String, total\_votes:Number, url:String, last\_aslot: (Number\|undefined), signing\_key: (String\|undefined), pay\_vb: (String\|undefined), total\_missed: (Number\|undefined), last\_confirmed\_block\_num: (Number\|undefined), ed\_signing\_key: (String\|undefined)}&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| votes | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getTransactionHex"></a>
+
+## getTransactionHex(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transaction | <code>Object</code> |
+
+<a name="getRequiredSignatures"></a>
+
+## getRequiredSignatures(transaction, availableKeys) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| transaction | <code>Object</code> |  |
+| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys] |
+
+<a name="getPotentialSignatures"></a>
+
+## getPotentialSignatures(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transaction | <code>Object</code> |
+
+<a name="getPotentialAddressSignatures"></a>
+
+## getPotentialAddressSignatures(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transaction | <code>Object</code> |
+
+<a name="verifyAuthority"></a>
+
+## verifyAuthority(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transaction | <code>Object</code> |
+
+<a name="verifyAccountAuthority"></a>
+
+## verifyAccountAuthority(accountNameOrId, signers) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountNameOrId | <code>Object</code> |  |
+| signers | <code>Array.&lt;String&gt;</code> | [public keys] |
+
+<a name="validateTransaction"></a>
+
+## validateTransaction(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transaction | <code>Object</code> |
+
+<a name="getRequiredFees"></a>
+
+## getRequiredFees(operations, assetId) ⇒ <code>Promise.&lt;Array.&lt;{asset\_id:String, amount:Number}&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| operations | <code>Array.&lt;Object&gt;</code> |
+| assetId | <code>String</code> |
+
+<a name="getProposedTransactions"></a>
+
+## getProposedTransactions(accountNameOrId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| accountNameOrId | <code>String</code> |
+
+<a name="getAllContracts"></a>
+
+## getAllContracts() ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code>
+**Kind**: global function
+<a name="getContractLogs"></a>
+
+## getContractLogs(contractId, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;{address:String, log:Array.&lt;String&gt;, data:String}&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| contractId | <code>String</code> |
+| fromBlock | <code>Number</code> |
+| toBlock | <code>Number</code> |
+
+<a name="getContractResult"></a>
+
+## getContractResult(resultContractId, force) ⇒ <code>Promise.&lt;{exec\_res: {excepted:String, new\_address:String, output:String, code\_deposit:String, gas\_refunded:String, deposit\_size:Number, gas\_for\_deposit:String}, tr\_receipt: {status\_code:String, gas\_used:String, bloom:String, log:Array}}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| resultContractId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="getContract"></a>
+
+## getContract(contractId, force) ⇒ <code>Promise.&lt;{contract\_info: {id:String, statistics:String, suicided:Boolean}, code:String, storage:Array.&lt;Array&gt;}&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| contractId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="callContractNoChangingState"></a>
+
+## callContractNoChangingState(contractId, accountId, assetId, bytecode) ⇒ <code>Promise.&lt;String&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| contractId | <code>String</code> |
+| accountId | <code>String</code> |
+| assetId | <code>String</code> |
+| bytecode | <code>String</code> |
+
+<a name="getContracts"></a>
+
+## getContracts(contractIds, force) ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| contractIds | <code>Array.&lt;String&gt;</code> |
+| force | <code>Boolean</code> |
+
+<a name="getContractBalances"></a>
+
+## getContractBalances(contractId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| contractId | <code>String</code> |
+| force | <code>Boolean</code> |
+
+<a name="getRecentTransactionById"></a>
+
+## getRecentTransactionById(transactionId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| transactionId | <code>String</code> |
+
+<a name="registerAccount"></a>
+
+## registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) ⇒ <code>Promise.&lt;null&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| name | <code>String</code> |
+| ownerKey | <code>String</code> |
+| activeKey | <code>String</code> |
+| memoKey | <code>String</code> |
+| echoRandKey | <code>String</code> |
+
+<a name="getAccountHistory
+ Get operations relevant to the specified account."></a>
+
+## getAccountHistory
+ Get operations relevant to the specified account.(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> |  |
+| stop | <code>String</code> | [Id of the earliest operation to retrieve] |
+| limit | <code>Number</code> | [count operations (max 100)] |
+| start | <code>String</code> | [Id of the most recent operation to retrieve] |
+
+<a name="getRelativeAccountHistory
+ Get operations relevant to the specified account referenced
+ by an event numbering specific to the account."></a>
+
+## getRelativeAccountHistory
+ Get operations relevant to the specified account referenced
+ by an event numbering specific to the account.(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> |  |
+| stop | <code>Number</code> | [Sequence number of earliest operation] |
+| limit | <code>Number</code> | [count operations (max 100)] |
+| start | <code>Number</code> | [Sequence number of the most recent operation to retrieve] |
+
+<a name="getAccountHistoryOperations
+ Get only asked operations relevant to the specified account."></a>
+
+## getAccountHistoryOperations
+ Get only asked operations relevant to the specified account.(accountId, operationId, start, stop, limit) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> |  |
+| operationId | <code>String</code> |  |
+| start | <code>Number</code> | [Id of the most recent operation to retrieve] |
+| stop | <code>Number</code> | [Id of the earliest operation to retrieve] |
+| limit | <code>Number</code> | [count operations (max 100)] |
+
+<a name="getContractHistory
+ Get operations relevant to the specified account."></a>
+
+## getContractHistory
+ Get operations relevant to the specified account.(contractId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> |  |
+| stop | <code>String</code> | [Id of the earliest operation to retrieve] |
+| limit | <code>Number</code> | [count operations (max 100)] |
+| start | <code>String</code> | [Id of the most recent operation to retrieve] |
+
+<a name="broadcastTransaction
+	Broadcast a transaction to the network."></a>
+
+## broadcastTransaction
+	Broadcast a transaction to the network.(tr) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type |
+| --- | --- |
+| tr | <code>Object</code> |
+| tr.ref_block_num | <code>Number</code> |
+| tr.ref_block_prefix | <code>Number</code> |
+| tr.operations | <code>Array</code> |
+| tr.signatures | <code>Array</code> |
+
+<a name="broadcastBlock
+	Broadcast a block to the network."></a>
+
+## broadcastBlock
+	Broadcast a block to the network.(block) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| block | <code>Object</code> |  |
+| block.previous | <code>Number</code> | [previous block id] |
+| block.timestamp | <code>Number</code> | [block timestamp] |
+| block.witness | <code>String</code> | [witness id] |
+| block.transaction_merkle_root | <code>String</code> | [merkle root] |
+| block.state_root_hash | <code>String</code> | [hash] |
+| block.result_root_hash | <code>String</code> | [result hash] |
+| block.witness_signature | <code>String</code> | [witness signature] |
+| block.ed_signature | <code>String</code> | [eddsa signature] |
+| block.verifications | <code>Array</code> | [{witness-id, witness-signature}] |
+| block.round | <code>Number</code> | [round id] |
+| block.rand | <code>Number</code> | [rand] |
+| block.cert | <code>String</code> | [certificate] |
+| block.transactions | <code>Array</code> |  |
+
+<a name="getAssetHolders
+ Retrieve the information about the holders of the specified asset."></a>
+
+## getAssetHolders
+ Retrieve the information about the holders of the specified asset.(assetId, start, limit) ⇒ <code>Promise.&lt;Array.&lt;{name: String, account\_id:String, amount: String}&gt;&gt;</code>
+**Kind**: global function
+**Returns**: <code>Promise.&lt;Array.&lt;{name: String, account\_id:String, amount: String}&gt;&gt;</code> - [ { name: 'init0', account_id: '1.2.6', amount: '100000039900000' } ]
+
+| Param | Type | Description |
+| --- | --- | --- |
+| assetId | <code>String</code> | [asset id to retrieve] |
+| start | <code>Number</code> | [account id to start retrieving from] |
+| limit | <code>Number</code> | [count accounts (max 100)] |
+
+<a name="getAssetHoldersCount
+ Retrieve the number of holders of the provided asset."></a>
+
+## getAssetHoldersCount
+ Retrieve the number of holders of the provided asset.(assetId) ⇒ <code>Promise.&lt;Number&gt;</code>
+**Kind**: global function
+**Returns**: <code>Promise.&lt;Number&gt;</code> - result - 8
+
+| Param | Type | Description |
+| --- | --- | --- |
+| assetId | <code>String</code> | [asset id to retrieve] |
+
+<a name="getAllAssetHolders
+ Array of all asset IDs with the number of holders."></a>
+
+## getAllAssetHolders
+ Array of all asset IDs with the number of holders.() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
+**Kind**: global function
+**Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
+<a name="Witness"></a>
+
+## Witness : <code>Object</code>
+**Kind**: global typedef
+<a name="Committee"></a>
+
+## Committee : <code>Object</code>
+**Kind**: global typedef
+<a name="Account"></a>
+
+## Account : <code>Object</code>
+**Kind**: global typedef
+<a name="AccountHistory"></a>
+
+## AccountHistory : <code>Object</code>
+**Kind**: global typedef
+<a name="FullAccount"></a>
+
+## FullAccount : <code>Object</code>
+**Kind**: global typedef
+<a name="Asset"></a>
+
+## Asset : <code>Object</code>
+**Kind**: global typedef
+<a name="AccountName"></a>
+
+## AccountName : <code>String</code>
+**Kind**: global typedef
+<a name="AccountId"></a>
+
+## AccountId : <code>String</code>
+**Kind**: global typedef
+
+
 #### Subscriber
 This library provides subscriber module to notify subscribers about changes.
 ```javascript
@@ -79,7 +1016,7 @@ console.log(echo.cache.objectsById);
 #### Redux
 We provide redux store update automaticly
 ```javascript
-import echo, { cacheReducer } from "echojs-lib";
+import echo, { echoReducer } from "echojs-lib";
 import { combineReducers, createStore } from 'redux';
 
 const caches = ['objectsById'] // array of caches you want to follow
@@ -87,7 +1024,7 @@ const caches = ['objectsById'] // array of caches you want to follow
 const store = createStore(
                 combineReducers({
                     ...reducers,
-                    cache: cacheReducer(caches), // return reducer
+                    cache: echoReducer(caches), // return reducer
                 })
            );
 

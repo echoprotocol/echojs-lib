@@ -10,7 +10,8 @@
     "test-redux": "mocha --compilers js:babel-core/register --require babel-polyfill test/redux.test.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "jsdoc2md": "jsdoc2md src/echo/api.js > api.md "
   },
   "repository": {
     "type": "git",
@@ -30,11 +31,12 @@
     "crypto-js": "^3.1.9-1",
     "deep-equal": "^1.0.1",
     "ecurve": "^1.0.6",
+    "events": "^3.0.0",
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
+    "jsdoc-to-markdown": "^4.0.1",
     "tweetnacl": "^1.0.0",
-    "ws": "^6.1.2",
-    "events": "^3.0.0"
+    "ws": "^6.1.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -1,4 +1,4 @@
-/* eslint-disable no-continue,max-len,no-await-in-loop,camelcase */
+/* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
 import { Map, List, fromJS } from 'immutable';
 
 import {
@@ -33,6 +33,160 @@ import { Transactions, Operations } from '../serializer/operations';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 
+
+/** @typedef {
+* 	{
+*  		id:String,
+*  		witness_account:String,
+*  		last_aslot:Number,
+*  		signing_key:String,
+*  		pay_vb:String,
+*  		vote_id:String,
+*  		total_votes:Number,
+*  		url:String,
+*  		total_missed:Number,
+*  		last_confirmed_block_num:Number,
+*  		ed_signing_key:String
+*  	}
+*  	} Witness */
+
+/** @typedef {
+* 	{
+*  		id:String,
+*  		committee_member_account:String,
+*  		vote_id:String,
+*  		total_votes:Number,
+*  		url:String
+*  	}
+*  	} Committee */
+
+/** @typedef {
+* 			{
+* 				id:String,
+* 				membership_expiration_date:String,
+* 				registrar:String,
+* 				referrer:String,
+* 				lifetime_referrer:String,
+* 				network_fee_percentage:Number,
+* 				lifetime_referrer_fee_percentage:Number,
+* 				referrer_rewards_percentage:Number,
+* 				name:String,
+* 				owner:{
+* 					weight_threshold:Number,
+* 					account_auths:Array,
+* 					key_auths:Array,
+* 					address_auths:Array
+* 					},
+* 				active:{
+* 					weight_threshold:Number,
+* 					account_auths:Array,
+* 					key_auths:Array,
+* 					address_auths:Array
+* 					},
+* 				ed_key:String,
+* 				options:{
+* 					memo_key:String,
+* 					voting_account:String,
+* 					delegating_account:String,
+* 					num_witness:Number,
+* 					num_committee:Number,
+* 					votes:Array,
+* 					extensions:Array
+* 				},
+* 				statistics:String,
+* 				whitelisting_accounts:Array,
+* 				blacklisting_accounts:Array,
+* 				whitelisted_accounts:Array,
+* 				blacklisted_accounts:Array,
+* 				owner_special_authority:Array,
+* 				active_special_authority:Array,
+* 				top_n_control_flags:Number
+* 			}
+* 	} Account */
+
+/** @typedef {
+* 		{
+*  			id:String,
+* 			op:Array,
+* 			result:Array,
+* 			block_num:Number,
+* 			trx_in_block:Number,
+* 			op_in_block:Number,
+* 			virtual_op:Number
+*  		}
+*  	} AccountHistory */
+
+/** @typedef {
+* 			{
+* 				id:String,
+* 				membership_expiration_date:String,
+* 				registrar:String,
+* 				referrer:String,
+* 				lifetime_referrer:String,
+* 				network_fee_percentage:Number,
+* 				lifetime_referrer_fee_percentage:Number,
+* 				referrer_rewards_percentage:Number,
+* 				name:String,
+* 				owner:{
+* 					weight_threshold:Number,
+* 					account_auths:Array,
+* 					key_auths:Array,
+* 					address_auths:Array
+* 					},
+* 				active:{
+* 					weight_threshold:Number,
+* 					account_auths:Array,
+* 					key_auths:Array,
+* 					address_auths:Array
+* 					},
+* 				ed_key:String,
+* 				options:{
+* 					memo_key:String,
+* 					voting_account:String,
+* 					delegating_account:String,
+* 					num_witness:Number,
+* 					num_committee:Number,
+* 					votes:Array,
+* 					extensions:Array
+* 				},
+* 				statistics:String,
+* 				whitelisting_accounts:Array,
+* 				blacklisting_accounts:Array,
+* 				whitelisted_accounts:Array,
+* 				blacklisted_accounts:Array,
+* 				owner_special_authority:Array,
+* 				active_special_authority:Array,
+* 				top_n_control_flags:Number,
+* 				history:Array.<AccountHistory>
+* 			}
+* 	} FullAccount */
+
+/** @typedef {
+* 		{
+*  			id:String,
+*  			symbol:String,
+*  			precision:Number,
+*  			issuer:String,
+*  			options:{
+*  				max_supply:String,
+*  				market_fee_percent:Number,
+*  				max_market_fee:String,
+*  				issuer_permissions:Number,
+*  				flags:Number,
+*  				core_exchange_rate:Object,
+*  				whitelist_authorities:Array,
+*  				blacklist_authorities:Array,
+*  				whitelist_markets:Array,
+*  				blacklist_markets:Array,
+*  				description:String,
+*  				extensions:Array
+*  			},
+*  			dynamic_asset_data_id:String,
+*  			dynamic:Object,
+*  			bitasset:(Object|undefined)
+*  		}
+*  	} Asset */
+
 class API {
 
 	/**
@@ -51,15 +205,17 @@ class API {
      * @param {String} methodName
      * @param {Boolean} force
      *
-     * @returns {Promise.<Map>}
+     * @return {Promise.<Object>}
      * @private
      */
 	async _getConfigurations(cacheName, methodName, force = false) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName];
 
-			if (cacheValue) {
-				return cacheValue;
+			if (
+				cacheValue && (isString(cacheValue) || (cacheValue instanceof Map && cacheValue.size !== 0))
+			) {
+				return cacheValue.toJS();
 			}
 		}
 
@@ -82,7 +238,7 @@ class API {
      * @param {Boolean} force
      * @param {Array} cacheParams
      *
-     * @returns {Promise.<List.<Map>>}
+     * @return {Promise.<Array.<Object>>}
      * @private
      */
 	async _getArrayDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams = []) {
@@ -128,7 +284,9 @@ class API {
 			requestedObject = new Map(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
-			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
+			for (const { param, cache } of cacheParams) {
+				this.cache.setInMap(cache, requestedObject.get(param), requestedObject);
+			}
 		}
 
 		return resultArray;
@@ -142,7 +300,7 @@ class API {
      * @param {Boolean} force
      * @param {Array} cacheParams
      *
-     * @returns {Promise.<Map>}
+     * @return {Promise.<Object>}
      * @private
      */
 	async _getSingleDataWithMultiSave(key, cacheName, methodName, force = false, cacheParams = []) {
@@ -163,9 +321,10 @@ class API {
 
 			requestedObject = new Map(requestedObject);
 
-			cacheParams.forEach(({ param, cache }) => this.cache.setInMap(cache, requestedObject.get(param), requestedObject));
-
 			this.cache.setInMap(cacheName, key, requestedObject);
+			for (const { param, cache } of cacheParams) {
+				this.cache.setInMap(cache, requestedObject.get(param), requestedObject);
+			}
 
 			return requestedObject.toJS();
 		} catch (error) {
@@ -181,7 +340,7 @@ class API {
      * @param {Boolean} force
      * @param {...Array} params
      *
-     * @returns {Promise.<Map>}
+     * @return {Promise.<Object>}
      * @private
      */
 	async _getSingleDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
@@ -213,7 +372,9 @@ class API {
 	 *
      * @param {Map} requestedObject
      * @param {Boolean} force
-     *  @returns {Promise.<Map{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String,dynamic:Object,bitasset:Object|undefined}>}
+     * @return {
+     *  	Promise.<{Asset}>
+     * }
      * @private
      */
 	async _addAssetExtraFields(requestedObject, force = false) {
@@ -240,7 +401,7 @@ class API {
      *
      * @param {Map} account
      * @param {Number} limit
-     *  @returns {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>}>}
+     * @return {Promise.<FullAccount>}
      * @private
      */
 	async _addHistory(account, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
@@ -274,7 +435,7 @@ class API {
      * @param {String} cacheName
      * @param {String} methodName
      * @param {Boolean} force
-     * @returns {Promise.<List.<*>>}
+     * @return {Promise.<Array.<*>>}
      * @private
      */
 	async _getObjectsById(array, cacheName, methodName, force = false) {
@@ -355,7 +516,8 @@ class API {
 
 				} else if (isDynamicAssetDataId(key)) {
 
-					this.cache.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
+					this.cache
+						.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
 
 				}
 
@@ -374,7 +536,7 @@ class API {
      *  @param  {Array<String>} objectIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map>>}
+     *  @return {Promise.<Array.<Object>>}
      */
 	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
@@ -389,7 +551,7 @@ class API {
      *  @param  {String} objectId
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Map>}
+     *  @return {Promise.<Object>}
      */
 	async getObject(objectId, force = false) {
 		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectIds should be a array'));
@@ -402,7 +564,7 @@ class API {
 	 *
      * 	@param {String} bitAssetId
      *  @param {Boolean} force
-     * 	@returns  {Promise.<Map>}
+     * 	@return  {Promise.<Object>}
      * 	@private
      */
 	getBitAssetData(bitAssetId, force = false) {
@@ -417,7 +579,7 @@ class API {
      *
      * 	@param {String} dynamicAssetDataId
      *  @param {Boolean} force
-     * 	@returns  {Promise.<<Map>}
+     * 	@return  {Promise.<Object>}
      * 	@private
      */
 	getDynamicAssetData(dynamicAssetDataId, force = false) {
@@ -431,7 +593,18 @@ class API {
      *  @method getBlockHeader
      *  @param  {Number} blockNum
      *
-     *  @returns {Promise.<Map{previous:String,timestamp:String,witness:String,account:String,transaction_merkle_root:String,state_root_hash:String,result_root_hash:String,extensions:[]}>}
+     *  @return {
+     *  	Promise.<{
+     *  		previous:String,
+     *  		timestamp:String,
+     *  		witness:String,
+     *  		account:String,
+     *  		transaction_merkle_root:String,
+     *  		state_root_hash:String,
+     *  		result_root_hash:String,
+     *  		extensions:Array
+     *  	}>
+     *  }
      */
 	getBlockHeader(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -443,7 +616,43 @@ class API {
      *  @method getBlock
      *  @param  {Number} blockNum
      *
-     *  @returns {Promise.<Map{previous:String,timestamp:String,witness:String,account:String,transaction_merkle_root:String,state_root_hash:String,result_root_hash:String,extensions:[],witness_signature:String,ed_signature:String,verifications:Array,round:Number,rand:String,cert:{_rand:String,_block_hash:String,_producer:Number,_signatures:Array.<{_step:Number,_value:Number,_signer:Number,_bba_sign:String}>},transactions:Array.<{ref_block_num:Number,ref_block_prefix:Number,expiration:String,operations:Array.<*>,extensions:[],signatures:Array.<String>,operation_results:Array.<Array.<*>>}}>}
+     *  @return {
+     *  	Promise.<{
+     *  		previous:String,
+     *  		timestamp:String,
+     *  		witness:String,
+     *  		account:String,
+     *  		transaction_merkle_root:String,
+     *  		state_root_hash:String,
+     *  		result_root_hash:String,
+     *  		extensions:Array,
+     *  		witness_signature:String,
+     *  		ed_signature:String,
+     *  		verifications:Array,
+     *  		round:Number,
+     *  		rand:String,
+     *  		cert:{
+     *  			_rand:String,
+     *  			_block_hash:String,
+     *  			_producer:Number,
+     *  			_signatures:Array.<{
+     *  				_step:Number,
+     *  				_value:Number,
+     *  				_signer:Number,
+     *  				_bba_sign:String
+     *  			}>
+     *  		},
+     *  		transactions:Array.<{
+     *  			ref_block_num:Number,
+     *  			ref_block_prefix:Number,
+     *  			expiration:String,
+     *  			operations:Array,
+     *  			extensions:Array,
+     *  			signatures:Array.<String>,
+     *  			operation_results:Array.<Array>
+     *  		}>
+     *  	}>
+     *  }
      */
 	getBlock(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -456,7 +665,17 @@ class API {
      *  @param  {Number} blockNum
      *  @param  {Number} transactionIndex
      *
-     *  @returns {Promise.<Map{ref_block_num:Number,ref_block_prefix:Number,expiration:String,operations:Array.<*>,extensions:[],signatures:Array.<String>,operation_results:Array.<Array.<*>>}>}
+     *  @return {
+     *  	Promise.<{
+     *  		ref_block_num:Number,
+     *  		ref_block_prefix:Number,
+     *  		expiration:String,
+     *  		operations:Array.<*>,
+     *  		extensions:Array,
+     *  		signatures:Array.<String>,
+     *  		operation_results:Array.<Array.<*>>
+     *      }>
+     *  }
      */
 	getTransaction(blockNum, transactionIndex) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
@@ -471,7 +690,18 @@ class API {
      *  @method getChainProperties
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Map{id:String,chain_id:String,immutable_parameters:{min_committee_member_count:Number,min_witness_count:Number,num_special_accounts:Number,num_special_assets:Number}}>}
+     *  @return {
+     *  	Promise.<{
+     *  		id:String,
+     *  		chain_id:String,
+     *  		immutable_parameters:{
+     *  			min_committee_member_count:Number,
+     *  			min_witness_count:Number,
+     *  			num_special_accounts:Number,
+     *  			num_special_assets:Number
+     *  		}
+     *  	}>
+     * 	}
      */
 	getChainProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -482,7 +712,48 @@ class API {
 	/**
      *  @method getGlobalProperties
      *
-     *  @returns {Promise.<Map{id:String,parameters:{current_fees:{parameters:Array.<*>,scale:Number},block_interval:Number,maintenance_interval:Number,maintenance_skip_slots:Number,committee_proposal_review_period:Number,maximum_transaction_size:Number,maximum_block_size:Number,maximum_time_until_expiration:Number,maximum_proposal_lifetime:Number,maximum_asset_whitelist_authorities:Number,maximum_asset_feed_publishers:Number,maximum_witness_count:Number,maximum_committee_count:Number,maximum_authority_membership:Number,reserve_percent_of_fee:Number,network_percent_of_fee:Number,lifetime_referrer_percent_of_fee:Number,cashback_vesting_period_seconds:Number,cashback_vesting_threshold:Number,count_non_member_votes:Boolean,allow_non_member_whitelists:Boolean,witness_pay_per_block:Number,worker_budget_per_day:String,max_predicate_opcode:Number,fee_liquidation_threshold:Number,accounts_per_fee_scale:Number,account_fee_scale_bitshifts:Number,max_authority_depth:Number,extensions:[]},next_available_vote_id:Number,active_committee_members:Array.<String>,active_witnesses:Array.<String>}>}
+     *  @return {
+     *  	Promise.<{
+     * 	 		id:String,
+     * 	 		parameters:{
+     * 	 			current_fees:{
+     * 	 				parameters:Array.<*>,
+     * 	 				scale:Number
+     * 	 			},
+     * 	 			block_interval:Number,
+     * 	 			maintenance_interval:Number,
+     * 	 			maintenance_skip_slots:Number,
+     * 	 			committee_proposal_review_period:Number,
+     * 	 			maximum_transaction_size:Number,
+     * 	 			maximum_block_size:Number,
+     * 	 			maximum_time_until_expiration:Number,
+     * 	 			maximum_proposal_lifetime:Number,
+     * 	 			maximum_asset_whitelist_authorities:Number,
+     * 	 			maximum_asset_feed_publishers:Number,
+     * 	 			maximum_witness_count:Number,
+     * 	 			maximum_committee_count:Number,
+     * 	 			maximum_authority_membership:Number,
+     * 	 			reserve_percent_of_fee:Number,
+     * 	 			network_percent_of_fee:Number,
+     * 	 			lifetime_referrer_percent_of_fee:Number,
+     * 	 			cashback_vesting_period_seconds:Number,
+     * 	 			cashback_vesting_threshold:Number,
+     * 	 			count_non_member_votes:Boolean,
+     * 	 			allow_non_member_whitelists:Boolean,
+     * 	 			witness_pay_per_block:Number,
+     * 	 			worker_budget_per_day:String,
+     * 	 			max_predicate_opcode:Number,
+     * 	 			fee_liquidation_threshold:Number,
+     * 	 			accounts_per_fee_scale:Number,
+     * 	 			account_fee_scale_bitshifts:Number,
+     * 	 			max_authority_depth:Number,
+     * 	 			extensions:Array
+     * 	 		},
+     * 	 		next_available_vote_id:Number,
+     * 	 		active_committee_members:Array.<String>,
+     * 	 		active_witnesses:Array.<String>
+     *      }>
+     *  }
      */
 	getGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -494,7 +765,85 @@ class API {
      *  @method getConfig
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<Map{GRAPHENE_SYMBOL:String,GRAPHENE_ADDRESS_PREFIX:String,GRAPHENE_ED_PREFIX:String,GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number,GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number,GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number,GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number,GRAPHENE_MAX_SHARE_SUPPLY:String,GRAPHENE_MAX_PAY_RATE:Number,GRAPHENE_MAX_SIG_CHECK_DEPTH:Number,GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number,GRAPHENE_MIN_BLOCK_INTERVAL:Number,GRAPHENE_MAX_BLOCK_INTERVAL:Number,GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number,GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number,GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number,GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number,GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number,GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number,GRAPHENE_MIN_UNDO_HISTORY:Number,GRAPHENE_MAX_UNDO_HISTORY:Number,GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number,GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number,GRAPHENE_BLOCKCHAIN_PRECISION:Number,GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number,GRAPHENE_DEFAULT_TRANSFER_FEE:Number,GRAPHENE_MAX_INSTANCE_ID:String,GRAPHENE_100_PERCENT:Number,GRAPHENE_1_PERCENT:Number,GRAPHENE_MAX_MARKET_FEE_PERCENT:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number,GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number,GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number,GRAPHENE_MAX_FEED_PRODUCERS:Number,GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number,GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number,GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number,GRAPHENE_COLLATERAL_RATIO_DENOM:Number,GRAPHENE_MIN_COLLATERAL_RATIO:Number,GRAPHENE_MAX_COLLATERAL_RATIO:Number,GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number,GRAPHENE_DEFAULT_MAX_WITNESSES:Number,GRAPHENE_DEFAULT_MAX_COMMITTEE:Number,GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number,GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number,GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number,GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,GRAPHENE_MAX_WORKER_NAME_LENGTH:Number,GRAPHENE_MAX_URL_LENGTH:Number,GRAPHENE_NEAR_SCHEDULE_CTR_IV:String,GRAPHENE_FAR_SCHEDULE_CTR_IV:String,GRAPHENE_CORE_ASSET_CYCLE_RATE:Number,GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number,GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY: '50000000000',GRAPHENE_MAX_INTEREST_APR:Number,GRAPHENE_COMMITTEE_ACCOUNT:String,GRAPHENE_WITNESS_ACCOUNT:String,GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,GRAPHENE_NULL_ACCOUNT:String,GRAPHENE_TEMP_ACCOUNT:String}>}
+     *  @return {
+     *  	Promise.<{
+     *  		GRAPHENE_SYMBOL:String,
+     *  		GRAPHENE_ADDRESS_PREFIX:String,
+     *  		GRAPHENE_ED_PREFIX:String,
+     *  		GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number,
+     *  		GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number,
+     *  		GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number,
+     *  		GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number,
+     *  		GRAPHENE_MAX_SHARE_SUPPLY:String,
+     *  		GRAPHENE_MAX_PAY_RATE:Number,
+     *  		GRAPHENE_MAX_SIG_CHECK_DEPTH:Number,
+     *  		GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number,
+     *  		GRAPHENE_MIN_BLOCK_INTERVAL:Number,
+     *  		GRAPHENE_MAX_BLOCK_INTERVAL:Number,
+     *  		GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number,
+     *  		GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number,
+     *  		GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number,
+     *  		GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number,
+     *  		GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number,
+     *  		GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number,
+     *  		GRAPHENE_MIN_UNDO_HISTORY:Number,
+     *  		GRAPHENE_MAX_UNDO_HISTORY:Number,
+     *  		GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number,
+     *  		GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number,
+     *  		GRAPHENE_BLOCKCHAIN_PRECISION:Number,
+     *  		GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number,
+     *  		GRAPHENE_DEFAULT_TRANSFER_FEE:Number,
+     *  		GRAPHENE_MAX_INSTANCE_ID:String,
+     *  		GRAPHENE_100_PERCENT:Number,
+     *  		GRAPHENE_1_PERCENT:Number,
+     *  		GRAPHENE_MAX_MARKET_FEE_PERCENT:Number,
+     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number,
+     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number,
+     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number,
+     *  		GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number,
+     *  		GRAPHENE_MAX_FEED_PRODUCERS:Number,
+     *  		GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number,
+     *  		GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number,
+     *  		GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number,
+     *  		GRAPHENE_COLLATERAL_RATIO_DENOM:Number,GRAPHENE_MIN_COLLATERAL_RATIO:Number,
+     *  		GRAPHENE_MAX_COLLATERAL_RATIO:Number,
+     *  		GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,
+     *  		GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,
+     *  		GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number,
+     *  		GRAPHENE_DEFAULT_MAX_WITNESSES:Number,
+     *  		GRAPHENE_DEFAULT_MAX_COMMITTEE:Number,
+     *  		GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
+     *  		GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
+     *  		GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,
+     *  		GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,
+     *  		GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,
+     *  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,
+     *  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,
+     *  		GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
+     *  		GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
+     *  		GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number,
+     *  		GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number,
+     *  		GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number,
+     *  		GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
+     *  		GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
+     *  		GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
+     *  		GRAPHENE_MAX_WORKER_NAME_LENGTH:Number,
+     *  		GRAPHENE_MAX_URL_LENGTH:Number,
+     *  		GRAPHENE_NEAR_SCHEDULE_CTR_IV:String,
+     *  		GRAPHENE_FAR_SCHEDULE_CTR_IV:String,
+     *  		GRAPHENE_CORE_ASSET_CYCLE_RATE:Number,
+     *  		GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number,
+     *  		GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,
+     *  		GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,
+     *  		GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY:String,
+     *  		GRAPHENE_MAX_INTEREST_APR:Number,
+     *  		GRAPHENE_COMMITTEE_ACCOUNT:String,
+     *  		GRAPHENE_WITNESS_ACCOUNT:String,
+     *  		GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,
+     *  		GRAPHENE_NULL_ACCOUNT:String,
+     *  		GRAPHENE_TEMP_ACCOUNT:String
+     *  	}>
+     *  }
      */
 	async getConfig(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -506,7 +855,7 @@ class API {
      *  @method getChainId
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<String>}
+     *  @return {Promise.<String>}
      */
 	async getChainId(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -533,7 +882,24 @@ class API {
 	/**
      *  @method getDynamicGlobalProperties
      *
-     *  @returns {Promise.<Map{id:String,head_block_number:Number,head_block_id:String,time:String,current_witness:String,next_maintenance_time:String,last_budget_time:String,witness_budget:Number,accounts_registered_this_interval:Number,recently_missed_count:Number,current_aslot:Number,recent_slots_filled:String,dynamic_flags:Number,last_irreversible_block_num:Number}>}
+     *  @return {
+     *  	Promise.<{
+     *  		id:String,
+     *  		head_block_number:Number,
+     *  		head_block_id:String,
+     *  		time:String,
+     *  		current_witness:String,
+     *  		next_maintenance_time:String,
+     *  		last_budget_time:String,
+     *  		witness_budget:Number,
+     *  		accounts_registered_this_interval:Number,
+     *  		recently_missed_count:Number,
+     *  		current_aslot:Number,
+     *  		recent_slots_filled:String,
+     *  		dynamic_flags:Number,
+     *  		last_irreversible_block_num:Number
+     *  	}>
+     *  }
      */
 	async getDynamicGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -546,7 +912,7 @@ class API {
      *  @param  {List<String>} keys [public keys]
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<*>>}
+     *  @return {Promise.<Array.<*>>}
      */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
@@ -561,7 +927,7 @@ class API {
      *  @param  {Array<String>} accountIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
+     *  @return {Promise.<Array.<Account>>}
      */
 	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) throw new Error('Account ids should be an array');
@@ -624,9 +990,9 @@ class API {
      *  @method getFullAccounts
      *  @param  {Array<String>} accountNamesOrIds
      *  @param  {Boolean} subscribe
-     *  @param {Boolean} force
+     *  @param 	{Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
+     *  @return {Promise.<Array.<FullAccount>>}
      */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 		if (!isArray(accountNamesOrIds)) return Promise.reject(new Error('Account names or ids should be an array'));
@@ -729,7 +1095,7 @@ class API {
      *  @param  {String} accountName
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>}
+     *  @return {Promise.<Account>}
      */
 	async getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) throw new Error('Account name is invalid');
@@ -770,7 +1136,7 @@ class API {
      *  @param  {String} accountId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map>}
+     *  @return {Promise.<Object>}
      */
 	getAccountReferences(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -784,7 +1150,7 @@ class API {
      *  @param  {Array<String>} accountNames
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,membership_expiration_date:String,registrar:String,referrer:String,lifetime_referrer:String,network_fee_percentage:Number,lifetime_referrer_fee_percentage:Number,referrer_rewards_percentage:Number,name:String,owner:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},active:{weight_threshold:Number,account_auths:Array,key_auths:Array,address_auths:Array},ed_key:String,options:{memo_key:String,voting_account:String,delegating_account:String,num_witness:Number,num_committee:Number,votes:Array,extensions:Array},statistics:String,whitelisting_accounts:Array,blacklisting_accounts:Array,whitelisted_accounts:Array,blacklisted_accounts:Array,owner_special_authority:Array,active_special_authority:Array,top_n_control_flags:Number,history:Array.<{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}}>>}
+     *  @return {Promise.<Array.<Account>>}
      */
 	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) return Promise.reject(new Error('Account names should be an array'));
@@ -861,14 +1227,13 @@ class API {
      *  @param  {String} lowerBoundName
      *  @param  {Number} limit
      *
-     *  @return {Promise.<List<[AccountName, AccountId]>>}
+     *  @return {Promise.<Array<AccountName, AccountId>>}
      */
 	async lookupAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('Lower bound name should be a string');
 		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
 
-		const result = await this.wsApi.database.lookupAccounts(lowerBoundName, limit);
-		return result;
+		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
 
 	/**
@@ -886,7 +1251,7 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map>}
+     *  @return {Promise.<Object>}
      */
 	getAccountBalances(accountId, assetIds, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -903,7 +1268,7 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map>}
+     *  @return {Promise.<Object>}
      */
 	getNamedAccountBalances(accountName, assetIds, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
@@ -924,8 +1289,7 @@ class API {
 		if (!isArray(balanceIds)) throw new Error('Balance ids should be an array');
 		if (!balanceIds.every((id) => isBalanceId(id))) throw new Error('Balance ids should contain valid balance ids');
 
-		const result = this.wsApi.database.getVestedBalances(balanceIds);
-		return result;
+		return this.wsApi.database.getVestedBalances(balanceIds);
 	}
 
 	/**
@@ -937,8 +1301,7 @@ class API {
 	async getVestingBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
-		const result = this.wsApi.database.getVestingBalances(accountId);
-		return result;
+		return this.wsApi.database.getVestingBalances(accountId);
 	}
 
 	/**
@@ -946,7 +1309,7 @@ class API {
      *  @param  {Array<String>} assetIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String,dynamic:Object,bitasset:Object|undefined}>>}
+     *  @return {Promise.<Array.<Asset>>}
      */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -1012,14 +1375,13 @@ class API {
      *  @param  {String} lowerBoundSymbol
      *  @param  {Number} limit
      *
-     *  @return {Promise.<List.<Map{id:String,symbol:String,precision:Number,issuer:String,options:{max_supply:String,market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String}>>}
+     *  @return {Promise.<Array.<Asset>>}
      */
 	async listAssets(lowerBoundSymbol, limit = ApiConfig.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
 		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`);
 
-		const result = await this.wsApi.database.listAssets(lowerBoundSymbol, limit);
-		return result;
+		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
 
 	/**
@@ -1027,7 +1389,7 @@ class API {
      *  @param  {Array<String>} symbolsOrIds
      *  @param {Boolean} force
      *
-     *  @return {Promise.<List.<Map{id:String,symbol:String,precision:Number,issuer:String,options: {max_supply:String,	market_fee_percent:Number,max_market_fee:String,issuer_permissions:Number,flags:Number,core_exchange_rate:Object,whitelist_authorities:Array,blacklist_authorities:Array,whitelist_markets:Array,blacklist_markets:Array,description:String,extensions:[]},dynamic_asset_data_id:String|Object}>>}
+     *  @return {Promise.<Array.<Asset>>}
      */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
@@ -1105,8 +1467,7 @@ class API {
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) throw new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`);
 
-		const result = await this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
-		return result;
+		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
 
 	/**
@@ -1122,8 +1483,7 @@ class API {
 		if (!isAssetId(quoteAssetId)) throw new Error('Quote asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
-		const result = await this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
-		return result;
+		return this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
 	}
 
 	/**
@@ -1137,8 +1497,7 @@ class API {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
-		const result = await this.wsApi.database.getCallOrders(assetId, limit);
-		return result;
+		return this.wsApi.database.getCallOrders(assetId, limit);
 	}
 
 	/**
@@ -1152,8 +1511,7 @@ class API {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
 
-		const result = await this.wsApi.database.getSettleOrders(assetId, limit);
-		return result;
+		return this.wsApi.database.getSettleOrders(assetId, limit);
 	}
 
 	/**
@@ -1165,8 +1523,7 @@ class API {
 	async getMarginPositions(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
-		const result = await this.wsApi.database.getMarginPositions(accountId);
-		return result;
+		return this.wsApi.database.getMarginPositions(accountId);
 	}
 
 	/**
@@ -1181,8 +1538,7 @@ class API {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 
-		const result = await this.wsApi.database.getTicker(baseAssetName, quoteAssetName);
-		return result;
+		return this.wsApi.database.getTicker(baseAssetName, quoteAssetName);
 	}
 
 	/**
@@ -1197,8 +1553,7 @@ class API {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 
-		const result = await this.wsApi.database.get24Volume(baseAssetName, quoteAssetName);
-		return result;
+		return this.wsApi.database.get24Volume(baseAssetName, quoteAssetName);
 	}
 
 	/**
@@ -1212,15 +1567,20 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	async getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = ApiConfig.GET_TRADE_HISTORY_DEFAULT_LIMIT) {
+	async getTradeHistory(
+		baseAssetName,
+		quoteAssetName,
+		start,
+		stop,
+		limit = ApiConfig.GET_TRADE_HISTORY_DEFAULT_LIMIT,
+	) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 		if (!isUInt64(start)) throw new Error('Start should be UNIX timestamp');
 		if (!isUInt64(stop)) throw new Error('Stop should be UNIX timestamp');
 		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`);
 
-		const result = await this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
-		return result;
+		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
 
 	/**
@@ -1229,7 +1589,7 @@ class API {
      *  @param  {Array<String>} witnessIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,witness_account:String,last_aslot:Number,signing_key:String,pay_vb:String,vote_id:String,total_votes:Number,url:String,total_missed:Number,last_confirmed_block_num:Number,ed_signing_key:String}>>}
+     *  @return {Promise.<Array.<Witness>>}
      */
 	getWitnesses(witnessIds, force = false) {
 		if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
@@ -1247,7 +1607,7 @@ class API {
      *  @param  {String} accountId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map{id:String,witness_account:String,last_aslot:Number,signing_key:String,pay_vb:String,vote_id:String,total_votes:Number,url:String,total_missed:Number,last_confirmed_block_num:Number,ed_signing_key:String}>}
+     *  @return {Promise.<Witness>}
      */
 	getWitnessByAccount(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -1266,12 +1626,14 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	async lookupWitnessAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT) {
+	async lookupWitnessAccounts(
+		lowerBoundName,
+		limit = ApiConfig.LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT,
+	) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
 		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`);
 
-		const result = await this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
-		return result;
+		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
 	}
 
 	/**
@@ -1289,7 +1651,9 @@ class API {
      *  @param  {Array<String>} committeeMemberIds
      *  @param {Boolean} force
      *
-     *  @returns {Promise.<List.<Map{id:String,committee_member_account:String,vote_id:String,total_votes:Number,url:String}>>}
+     *  @return {
+     *  	Promise.<Array.<Committee>>
+     *  }
      */
 	getCommitteeMembers(committeeMemberIds, force = false) {
 		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
@@ -1307,7 +1671,7 @@ class API {
      *  @param  {String} accountId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map{id:String,committee_member_account:String,vote_id:String,total_votes:Number,url:String}>}
+     *  @return {Promise.<Committee>}
      */
 	getCommitteeMemberByAccount(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
@@ -1326,12 +1690,14 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	async lookupCommitteeMemberAccounts(lowerBoundName, limit = ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
+	async lookupCommitteeMemberAccounts(
+		lowerBoundName,
+		limit = ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
+	) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
 		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
 
-		const result = await this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
-		return result;
+		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
 
 	/**
@@ -1344,8 +1710,7 @@ class API {
 	async getWorkersByAccount(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
-		const result = await this.wsApi.database.getWorkersByAccount(accountId);
-		return result;
+		return this.wsApi.database.getWorkersByAccount(accountId);
 	}
 
 	/**
@@ -1354,7 +1719,22 @@ class API {
      *  @param  {Array<String>} votes
      *  @param  {Boolean} force
      *
-     *  @return {Promise.<Array.<{id:String,committee_member_account:String|undefined,witness_account:String|undefined,vote_id:String,total_votes:Number,url:String,last_aslot:Number|undefined,signing_key:String|undefined,pay_vb:String|undefined,total_missed:Number|undefined,last_confirmed_block_num:Number|undefined,ed_signing_key:String|undefined}>>}
+     *  @return {
+     *  	Promise.<Array.<{
+     *  		id:String,
+     *  		committee_member_account:(String|undefined),
+     *  		witness_account:(String|undefined),
+     *  		vote_id:String,
+     *  		total_votes:Number,
+     *  		url:String,
+     *  		last_aslot:(Number|undefined),
+     *  		signing_key:(String|undefined),
+     *  		pay_vb:(String|undefined),
+     *  		total_missed:(Number|undefined),
+     *  		last_confirmed_block_num:(Number|undefined),
+     *  		ed_signing_key:(String|undefined)
+     *  	}>>
+     *  }
      */
 	async lookupVoteIds(votes, force = false) {
 		if (!isArray(votes)) throw new Error('Votes should be an array');
@@ -1437,8 +1817,7 @@ class API {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
 		// transaction is signed
-		const result = await this.wsApi.database.getTransactionHex(transaction);
-		return result;
+		return this.wsApi.database.getTransactionHex(transaction);
 	}
 
 	/**
@@ -1454,8 +1833,7 @@ class API {
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
 		if (!availableKeys.every((key) => isPublicKey(key))) throw new Error('\'Available keys should contain valid public keys');
 
-		const result = await this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
-		return result;
+		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
 	}
 
 	/**
@@ -1468,8 +1846,7 @@ class API {
 	async getPotentialSignatures(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
-		const result = await this.wsApi.database.getPotentialSignatures(transaction);
-		return result;
+		return this.wsApi.database.getPotentialSignatures(transaction);
 	}
 
 	/**
@@ -1482,8 +1859,7 @@ class API {
 	async getPotentialAddressSignatures(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
-		const result = await this.wsApi.database.getPotentialAddressSignatures(transaction);
-		return result;
+		return this.wsApi.database.getPotentialAddressSignatures(transaction);
 	}
 
 	/**
@@ -1496,8 +1872,7 @@ class API {
 	async verifyAuthority(transaction) {
 		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
-		const result = await this.wsApi.database.verifyAuthority(transaction);
-		return result;
+		return this.wsApi.database.verifyAuthority(transaction);
 	}
 
 	/**
@@ -1513,8 +1888,7 @@ class API {
 		if (!isArray(signers)) throw new Error('Signers ids should be an array');
 		if (!signers.every((key) => isPublicKey(key))) throw new Error('Signers should contain valid public keys');
 
-		const result = await this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
-		return result;
+		return this.wsApi.database.verifyAccountAuthority(accountNameOrId, signers);
 	}
 
 	/**
@@ -1528,8 +1902,7 @@ class API {
 		if (!Transactions.signedTransaction.isValid(transaction)) throw new Error('Transaction is invalid');
 
 		// signed transaction
-		const result = await this.wsApi.database.validateTransaction(transaction);
-		return result;
+		return this.wsApi.database.validateTransaction(transaction);
 	}
 
 	/**
@@ -1538,15 +1911,19 @@ class API {
      *  @param  {Array<Object>} operations
      *  @param  {String} assetId
      *
-     *  @return {Promise.<List<{asset_id:String,amount:Number}>>}
+     *  @return {
+     *  	Promise.<Array<{
+     *  		asset_id:String,
+     *  		amount:Number
+     *  	}>>
+     *  }
      */
 	async getRequiredFees(operations, assetId = '1.3.0') {
 		if (!isArray(operations)) throw new Error('Operations should be an array');
 		if (!operations.every((v) => Operations.some((op) => op.isValid(v)))) throw new Error('Operations should contain valid operations');
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 
-		const result = await this.wsApi.database.getRequiredFees(operations, assetId);
-		return result;
+		return this.wsApi.database.getRequiredFees(operations, assetId);
 	}
 
 	/**
@@ -1559,19 +1936,22 @@ class API {
 	async getProposedTransactions(accountNameOrId) {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) throw new Error('AccountNameOrId is invalid');
 
-		const result = await this.wsApi.database.getProposedTransactions(accountNameOrId);
-		return result;
+		return this.wsApi.database.getProposedTransactions(accountNameOrId);
 	}
 
 	/**
      *  @method getAllContracts
      *
-     *  @return {Promise.<List<Map{id:String,statistics:String,suicided:Boolean}>>}
+     *  @return {
+     *  	Promise.<Array<{
+     *  		id:String,
+     *  		statistics:String,
+     *  		suicided:Boolean
+     *  	}>>
+     *  }
 	 */
-	async getAllContracts() {
-
-		const result = await this.wsApi.database.getAllContracts();
-		return result;
+	getAllContracts() {
+		return this.wsApi.database.getAllContracts();
 	}
 
 	/**
@@ -1581,7 +1961,13 @@ class API {
      *  @param  {Number} fromBlock
      *  @param  {Number} toBlock
      *
-     *  @return {Promise.<Array.<{address:String,log:Array.<String>,data:String}>>}
+     *  @return {
+     *  	Promise.<Array.<{
+     *  		address:String,
+     *  		log:Array.<String>,
+     *  		data:String
+     *  	}>>
+     *  }
      */
 	async getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
@@ -1589,8 +1975,7 @@ class API {
 		if (!isUInt64(toBlock)) throw new Error('ToBlock should be a non negative integer');
 		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
 
-		const result = await this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
-		return result;
+		return this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
 	}
 
 	/**
@@ -1599,7 +1984,25 @@ class API {
      *  @param  {String} resultContractId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<{exec_res:{excepted:String,new_address:String,output:String,code_deposit:String,gas_refunded:String,deposit_size:Number,gas_for_deposit:String},tr_receipt: {status_code:String,gas_used:String,bloom:String,log:Array}}>}
+     *  @return {
+     *  	Promise.<{
+     *  		exec_res:{
+     *  			excepted:String,
+     *  			new_address:String,
+     *  			output:String,
+     *  			code_deposit:String,
+     *  			gas_refunded:String,
+     *  			deposit_size:Number,
+     *  			gas_for_deposit:String
+     *  		},
+     *  		tr_receipt:{
+     *  			status_code:String,
+     *  			gas_used:String,
+     *  			bloom:String,
+     *  			log:Array
+     *  		}
+     *  	}>
+     *  }
      */
 	getContractResult(resultContractId, force = false) {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
@@ -1614,7 +2017,17 @@ class API {
      *  @param  {String} contractId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<{contract_info:{id:String,statistics:String,suicided:Boolean},code:String,storage:Array.<Array>}>}
+     *  @return {
+     *  	Promise.<{
+     *  		contract_info:{
+     *  			id:String,
+     *  			statistics:String,
+     *  			suicided:Boolean
+     *  		},
+     *  		code:String,
+     *  		storage:Array.<Array>
+     *      }>
+     *  }
      */
 	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
@@ -1631,7 +2044,7 @@ class API {
      *  @param  {String} assetId
      *  @param  {String} bytecode
      *
-     *  @return {Promise<string>}
+     *  @return {Promise<String>}
      */
 	async callContractNoChangingState(contractId, accountId, assetId, bytecode) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
@@ -1639,8 +2052,8 @@ class API {
 		if (!isAssetId(assetId)) throw new Error('AssetId is invalid');
 		if (!isBytecode(bytecode)) throw new Error('Bytecode is invalid');
 
-		const result = await this.wsApi.database.callContractNoChangingState(contractId, accountId, assetId, bytecode);
-		return result;
+		return this.wsApi.database
+			.callContractNoChangingState(contractId, accountId, assetId, bytecode);
 	}
 
 	/**
@@ -1649,7 +2062,7 @@ class API {
      *  @param  {Array<String>} contractIds
 	 *  @param {Boolean} force
      *
-     *  @return {Promise.<List<Map{id:String,statistics:String,suicided:Boolean}>>}
+     *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
      */
 	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
@@ -1664,14 +2077,13 @@ class API {
      *  @param  {String} contractId
      *  @param {Boolean} force
      *
-     *  @return {Promise.<Map>}
+     *  @return {Promise.<Object>}
      */
 	async getContractBalances(contractId, force = false) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
-		const result = await this.wsApi.database.getContractBalances(contractId);
-		return result;
+		return this.wsApi.database.getContractBalances(contractId);
 	}
 
 	/**
@@ -1684,8 +2096,7 @@ class API {
 	async getRecentTransactionById(transactionId) {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
-		const result = await this.wsApi.database.getRecentTransactionById(transactionId);
-		return result;
+		return this.wsApi.database.getRecentTransactionById(transactionId);
 	}
 
 	/**
@@ -1694,6 +2105,7 @@ class API {
      *  @param  {String} name
      * 	@param  {String} ownerKey
      * 	@param  {String} activeKey
+     * 	@param  {String} memoKey
      * 	@param  {String} echoRandKey
      *
      *  @return {Promise.<null>}
@@ -1705,8 +2117,7 @@ class API {
 		if (!isPublicKey(memoKey)) throw new Error('Memo public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
 
-		const result = await this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
-		return result;
+		return this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
 	}
 
 	/**
@@ -1718,16 +2129,22 @@ class API {
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {String} start [Id of the most recent operation to retrieve]
      *
-     *  @return {Promise.<List.<Map{is:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_block:Number,virtual_op:Number}>>}
+     *  @return {
+     *  	Promise.<Array.<AccountHistory>>
+     *  }
      */
-	async getAccountHistory(accountId, stop = ApiConfig.START_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.STOP_OPERATION_HISTORY_ID) {
+	async getAccountHistory(
+		accountId,
+		stop = ApiConfig.START_OPERATION_HISTORY_ID,
+		limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT,
+		start = ApiConfig.STOP_OPERATION_HISTORY_ID,
+	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
 		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
-		const result = await this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
-		return result;
+		return this.wsApi.history.getAccountHistory(accountId, stop, limit, start);
 	}
 
 	/**
@@ -1740,16 +2157,22 @@ class API {
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {Number} start [Sequence number of the most recent operation to retrieve]
      *
-     *  @return {Promise.<Array.<{id:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_trx:Number,virtual_op:Number}>>}
+     *  @return {
+     *  	Promise.<Array.<AccountHistory>>
+     *  }
      */
-	async getRelativeAccountHistory(accountId, stop = ApiConfig.RELATIVE_ACCOUNT_HISTORY_STOP, limit = ApiConfig.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.RELATIVE_ACCOUNT_HISTORY_START) {
+	async getRelativeAccountHistory(
+		accountId,
+		stop = ApiConfig.RELATIVE_ACCOUNT_HISTORY_STOP,
+		limit = ApiConfig.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
+		start = ApiConfig.RELATIVE_ACCOUNT_HISTORY_START,
+	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
 		if (!isUInt64(limit) || limit > ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
 		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
-		const result = await this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
-		return result;
+		return this.wsApi.history.getRelativeAccountHistory(accountId, stop, limit, start);
 	}
 
 	/**
@@ -1762,17 +2185,25 @@ class API {
      *  @param {Number} stop [Id of the earliest operation to retrieve]
      *  @param {Number} limit     [count operations (max 100)]
      *
-     *  @return {Promise<Array.<{ id:String,op:Array,result:Array,block_num:Number,trx_in_block:Number,op_in_trx:Number,virtual_op:Number}>>}
+     *  @return {
+     *  	Promise<Array.<AccountHistory>>
+     *  }
      */
-	async getAccountHistoryOperations(accountId, operationId, start = ApiConfig.START_OPERATION_HISTORY_ID, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT) {
+	async getAccountHistoryOperations(
+		accountId,
+		operationId,
+		start = ApiConfig.START_OPERATION_HISTORY_ID,
+		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
+		limit = ApiConfig.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT,
+	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isOperationId(operationId)) throw new Error('Operation id invalid');
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
 		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
 
-		const result = await this.wsApi.history.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
-		return result;
+		return this.wsApi.history
+			.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
 	}
 
 	/**
@@ -1786,14 +2217,18 @@ class API {
      *
      *  @return {Promise.<Array.<*>>}
      */
-	async getContractHistory(contractId, stop = ApiConfig.STOP_OPERATION_HISTORY_ID, limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT, start = ApiConfig.START_OPERATION_HISTORY_ID) {
+	async getContractHistory(
+		contractId,
+		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
+		limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT,
+		start = ApiConfig.START_OPERATION_HISTORY_ID,
+	) {
 		if (!isContractId(contractId)) throw new Error('Contract is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
 		if (!isUInt64(limit) || limit > ApiConfig.CONTRACT_HISTORY_MAX_LIMIT) throw new Error(`Limit should be capped at ${ApiConfig.CONTRACT_HISTORY_MAX_LIMIT}`);
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
-		const result = await this.wsApi.history.getContractHistory(contractId, stop, limit, start);
-		return result;
+		return this.wsApi.history.getContractHistory(contractId, stop, limit, start);
 	}
 
 	/**
@@ -1806,7 +2241,7 @@ class API {
 	 *  @param  {Array} tr.operations
 	 *  @param  {Array} tr.signatures
 	 *
-	 *  @return {Promise}
+	 *  @return {Promise.<*>}
 	 */
 	broadcastTransaction(tr) {
 		if (!tr) {
@@ -1839,7 +2274,7 @@ class API {
 	 *  @param  {String} block.cert  [certificate]
 	 *  @param  {Array} block.transactions
 	 *
-	 *  @return {Promise}
+	 *  @return {Promise.<*>}
 	 */
 	broadcastBlock(block) {
 		if (!block) {
