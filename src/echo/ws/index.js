@@ -55,15 +55,17 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) return;
 
 		this._connected = true;
-		if (this.onOpenCb) this.onOpenCb('open');
-		this.emit(STATUS.OPEN);
+
 
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
-			return;
+		} else {
+			await this._initGrapheneApi();
 		}
 
-		await this._initGrapheneApi();
+		if (this.onOpenCb) this.onOpenCb('open');
+		this.emit(STATUS.OPEN);
+
 	}
 
 	/**
