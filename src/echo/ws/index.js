@@ -89,7 +89,8 @@ class WS extends EventEmitter {
 
 	/**
      * init params and connect to chain
-     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+     * @param {String} url - remote node address,
+	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
      * @param {Object} options - connection params.
      * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
      * 		default call delay before reject it.
