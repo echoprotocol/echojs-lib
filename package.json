@@ -12,7 +12,8 @@
 		"prepublishOnly": "build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
-		"lint:fix": "npm run lint -- --fix"
+		"lint:fix": "npm run lint -- --fix",
+	    "jsdoc2md": "jsdoc2md src/echo/api.js > api.md"
 	},
 	"repository": {
 		"type": "git",
@@ -54,6 +55,7 @@
 		"eslint-plugin-jsx-a11y": "^6.1.2",
 		"eslint-plugin-react": "^7.11.1",
 		"mocha": "^5.2.0",
-		"redux": "^4.0.1"
+		"redux": "^4.0.1",
+	    "jsdoc-to-markdown": "^4.0.1"
 	}
 }
