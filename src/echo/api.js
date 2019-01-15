@@ -990,11 +990,7 @@ class API {
 
 	/**
      *  @method getKeyReferences
-<<<<<<< HEAD
-     *  @param  {List<String>} keys [public keys]
-=======
      *  @param  {Array<String|PublicKey>} keys [public keys]
->>>>>>> pre-immutable-version
      *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<*>>}
