@@ -58,12 +58,10 @@ class WS extends EventEmitter {
 
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
-			if (this.onOpenCb) this.onOpenCb('open');
-			this.emit(STATUS.OPEN);
-			return;
+		} else {
+			await this._initGrapheneApi();
 		}
 
-		await this._initGrapheneApi();
 		if (this.onOpenCb) this.onOpenCb('open');
 		this.emit(STATUS.OPEN);
 	}
