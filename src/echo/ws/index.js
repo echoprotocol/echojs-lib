@@ -167,7 +167,6 @@ class WS extends EventEmitter {
 			} catch (error) {
 				throw error;
 			}
-			this._ws_rpc = null;
 		}
 	}
 

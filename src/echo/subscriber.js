@@ -292,7 +292,8 @@ class Subscriber extends EventEmitter {
 			if (this.cache.objectsById.get(object.id)) {
 
 				const mutableObj = obj.withMutations((map) => {
-					map.deleteAll(['statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name', 'votes', 'balances',
+					map.deleteAll([
+						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name', 'votes', 'balances',
 						'vesting_balances', 'limit_orders', 'call_orders', 'settle_orders', 'proposals', 'assets', 'withdraws',
 					]);
 				});
@@ -800,7 +801,7 @@ class Subscriber extends EventEmitter {
 
 		for (let i = 0; i < length; i += 1) {
 			if (this.subscribers.account[i].accounts.includes(obj.get('id'))) {
-				this.subscribers.account[i].callback(obj);
+				this.subscribers.account[i].callback(obj.toJS());
 			}
 		}
 	}

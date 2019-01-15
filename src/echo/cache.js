@@ -1,14 +1,21 @@
+/* eslint-disable max-len,no-continue,no-restricted-syntax */
 import { Map } from 'immutable';
+
+import { isFunction, isObject, isVoid } from '../utils/validator';
 
 class Cache {
 
-	constructor(options) {
+	constructor() {
 		this.isUsed = true;
-		this.options = options;
-		this.clearCache();
+
+		this.redux = {
+			store: null,
+		};
+
+		this.reset();
 	}
 
-	clearCache() {
+	reset() {
 		this.subbedAccounts = new Map();
 		this.subbedWitnesses = new Map();
 		this.subbedCommittee = new Map();
@@ -52,24 +59,72 @@ class Cache {
 		this.balanceObjectsByBalanceId = new Map();
 		this.getAccountRefsOfAccountsCalls = new Map();
 
-		this.chainProperties = null;
-		this.globalProperties = null;
-		this.config = null;
+		this.chainProperties = new Map();
+		this.globalProperties = new Map();
+		this.config = new Map();
 		this.chainId = null;
-		this.dynamicGlobalProperties = null;
+		this.dynamicGlobalProperties = new Map();
+
+		this._resetRedux();
+	}
+
+	_copyCacheToRedux() {
+		if (!this.redux.store) return;
+
+		const keys = Object.keys(this);
+
+		for (const field of keys) {
+			const value = this[field];
+			this.redux.store.dispatch({ type: 'ECHO_SET_CACHE', payload: { field, value } });
+		}
 	}
 
 	setInMap(map, key, value) {
-		if (this.isUsed) this[map] = this[map].set(key, value);
+		if (this.isUsed) {
+			this.set(map, this[map].set(key, value));
+		}
 		return this;
 	}
 
-	set(param, value) {
-		if (this.isUsed) this[param] = value;
+	set(field, value) {
+		if (this.isUsed) {
+			this[field] = value;
+			if (this.redux.store) {
+				this.redux.store.dispatch({ type: 'ECHO_SET_CACHE', payload: { field, value } });
+			}
+		}
 		return this;
 	}
 
-	setOptions() {}
+	_resetRedux() {
+		if (this.redux.store) {
+			this.redux.store.dispatch({ type: 'ECHO_RESET_CACHE' });
+		}
+	}
+
+	/**
+	 *
+     * @param {Object} store
+     */
+	setStore({ store }) {
+		if (isVoid(store)) return;
+
+		if (!isObject(store) || !isFunction(store.getState) || !isFunction(store.dispatch) || isVoid(store.getState())) {
+			throw new Error('Expected the state and dispatch to be available');
+		}
+
+		this.redux.store = store;
+		this._copyCacheToRedux();
+	}
+
+	setOptions(options) {
+		try {
+			this.setStore(options);
+		} catch (error) {
+			throw error;
+			// TODO
+		}
+	}
 
 }
 

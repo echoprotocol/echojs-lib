@@ -7,6 +7,7 @@
     "test": "mocha --compilers js:babel-core/register --require babel-polyfill test/**/*.js",
     "test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
     "test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
+    "test-redux": "mocha --compilers js:babel-core/register --require babel-polyfill test/redux.test.js",
     "lint": "eslint .",
     "lint:debug": "npm run lint -- --debug",
     "lint:fix": "npm run lint -- --fix"
@@ -32,7 +33,8 @@
     "immutable": "^3.8.1",
     "isomorphic-ws": "^4.0.1",
     "tweetnacl": "^1.0.0",
-    "ws": "^6.1.2"
+    "ws": "^6.1.2",
+    "events": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -49,6 +51,7 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "redux": "^4.0.1"
   }
 }
