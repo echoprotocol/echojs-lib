@@ -33,6 +33,223 @@ import { Transactions, Operations } from '../serializer/operations';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 
+/** @typedef {
+*	{
+*  		previous:String,
+*  		timestamp:String,
+*  		witness:String,
+*  		account:String,
+*  		transaction_merkle_root:String,
+*  		state_root_hash:String,
+*  		result_root_hash:String,
+*  		extensions:Array
+*  	}
+* 	} BlockHeader */
+
+/** @typedef {
+*	{
+*  		previous:String,
+*  		timestamp:String,
+*  		witness:String,
+*  		account:String,
+*  		transaction_merkle_root:String,
+*  		state_root_hash:String,
+*  		result_root_hash:String,
+*  		extensions:Array,
+*  		witness_signature:String,
+*  		ed_signature:String,
+*  		verifications:Array,
+*  		round:Number,
+*  		rand:String,
+*  		cert:{
+*  			_rand:String,
+*  			_block_hash:String,
+*  			_producer:Number,
+*  			_signatures:Array.<{
+*  				_step:Number,
+*  				_value:Number,
+*  				_signer:Number,
+*  				_bba_sign:String
+*  			}>
+*  		},
+*  		transactions:Array.<{
+*  			ref_block_num:Number,
+*  			ref_block_prefix:Number,
+*  			expiration:String,
+*  			operations:Array,
+*  			extensions:Array,
+*  			signatures:Array.<String>,
+*  			operation_results:Array.<Array>
+*  		}>
+*  	}
+* 	} Block */
+
+/** @typedef {
+*		{
+*  			ref_block_num:Number,
+*  			ref_block_prefix:Number,
+*  			expiration:String,
+*  			operations:Array.<*>,
+*  			extensions:Array,
+*  			signatures:Array.<String>,
+*  			operation_results:Array.<Array.<*>>
+*      }
+* 	} Transaction */
+
+/** @typedef {
+*	{
+*  		id:String,
+*  		chain_id:String,
+*  		immutable_parameters:{
+*  			min_committee_member_count:Number,
+*  			min_witness_count:Number,
+*  			num_special_accounts:Number,
+*  			num_special_assets:Number
+*  		}
+*  	}
+* 	} ChainProperties */
+
+/** @typedef {
+*	{
+* 	 		id:String,
+* 	 		parameters:{
+* 	 			current_fees:{
+* 	 				parameters:Array.<*>,
+* 	 				scale:Number
+* 	 			},
+* 	 			block_interval:Number,
+* 	 			maintenance_interval:Number,
+* 	 			maintenance_skip_slots:Number,
+* 	 			committee_proposal_review_period:Number,
+* 	 			maximum_transaction_size:Number,
+* 	 			maximum_block_size:Number,
+* 	 			maximum_time_until_expiration:Number,
+* 	 			maximum_proposal_lifetime:Number,
+* 	 			maximum_asset_whitelist_authorities:Number,
+* 	 			maximum_asset_feed_publishers:Number,
+* 	 			maximum_witness_count:Number,
+* 	 			maximum_committee_count:Number,
+* 	 			maximum_authority_membership:Number,
+* 	 			reserve_percent_of_fee:Number,
+* 	 			network_percent_of_fee:Number,
+* 	 			lifetime_referrer_percent_of_fee:Number,
+* 	 			cashback_vesting_period_seconds:Number,
+* 	 			cashback_vesting_threshold:Number,
+* 	 			count_non_member_votes:Boolean,
+* 	 			allow_non_member_whitelists:Boolean,
+* 	 			witness_pay_per_block:Number,
+* 	 			worker_budget_per_day:String,
+* 	 			max_predicate_opcode:Number,
+* 	 			fee_liquidation_threshold:Number,
+* 	 			accounts_per_fee_scale:Number,
+* 	 			account_fee_scale_bitshifts:Number,
+* 	 			max_authority_depth:Number,
+* 	 			extensions:Array
+* 	 		},
+* 	 		next_available_vote_id:Number,
+* 	 		active_committee_members:Array.<String>,
+* 	 		active_witnesses:Array.<String>
+*      }
+*  	} GlobalProperties */
+
+/** @typedef {
+*	{
+*  		GRAPHENE_SYMBOL:String,
+*  		GRAPHENE_ADDRESS_PREFIX:String,
+*  		GRAPHENE_ED_PREFIX:String,
+*  		GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number,
+*  		GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number,
+*  		GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number,
+*  		GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number,
+*  		GRAPHENE_MAX_SHARE_SUPPLY:String,
+*  		GRAPHENE_MAX_PAY_RATE:Number,
+*  		GRAPHENE_MAX_SIG_CHECK_DEPTH:Number,
+*  		GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number,
+*  		GRAPHENE_MIN_BLOCK_INTERVAL:Number,
+*  		GRAPHENE_MAX_BLOCK_INTERVAL:Number,
+*  		GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number,
+*  		GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number,
+*  		GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number,
+*  		GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number,
+*  		GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number,
+*  		GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number,
+*  		GRAPHENE_MIN_UNDO_HISTORY:Number,
+*  		GRAPHENE_MAX_UNDO_HISTORY:Number,
+*  		GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number,
+*  		GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number,
+*  		GRAPHENE_BLOCKCHAIN_PRECISION:Number,
+*  		GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number,
+*  		GRAPHENE_DEFAULT_TRANSFER_FEE:Number,
+*  		GRAPHENE_MAX_INSTANCE_ID:String,
+*  		GRAPHENE_100_PERCENT:Number,
+*  		GRAPHENE_1_PERCENT:Number,
+*  		GRAPHENE_MAX_MARKET_FEE_PERCENT:Number,
+*  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number,
+*  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number,
+*  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number,
+*  		GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number,
+*  		GRAPHENE_MAX_FEED_PRODUCERS:Number,
+*  		GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number,
+*  		GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number,
+*  		GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number,
+*  		GRAPHENE_COLLATERAL_RATIO_DENOM:Number,GRAPHENE_MIN_COLLATERAL_RATIO:Number,
+*  		GRAPHENE_MAX_COLLATERAL_RATIO:Number,
+*  		GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,
+*  		GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,
+*  		GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number,
+*  		GRAPHENE_DEFAULT_MAX_WITNESSES:Number,
+*  		GRAPHENE_DEFAULT_MAX_COMMITTEE:Number,
+*  		GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
+*  		GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
+*  		GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,
+*  		GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,
+*  		GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,
+*  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,
+*  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,
+*  		GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
+*  		GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
+*  		GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number,
+*  		GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number,
+*  		GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number,
+*  		GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
+*  		GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
+*  		GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
+*  		GRAPHENE_MAX_WORKER_NAME_LENGTH:Number,
+*  		GRAPHENE_MAX_URL_LENGTH:Number,
+*  		GRAPHENE_NEAR_SCHEDULE_CTR_IV:String,
+*  		GRAPHENE_FAR_SCHEDULE_CTR_IV:String,
+*  		GRAPHENE_CORE_ASSET_CYCLE_RATE:Number,
+*  		GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number,
+*  		GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,
+*  		GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,
+*  		GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY:String,
+*  		GRAPHENE_MAX_INTEREST_APR:Number,
+*  		GRAPHENE_COMMITTEE_ACCOUNT:String,
+*  		GRAPHENE_WITNESS_ACCOUNT:String,
+*  		GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,
+*  		GRAPHENE_NULL_ACCOUNT:String,
+*  		GRAPHENE_TEMP_ACCOUNT:String
+*  	}
+*  	} Config */
+
+/** @typedef {
+*	{
+*  		id:String,
+*  		head_block_number:Number,
+*  		head_block_id:String,
+*  		time:String,
+*  		current_witness:String,
+*  		next_maintenance_time:String,
+*  		last_budget_time:String,
+*  		witness_budget:Number,
+*  		accounts_registered_this_interval:Number,
+*  		recently_missed_count:Number,
+*  		current_aslot:Number,
+*  		recent_slots_filled:String,
+*  		dynamic_flags:Number,
+*  		last_irreversible_block_num:Number
+*  	}
+*  	} DynamicGlobalProperties */
 
 /** @typedef {
 * 	{
@@ -157,7 +374,11 @@ import * as CacheMaps from '../constants/cache-maps';
 * 				owner_special_authority:Array,
 * 				active_special_authority:Array,
 * 				top_n_control_flags:Number,
-* 				history:Array.<AccountHistory>
+* 				history:Array.<AccountHistory>,
+* 				balances:Object,
+* 				limit_orders:Object,
+* 				call_orders:Object,
+* 				proposals:Object
 * 			}
 * 	} FullAccount */
 
@@ -186,6 +407,55 @@ import * as CacheMaps from '../constants/cache-maps';
 *  			bitasset:(Object|undefined)
 *  		}
 *  	} Asset */
+
+
+
+
+/** @typedef {
+*	{
+*  		id:String,
+*  		committee_member_account:(String|undefined),
+*  		witness_account:(String|undefined),
+*  		vote_id:String,
+*  		total_votes:Number,
+*  		url:String,
+*  		last_aslot:(Number|undefined),
+*  		signing_key:(String|undefined),
+*  		pay_vb:(String|undefined),
+*  		total_missed:(Number|undefined),
+*  		last_confirmed_block_num:(Number|undefined),
+*  		ed_signing_key:(String|undefined)
+*  	}
+*  	} Vote */
+
+/** @typedef {
+*	{
+*  		address:String,
+*  		log:Array.<String>,
+*  		data:String
+*  	}
+*  	} ContractLogs */
+
+/** @typedef {
+*	{
+*  		exec_res:{
+*  			excepted:String,
+*  			new_address:String,
+*  			output:String,
+*  			code_deposit:String,
+*  			gas_refunded:String,
+*  			deposit_size:Number,
+*  			gas_for_deposit:String
+*  		},
+*  		tr_receipt:{
+*  			status_code:String,
+*  			gas_used:String,
+*  			bloom:String,
+*  			log:Array
+*  		}
+*  	}
+*  	} ContractResult */
+
 
 class API {
 
@@ -297,7 +567,7 @@ class API {
      * @param {*} key
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force [make rpc request, instead cache checking]
+     * @param {Boolean} force
      * @param {Array} cacheParams
      *
      * @return {Promise.<Object>}
@@ -337,7 +607,7 @@ class API {
      * @param {String} key
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force [make rpc request, instead cache checking]
+     * @param {Boolean} force
      * @param {...Array} params
      *
      * @return {Promise.<Object>}
@@ -371,10 +641,8 @@ class API {
 	/**
 	 *
      * @param {Map} requestedObject
-     * @param {Boolean} force [make rpc request, instead cache checking]
-     * @return {
-     *  	Promise.<{Asset}>
-     * }
+     * @param {Boolean} force
+     * @return {Promise.<Asset>}
      * @private
      */
 	async _addAssetExtraFields(requestedObject, force = false) {
@@ -434,7 +702,7 @@ class API {
      * @param {Array} array
      * @param {String} cacheName
      * @param {String} methodName
-     * @param {Boolean} force [make rpc request, instead cache checking]
+     * @param {Boolean} force
      * @return {Promise.<Array.<*>>}
      * @private
      */
@@ -534,7 +802,7 @@ class API {
 	/**
      *  @method getObjects
      *  @param  {Array<String>} objectIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Object>>}
      */
@@ -549,7 +817,7 @@ class API {
 	/**
      *  @method getObject
      *  @param  {String} objectId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Object>}
      */
@@ -563,7 +831,7 @@ class API {
 	/**
 	 *
      * 	@param {String} bitAssetId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      * 	@return  {Promise.<Object>}
      * 	@private
      */
@@ -578,7 +846,7 @@ class API {
 	/**
      *
      * 	@param {String} dynamicAssetDataId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      * 	@return  {Promise.<Object>}
      * 	@private
      */
@@ -594,16 +862,7 @@ class API {
      *  @param  {Number} blockNum
      *
      *  @return {
-     *  	Promise.<{
-     *  		previous:String,
-     *  		timestamp:String,
-     *  		witness:String,
-     *  		account:String,
-     *  		transaction_merkle_root:String,
-     *  		state_root_hash:String,
-     *  		result_root_hash:String,
-     *  		extensions:Array
-     *  	}>
+     *  	Promise.<BlockHeader>
      *  }
      */
 	getBlockHeader(blockNum) {
@@ -617,41 +876,7 @@ class API {
      *  @param  {Number} blockNum
      *
      *  @return {
-     *  	Promise.<{
-     *  		previous:String,
-     *  		timestamp:String,
-     *  		witness:String,
-     *  		account:String,
-     *  		transaction_merkle_root:String,
-     *  		state_root_hash:String,
-     *  		result_root_hash:String,
-     *  		extensions:Array,
-     *  		witness_signature:String,
-     *  		ed_signature:String,
-     *  		verifications:Array,
-     *  		round:Number,
-     *  		rand:String,
-     *  		cert:{
-     *  			_rand:String,
-     *  			_block_hash:String,
-     *  			_producer:Number,
-     *  			_signatures:Array.<{
-     *  				_step:Number,
-     *  				_value:Number,
-     *  				_signer:Number,
-     *  				_bba_sign:String
-     *  			}>
-     *  		},
-     *  		transactions:Array.<{
-     *  			ref_block_num:Number,
-     *  			ref_block_prefix:Number,
-     *  			expiration:String,
-     *  			operations:Array,
-     *  			extensions:Array,
-     *  			signatures:Array.<String>,
-     *  			operation_results:Array.<Array>
-     *  		}>
-     *  	}>
+     *  	Promise.<Block>
      *  }
      */
 	getBlock(blockNum) {
@@ -666,15 +891,7 @@ class API {
      *  @param  {Number} transactionIndex
      *
      *  @return {
-     *  	Promise.<{
-     *  		ref_block_num:Number,
-     *  		ref_block_prefix:Number,
-     *  		expiration:String,
-     *  		operations:Array.<*>,
-     *  		extensions:Array,
-     *  		signatures:Array.<String>,
-     *  		operation_results:Array.<Array.<*>>
-     *      }>
+     *  	Promise.<Transaction>
      *  }
      */
 	getTransaction(blockNum, transactionIndex) {
@@ -688,19 +905,10 @@ class API {
 
 	/**
      *  @method getChainProperties
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {
-     *  	Promise.<{
-     *  		id:String,
-     *  		chain_id:String,
-     *  		immutable_parameters:{
-     *  			min_committee_member_count:Number,
-     *  			min_witness_count:Number,
-     *  			num_special_accounts:Number,
-     *  			num_special_assets:Number
-     *  		}
-     *  	}>
+     *  	Promise.<ChainProperties>
      * 	}
      */
 	getChainProperties(force = false) {
@@ -713,46 +921,7 @@ class API {
      *  @method getGlobalProperties
      *
      *  @return {
-     *  	Promise.<{
-     * 	 		id:String,
-     * 	 		parameters:{
-     * 	 			current_fees:{
-     * 	 				parameters:Array.<*>,
-     * 	 				scale:Number
-     * 	 			},
-     * 	 			block_interval:Number,
-     * 	 			maintenance_interval:Number,
-     * 	 			maintenance_skip_slots:Number,
-     * 	 			committee_proposal_review_period:Number,
-     * 	 			maximum_transaction_size:Number,
-     * 	 			maximum_block_size:Number,
-     * 	 			maximum_time_until_expiration:Number,
-     * 	 			maximum_proposal_lifetime:Number,
-     * 	 			maximum_asset_whitelist_authorities:Number,
-     * 	 			maximum_asset_feed_publishers:Number,
-     * 	 			maximum_witness_count:Number,
-     * 	 			maximum_committee_count:Number,
-     * 	 			maximum_authority_membership:Number,
-     * 	 			reserve_percent_of_fee:Number,
-     * 	 			network_percent_of_fee:Number,
-     * 	 			lifetime_referrer_percent_of_fee:Number,
-     * 	 			cashback_vesting_period_seconds:Number,
-     * 	 			cashback_vesting_threshold:Number,
-     * 	 			count_non_member_votes:Boolean,
-     * 	 			allow_non_member_whitelists:Boolean,
-     * 	 			witness_pay_per_block:Number,
-     * 	 			worker_budget_per_day:String,
-     * 	 			max_predicate_opcode:Number,
-     * 	 			fee_liquidation_threshold:Number,
-     * 	 			accounts_per_fee_scale:Number,
-     * 	 			account_fee_scale_bitshifts:Number,
-     * 	 			max_authority_depth:Number,
-     * 	 			extensions:Array
-     * 	 		},
-     * 	 		next_available_vote_id:Number,
-     * 	 		active_committee_members:Array.<String>,
-     * 	 		active_witnesses:Array.<String>
-     *      }>
+     *  	Promise.<GlobalProperties>
      *  }
      */
 	getGlobalProperties(force = false) {
@@ -763,86 +932,10 @@ class API {
 
 	/**
      *  @method getConfig
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {
-     *  	Promise.<{
-     *  		GRAPHENE_SYMBOL:String,
-     *  		GRAPHENE_ADDRESS_PREFIX:String,
-     *  		GRAPHENE_ED_PREFIX:String,
-     *  		GRAPHENE_MIN_ACCOUNT_NAME_LENGTH:Number,
-     *  		GRAPHENE_MAX_ACCOUNT_NAME_LENGTH:Number,
-     *  		GRAPHENE_MIN_ASSET_SYMBOL_LENGTH:Number,
-     *  		GRAPHENE_MAX_ASSET_SYMBOL_LENGTH:Number,
-     *  		GRAPHENE_MAX_SHARE_SUPPLY:String,
-     *  		GRAPHENE_MAX_PAY_RATE:Number,
-     *  		GRAPHENE_MAX_SIG_CHECK_DEPTH:Number,
-     *  		GRAPHENE_MIN_TRANSACTION_SIZE_LIMIT:Number,
-     *  		GRAPHENE_MIN_BLOCK_INTERVAL:Number,
-     *  		GRAPHENE_MAX_BLOCK_INTERVAL:Number,
-     *  		GRAPHENE_DEFAULT_BLOCK_INTERVAL:Number,
-     *  		GRAPHENE_DEFAULT_MAX_TRANSACTION_SIZE:Number,
-     *  		GRAPHENE_DEFAULT_MAX_BLOCK_SIZE:Number,
-     *  		GRAPHENE_DEFAULT_MAX_TIME_UNTIL_EXPIRATION:Number,
-     *  		GRAPHENE_DEFAULT_MAINTENANCE_INTERVAL:Number,
-     *  		GRAPHENE_DEFAULT_MAINTENANCE_SKIP_SLOTS:Number,
-     *  		GRAPHENE_MIN_UNDO_HISTORY:Number,
-     *  		GRAPHENE_MAX_UNDO_HISTORY:Number,
-     *  		GRAPHENE_MIN_BLOCK_SIZE_LIMIT:Number,
-     *  		GRAPHENE_MIN_TRANSACTION_EXPIRATION_LIMIT:Number,
-     *  		GRAPHENE_BLOCKCHAIN_PRECISION:Number,
-     *  		GRAPHENE_BLOCKCHAIN_PRECISION_DIGITS:Number,
-     *  		GRAPHENE_DEFAULT_TRANSFER_FEE:Number,
-     *  		GRAPHENE_MAX_INSTANCE_ID:String,
-     *  		GRAPHENE_100_PERCENT:Number,
-     *  		GRAPHENE_1_PERCENT:Number,
-     *  		GRAPHENE_MAX_MARKET_FEE_PERCENT:Number,
-     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_DELAY:Number,
-     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_OFFSET:Number,
-     *  		GRAPHENE_DEFAULT_FORCE_SETTLEMENT_MAX_VOLUME:Number,
-     *  		GRAPHENE_DEFAULT_PRICE_FEED_LIFETIME:Number,
-     *  		GRAPHENE_MAX_FEED_PRODUCERS:Number,
-     *  		GRAPHENE_DEFAULT_MAX_AUTHORITY_MEMBERSHIP:Number,
-     *  		GRAPHENE_DEFAULT_MAX_ASSET_WHITELIST_AUTHORITIES:Number,
-     *  		GRAPHENE_DEFAULT_MAX_ASSET_FEED_PUBLISHERS:Number,
-     *  		GRAPHENE_COLLATERAL_RATIO_DENOM:Number,GRAPHENE_MIN_COLLATERAL_RATIO:Number,
-     *  		GRAPHENE_MAX_COLLATERAL_RATIO:Number,
-     *  		GRAPHENE_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,
-     *  		GRAPHENE_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,
-     *  		GRAPHENE_DEFAULT_MARGIN_PERIOD_SEC:Number,
-     *  		GRAPHENE_DEFAULT_MAX_WITNESSES:Number,
-     *  		GRAPHENE_DEFAULT_MAX_COMMITTEE:Number,
-     *  		GRAPHENE_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
-     *  		GRAPHENE_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
-     *  		GRAPHENE_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,
-     *  		GRAPHENE_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,
-     *  		GRAPHENE_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,
-     *  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,
-     *  		GRAPHENE_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,
-     *  		GRAPHENE_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
-     *  		GRAPHENE_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
-     *  		GRAPHENE_DEFAULT_BURN_PERCENT_OF_FEE:Number,
-     *  		GRAPHENE_WITNESS_PAY_PERCENT_PRECISION:Number,
-     *  		GRAPHENE_DEFAULT_MAX_ASSERT_OPCODE:Number,
-     *  		GRAPHENE_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
-     *  		GRAPHENE_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
-     *  		GRAPHENE_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
-     *  		GRAPHENE_MAX_WORKER_NAME_LENGTH:Number,
-     *  		GRAPHENE_MAX_URL_LENGTH:Number,
-     *  		GRAPHENE_NEAR_SCHEDULE_CTR_IV:String,
-     *  		GRAPHENE_FAR_SCHEDULE_CTR_IV:String,
-     *  		GRAPHENE_CORE_ASSET_CYCLE_RATE:Number,
-     *  		GRAPHENE_CORE_ASSET_CYCLE_RATE_BITS:Number,
-     *  		GRAPHENE_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,
-     *  		GRAPHENE_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,
-     *  		GRAPHENE_DEFAULT_WORKER_BUDGET_PER_DAY:String,
-     *  		GRAPHENE_MAX_INTEREST_APR:Number,
-     *  		GRAPHENE_COMMITTEE_ACCOUNT:String,
-     *  		GRAPHENE_WITNESS_ACCOUNT:String,
-     *  		GRAPHENE_RELAXED_COMMITTEE_ACCOUNT:String,
-     *  		GRAPHENE_NULL_ACCOUNT:String,
-     *  		GRAPHENE_TEMP_ACCOUNT:String
-     *  	}>
+     *  	Promise.<Config>
      *  }
      */
 	async getConfig(force = false) {
@@ -853,7 +946,7 @@ class API {
 
 	/**
      *  @method getChainId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<String>}
      */
@@ -883,22 +976,7 @@ class API {
      *  @method getDynamicGlobalProperties
      *
      *  @return {
-     *  	Promise.<{
-     *  		id:String,
-     *  		head_block_number:Number,
-     *  		head_block_id:String,
-     *  		time:String,
-     *  		current_witness:String,
-     *  		next_maintenance_time:String,
-     *  		last_budget_time:String,
-     *  		witness_budget:Number,
-     *  		accounts_registered_this_interval:Number,
-     *  		recently_missed_count:Number,
-     *  		current_aslot:Number,
-     *  		recent_slots_filled:String,
-     *  		dynamic_flags:Number,
-     *  		last_irreversible_block_num:Number
-     *  	}>
+     *  	Promise.<DynamicGlobalProperties>
      *  }
      */
 	async getDynamicGlobalProperties(force = false) {
@@ -910,7 +988,7 @@ class API {
 	/**
      *  @method getKeyReferences
      *  @param  {List<String>} keys [public keys]
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<*>>}
      */
@@ -925,7 +1003,7 @@ class API {
 	/**
      *  @method getAccounts
      *  @param  {Array<String>} accountIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Account>>}
      */
@@ -1093,7 +1171,7 @@ class API {
 	/**
      *  @method getAccountByName
      *  @param  {String} accountName
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Account>}
      */
@@ -1134,7 +1212,7 @@ class API {
 	/**
      *  @method getAccountReferences
      *  @param  {String} accountId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Object>}
      */
@@ -1148,7 +1226,7 @@ class API {
 	/**
      *  @method lookupAccountNames
      *  @param  {Array<String>} accountNames
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Account>>}
      */
@@ -1249,7 +1327,7 @@ class API {
      *  @method getAccountBalances
      *  @param  {String} accountId
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Object>}
      */
@@ -1266,7 +1344,7 @@ class API {
      *  @method getNamedAccountBalances
      *  @param  {String} accountName
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Object>}
      */
@@ -1307,7 +1385,7 @@ class API {
 	/**
      *  @method getAssets
      *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Asset>>}
      */
@@ -1387,7 +1465,7 @@ class API {
 	/**
      *  @method lookupAssetSymbols
      *  @param  {Array<String>} symbolsOrIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Asset>>}
      */
@@ -1587,7 +1665,7 @@ class API {
      *  @method getWitnesses
      *
      *  @param  {Array<String>} witnessIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<Witness>>}
      */
@@ -1605,7 +1683,7 @@ class API {
      *  @method getWitnessByAccount
      *
      *  @param  {String} accountId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Witness>}
      */
@@ -1649,7 +1727,7 @@ class API {
      *  @method getCommitteeMembers
      *
      *  @param  {Array<String>} committeeMemberIds
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {
      *  	Promise.<Array.<Committee>>
@@ -1669,7 +1747,7 @@ class API {
      *  @method getCommitteeMemberByAccount
      *
      *  @param  {String} accountId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Committee>}
      */
@@ -1720,20 +1798,7 @@ class API {
      *  @param  {Boolean} force
      *
      *  @return {
-     *  	Promise.<Array.<{
-     *  		id:String,
-     *  		committee_member_account:(String|undefined),
-     *  		witness_account:(String|undefined),
-     *  		vote_id:String,
-     *  		total_votes:Number,
-     *  		url:String,
-     *  		last_aslot:(Number|undefined),
-     *  		signing_key:(String|undefined),
-     *  		pay_vb:(String|undefined),
-     *  		total_missed:(Number|undefined),
-     *  		last_confirmed_block_num:(Number|undefined),
-     *  		ed_signing_key:(String|undefined)
-     *  	}>>
+     *  	Promise.<Array.<Vote>>
      *  }
      */
 	async lookupVoteIds(votes, force = false) {
@@ -1962,11 +2027,7 @@ class API {
      *  @param  {Number} toBlock
      *
      *  @return {
-     *  	Promise.<Array.<{
-     *  		address:String,
-     *  		log:Array.<String>,
-     *  		data:String
-     *  	}>>
+     *  	Promise.<Array.<ContractLogs>>
      *  }
      */
 	async getContractLogs(contractId, fromBlock, toBlock) {
@@ -1982,27 +2043,9 @@ class API {
      *  @method getContractResult
      *
      *  @param  {String} resultContractId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
-     *  @return {
-     *  	Promise.<{
-     *  		exec_res:{
-     *  			excepted:String,
-     *  			new_address:String,
-     *  			output:String,
-     *  			code_deposit:String,
-     *  			gas_refunded:String,
-     *  			deposit_size:Number,
-     *  			gas_for_deposit:String
-     *  		},
-     *  		tr_receipt:{
-     *  			status_code:String,
-     *  			gas_used:String,
-     *  			bloom:String,
-     *  			log:Array
-     *  		}
-     *  	}>
-     *  }
+     *  @return {Promise.<ContractResult>}
      */
 	getContractResult(resultContractId, force = false) {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
@@ -2015,7 +2058,7 @@ class API {
      *  @method getContract
      *
      *  @param  {String} contractId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {
      *  	Promise.<{
@@ -2060,7 +2103,7 @@ class API {
      *  @method getContracts
      *
      *  @param  {Array<String>} contractIds
-	 *  @param {Boolean} force [make rpc request, instead cache checking]
+	 *  @param {Boolean} force
      *
      *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
      */
@@ -2075,7 +2118,7 @@ class API {
      *  @method getContractBalances
      *
      *  @param  {String} contractId
-     *  @param {Boolean} force [make rpc request, instead cache checking]
+     *  @param {Boolean} force
      *
      *  @return {Promise.<Object>}
      */
