@@ -2,9 +2,11 @@
 import Echo from './echo';
 
 import constants from './constants';
-import crypto from './crypto';
+import { PrivateKey, PublicKey } from './crypto';
 import Transaction from './echo/transaction';
 
-export { Echo, constants, crypto, Transaction };
+export { OPERATIONS_IDS } from './constants';
+
+export { Echo, constants, PrivateKey, PublicKey, Transaction };
 
 export default new Echo();

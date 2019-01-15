@@ -23,6 +23,7 @@ import {
 	isBitAssetId,
 	isDynamicAssetDataId,
 	isEchoRandKey,
+	isOperationId,
 } from '../utils/validators';
 
 import { operationById } from './operations';
@@ -34,7 +35,7 @@ import { ECHO_ASSET_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
-import { isOperationId } from '../../lib/utils/validators';
+import { PublicKey } from '../crypto';
 
 class API {
 
@@ -611,13 +612,14 @@ class API {
 
 	/**
      *  @method getKeyReferences
-     *  @param  {Array<String>} keys [public keys]
+     *  @param  {Array<String|PublicKey>} keys [public keys]
      *  @param {Boolean} force
      *
      *  @returns {Promise.<Array.<*>>}
      */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
+		keys = keys.map((value) => ((value instanceof PublicKey) ? value.toString() : value));
 		if (!keys.every((key) => isPublicKey(key))) return Promise.reject(new Error('Keys should contain valid public keys'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
@@ -1351,11 +1353,8 @@ class API {
      */
 	getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		for (const operation of operations) {
-			const [operationId] = operation;
-			operationById[operationId].validate(operation, false);
-		}
-		return this.wsApi.database.getRequiredFees(operations, assetId);
+		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
+		return this.wsApi.database.getRequiredFees(operationsObjects, assetId);
 	}
 
 	/**
