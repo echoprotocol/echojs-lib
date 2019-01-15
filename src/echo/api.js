@@ -1982,19 +1982,10 @@ class API {
      *  	}>>
      *  }
      */
-<<<<<<< HEAD
 	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
 		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
 		return this.wsApi.database.getRequiredFees(operationsObjects, assetId);
-=======
-	async getRequiredFees(operations, assetId = '1.3.0') {
-		if (!isArray(operations)) throw new Error('Operations should be an array');
-		if (!operations.every((v) => Operations.some((op) => op.isValid(v)))) throw new Error('Operations should contain valid operations');
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-
-		return this.wsApi.database.getRequiredFees(operations, assetId);
->>>>>>> master
 	}
 
 	/**

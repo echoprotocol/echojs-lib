@@ -12,7 +12,6 @@ import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_MAX_LAG_SECONDS } from '../constants/api-config';
-import { inspect } from 'util';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
