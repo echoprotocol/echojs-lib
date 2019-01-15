@@ -839,11 +839,9 @@ try {
 | memoKey | <code>String</code> |
 | echoRandKey | <code>String</code> |
 
-<a name="getAccountHistory
- Get operations relevant to the specified account."></a>
+<a name="getAccountHistory"></a>
 
-## getAccountHistory
- Get operations relevant to the specified account.(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+## getAccountHistory(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -853,13 +851,9 @@ try {
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>String</code> | [Id of the most recent operation to retrieve] |
 
-<a name="getRelativeAccountHistory
- Get operations relevant to the specified account referenced
- by an event numbering specific to the account."></a>
+<a name="getRelativeAccountHistory"></a>
 
-## getRelativeAccountHistory
- Get operations relevant to the specified account referenced
- by an event numbering specific to the account.(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+## getRelativeAccountHistory(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -869,11 +863,9 @@ try {
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>Number</code> | [Sequence number of the most recent operation to retrieve] |
 
-<a name="getAccountHistoryOperations
- Get only asked operations relevant to the specified account."></a>
+<a name="getAccountHistory"></a>
 
-## getAccountHistoryOperations
- Get only asked operations relevant to the specified account.(accountId, operationId, start, stop, limit) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
+## getAccountHistoryOperations(accountId, operationId, start, stop, limit) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -884,11 +876,9 @@ try {
 | stop | <code>Number</code> | [Id of the earliest operation to retrieve] |
 | limit | <code>Number</code> | [count operations (max 100)] |
 
-<a name="getContractHistory
- Get operations relevant to the specified account."></a>
+<a name="getContractHistory"></a>
 
-## getContractHistory
- Get operations relevant to the specified account.(contractId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
+## getContractHistory(contractId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -898,11 +888,9 @@ try {
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>String</code> | [Id of the most recent operation to retrieve] |
 
-<a name="broadcastTransaction
-	Broadcast a transaction to the network."></a>
+<a name="broadcastTransaction"></a>
 
-## broadcastTransaction
-	Broadcast a transaction to the network.(tr) ⇒ <code>Promise.&lt;\*&gt;</code>
+## broadcastTransaction(tr) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
 | Param | Type |
@@ -913,11 +901,9 @@ try {
 | tr.operations | <code>Array</code> |
 | tr.signatures | <code>Array</code> |
 
-<a name="broadcastBlock
-	Broadcast a block to the network."></a>
+<a name="broadcastBlock"></a>
 
-## broadcastBlock
-	Broadcast a block to the network.(block) ⇒ <code>Promise.&lt;\*&gt;</code>
+## broadcastBlock(block) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -937,11 +923,9 @@ try {
 | block.cert | <code>String</code> | [certificate] |
 | block.transactions | <code>Array</code> |  |
 
-<a name="getAssetHolders
- Retrieve the information about the holders of the specified asset."></a>
+<a name="getAssetHolders"></a>
 
-## getAssetHolders
- Retrieve the information about the holders of the specified asset.(assetId, start, limit) ⇒ <code>Promise.&lt;Array.&lt;{name: String, account\_id:String, amount: String}&gt;&gt;</code>
+## getAssetHolders>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{name: String, account\_id:String, amount: String}&gt;&gt;</code> - [ { name: 'init0', account_id: '1.2.6', amount: '100000039900000' } ]
 
@@ -951,11 +935,9 @@ try {
 | start | <code>Number</code> | [account id to start retrieving from] |
 | limit | <code>Number</code> | [count accounts (max 100)] |
 
-<a name="getAssetHoldersCount
- Retrieve the number of holders of the provided asset."></a>
+<a name="getAssetHoldersCount"></a>
 
-## getAssetHoldersCount
- Retrieve the number of holders of the provided asset.(assetId) ⇒ <code>Promise.&lt;Number&gt;</code>
+## getAssetHoldersCount(assetId) ⇒ <code>Promise.&lt;Number&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Number&gt;</code> - result - 8
 
@@ -963,11 +945,9 @@ try {
 | --- | --- | --- |
 | assetId | <code>String</code> | [asset id to retrieve] |
 
-<a name="getAllAssetHolders
- Array of all asset IDs with the number of holders."></a>
+<a name="getAllAssetHolders"></a>
 
-## getAllAssetHolders
- Array of all asset IDs with the number of holders.() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
+## getAllAssetHolders() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
 
@@ -1468,7 +1448,51 @@ echo.syncCacheWithStore(store);
 
 console.log(echo.cache.objectsById);
 ```
-All objects after and before sync, will be added to redux store.
+> All objects after and before sync, will be added to redux store.
+
+### Transactions
+Using transaction builder you can build and broadcast transaction
+```javascript
+import echo, { constants } from 'echolib-js';
+
+const tx = echo.createTransaction();
+// or
+const tx = new Transaction(echo.api);
+
+const privateKey = Buffer.from('...', 'hex');
+
+const options = {
+fee: asset,
+    from: '1.2.20',
+    to: '1.2.21'
+    amount: {
+        asset_id: '1.3.0',
+        amount: 1
+    },
+    memo: '123',
+    extensions: [],
+};
+
+tx.addOperation(constants.OPERATIONS_IDS.TRANSFER, options);
+
+tx.addSigner(privateKey);
+await tx.sign();
+// or
+await tx.sign(privateKey);
+
+await tx.broadcast(() => console.log('was broadcasted'));
+
+// or
+await echo
+.createTransaction()
+.addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+.addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+.addSigner(privateKey)
+.addSigner(privateKey)
+.broadcast();
+
+```
+
 
 ### ECC
 The ECC library contains all the crypto functions for private and public keys as well as transaction creation/signing.
