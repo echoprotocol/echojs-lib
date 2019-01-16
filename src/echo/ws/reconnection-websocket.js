@@ -126,6 +126,7 @@ class ReconnectionWebSocket {
 				this._clearWaitingCallPromises();
 				this._clearPingInterval();
 				this._clearReconnectionTimeout();
+				this._resetId();
 
 				if (this.onClose) this.onClose();
 
@@ -332,6 +333,13 @@ class ReconnectionWebSocket {
 		}
 	}
 
+	/**
+	 * reset calls id
+	 * @private
+	 */
+	_resetId() {
+		this._cbId = 0;
+	}
 
 	/**
 	 * clear waiting calls

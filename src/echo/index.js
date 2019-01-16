@@ -48,7 +48,11 @@ class Echo {
 		await this.subscriber.init();
 
 		this._ws.on('open', async () => {
-			await this.subscriber.init();
+			try {
+				await this.subscriber.init();
+			} catch (err) {
+				console.log('ONOPEN init error', err);
+			}
 		});
 	}
 

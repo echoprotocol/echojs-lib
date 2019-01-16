@@ -56,7 +56,6 @@ class WS extends EventEmitter {
 
 		this._connected = true;
 
-
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
 		} else {
