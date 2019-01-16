@@ -554,7 +554,7 @@ class API {
 			}
 
 			resultArray[i] = requestedObject;
-			requestedObject = new Map(requestedObject);
+			requestedObject = fromJS(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 			for (const { param, cache } of cacheParams) {
@@ -1987,7 +1987,7 @@ class API {
 	async getTransactionHex(tr) {
 		transaction.validate(tr);
 		// transaction is signed
-		return this.wsApi.database.getTransactionHex(transaction);
+		return this.wsApi.database.getTransactionHex(tr);
 	}
 
 	/**
@@ -2017,7 +2017,7 @@ class API {
      */
 	async getPotentialSignatures(tr) {
 		transaction.validate(tr);
-		return this.wsApi.database.getPotentialSignatures(transaction);
+		return this.wsApi.database.getPotentialSignatures(tr);
 	}
 
 	/**
@@ -2029,7 +2029,7 @@ class API {
      */
 	async getPotentialAddressSignatures(tr) {
 		transaction.validate(tr);
-		return this.wsApi.database.getPotentialAddressSignatures(transaction);
+		return this.wsApi.database.getPotentialAddressSignatures(tr);
 	}
 
 	/**
@@ -2041,7 +2041,7 @@ class API {
      */
 	async verifyAuthority(tr) {
 		transaction.validate(tr);
-		return this.wsApi.database.verifyAuthority(transaction);
+		return this.wsApi.database.verifyAuthority(tr);
 	}
 
 	/**

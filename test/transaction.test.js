@@ -134,9 +134,9 @@ describe('Transaction', () => {
 				to: '1.2.190',
 				amount: { asset_id: '1.3.0', amount: 1000 },
 			});
-			await transaction.sign(PrivateKey.fromWif(pk));
-			console.log(await transaction.broadcast(console.log));
-			// console.log(await transaction.getPotentialSignatures());
+			// await transaction.sign(PrivateKey.fromWif(pk));
+			// console.log(await transaction.broadcast(console.log));
+			console.log(await transaction.getPotentialSignatures());
 		}).timeout(12e3);
 	});
 
