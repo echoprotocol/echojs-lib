@@ -1,6 +1,6 @@
 import { box } from 'tweetnacl';
 
-import { isString, isBuffer } from '../utils/validator';
+import { isString, isBuffer } from '../utils/validators';
 
 class ED25519 {
 

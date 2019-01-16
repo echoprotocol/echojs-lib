@@ -24,7 +24,7 @@ import {
 	isBitAssetId,
 	isProposalId,
 	isArray,
-} from '../utils/validator';
+} from '../utils/validators';
 
 import {
 	CANCEL_LIMIT_ORDER,
@@ -293,8 +293,9 @@ class Subscriber extends EventEmitter {
 
 				const mutableObj = obj.withMutations((map) => {
 					map.deleteAll([
-						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name', 'votes', 'balances',
-						'vesting_balances', 'limit_orders', 'call_orders', 'settle_orders', 'proposals', 'assets', 'withdraws',
+						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name',
+						'votes', 'balances', 'vesting_balances', 'limit_orders', 'call_orders',
+						'settle_orders', 'proposals', 'assets', 'withdraws',
 					]);
 				});
 

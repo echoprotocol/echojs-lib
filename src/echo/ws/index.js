@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 
 import ReconnectionWebSocket from './reconnection-websocket';
 import GrapheneApi from './graphene-api';
-import { validateUrl, validateOptionsError } from '../../utils/validator';
+import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
 
 class WS extends EventEmitter {
@@ -64,6 +64,7 @@ class WS extends EventEmitter {
 
 		if (this.onOpenCb) this.onOpenCb('open');
 		this.emit(STATUS.OPEN);
+
 	}
 
 	/**
@@ -89,7 +90,8 @@ class WS extends EventEmitter {
 
 	/**
      * init params and connect to chain
-     * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+     * @param {String} url - remote node address,
+	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
      * @param {Object} options - connection params.
      * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
      * 		default call delay before reject it.
@@ -103,7 +105,12 @@ class WS extends EventEmitter {
 	async connect(url, options = {}) {
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
-		if (typeof window !== 'undefined' && window.location && window.location.protocol === 'https:' && url.indexOf('wss://') < 0) {
+		if (
+			typeof window !== 'undefined' &&
+			window.location &&
+			window.location.protocol === 'https:' &&
+			url.indexOf('wss://') < 0
+		) {
 			throw new Error('Secure domains require wss connection');
 		}
 
