@@ -1,5 +1,6 @@
 import { OPERATIONS_IDS } from "../constants";
 import PrivateKey from "../crypto/private-key";
+import PublicKey from "../crypto/public-key";
 
 type int64 = string | number;
 type uint64 = string | number;
@@ -10,6 +11,14 @@ interface Asset {
 }
 
 type OPERATIONS_PROPS = {
+	[OPERATIONS_IDS.TRANSFER]: {
+		fee?: Asset,
+		from: string,
+		to: string,
+		amount: Asset,
+		// memo?: void,
+		// extensions?: void,
+	},
 	[OPERATIONS_IDS.CREATE_CONTRACT]: {
 		fee?: Asset,
 		registrar: string,
@@ -19,6 +28,15 @@ type OPERATIONS_PROPS = {
 		code: string,
 		eth_accuracy: boolean,
 		supported_asset_id?: string,
+	},
+	[OPERATIONS_IDS.CALL_CONTRACT]: {
+		fee: Asset,
+		registrar: string,
+		value: Asset,
+		gasPrice: uint64,
+		gas: uint64,
+		code: string,
+		callee: string,
 	},
 };
 
@@ -44,12 +62,13 @@ interface BroadcastingResult {
 		operations: Array<OPERATION>,
 		extensions: Array<void>,
 		signatures: Array<string>,
-		operation_results: Array<OPERATION_RESULT>,
+		operation_results: Array<OPERATION_RESULT<OPERATION_RESULT_VARIANT>>,
 	},
 }
 
 export default class Transaction {
 	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATIONS_PROPS[T]): Transaction;
+	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
 }
