@@ -107,7 +107,7 @@ class Cache {
      * @param {Object} store
      */
 	setStore({ store }) {
-		if (isVoid(store)) return;
+		if (isVoid(store)) return false;
 
 		if (!isObject(store) || !isFunction(store.getState) || !isFunction(store.dispatch) || isVoid(store.getState())) {
 			throw new Error('Expected the state and dispatch to be available');
@@ -118,11 +118,13 @@ class Cache {
 	}
 
 	setOptions(options) {
+
+		if (!isObject(options)) return false;
+
 		try {
 			this.setStore(options);
 		} catch (error) {
 			throw error;
-			// TODO
 		}
 	}
 
