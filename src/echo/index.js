@@ -28,7 +28,6 @@ class Echo {
 			await this._initModules();
 
 			this.cache.setOptions(options);
-			this.api.setOptions(options);
 			this.subscriber.setOptions(options);
 		} catch (e) {
 			throw e;

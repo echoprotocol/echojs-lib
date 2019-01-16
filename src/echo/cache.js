@@ -118,11 +118,13 @@ class Cache {
 	}
 
 	setOptions(options) {
+
+		if (!isObject(options)) return;
+
 		try {
 			this.setStore(options);
 		} catch (error) {
 			throw error;
-			// TODO
 		}
 	}
 
