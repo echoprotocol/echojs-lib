@@ -1043,7 +1043,7 @@ class API {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1121,7 +1121,7 @@ class API {
 				cacheValue = this.cache.fullAccounts.get(id);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1287,7 +1287,7 @@ class API {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
