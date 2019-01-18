@@ -4,6 +4,7 @@ import WSAPI from './ws-api';
 import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
+import Transaction from './transaction';
 
 class Echo {
 
@@ -27,7 +28,6 @@ class Echo {
 			await this._initModules();
 
 			this.cache.setOptions(options);
-			this.api.setOptions(options);
 			this.subscriber.setOptions(options);
 		} catch (e) {
 			throw e;
@@ -47,7 +47,11 @@ class Echo {
 		await this.subscriber.init();
 
 		this._ws.on('open', async () => {
-			await this.subscriber.init();
+			try {
+				await this.subscriber.init();
+			} catch (err) {
+				console.log('ONOPEN init error', err);
+			}
 		});
 	}
 
@@ -63,6 +67,9 @@ class Echo {
 		this.subscriber.reset();
 		await this._ws.close();
 	}
+
+	/** @returns {Transaction} */
+	createTransaction() { return new Transaction(this.api); }
 
 }
 

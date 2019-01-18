@@ -26,12 +26,18 @@ import {
 	isDynamicAssetDataId,
 	isEchoRandKey,
 	isOperationId,
-} from '../utils/validator';
+} from '../utils/validators';
 
-import { Transactions, Operations } from '../serializer/operations';
+import { operationById } from './operations';
 
+/** @typedef {import("bignumber.js").default} BigNumber */
+/** @typedef {import('./ws-api').default} WSAPI */
+
+import { ECHO_ASSET_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
+import transaction, { signedTransaction } from '../serializer/transaction-type';
+import { PublicKey } from '../crypto';
 
 /** @typedef {
 *	{
@@ -548,7 +554,7 @@ class API {
 			}
 
 			resultArray[i] = requestedObject;
-			requestedObject = new Map(requestedObject);
+			requestedObject = fromJS(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 			for (const { param, cache } of cacheParams) {
@@ -997,13 +1003,14 @@ class API {
 
 	/**
      *  @method getKeyReferences
-     *  @param  {List<String>} keys [public keys]
+     *  @param  {Array<String|PublicKey>} keys [public keys]
      *  @param {Boolean} force
      *
      *  @return {Promise.<Array.<*>>}
      */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
+		keys = keys.map((value) => ((value instanceof PublicKey) ? value.toString() : value));
 		if (!keys.every((key) => isPublicKey(key))) {
 			return Promise.reject(new Error('Keys should contain valid public keys'));
 		}
@@ -1036,7 +1043,7 @@ class API {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1114,7 +1121,7 @@ class API {
 				cacheValue = this.cache.fullAccounts.get(id);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1280,7 +1287,7 @@ class API {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
-					resultArray[i] = cacheValue;
+					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
 			}
@@ -1973,30 +1980,29 @@ class API {
 	/**
      *  @method getTransactionHex
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	async getTransactionHex(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
-
+	async getTransactionHex(tr) {
+		transaction.validate(tr);
 		// transaction is signed
-		return this.wsApi.database.getTransactionHex(transaction);
+		return this.wsApi.database.getTransactionHex(tr);
 	}
 
 	/**
      *  @method getRequiredSignatures
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *  @param  {Array<String>} availableKeys [public keys]
      *
      *  @return {Promise.<*>}
      */
-	async getRequiredSignatures(transaction, availableKeys) {
-		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
+	async getRequiredSignatures(tr, availableKeys) {
+		transaction.validate(tr);
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
 		if (!availableKeys.every((key) => isPublicKey(key))) {
-			throw new Error('\'Available keys should contain valid public keys');
+			throw new Error('Available keys should contain valid public keys');
 		}
 
 		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
@@ -2009,10 +2015,9 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	async getPotentialSignatures(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
-
-		return this.wsApi.database.getPotentialSignatures(transaction);
+	async getPotentialSignatures(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.getPotentialSignatures(tr);
 	}
 
 	/**
@@ -2022,23 +2027,21 @@ class API {
      *
      *  @return {Promise.<*>}
      */
-	async getPotentialAddressSignatures(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
-
-		return this.wsApi.database.getPotentialAddressSignatures(transaction);
+	async getPotentialAddressSignatures(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.getPotentialAddressSignatures(tr);
 	}
 
 	/**
      *  @method verifyAuthority
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	async verifyAuthority(transaction) {
-		if (!Transactions.transaction.isValid(transaction)) throw new Error('Transaction is invalid');
-
-		return this.wsApi.database.verifyAuthority(transaction);
+	async verifyAuthority(tr) {
+		transaction.validate(tr);
+		return this.wsApi.database.verifyAuthority(tr);
 	}
 
 	/**
@@ -2062,13 +2065,12 @@ class API {
 	/**
      *  @method validateTransaction
      *
-     *  @param  {Object} transaction
+     *  @param  {Object} tr
      *
      *  @return {Promise.<*>}
      */
-	async validateTransaction(transaction) {
-		if (!Transactions.signedTransaction.isValid(transaction)) throw new Error('Transaction is invalid');
-
+	async validateTransaction(tr) {
+		signedTransaction.validate(tr);
 		// signed transaction
 		return this.wsApi.database.validateTransaction(transaction);
 	}
@@ -2086,14 +2088,10 @@ class API {
      *  	}>>
      *  }
      */
-	async getRequiredFees(operations, assetId = '1.3.0') {
-		if (!isArray(operations)) throw new Error('Operations should be an array');
-		if (!operations.every((v) => Operations.some((op) => op.isValid(v)))) {
-			throw new Error('Operations should contain valid operations');
-		}
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-
-		return this.wsApi.database.getRequiredFees(operations, assetId);
+	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
+		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
+		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
+		return this.wsApi.database.getRequiredFees(operationsObjects, assetId);
 	}
 
 	/**
@@ -2259,6 +2257,39 @@ class API {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
 		return this.wsApi.database.getRecentTransactionById(transactionId);
+	}
+
+	/**
+	 * @param {string} assetId
+	 * @returns {Promise<BigNumber>}
+	 */
+	async getFeePool(assetId) {
+		if (!isAssetId(assetId)) throw new Error('invalid assetId format');
+		const [asset] = await this.getObjects([assetId], true);
+		if (!asset) throw new Error(`asset ${assetId} not found`);
+		const [assetDynamicData] = await this.getObjects([asset.dynamic_asset_data_id]);
+		return assetDynamicData.fee_pool;
+	}
+
+	// TODO: fix @returns in JSDoc
+	/**
+	 * @param {import('../serializer/transaction-type').SignedTransactionObject} signedTransactionObject
+	 * @param {()=>* =} wasBroadcastedCallback
+	 * @returns {Promise<*>}
+	 */
+	broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.network.broadcastTransactionWithCallback(
+					(res) => resolve(res),
+					signedTransactionObject,
+				);
+			} catch (error) {
+				reject(error);
+				return;
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
 	}
 
 	/**

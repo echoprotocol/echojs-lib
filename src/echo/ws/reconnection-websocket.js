@@ -29,7 +29,8 @@ class ReconnectionWebSocket {
 
 	/**
 	 * init params and connect to chain
-	 * @param {String} url - remote node address, should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
+	 * @param {String} url - remote node address,
+	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
 	 * @param {Object} options - connection params.
 	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
 	 * @param {Number} options.maxRetries - max count retries before close socket.
@@ -125,6 +126,7 @@ class ReconnectionWebSocket {
 				this._clearWaitingCallPromises();
 				this._clearPingInterval();
 				this._clearReconnectionTimeout();
+				this._resetId();
 
 				if (this.onClose) this.onClose();
 
@@ -331,6 +333,13 @@ class ReconnectionWebSocket {
 		}
 	}
 
+	/**
+	 * reset calls id
+	 * @private
+	 */
+	_resetId() {
+		this._cbId = 0;
+	}
 
 	/**
 	 * clear waiting calls

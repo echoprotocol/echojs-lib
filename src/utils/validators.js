@@ -4,6 +4,21 @@ import BN from 'bignumber.js';
 import ChainConfig from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 
+export function validateSafeInteger(value, fieldName) {
+	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
+	if (!Number.isInteger(value)) throw new Error(`${fieldName} is not a integer`);
+}
+
+export function validatePositiveSafeInteger(value) {
+	validateSafeInteger(value);
+	if (value <= 0) throw new Error('value is not positive');
+}
+
+export function validateUnsignedSafeInteger(value, fieldName = 'value') {
+	validateSafeInteger(value, fieldName);
+	if (value < 0) throw new Error(`${fieldName} is negative`);
+}
+
 const urlRegex = new RegExp(
 	'^(https|http|wss|ws):\\/\\/' + // protocol
 	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
@@ -14,7 +29,7 @@ const urlRegex = new RegExp(
 	'(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
-const idRegex = /^\d+\.\d+\.(\d+)$/;
+export const idRegex = /^(0|([1-9]\d*\.)){2}(0|([1-9]\d*))$/;
 
 const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
@@ -75,7 +90,7 @@ export const isArray = (v) => Array.isArray(v) && !isEmpty(v.length);
 
 export const isEmptyArray = (v) => Array.isArray(v) && v.length === 0;
 
-export const isNumber = (v) => v && typeof v === 'number';
+export const isNumber = (v) => typeof v === 'number';
 
 const isUInt = (v, x) => {
 	if (isNumber(v) && v > Number.MAX_SAFE_INTEGER) return false;
@@ -103,7 +118,7 @@ export const isFunction = (v) => typeof v === 'function';
 
 export const isBoolean = (v) => typeof v === 'boolean';
 
-export const isObject = (v) => typeof v === 'object';
+export const isObject = (v) => typeof v === 'object' && v !== null;
 
 export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 

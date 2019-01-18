@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 
-import { isArray, isString, isVoid } from '../utils/validator';
+import { isArray, isString, isVoid } from '../utils/validators';
 
 let DEFAULT_FIELDS = Map({
 	subbedAccounts: new Map(),
