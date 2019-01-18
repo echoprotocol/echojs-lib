@@ -592,7 +592,7 @@ class API {
 				return requestedObject;
 			}
 
-			requestedObject = new Map(requestedObject);
+			requestedObject = fromJS(requestedObject);
 
 			this.cache.setInMap(cacheName, key, requestedObject);
 			for (const { param, cache } of cacheParams) {
