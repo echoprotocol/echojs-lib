@@ -10,7 +10,7 @@
 		"test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
 		"build": "npx babel-cli src --out-dir dist",
-		"prepublishOnly": "build",
+		"prepublishOnly": "npm run build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
 		"lint:fix": "npm run lint -- --fix",
