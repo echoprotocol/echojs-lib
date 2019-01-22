@@ -10,6 +10,7 @@ let DEFAULT_FIELDS = Map({
 
 	objectsById: new Map(),
 
+	fullAccounts: new Map(),
 	accountsByName: new Map(),
 	accountsById: new Map(),
 	accountsIdByKey: Map(),
