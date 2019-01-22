@@ -8,7 +8,7 @@ import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
 import * as converters from './utils/converters';
 
-export { OPERATIONS_IDS } from './constants';
+export { OPERATIONS_IDS, CACHE_MAPS } from './constants';
 
 export {
 	Echo,
