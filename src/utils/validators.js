@@ -230,6 +230,51 @@ export const isAccountName = (v) => {
 	return true;
 };
 
+export const checkAccountName = (value) => {
+	let suffix = 'Account name should';
+
+	if (value == null || value.length === 0) {
+		return `${suffix} not be empty.`;
+	}
+
+	if (value.length < 3) {
+		return `${suffix} be longer.`;
+	}
+
+	if (value.length > 63) {
+		return `${suffix} be shorter.`;
+	}
+
+	if (/\./.test(value)) {
+		suffix = 'Each account segment should';
+	}
+
+	const ref = value.split('.');
+
+	for (let i = 0; i < ref.length; i += 1) {
+		const label = ref[i];
+		if (!/^[~a-z]/.test(label)) {
+			return `${suffix} start with a letter.`;
+		}
+		if (!/^[~a-z0-9-]*$/.test(label)) {
+			return `${suffix} have only letters, digits, or dashes.`;
+		}
+		if (/--/.test(label)) {
+			return `${suffix} have only one dash in a row.`;
+		}
+		if (!/[a-z0-9]$/.test(label)) {
+			return `${suffix} end with a letter or digit.`;
+		}
+		if (!(label.length >= 3)) {
+			return `${suffix} be longer.`;
+		}
+	}
+
+	return null;
+};
+
+export const checkCheapName = (name) => /[0-9-]/.test(name) || !/[aeiouy]/.test(name);
+
 export const validateOptionsError = (options) => {
 	if (!options || typeof options !== 'object') return 'Options should be an object';
 
