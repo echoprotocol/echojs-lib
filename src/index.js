@@ -2,7 +2,7 @@
 import Echo from './echo';
 
 import constants from './constants';
-import { PrivateKey, PublicKey } from './crypto';
+import { aes, hash, PrivateKey, PublicKey } from './crypto';
 import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
@@ -19,6 +19,8 @@ export {
 	echoReducer,
 	validators,
 	converters,
+	aes,
+	hash,
 };
 
 export default new Echo();
