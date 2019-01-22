@@ -621,7 +621,7 @@ class API {
 			const cacheValue = this.cache[cacheName].get(key);
 
 			if (cacheValue) {
-				return cacheValue;
+				return cacheValue.toJS();
 			}
 		}
 
@@ -1208,7 +1208,7 @@ class API {
 			const cacheValue = this.cache.objectsById.get(id);
 
 			if (cacheValue) {
-				return cacheValue;
+				return cacheValue.toJS();
 			}
 		}
 
@@ -1277,14 +1277,6 @@ class API {
 				const id = this.cache.accountsByName.get(key);
 
 				const cacheValue = this.cache.objectsById.get(id);
-
-				if (cacheValue) {
-					return cacheValue;
-				}
-			}
-
-			if (!force) {
-				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
