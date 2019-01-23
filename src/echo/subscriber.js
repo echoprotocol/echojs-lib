@@ -194,7 +194,11 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
-		if (isAccountBalanceId(object.id) && !subscribedAccounts.includes(object.owner)) {
+		if (
+			isAccountBalanceId(object.id)
+			&& !subscribedAccounts.includes(object.owner)
+			&& !this.cache.fullAccounts.has(object.owner)
+		) {
 			return null;
 		}
 
