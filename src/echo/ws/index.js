@@ -2,7 +2,7 @@
 import EventEmitter from 'events';
 
 import ReconnectionWebSocket from './reconnection-websocket';
-import GrapheneApi from './graphene-api';
+import EchoApi from './echo-api';
 import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
 
@@ -32,7 +32,7 @@ class WS extends EventEmitter {
 	 *
      * @private
      */
-	async _initGrapheneApi() {
+	async _initEchoApi() {
 		const initPromises = [];
 
 		this.apis.forEach((api) => {
@@ -59,7 +59,7 @@ class WS extends EventEmitter {
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
 		} else {
-			await this._initGrapheneApi();
+			await this._initEchoApi();
 		}
 
 		if (this.onOpenCb) this.onOpenCb('open');
@@ -142,11 +142,11 @@ class WS extends EventEmitter {
 		this._ws_rpc.onClose = () => this._onClose();
 		this._ws_rpc.onError = () => this._onError();
 
-		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new GrapheneApi(this._ws_rpc, api); });
+		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
 
 		try {
 			await this._ws_rpc.connect(url, this.options);
-			await this._initGrapheneApi();
+			await this._initEchoApi();
 		} catch (err) {
 			console.error(url, 'Failed to initialize with error', err && err.message);
 			await this.close();
@@ -187,7 +187,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * database API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	dbApi() {
 		return this._database;
@@ -195,7 +195,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * network API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	networkApi() {
 		return this._network_broadcast;
@@ -203,7 +203,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * history API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	historyApi() {
 		return this._history;
@@ -211,7 +211,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * registration API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	registrationApi() {
 		return this._registration;
@@ -219,7 +219,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * asset API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	assetApi() {
 		return this._asset;
@@ -227,7 +227,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * login API
-	 * @returns {GrapheneApi}
+	 * @returns {EchoApi}
 	 */
 	loginApi() {
 		return this._login;
@@ -235,7 +235,7 @@ class WS extends EventEmitter {
 
 	/**
      * network node API
-     * @returns {GrapheneApi}
+     * @returns {EchoApi}
      */
 	networkNodeApi() {
 		return this._network_node;

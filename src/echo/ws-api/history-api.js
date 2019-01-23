@@ -4,7 +4,7 @@ class HistoryAPI {
 
 	/**
 	 *  @constructor
-	 *  @param {GrapheneApi} db [history api]
+	 *  @param {EchoApi} db [history api]
 	 */
 	constructor(db) {
 		this.db = db;
