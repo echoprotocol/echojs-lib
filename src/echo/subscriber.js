@@ -155,7 +155,7 @@ class Subscriber extends EventEmitter {
 		};
 	}
 
-	async _updateObject(object) {
+	_updateObject(object) {
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
