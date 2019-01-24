@@ -241,7 +241,7 @@ class Subscriber extends EventEmitter {
 			const mostRecetTr = this.cache.fullAccounts.getIn([object.account, 'history']).first();
 			if (mostRecetTr.id !== object.operation_id) {
 				const account = await this._api.getFullAccounts([object.account], true, true);
-				this._notifyAccountSubscribers(account);
+				this._notifyAccountSubscribers(fromJS(account));
 			}
 		}
 
