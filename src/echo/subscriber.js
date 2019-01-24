@@ -155,7 +155,7 @@ class Subscriber extends EventEmitter {
 		};
 	}
 
-	_updateObject(object) {
+	async _updateObject(object) {
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
@@ -167,7 +167,11 @@ class Subscriber extends EventEmitter {
 		const subscribedAccounts = this.subscribers.account.reduce(
 			(arr, { accounts }) => arr.concat(accounts),
 			[],
-		);
+		).concat(this.cache.fullAccounts.reduce(
+			(arr, value, key) => ([...arr, key]),
+			[],
+		));
+
 		const subscribedWitnesses = this.subscribers.witness.reduce(
 			(arr, { ids }) => arr.concat(ids),
 			[],
@@ -233,6 +237,14 @@ class Subscriber extends EventEmitter {
 		obj = obj ? obj.mergeDeep(fromJS(object)) : fromJS(object);
 
 		// update dependencies by id type
+		if (isAccountTransactionHistoryId(object.id)) {
+			const mostRecetTr = this.cache.fullAccounts.getIn([object.account, 'history']).first();
+			if (mostRecetTr.id !== object.operation_id) {
+				const account = await this._api.getFullAccounts([object.account], true, true);
+				this._notifyAccountSubscribers(account);
+			}
+		}
+
 		if (isAccountBalanceId(object.id)) {
 			let owner = this.cache.fullAccounts.get(object.owner);
 			if (!owner) {
