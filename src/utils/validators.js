@@ -230,6 +230,13 @@ export const isAccountName = (v) => {
 	return true;
 };
 
+/**
+ * @method checkAccountName
+ *
+ * Return name of error if account name is invalid
+ *
+ * @param {String} value
+ */
 export const checkAccountName = (value) => {
 	let suffix = 'Account name should';
 
@@ -273,6 +280,13 @@ export const checkAccountName = (value) => {
 	return null;
 };
 
+/**
+ * @method checkCheapName
+ *
+ * Check cheap name
+ *
+ * @param {String} name
+ */
 export const checkCheapName = (name) => /[0-9-]/.test(name) || !/[aeiouy]/.test(name);
 
 export const validateOptionsError = (options) => {

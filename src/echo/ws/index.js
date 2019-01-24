@@ -31,7 +31,7 @@ class WS extends EventEmitter {
 	/**
 	 *
      * @private
-     */
+       */
 	async _initEchoApi() {
 		const initPromises = [];
 
