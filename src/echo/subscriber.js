@@ -237,14 +237,6 @@ class Subscriber extends EventEmitter {
 		obj = obj ? obj.mergeDeep(fromJS(object)) : fromJS(object);
 
 		// update dependencies by id type
-		if (isAccountTransactionHistoryId(object.id)) {
-			const mostRecetTr = this.cache.fullAccounts.getIn([object.account, 'history']).first();
-			if (mostRecetTr.id !== object.operation_id) {
-				const account = await this._api.getFullAccounts([object.account], true, true);
-				this._notifyAccountSubscribers(fromJS(account));
-			}
-		}
-
 		if (isAccountBalanceId(object.id)) {
 			let owner = this.cache.fullAccounts.get(object.owner);
 			if (!owner) {
