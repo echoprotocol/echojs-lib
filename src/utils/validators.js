@@ -75,6 +75,8 @@ const MAX_INTX_VALUES = {
 	8: new BN(2).pow(7).minus(1),
 };
 
+const NAME_MIN_LENGTH = 3;
+const NAME_MAX_LENGTH = 63;
 
 export const validateUrl = (url) => urlRegex.test(String(url));
 
@@ -212,7 +214,7 @@ export const isAccountName = (v) => {
 
 	const { length } = v;
 
-	if (length < 3 || length > 63) {
+	if (length < NAME_MIN_LENGTH || length > NAME_MAX_LENGTH) {
 		return false;
 	}
 
@@ -244,11 +246,11 @@ export const checkAccountName = (value) => {
 		return `${suffix} not be empty.`;
 	}
 
-	if (value.length < 3) {
+	if (value.length < NAME_MIN_LENGTH) {
 		return `${suffix} be longer.`;
 	}
 
-	if (value.length > 63) {
+	if (value.length > NAME_MAX_LENGTH) {
 		return `${suffix} be shorter.`;
 	}
 
@@ -272,7 +274,7 @@ export const checkAccountName = (value) => {
 		if (!/[a-z0-9]$/.test(label)) {
 			return `${suffix} end with a letter or digit.`;
 		}
-		if (!(label.length >= 3)) {
+		if (!(label.length >= NAME_MIN_LENGTH)) {
 			return `${suffix} be longer.`;
 		}
 	}
