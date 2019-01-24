@@ -655,14 +655,22 @@ class API {
 		if (bitAssetId) {
 			const bitasset = await this.getBitAssetData(bitAssetId, force);
 			if (bitasset) {
-				requestedObject = requestedObject.set('bitasset', bitasset);
+				requestedObject = requestedObject.set('bitasset', fromJS(bitasset));
+				if (!this.cache.bitAssetIdToAssetId.get(bitAssetId)) {
+					this.cache.setInMap(CacheMaps.BIT_ASSET_ID_TO_ASSET_ID, bitAssetId, requestedObject.get('id'));
+				}
 			}
 		}
 
 		if (dynamicAssetDataId) {
 			const dynamicAssetData = await this.getDynamicAssetData(dynamicAssetDataId, force);
 			if (dynamicAssetData) {
-				requestedObject = requestedObject.set('dynamic', dynamicAssetData);
+				requestedObject = requestedObject.set('dynamic', fromJS(dynamicAssetData));
+				if (!this.cache.dynamicIdToAssetId.get(dynamicAssetDataId)) {
+					this.cache
+						.setInMap(CacheMaps.DYNAMIC_ID_TO_ASSET_ID, dynamicAssetDataId, requestedObject.get('id'));
+				}
+
 			}
 		}
 		return requestedObject;
