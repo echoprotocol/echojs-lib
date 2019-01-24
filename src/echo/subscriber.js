@@ -167,7 +167,11 @@ class Subscriber extends EventEmitter {
 		const subscribedAccounts = this.subscribers.account.reduce(
 			(arr, { accounts }) => arr.concat(accounts),
 			[],
-		);
+		).concat(this.cache.fullAccounts.reduce(
+			(arr, value, key) => ([...arr, key]),
+			[],
+		));
+
 		const subscribedWitnesses = this.subscribers.witness.reduce(
 			(arr, { ids }) => arr.concat(ids),
 			[],
