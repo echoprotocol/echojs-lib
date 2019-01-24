@@ -70,6 +70,7 @@ class Echo {
 		this.cache.reset();
 		await this._ws.close();
 		this._ws.removeListener('open', this.onOpen);
+		this.onOpen = null;
 		this._isInitModules = false;
 	}
 
