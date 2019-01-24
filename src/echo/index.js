@@ -46,13 +46,15 @@ class Echo {
 
 		await this.subscriber.init();
 
-		this._ws.on('open', async () => {
+		this.onOpen = async () => {
 			try {
 				await this.subscriber.init();
 			} catch (err) {
 				console.log('ONOPEN init error', err);
 			}
-		});
+		};
+
+		this._ws.on('open', this.onOpen);
 	}
 
 	syncCacheWithStore(store) {
@@ -65,7 +67,11 @@ class Echo {
 
 	async disconnect() {
 		this.subscriber.reset();
+		this.cache.reset();
 		await this._ws.close();
+		this._ws.removeListener('open', this.onOpen);
+		this.onOpen = null;
+		this._isInitModules = false;
 	}
 
 	/** @returns {Transaction} */
