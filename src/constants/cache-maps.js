@@ -41,6 +41,9 @@ export const FULL_ACCOUNTS = 'fullAccounts';
 export const BIT_ASSETS_BY_BIT_ASSET_ID = 'bitAssetsByBitAssetId';
 export const DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID = 'dynamicAssetDataByDynamicAssetDataId';
 
+export const DYNAMIC_ID_TO_ASSET_ID = 'dynamicIdToAssetId';
+export const BIT_ASSET_ID_TO_ASSET_ID = 'bitAssetIdToAssetId';
+
 export const CHAIN_PROPERTIES = 'chainProperties';
 export const GLOBAL_PROPERTIES = 'globalProperties';
 export const CONFIG = 'config';

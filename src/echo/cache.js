@@ -34,6 +34,9 @@ class Cache {
 		this.dynamicAssetDataByDynamicAssetDataId = new Map();
 		this.bitAssetsByBitAssetId = new Map();
 
+		this.dynamicIdToAssetId = new Map();
+		this.bitAssetIdToAssetId = new Map();
+
 		this.contractsByContractId = new Map();
 		this.fullContractsByContractId = new Map();
 		this.contractResultsByContractResultId = new Map();

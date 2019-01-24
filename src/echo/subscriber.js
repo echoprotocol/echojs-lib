@@ -361,7 +361,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isDynamicAssetDataId(object.id)) {
-			const assetId = obj.get('asset_id');
+			const assetId = this.cache.dynamicIdToAssetId.get(object.id);
 			if (assetId) {
 				let asset = this.cache.objectsById.get(assetId);
 				if (asset && asset.set) {
@@ -369,7 +369,7 @@ class Subscriber extends EventEmitter {
 
 					this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, assetId, asset)
 						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
-						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
+						.setInMap(CacheMaps.ASSET_BY_SYMBOL, asset.get('symbol'), asset);
 				}
 			}
 
@@ -385,7 +385,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isBitAssetId(object.id)) {
-			const assetId = obj.get('asset_id');
+			const assetId = this.cache.bitAssetIdToAssetId.get(object.id);
 
 			if (assetId) {
 				let asset = this.cache.objectsById.get(assetId);
@@ -395,7 +395,7 @@ class Subscriber extends EventEmitter {
 
 					this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, assetId, asset)
 						.setInMap(CacheMaps.ASSET_BY_ASSET_ID, assetId, asset)
-						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, asset.get('symbol'), asset);
+						.setInMap(CacheMaps.ASSET_BY_SYMBOL, asset.get('symbol'), asset);
 				}
 			}
 

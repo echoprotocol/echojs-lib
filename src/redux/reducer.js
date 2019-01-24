@@ -43,6 +43,9 @@ let DEFAULT_FIELDS = Map({
 	bitAssetsByBitAssetId: new Map(),
 	dynamicAssetDataByDynamicAssetDataId: new Map(),
 
+	dynamicIdToAssetId: new Map(),
+	bitAssetIdToAssetId: new Map(),
+
 	balanceObjectsByBalanceId: new Map(),
 	getAccountRefsOfAccountsCalls: new Map(),
 	fetchingGetFullAccounts: new Map(),
