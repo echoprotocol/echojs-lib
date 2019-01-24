@@ -3,7 +3,7 @@ class NetworkAPI {
 	/**
 	 *  @constructor
 	 *
-	 *  @param {GrapheneApi} db [network api]
+	 *  @param {EchoApi} db [network api]
 	 */
 	constructor(db) {
 		this.db = db;

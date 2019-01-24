@@ -1,4 +1,4 @@
-class GrapheneApi {
+class EchoApi {
 
 	/**
 	 *
@@ -36,4 +36,4 @@ class GrapheneApi {
 
 }
 
-export default GrapheneApi;
+export default EchoApi;

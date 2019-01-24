@@ -75,6 +75,8 @@ const MAX_INTX_VALUES = {
 	8: new BN(2).pow(7).minus(1),
 };
 
+const NAME_MIN_LENGTH = 3;
+const NAME_MAX_LENGTH = 63;
 
 export const validateUrl = (url) => urlRegex.test(String(url));
 
@@ -212,7 +214,7 @@ export const isAccountName = (v) => {
 
 	const { length } = v;
 
-	if (length < 3 || length > 63) {
+	if (length < NAME_MIN_LENGTH || length > NAME_MAX_LENGTH) {
 		return false;
 	}
 
@@ -229,6 +231,65 @@ export const isAccountName = (v) => {
 	}
 	return true;
 };
+
+/**
+ * @method checkAccountName
+ *
+ * Return name of error if account name is invalid
+ *
+ * @param {String} value
+ */
+export const checkAccountName = (value) => {
+	let suffix = 'Account name should';
+
+	if (value == null || value.length === 0) {
+		return `${suffix} not be empty.`;
+	}
+
+	if (value.length < NAME_MIN_LENGTH) {
+		return `${suffix} be longer.`;
+	}
+
+	if (value.length > NAME_MAX_LENGTH) {
+		return `${suffix} be shorter.`;
+	}
+
+	if (/\./.test(value)) {
+		suffix = 'Each account segment should';
+	}
+
+	const ref = value.split('.');
+
+	for (let i = 0; i < ref.length; i += 1) {
+		const label = ref[i];
+		if (!/^[~a-z]/.test(label)) {
+			return `${suffix} start with a letter.`;
+		}
+		if (!/^[~a-z0-9-]*$/.test(label)) {
+			return `${suffix} have only letters, digits, or dashes.`;
+		}
+		if (/--/.test(label)) {
+			return `${suffix} have only one dash in a row.`;
+		}
+		if (!/[a-z0-9]$/.test(label)) {
+			return `${suffix} end with a letter or digit.`;
+		}
+		if (!(label.length >= NAME_MIN_LENGTH)) {
+			return `${suffix} be longer.`;
+		}
+	}
+
+	return null;
+};
+
+/**
+ * @method checkCheapName
+ *
+ * Check cheap name
+ *
+ * @param {String} name
+ */
+export const checkCheapName = (name) => /[0-9-]/.test(name) || !/[aeiouy]/.test(name);
 
 export const validateOptionsError = (options) => {
 	if (!options || typeof options !== 'object') return 'Options should be an object';
