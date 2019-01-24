@@ -167,7 +167,11 @@ class Subscriber extends EventEmitter {
 		const subscribedAccounts = this.subscribers.account.reduce(
 			(arr, { accounts }) => arr.concat(accounts),
 			[],
-		);
+		).concat(this.cache.fullAccounts.reduce(
+			(arr, value, key) => ([...arr, key]),
+			[],
+		));
+
 		const subscribedWitnesses = this.subscribers.witness.reduce(
 			(arr, { ids }) => arr.concat(ids),
 			[],
@@ -227,11 +231,10 @@ class Subscriber extends EventEmitter {
 			this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, new Map(object));
 		}
 
-		// get object from cache by id -> update or create
+		// get object from cache by id
 		let obj = this.cache.objectsById.get(object.id);
 		const previous = obj || new Map();
-		obj = obj ? obj.mergeDeep(new Map(object)) : new Map(object);
-		this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj);
+		obj = obj ? obj.mergeDeep(fromJS(object)) : fromJS(object);
 
 		// update dependencies by id type
 		if (isAccountBalanceId(object.id)) {
@@ -376,6 +379,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isWorkerId(object.id)) {
+			this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj);
 			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_for, obj);
 			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_against, obj);
 		}
