@@ -4,7 +4,7 @@ class RegistrationAPI {
 	/**
 	 *  @constructor
 	 *
-	 *  @param {GrapheneAPI} db [register api]
+	 *  @param {EchoApi} db [register api]
 	 */
 	constructor(db) {
 		this.db = db;

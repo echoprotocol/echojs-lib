@@ -111,6 +111,7 @@ describe('API', () => {
                         const api = new API(cache, wsApi);
 
                         const config =  await api.getConfig();
+                        console.log(config)
 
                         expect(config).to.be.an('object');
                         expect(config).to.deep.equal(cache.config.toJS());
