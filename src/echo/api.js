@@ -698,7 +698,7 @@ class API {
 		try {
 			const accountHistory = await this.getAccountHistory(account.get('id'), stop, limit, start);
 
-			history = history.concat(accountHistory);
+			history = history.concat(fromJS(accountHistory));
 
 			account = account.set('history', history);
 
@@ -835,7 +835,7 @@ class API {
      *  @return {Promise.<Object>}
      */
 	async getObject(objectId, force = false) {
-		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectIds should be a array'));
+		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return (await this.getObjects([objectId], force))[0];

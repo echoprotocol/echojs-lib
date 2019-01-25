@@ -79,7 +79,7 @@ describe('API', () => {
                         const api = new API(cache, wsApi);
 
                         const chainProperties =  await api.getChainProperties();
-                        console.log(chainProperties)
+
                         expect(chainProperties).to.be.an('object');
                         expect(chainProperties).to.deep.equal(cache.chainProperties.toJS());
                     } catch (e) {
