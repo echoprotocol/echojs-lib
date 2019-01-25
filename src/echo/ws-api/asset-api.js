@@ -3,7 +3,7 @@ class AssetAPI {
 	/**
 	 *  @constructor
 	 *
-	 *  @param {GrapheneAPI} db [asset api]
+	 *  @param {EchoApi} db [asset api]
 	 */
 	constructor(db) {
 		this.db = db;
