@@ -29,6 +29,7 @@ export default {
 	CLOSE_CALL_ORDER,
 	BITASSET_UPDATE,
 	CACHE_MAPS,
+	OPERATIONS_IDS,
 };
 
 export { default as CHAIN_TYPES } from './chain-types';
