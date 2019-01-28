@@ -319,6 +319,26 @@ describe('API', () => {
                 }
             }).timeout(5000);
         });
+        describe('#getObjects()', () => {
+            it('should get objects by id and save it in multi caches', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    let object = await api.getObject('2.1.0');
+                    console.log(object)
+                    await new Promise((res) => {
+                       setTimeout(() => { res() }, 1000 * 10)
+                    });
+                    object = await api.getObject('2.1.0');
+                    console.log(object)
+
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(15000);
+        });
         describe('#getCommitteeMembers()', () => {
             it('should get committee member by id and save it in multi caches', async () => {
                 try {
