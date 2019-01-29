@@ -34,7 +34,6 @@ import {
 } from '../constants';
 
 import * as CacheMaps from '../constants/cache-maps';
-import {objectId} from "../serializer/basic-types";
 
 class Subscriber extends EventEmitter {
 
