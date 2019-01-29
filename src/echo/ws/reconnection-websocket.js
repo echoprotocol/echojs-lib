@@ -120,7 +120,8 @@ class ReconnectionWebSocket {
 			this.ws.onclose = () => {
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
+					reject(new Error('Could\'t reach server or bad internet access'));
+					return;
 				}
 
 				this._clearWaitingCallPromises();

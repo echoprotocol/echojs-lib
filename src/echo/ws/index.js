@@ -45,6 +45,7 @@ class WS extends EventEmitter {
 			await Promise.all(initPromises);
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
+			await this.close();
 		}
 	}
 
@@ -148,8 +149,6 @@ class WS extends EventEmitter {
 			await this._ws_rpc.connect(url, this.options);
 			await this._initEchoApi();
 		} catch (err) {
-			console.error(url, 'Failed to initialize with error', err && err.message);
-			await this.close();
 			throw err;
 		}
 	}
