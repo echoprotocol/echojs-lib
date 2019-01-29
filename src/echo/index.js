@@ -27,6 +27,10 @@ class Echo {
 
 			await this._initModules();
 
+			if (!options.store && this.store) {
+				options.store = this.store;
+			}
+
 			this.cache.setOptions(options);
 			this.subscriber.setOptions(options);
 		} catch (e) {
@@ -58,7 +62,10 @@ class Echo {
 	}
 
 	syncCacheWithStore(store) {
-		this.cache.setStore({ store });
+		if (this._ws._connected) {
+			this.cache.setStore({ store });
+		}
+		this.store = store;
 	}
 
 	async reconnect() {
