@@ -1,8 +1,10 @@
 import "mocha";
-import { ok, strictEqual } from "assert";
+import { ok } from "assert";
 import { bytecode } from "./_contract.test";
 import { privateKey, accountId } from "../_testAccount";
-import { Echo, OPERATIONS_IDS } from "../../src/index";
+import { Echo, constants } from "../../src/index";
+
+const { OPERATIONS_IDS } = constants;
 import { ECHO_ASSET_ID } from "../../src/constants";
 
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
