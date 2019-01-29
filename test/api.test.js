@@ -326,14 +326,29 @@ describe('API', () => {
                     const cache = new Cache();
                     const api = new API(cache, wsApi);
 
-                    let object = await api.getObject('2.1.0');
-                    console.log(object)
-                    await new Promise((res) => {
-                       setTimeout(() => { res() }, 1000 * 10)
-                    });
-                    object = await api.getObject('2.1.0');
-                    console.log(object)
+                    const accountId = '1.2.2';
+                    const assetId = '1.3.0';
+                    const witnessId = '1.6.0';
+                    const assetSymbol = 'ECHO';
 
+                    const objects = await api.getObjects([accountId, assetId, witnessId]);
+
+                    const accountName = objects[0].name;
+                    const witnessAccountId = objects[2].witness_account;
+                    const witnessVoteId = objects[2].vote_id;
+
+                    expect(objects).to.be.an('array');
+
+                    expect(objects[0]).to.deep.equal(cache.accountsById.get(accountId).toJS());
+                    expect(objects[0]).to.deep.equal(cache.objectsById.get(accountId).toJS());
+                    expect(accountId).to.equal(cache.accountsByName.get(accountName));
+                    expect(objects[1]).to.deep.equal(cache.objectsById.get(assetId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.assetByAssetId.get(assetId).toJS());
+                    expect(objects[1]).to.deep.equal(cache.assetBySymbol.get(assetSymbol).toJS());
+                    expect(objects[2]).to.deep.equal(cache.objectsById.get(witnessId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.witnessByWitnessId.get(witnessId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.witnessByAccountId.get(witnessAccountId).toJS());
+                    expect(objects[2]).to.deep.equal(cache.objectsByVoteId.get(witnessVoteId).toJS());
                 } catch (e) {
                     throw e;
                 }

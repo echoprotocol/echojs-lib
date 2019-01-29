@@ -85,7 +85,6 @@ class WS extends EventEmitter {
 	 */
 	_onError(error) {
 		if (this.onErrorCb) this.onErrorCb('error', error);
-
 		this.emit(STATUS.ERROR);
 	}
 
