@@ -5,6 +5,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
+import { STATUS } from '../constants/ws-constants';
 
 class Echo {
 
@@ -54,7 +55,7 @@ class Echo {
 			}
 		};
 
-		this._ws.on('open', this.onOpen);
+		this._ws.on(STATUS.OPEN, this.onOpen);
 	}
 
 	syncCacheWithStore(store) {
@@ -69,7 +70,7 @@ class Echo {
 		this.subscriber.reset();
 		this.cache.reset();
 		await this._ws.close();
-		this._ws.removeListener('open', this.onOpen);
+		this._ws.removeListener(STATUS.OPEN, this.onOpen);
 		this.onOpen = null;
 		this._isInitModules = false;
 	}

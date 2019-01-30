@@ -82,6 +82,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {Promise.<undefined>}
 	 */
 	async init() {
+
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {

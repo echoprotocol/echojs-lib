@@ -441,6 +441,7 @@ class ReconnectionWebSocket {
 			}
 		}, this._options.connectionTimeout);
 
+		return true;
 	}
 	/**
 	 *
