@@ -136,8 +136,7 @@ class ReconnectionWebSocket {
 
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					reject(new Error('Could\'t reach server or bad internet access'));
-					return;
+					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
 				this._forceClose();
