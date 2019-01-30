@@ -739,6 +739,10 @@ class API {
 			requestedObjectsKeys.push(key);
 		}
 
+		if (requestedObjectsKeys.length === 0) {
+			return resultArray;
+		}
+
 		let requestedObjects;
 
 		try {
@@ -1060,6 +1064,10 @@ class API {
 			requestedObjectsKeys.push(key);
 		}
 
+		if (requestedObjectsKeys.length === 0) {
+			return resultArray;
+		}
+
 		let requestedObjects;
 
 		try {
@@ -1136,6 +1144,10 @@ class API {
 			}
 
 			requestedObjects.push(key);
+		}
+
+		if (requestedObjects.length === 0) {
+			return resultArray;
 		}
 
 		try {
