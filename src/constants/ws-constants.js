@@ -15,9 +15,9 @@ export const CHAIN_APIS = [
 export const DEFAULT_CHAIN_APIS = ['database', 'network_broadcast', 'history', 'login'];
 
 export const STATUS = {
-	OPEN: 'open',
-	ERROR: 'error',
-	CLOSE: 'close',
+	OPEN: 'OPEN',
+	ERROR: 'ERROR',
+	CLOSE: 'CLOSE',
 };
 
 export default {
