@@ -119,6 +119,14 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
+		this.subscribers.connect.forEach((cb) => {
+			this._ws.removeListener(STATUS.OPEN, cb);
+		});
+
+		this.subscribers.disconnect.forEach((cb) => {
+			this._ws.removeListener(STATUS.CLOSE, cb);
+		});
+
 		this.subscribers = {
 			global: [],
 			account: [],
@@ -132,6 +140,8 @@ class Subscriber extends EventEmitter {
 			connect: [],
 			disconnect: [],
 		};
+
+
 	}
 
 	/**
@@ -575,10 +585,10 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	*  @method _setConsensusMessageCallback
-	*
-	*  @return {Promise.<undefined>}
-	*/
+	 *  @method _setConsensusMessageCallback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async _setConsensusMessageCallback() {
 		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
 		this.subscriptions.echorand = true;
@@ -615,12 +625,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method setGlobalSubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method setGlobalSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	setGlobalSubscribe(callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -630,23 +640,23 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method removeGlobalSubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {undefined}
-     */
+	 *  @method removeGlobalSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
 	removeGlobalSubscribe(callback) {
 		this.subscribers.global = this.subscribers.global.filter((c) => c !== callback);
 	}
 
 	/**
-     *  @method _pendingTransactionUpdate
-     *
-     *  @param  {Array} result
-     *
-     *  @return {undefined}
-     */
+	 *  @method _pendingTransactionUpdate
+	 *
+	 *  @param  {Array} result
+	 *
+	 *  @return {undefined}
+	 */
 	_pendingTransactionUpdate(result) {
 		this.subscribers.transaction.forEach((callback) => {
 			callback(result);
@@ -654,10 +664,10 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method _setPendingTransactionCallback
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method _setPendingTransactionCallback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async _setPendingTransactionCallback() {
 		await this._wsApi.database
 			.setPendingTransactionCallback(this._pendingTransactionUpdate.bind(this));
@@ -665,12 +675,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method setPendingTransactionSubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method setPendingTransactionSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async setPendingTransactionSubscribe(callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -684,23 +694,23 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method removePendingTransactionSubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {undefined}
-     */
+	 *  @method removePendingTransactionSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
 	removePendingTransactionSubscribe(callback) {
 		this.subscribers.transaction = this.subscribers.transaction.filter((c) => c !== callback);
 	}
 
 	/**
-     *  @method _blockApplyUpdate
-     *
-     *  @param  {Array} result
-     *
-     *  @return {undefined}
-     */
+	 *  @method _blockApplyUpdate
+	 *
+	 *  @param  {Array} result
+	 *
+	 *  @return {undefined}
+	 */
 	_blockApplyUpdate(result) {
 		this.subscribers.block.forEach((callback) => {
 			callback(result);
@@ -709,22 +719,22 @@ class Subscriber extends EventEmitter {
 
 
 	/**
-     *  @method _setBlockApplyCallback
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method _setBlockApplyCallback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async _setBlockApplyCallback() {
 		await this._wsApi.database.setBlockAppliedCallback(this._blockApplyUpdate.bind(this));
 		this.subscriptions.block = true;
 	}
 
 	/**
-     *  @method setBlockApplySubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method setBlockApplySubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async setBlockApplySubscribe(callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -738,21 +748,21 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method removeBlockApplySubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {undefined}
-     */
+	 *  @method removeBlockApplySubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
 	removeBlockApplySubscribe(callback) {
 		this.subscribers.block = this.subscribers.block.filter((c) => c !== callback);
 	}
 
 	/**
-     *  @method _setAccountSubscribe
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method _setAccountSubscribe
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async _setAccountSubscribe() {
 
 		const array = this.subscribers.account.reduce((accum, { accounts }) => {
@@ -770,13 +780,13 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method setAccountSubscribe
-     *
-     *  @param  {Function} callback
-     *  @param  {Array.<String>} accounts
-     *
-     *  @return {Promise.<undefined>}
-     */
+	 *  @method setAccountSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *  @param  {Array.<String>} accounts
+	 *
+	 *  @return {Promise.<undefined>}
+	 */
 	async setAccountSubscribe(callback, accounts) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
@@ -792,22 +802,22 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-     *  @method removeAccountSubscribe
-     *
-     *  @param  {Function} callback
-     *
-     *  @return {undefined}
-     */
+	 *  @method removeAccountSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
 	removeAccountSubscribe(callback) {
 		this.subscribers.account = this.subscribers.account
 			.filter(({ callback: innerCallback }) => innerCallback !== callback);
 	}
 
 	/**
-     *
-     * @param {Map} obj
-     * @private
-     */
+	 *
+	 * @param {Map} obj
+	 * @private
+	 */
 	_notifyAccountSubscribers(obj) {
 		const { length } = this.subscribers.account;
 
@@ -863,10 +873,10 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.off(STATUS.OPEN, callback);
+			this._ws.removeListener(STATUS.OPEN, callback);
 			this.subscribers.connect = this.subscribers.connect.filter((c) => c !== callback);
 		} else {
-			this._ws.off(STATUS.CLOSE, callback);
+			this._ws.removeListener(STATUS.CLOSE, callback);
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 

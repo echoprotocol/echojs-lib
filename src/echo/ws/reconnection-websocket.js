@@ -81,20 +81,24 @@ class ReconnectionWebSocket {
 	 * @returns {Promise}
 	 */
 	_connect() {
+
+		this._debugLog('[ReconnectionWebSocket] >---- retry _connect');
+
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
+			let ws = null;
 			try {
-				this.ws = new WebSocket(this.url);
+				ws = new WebSocket(this.url);
 			} catch (error) {
-				this.ws = null;
+				ws = null;
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					reject(error);
-					return;
+					return reject(error);
 				}
 			}
 
-			this.ws.onopen = () => {
+			ws.onopen = () => {
+
 				this._currentRetry = 0;
 
 				if (this._isFirstConnection) {
@@ -109,60 +113,54 @@ class ReconnectionWebSocket {
 				this._pingIntervalId = setInterval(() => this._loginPing(), this._options.pingInterval);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
+				return true;
 			};
 
-			this.ws.onmessage = (message) => {
+			ws.onmessage = (message) => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
+
 				this._responseHandler(JSON.parse(message.data));
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
+				return true;
 			};
 
-			this.ws.onclose = () => {
+			ws.onclose = () => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
+
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					reject(new Error('Could\'t reach server or bad internet access'));
-					return;
+					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
-				this._clearWaitingCallPromises();
-				this._clearPingInterval();
-				this._clearReconnectionTimeout();
-				this._resetId();
+				this._forceClose();
 
-				if (this.onClose) this.onClose();
-
-				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
-
-				if (this._forceClosePromise) {
-					this._forceClosePromise();
-					this._forceClosePromise = null;
-					return;
-				}
-
-				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
-					this._isForceClose = true;
-					this.ws.close();
-					return;
-				}
-
-				this._reconnectionTimeoutId = setTimeout(async () => {
-					try {
-						await this._connect();
-					} catch (_) {
-						//
-					}
-				}, this._options.connectionTimeout);
+				return true;
 
 			};
 
-			this.ws.onerror = (error) => {
+			ws.onerror = (error) => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
 
 				if (this.onError) this.onError(error);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONERROR');
+
+				return true;
 			};
 
+			this.ws = ws;
 
+			return ws;
 		});
 	}
 
@@ -362,7 +360,8 @@ class ReconnectionWebSocket {
 			await this.login('', '', this._options.pingTimeout);
 		} catch (_) {
 			if (this.ws.readyState !== WebSocket.OPEN) return;
-			this.ws.close();
+			// this.ws.close();
+			this._forceClose();
 		}
 	}
 
@@ -398,7 +397,52 @@ class ReconnectionWebSocket {
 		}
 	}
 
+	_forceClose() {
 
+		this._debugLog('[ReconnectionWebSocket] >---- _forceClose ');
+
+		const { ws } = this;
+		this.ws = null;
+
+		if (ws) {
+			ws.onopen = () => {};
+			ws.onclose = () => {};
+			ws.onerror = () => {};
+			ws.onmessage = () => {};
+			ws.close();
+		}
+
+
+		this._clearWaitingCallPromises();
+		this._clearPingInterval();
+		this._clearReconnectionTimeout();
+		this._resetId();
+
+		if (this.onClose) this.onClose();
+
+		this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
+
+		if (this._forceClosePromise) {
+			this._forceClosePromise();
+			this._forceClosePromise = null;
+			return true;
+		}
+
+		if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
+			this._isForceClose = true;
+			return true;
+		}
+
+		this._reconnectionTimeoutId = setTimeout(async () => {
+			try {
+				await this._connect();
+			} catch (_) {
+				//
+			}
+		}, this._options.connectionTimeout);
+
+		return true;
+	}
 	/**
 	 *
 	 * @returns {Promise}
@@ -411,7 +455,8 @@ class ReconnectionWebSocket {
 		return new Promise((resolve) => {
 			this._forceClosePromise = resolve;
 			this._isForceClose = true;
-			this.ws.close();
+			this._forceClose();
+			// this.ws.close();
 		});
 	}
 
