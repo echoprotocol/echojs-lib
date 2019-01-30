@@ -404,11 +404,14 @@ class ReconnectionWebSocket {
 		const { ws } = this;
 		this.ws = null;
 
-		ws.onopen = () => {};
-		ws.onclose = () => {};
-		ws.onerror = () => {};
-		ws.onmessage = () => {};
-		ws.close();
+		if (ws) {
+			ws.onopen = () => {};
+			ws.onclose = () => {};
+			ws.onerror = () => {};
+			ws.onmessage = () => {};
+			ws.close();
+		}
+
 
 		this._clearWaitingCallPromises();
 		this._clearPingInterval();
@@ -422,13 +425,12 @@ class ReconnectionWebSocket {
 		if (this._forceClosePromise) {
 			this._forceClosePromise();
 			this._forceClosePromise = null;
-			return;
+			return true;
 		}
 
 		if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
 			this._isForceClose = true;
-			ws.close();
-			return;
+			return true;
 		}
 
 		this._reconnectionTimeoutId = setTimeout(async () => {
