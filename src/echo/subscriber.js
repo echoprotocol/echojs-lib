@@ -240,7 +240,10 @@ class Subscriber extends EventEmitter {
 
 		// check if dynamic global object
 		if (isDynamicGlobalObjectId(object.id)) {
-			this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, new Map(object));
+			const dynamicGlobalObject = new Map(object);
+
+			this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, dynamicGlobalObject)
+				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, dynamicGlobalObject);
 		}
 
 		// get object from cache by id

@@ -13,7 +13,7 @@ class Echo {
 		this._isInitModules = false;
 	}
 
-	async connect(address, options) {
+	async connect(address, options = {}) {
 		if (this._ws._connected) {
 			throw new Error('Connected');
 		}
@@ -26,6 +26,10 @@ class Echo {
 			}
 
 			await this._initModules();
+
+			if (!options.store && this.store) {
+				options.store = this.store;
+			}
 
 			this.cache.setOptions(options);
 			this.subscriber.setOptions(options);
@@ -58,7 +62,10 @@ class Echo {
 	}
 
 	syncCacheWithStore(store) {
-		this.cache.setStore({ store });
+		if (this._ws._connected) {
+			this.cache.setStore({ store });
+		}
+		this.store = store;
 	}
 
 	async reconnect() {
