@@ -119,6 +119,14 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
+		this.subscribers.connect.forEach((cb) => {
+			this._ws.removeListener(STATUS.OPEN, cb);
+		});
+
+		this.subscribers.disconnect.forEach((cb) => {
+			this._ws.removeListener(STATUS.CLOSE, cb);
+		});
+
 		this.subscribers = {
 			global: [],
 			account: [],
@@ -860,10 +868,10 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.off(STATUS.OPEN, callback);
+			this._ws.removeListener(STATUS.OPEN, callback);
 			this.subscribers.connect = this.subscribers.connect.filter((c) => c !== callback);
 		} else {
-			this._ws.off(STATUS.CLOSE, callback);
+			this._ws.removeListener(STATUS.CLOSE, callback);
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 
