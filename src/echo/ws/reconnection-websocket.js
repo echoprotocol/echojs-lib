@@ -113,6 +113,7 @@ class ReconnectionWebSocket {
 				this._pingIntervalId = setInterval(() => this._loginPing(), this._options.pingInterval);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
+				return true;
 			};
 
 			ws.onmessage = (message) => {
@@ -124,6 +125,7 @@ class ReconnectionWebSocket {
 				this._responseHandler(JSON.parse(message.data));
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
+				return true;
 			};
 
 			ws.onclose = () => {
@@ -137,7 +139,9 @@ class ReconnectionWebSocket {
 					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
-				return this._forceClose();
+				this._forceClose();
+
+				return true;
 
 			};
 
@@ -150,10 +154,13 @@ class ReconnectionWebSocket {
 				if (this.onError) this.onError(error);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONERROR');
+
+				return true;
 			};
 
 			this.ws = ws;
 
+			return ws;
 		});
 	}
 
@@ -394,7 +401,7 @@ class ReconnectionWebSocket {
 
 		this._debugLog('[ReconnectionWebSocket] >---- _forceClose ');
 
-		const ws = this.ws;
+		const { ws } = this;
 		this.ws = null;
 
 		ws.onopen = () => {};
