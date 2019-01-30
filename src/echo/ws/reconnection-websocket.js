@@ -81,20 +81,24 @@ class ReconnectionWebSocket {
 	 * @returns {Promise}
 	 */
 	_connect() {
+
+		this._debugLog('[ReconnectionWebSocket] >---- retry _connect');
+
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
+			let ws = null;
 			try {
-				this.ws = new WebSocket(this.url);
+				ws = new WebSocket(this.url);
 			} catch (error) {
-				this.ws = null;
+				ws = null;
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					reject(error);
-					return;
+					return reject(error);
 				}
 			}
 
-			this.ws.onopen = () => {
+			ws.onopen = () => {
+
 				this._currentRetry = 0;
 
 				if (this._isFirstConnection) {
@@ -111,56 +115,44 @@ class ReconnectionWebSocket {
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
 			};
 
-			this.ws.onmessage = (message) => {
+			ws.onmessage = (message) => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
+
 				this._responseHandler(JSON.parse(message.data));
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 			};
 
-			this.ws.onclose = () => {
+			ws.onclose = () => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
+
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
 					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
 				}
 
-				this._clearWaitingCallPromises();
-				this._clearPingInterval();
-				this._clearReconnectionTimeout();
-				this._resetId();
-
-				if (this.onClose) this.onClose();
-
-				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
-
-				if (this._forceClosePromise) {
-					this._forceClosePromise();
-					this._forceClosePromise = null;
-					return;
-				}
-
-				if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
-					this._isForceClose = true;
-					this.ws.close();
-					return;
-				}
-
-				this._reconnectionTimeoutId = setTimeout(async () => {
-					try {
-						await this._connect();
-					} catch (_) {
-						//
-					}
-				}, this._options.connectionTimeout);
+				return this._forceClose();
 
 			};
 
-			this.ws.onerror = (error) => {
+			ws.onerror = (error) => {
+
+				if (ws !== this.ws) {
+					return false;
+				}
 
 				if (this.onError) this.onError(error);
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONERROR');
 			};
 
+			this.ws = ws;
 
 		});
 	}
@@ -361,7 +353,8 @@ class ReconnectionWebSocket {
 			await this.login('', '', this._options.pingTimeout);
 		} catch (_) {
 			if (this.ws.readyState !== WebSocket.OPEN) return;
-			this.ws.close();
+			// this.ws.close();
+			this._forceClose();
 		}
 	}
 
@@ -397,7 +390,49 @@ class ReconnectionWebSocket {
 		}
 	}
 
+	_forceClose() {
 
+		this._debugLog('[ReconnectionWebSocket] >---- _forceClose ');
+
+		const ws = this.ws;
+		this.ws = null;
+
+		ws.onopen = () => {};
+		ws.onclose = () => {};
+		ws.onerror = () => {};
+		ws.onmessage = () => {};
+		ws.close();
+
+		this._clearWaitingCallPromises();
+		this._clearPingInterval();
+		this._clearReconnectionTimeout();
+		this._resetId();
+
+		if (this.onClose) this.onClose();
+
+		this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
+
+		if (this._forceClosePromise) {
+			this._forceClosePromise();
+			this._forceClosePromise = null;
+			return;
+		}
+
+		if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
+			this._isForceClose = true;
+			ws.close();
+			return;
+		}
+
+		this._reconnectionTimeoutId = setTimeout(async () => {
+			try {
+				await this._connect();
+			} catch (_) {
+				//
+			}
+		}, this._options.connectionTimeout);
+
+	}
 	/**
 	 *
 	 * @returns {Promise}
@@ -410,7 +445,8 @@ class ReconnectionWebSocket {
 		return new Promise((resolve) => {
 			this._forceClosePromise = resolve;
 			this._isForceClose = true;
-			this.ws.close();
+			this._forceClose();
+			// this.ws.close();
 		});
 	}
 
