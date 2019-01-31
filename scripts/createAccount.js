@@ -6,7 +6,7 @@ const { CHAIN_APIS } = require('../dist/constants/ws-constants');
 const [,, userName, privateKeySeed] = process.argv;
 
 (async () => {
-	await echo.connect('ws://195.201.164.54:6311', { apis: CHAIN_APIS });
+	await echo.connect('wss://testnet.echo-dev.io/ws', { apis: CHAIN_APIS });
 	ok(userName && userName.length > 0, 'username not provided');
 	ok(privateKeySeed && privateKeySeed.length > 0, 'private key seed not provided');
 	const privateKey = PrivateKey.fromSeed(privateKeySeed);

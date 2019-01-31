@@ -10,7 +10,7 @@ import { ECHO_ASSET_ID } from "../../src/constants";
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
 const options = {
 	contractAddress: null,
-	netAddress: 'ws://195.201.164.54:6311',
+	netAddress: 'wss://testnet.echo-dev.io/ws',
 	startValue: '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
 };
 

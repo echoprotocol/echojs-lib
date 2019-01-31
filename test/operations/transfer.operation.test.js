@@ -10,7 +10,7 @@ import Transaction from '../../src/echo/transaction';
 const echo = new Echo();
 
 describe('transfer', () => {
-	before(() => echo.connect('ws://195.201.164.54:6311'));
+	before(() => echo.connect('wss://testnet.echo-dev.io/ws'));
 
 	// describe('failure creation', () => { });
 	describe('successful validation', () => {

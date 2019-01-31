@@ -6,7 +6,7 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 // const url = 'wss:echo-devnet-node.pixelplex.io/ws';
-const url = 'ws:195.201.164.54:6311';
+const url = 'wss://testnet.echo-dev.io/ws';
 
 // describe('API', () => {
 // 	const ws = new WS();

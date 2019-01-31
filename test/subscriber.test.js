@@ -10,7 +10,7 @@ describe('SUBSCRIBER', () => {
 
 	before(async () => {
 		await echo.connect(
-			'ws://195.201.164.54:6311',
+			'wss://testnet.echo-dev.io/ws',
 			{
 				apis: [
 					'database',

@@ -7,7 +7,7 @@ const toAccountId = process.argv[3];
 const amount = process.argv[4];
 
 (async () => {
-	await echo.connect('ws://195.201.164.54:6311');
+	await echo.connect('wss://testnet.echo-dev.io/ws');
 	const [[fromAccountId]] = await echo.api.getKeyReferences([privateKey.toPublicKey().toString()]);
 	console.log('from', fromAccountId);
 	const tx = echo.createTransaction().addOperation(OPERATIONS_IDS.TRANSFER, {
