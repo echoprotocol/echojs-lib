@@ -1,7 +1,3 @@
-cache:
-  paths:
-  - node_modules/
-
 stages:
   - test
   - deploy
@@ -11,11 +7,12 @@ test:
   script:
     - npm install
     - npm run lint
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+      - node_modules
   tags:
     - echo-linux
-  only:
-    - triggers
-    - web
 
 publish:
   stage: deploy
