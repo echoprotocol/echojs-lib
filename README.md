@@ -15,7 +15,7 @@ npm install echojs-lib
 ```javascript
 import echo from 'echojs-ws';
 
-const url = 'ws://195.201.164.54:6311';
+const url = 'wss://testnet.echo-dev.io/ws';
 const options = {
     connectionTimeout: 5000,
     maxRetries: 5,

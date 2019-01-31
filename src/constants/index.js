@@ -4,18 +4,18 @@ import WS_CONSTANTS from './ws-constants';
 import * as OPERATIONS_IDS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
 
-const START_OPERATION_ID = '1.11.0';
-const CORE_ASSET_ID = '1.3.0';
+export const START_OPERATION_ID = '1.11.0';
+export const CORE_ASSET_ID = '1.3.0';
 
-const ECHORAND_TYPES = {
+export const ECHORAND_TYPES = {
 	START_NOTIFICATION: 1,
 	BLOCK_NOTIFICATION: 2,
 };
 
-const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
-const UPDATE_CALL_ORDER = 'update-call-order';
-const CLOSE_CALL_ORDER = 'close-call-order';
-const BITASSET_UPDATE = 'bitasset-update';
+export const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
+export const UPDATE_CALL_ORDER = 'update-call-order';
+export const CLOSE_CALL_ORDER = 'close-call-order';
+export const BITASSET_UPDATE = 'bitasset-update';
 
 export default {
 	CHAIN_TYPES,
