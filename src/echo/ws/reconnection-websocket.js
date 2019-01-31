@@ -62,7 +62,6 @@ class ReconnectionWebSocket {
 
 		this.url = url;
 		this._isFirstConnection = true;
-		this._isForceClose = false;
 		this._currentRetry = 0;
 		this._forceClosePromise = null;
 		this._reconnectionTimeoutId = null;
@@ -136,7 +135,8 @@ class ReconnectionWebSocket {
 
 				if (this._isFirstConnection) {
 					this._isFirstConnection = false;
-					if (this._options.maxRetries === 0) reject(new Error('connection closed'));
+					reject(new Error('Could\'t reach server or bad internet access'));
+					return false;
 				}
 
 				this._forceClose();
@@ -192,9 +192,14 @@ class ReconnectionWebSocket {
 	 * @returns {Promise}
 	 */
 	call(params, timeout = this._options.connectionTimeout) {
-		if (this.ws.readyState !== WebSocket.OPEN) {
-			return Promise.reject(new Error(`websocket state error: ${this.ws.readyState}`));
+		if (!this.ws) {
+			return Promise.reject(new Error('Websocket is closed'));
 		}
+
+		if (this.ws.readyState !== WebSocket.OPEN) {
+			return Promise.reject(new Error(`Websocket state error: ${this.ws.readyState}`));
+		}
+
 		const method = params[1];
 		this._debugLog(`[ReconnectionWebSocket] >---- call ----->  "id":${this._cbId + 1}`, JSON.stringify(params));
 
@@ -360,7 +365,6 @@ class ReconnectionWebSocket {
 			await this.login('', '', this._options.pingTimeout);
 		} catch (_) {
 			if (this.ws.readyState !== WebSocket.OPEN) return;
-			// this.ws.close();
 			this._forceClose();
 		}
 	}
@@ -412,7 +416,6 @@ class ReconnectionWebSocket {
 			ws.close();
 		}
 
-
 		this._clearWaitingCallPromises();
 		this._clearPingInterval();
 		this._clearReconnectionTimeout();
@@ -428,8 +431,7 @@ class ReconnectionWebSocket {
 			return true;
 		}
 
-		if (this._currentRetry >= this._options.maxRetries && !this._isForceClose) {
-			this._isForceClose = true;
+		if (this._currentRetry >= this._options.maxRetries) {
 			return true;
 		}
 
@@ -448,15 +450,13 @@ class ReconnectionWebSocket {
 	 * @returns {Promise}
 	 */
 	close() {
-		if (this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) {
+		if (!this.ws || this.ws.readyState === WebSocket.CLOSING || this.ws.readyState === WebSocket.CLOSED) {
 			return Promise.reject(new Error('Socket already close'));
 		}
 
 		return new Promise((resolve) => {
 			this._forceClosePromise = resolve;
-			this._isForceClose = true;
 			this._forceClose();
-			// this.ws.close();
 		});
 	}
 

@@ -16,7 +16,6 @@ const UPDATE_CALL_ORDER = 'update-call-order';
 const CLOSE_CALL_ORDER = 'close-call-order';
 const BITASSET_UPDATE = 'bitasset-update';
 
-
 export default {
     CHAIN_TYPES,
     CHAIN_CONFIG,
