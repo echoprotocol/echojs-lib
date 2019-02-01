@@ -13,7 +13,7 @@ npm install echojs-lib
 ## Usage
 
 ```javascript
-import echo from 'echojs-ws';
+import echo from 'echojs-lib';
 
 const url = 'wss://testnet.echo-dev.io/ws';
 const options = {
