@@ -15,29 +15,18 @@ class Echo {
 	}
 
 	async connect(address, options = {}) {
-		if (this._ws._connected) {
-			throw new Error('Connected');
-		}
-
+		if (this._ws._connected) throw new Error('Connected');
 		try {
 			await this._ws.connect(address, options);
-
-			if (this._isInitModules) {
-				return;
-			}
-
+			if (this._isInitModules) return this;
 			await this._initModules();
-
-			if (!options.store && this.store) {
-				options.store = this.store;
-			}
-
+			if (!options.store && this.store) options.store = this.store;
 			this.cache.setOptions(options);
 			this.subscriber.setOptions(options);
 		} catch (e) {
 			throw e;
 		}
-
+		return this;
 	}
 
 	async _initModules() {
