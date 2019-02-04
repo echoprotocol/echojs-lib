@@ -9,6 +9,7 @@ import * as converters from './utils/converters';
 
 require('buffer');
 
+export { default as BigNumber } from 'bignumber.js';
 export { OPERATIONS_IDS, CACHE_MAPS } from './constants';
 
 export {

@@ -1,4 +1,4 @@
-export enum OPERATIONS_IDS {
+declare enum OPERATIONS {
     TRANSFER = 0,
     LIMIT_ORDER_CREATE = 1,
     LIMIT_ORDER_CANCEL = 2,
@@ -49,4 +49,6 @@ export enum OPERATIONS_IDS {
     CREATE_CONTRACT = 47,
     CALL_CONTRACT = 48,
     CONTRACT_TRANSFER = 49,
-};
+}
+
+export default OPERATIONS;
