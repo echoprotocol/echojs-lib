@@ -1,6 +1,6 @@
 import CHAIN_TYPES from './chain-config';
 import WS_CONSTANTS from './ws-constants';
-import OPERATIONS_IDS from './operations-ids';
+import OPERATIONS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
 
 declare const START_OPERATION_ID = '1.11.0';
@@ -21,4 +21,4 @@ export { default as CHAIN_CONFIG } from './chain-config';
 export { default as OBJECT_TYPE } from './object-types';
 export const ECHO_ASSET_ID = '1.3.0';
 export const DYNAMIC_GLOBAL_OBJECT_ID = '2.1.0';
-export { OPERATIONS_IDS, CACHE_MAPS };
+export { OPERATIONS, CACHE_MAPS };
