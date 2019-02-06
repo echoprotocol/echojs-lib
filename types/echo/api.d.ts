@@ -73,4 +73,7 @@ export default class Api {
 		echoRandKey: string,
 	): Promise<any>;
 
+	// FIXME: fix result type
+	getTransaction(blockNum: number, txIndex: number): Promise<any>;
+
 }
