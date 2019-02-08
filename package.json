@@ -16,9 +16,13 @@
 		"lint:fix": "npm run lint -- --fix",
 		"jsdoc2md": "jsdoc2md src/echo/api.js > api.md"
 	},
+	"homepage": "https://github.com/echoprotocol/echojs-lib",
 	"repository": {
 		"type": "git",
-		"url": "git@gitlab.pixelplex.by:645.echo/echojs/echojs-lib.git"
+		"url": "https://github.com/echoprotocol/echojs-lib.git"
+	},
+	"bugs": {
+		"url": "https://github.com/echoprotocol/echojs-lib/issues"
 	},
 	"author": "PixelPlex",
 	"license": "UNLICENSED",
