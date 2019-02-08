@@ -25,7 +25,7 @@
 		"url": "https://github.com/echoprotocol/echojs-lib/issues"
 	},
 	"author": "PixelPlex",
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"dependencies": {
 		"babel-core": "^6.26.3",
 		"babel-plugin-transform-runtime": "^6.23.0",
