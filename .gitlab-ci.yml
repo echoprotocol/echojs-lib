@@ -12,12 +12,12 @@ test:
     paths:
       - node_modules
   tags:
-    - echo-linux
+    - pp-shell
 
 publish:
   stage: deploy
   tags:
-    - echo-linux
+    - pp-shell
   only:
     - tags
   script:
