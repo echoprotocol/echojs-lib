@@ -26,6 +26,7 @@ import {
 	isDynamicAssetDataId,
 	isEchoRandKey,
 	isOperationId,
+	isDynamicGlobalObjectId,
 } from '../utils/validators';
 
 import { operationById } from './operations';
@@ -33,7 +34,7 @@ import { operationById } from './operations';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
-import { ECHO_ASSET_ID } from '../constants';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
@@ -776,6 +777,8 @@ class API {
 					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
 						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
 
+				} else if (isDynamicGlobalObjectId(key)) {
+					this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, requestedObject);
 				} else if (isWitnessId(key)) {
 
 					const accountId = requestedObject.get('witness_account');
@@ -1009,9 +1012,9 @@ class API {
      *  }
      */
 	async getDynamicGlobalProperties(force = false) {
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
-		return this._getConfigurations(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, 'getDynamicGlobalProperties', force);
+		return this.getObject(DYNAMIC_GLOBAL_OBJECT_ID, force);
 	}
 
 	/**
