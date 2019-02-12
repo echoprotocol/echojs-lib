@@ -1,31 +1,40 @@
-import { box } from 'tweetnacl';
+import * as ed25519 from 'ed25519.js';
 
 import { isString, isBuffer } from '../utils/validators';
 
 class ED25519 {
 
 	/**
-     *  @method publicKeyFromPrivateKey
+     *  @method keyPairFromPrivateKey
      *
-     *  @param {String|Buffer} seed - 32 byte hex string.
+     *  @param {String|Buffer} privateKey - 32 byte hex string.
      *
      *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
      */
-	static keyPairFromSeed(seed) {
-		if (!(isString(seed) || isBuffer(seed))) {
+	static keyPairFromPrivateKey(privateKey) {
+		if (!(isString(privateKey) || isBuffer(privateKey))) {
 			throw new Error('private key must be string of buffer');
 		}
 
-		if (isString(seed)) seed = Buffer.from(seed, 'hex');
+		if (isString(privateKey)) privateKey = Buffer.from(privateKey, 'hex');
 
-		if (seed.length !== 32) {
-			throw new Error(`Expecting 32 bytes, instead got ${seed.length}`);
+		if (privateKey.length !== 32) {
+			throw new Error(`Expecting 32 bytes, instead got ${privateKey.length}`);
 		}
 
-		return box.keyPair.fromSecretKey(seed);
+		const publicKey = ed25519.derivePublicKey(privateKey);
+		return { privateKey, publicKey };
+	}
+
+	/**
+     *  @method createKeyPair
+     *
+     *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
+     */
+	static createKeyPair() {
+		return ed25519.createKeyPair();
 	}
 
 }
 
 export default ED25519;
-
