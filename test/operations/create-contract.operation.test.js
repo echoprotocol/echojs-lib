@@ -36,7 +36,8 @@ describe('create contract', () => {
 		await tx.sign(privateKey);
 		/** @type {string} */
 		const operationResultId = await tx.broadcast().then((res) => res[0].trx.operation_results[0][1]);
-		const contractId = await echo.api.getObject(operationResultId).then((res) => res.contracts_id[0]);
+		const contractId = await echo.api.getContractResult(operationResultId).then((res) => res.contracts_id[0]);
+		console.log(await echo.api.getContractResult(operationResultId))
 		ok(/^1\.16\.[1-9]\d*$/.test(contractId));
 		options.contractAddress = contractId;
 		// strictEqual(

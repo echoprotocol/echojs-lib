@@ -301,8 +301,8 @@ export const validateOptionsError = (options) => {
 		errorParameter = 'maxRetries';
 	} else if (!(Number.isInteger(options.pingTimeout) || typeof options.pingTimeout === 'undefined')) {
 		errorParameter = 'pingTimeout';
-	} else if (!(Number.isInteger(options.pingInterval) || typeof options.pingInterval === 'undefined')) {
-		errorParameter = 'pingInterval';
+	} else if (!(Number.isInteger(options.pingDelay) || typeof options.pingDelay === 'undefined')) {
+		errorParameter = 'pingDelay';
 	} else if (!(typeof options.debug === 'boolean' || typeof options.debug === 'undefined')) {
 		errorParameter = 'debug';
 	} else if (!((Array.isArray(options.apis) && options.apis.every((api) => CHAIN_APIS.includes(api))) || typeof options.apis === 'undefined')) {

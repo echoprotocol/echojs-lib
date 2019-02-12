@@ -98,7 +98,7 @@ class WS extends EventEmitter {
      * @param {Number} options.maxRetries - max count retries before close socket.
      * @param {Number} options.pingTimeout - delay time in ms between ping request
      * 		and socket disconnect.
-     * @param {Number} options.pingInterval - interval in ms between ping requests.
+     * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
      * @param {Boolean} options.debug - debug mode status.
      * @returns {Promise}
      */
@@ -124,7 +124,7 @@ class WS extends EventEmitter {
 			connectionTimeout: options.connectionTimeout,
 			maxRetries: options.maxRetries,
 			pingTimeout: options.pingTimeout,
-			pingInterval: options.pingInterval,
+			pingDelay: options.pingDelay,
 			debug: options.debug,
 		};
 

@@ -18,7 +18,7 @@ describe('API', () => {
 				connectionTimeout: 5000,
 				maxRetries: 5,
 				pingTimeout: 3000,
-				pingInterval: 3000,
+				pingDelay: 10000,
 				debug: false,
 				apis: constants.WS_CONSTANTS.CHAIN_APIS,
 			});
