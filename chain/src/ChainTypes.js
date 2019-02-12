@@ -97,8 +97,9 @@ ChainTypes.operations = {
 	fba_distribute: 44,
 	bid_collateral: 45,
 	execute_bid: 46,
-	contract: 47,
-	contract_transfer: 48,
+	create_contract: 47,
+	call_contract: 48,
+	contract_transfer: 49,
 };
 
 module.exports = ChainTypes;

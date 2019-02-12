@@ -1,3 +1,5 @@
+const { Apis } = require('echojs-ws');
+
 /* Serializer */
 const Serializer = require('./serializer/src/serializer');
 const fp = require('./serializer/src/FastParser');
@@ -31,6 +33,7 @@ const ContractFrame = require('./chain/src/ContractFrame');
 const { FetchChainObjects, FetchChain } = ChainStore;
 
 module.exports = {
+	Apis,
 	Serializer,
 	fp,
 	types,

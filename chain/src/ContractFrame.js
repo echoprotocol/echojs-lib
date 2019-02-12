@@ -89,16 +89,16 @@ class ContractFrame {
 
 		const options = {
 			registrar: accountId,
-			code: bytecode,
-			asset_id: feeAssetId || '1.3.0',
+			value: { amount: 0, asset_id: '1.3.0' },
 			gasPrice: gasPrice || 0,
 			gas: gas || 4700000,
-			value: 0,
+			code: bytecode,
+			eth_accuracy: false,
+			supported_asset_id: feeAssetId || '1.3.0',
 		};
 
 		const tr = new TransactionBuilder();
-		tr.add_type_operation('contract', options);
-
+		tr.add_type_operation('create_contract', options);
 		return tr.set_required_fees(options.asset_id).then(() => {
 			tr.add_signer(privateKey);
 			return tr.broadcast();

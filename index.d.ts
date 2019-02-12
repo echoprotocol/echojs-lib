@@ -1,6 +1,8 @@
 
 declare module 'echojs-lib' {
 
+	export { Apis } from 'echojs-ws';
+
 	export class PublicKey {
 		toString(): string;
 	}
@@ -37,14 +39,15 @@ declare module 'echojs-lib' {
 
 	export class TransactionBuilder {
 
-		add_type_operation(name: 'contract' | 'transfer', opts: {
-			registrar: string,
-			receiver: string,
-			asset_id: string,
-			value: number,
-			gasPrice: number,
-			gas: number,
-			code: string,
+		add_type_operation(name: 'create_contract' | 'call_contract' | 'transfer', opts: {
+			registrar?: string,
+			receiver?: string,
+			asset_id?: string,
+			value?: { amount: number | string, asset_id: string },
+			gasPrice?: number,
+			gas?: number,
+			code?: string,
+			callee?: string,
 		}): void;
 
 		set_required_fees(assetId: string): Promise<void>;
