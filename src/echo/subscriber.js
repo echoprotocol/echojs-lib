@@ -104,6 +104,8 @@ class Subscriber extends EventEmitter {
 			const [base, quote] = key.split('_');
 			this._subscribeToMarket(base, quote);
 		});
+
+		await this._subscribeCache();
 	}
 
 	/**
@@ -165,6 +167,13 @@ class Subscriber extends EventEmitter {
 		};
 	}
 
+	/**
+	 *  @method _updateObject
+	 *
+	 *  @param  {Object} object
+	 *
+	 *  @return {null}
+	 */
 	_updateObject(object) {
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
@@ -485,6 +494,13 @@ class Subscriber extends EventEmitter {
 		return null;
 	}
 
+	/**
+	 *  @method _updateOrder
+	 *
+	 *  @param  {String} id
+	 *
+	 *  @return {String}
+	 */
 	_updateOrder(id) {
 		let type = null;
 		const obj = this.cache.objectsById.get(id);
@@ -526,6 +542,13 @@ class Subscriber extends EventEmitter {
 		return type;
 	}
 
+	/**
+	 *  @method _onRespond
+	 *
+	 *  @param  {Object} [messages]
+	 *
+	 *  @return {undefined}
+	 */
 	_onRespond([messages]) {
 		const orders = [];
 
@@ -882,12 +905,29 @@ class Subscriber extends EventEmitter {
 
 	}
 
+	/**
+	 *  @method _subscribeToMarket
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {*} result
+	 *
+	 *  @return {undefined}
+	 */
 	_marketUpdate(base, quote, result) {
 		const callbacks = this.subscribers.market[`${base}_${quote}`];
 
 		callbacks.forEach((callback) => callback(result));
 	}
 
+	/**
+	 *  @method _subscribeToMarket
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *
+	 *  @return {undefined}
+	 */
 	_subscribeToMarket(base, quote) {
 		this._wsApi.database.subscribeToMarket(
 			this._marketUpdate.bind(this, base, quote),
@@ -896,6 +936,14 @@ class Subscriber extends EventEmitter {
 		);
 	}
 
+	/**
+	 *  @method _unsubscribeFromMarket
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *
+	 *  @return {undefined}
+	 */
 	_unsubscribeFromMarket(base, quote) {
 		this._wsApi.database.unsubscribeFromMarket(base, quote);
 	}
@@ -963,12 +1011,28 @@ class Subscriber extends EventEmitter {
 		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
+	/**
+	 *  @method _contractLogsUpdate
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {*} fromBlock
+	 *
+	 *  @return {undefined}
+	 */
 	_contractLogsUpdate(contractId, result) {
 		const callbacks = this.subscribers.logs[contractId];
 
 		callbacks.forEach((callback) => callback(result));
 	}
 
+	/**
+	 *  @method _subscribeToContractLogs
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Number} fromBlock
+	 *
+	 *  @return {undefined}
+	 */
 	async _subscribeToContractLogs(contractId, fromBlock) {
 		await this._wsApi.database.subscribeContractLogs(
 			this._contractLogsUpdate.bind(this, contractId),
@@ -1021,6 +1085,28 @@ class Subscriber extends EventEmitter {
 	removeContractLogsSubscribe(contractId, callback) {
 		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
 			.filter((c) => (c !== callback));
+	}
+
+	/**
+	 *  @method _subscribeCache
+	 *
+	 *  @return {undefined}
+	 */
+	async _subscribeCache() {
+		const [...objectIds] = this.cache.objectsById.keys();
+		const [...fullAccountIds] = this.cache.fullAccounts.keys();
+
+		const objectByIdsPromise = this._api.getObjects(objectIds, true);
+		const fullAccountsPromise = this._api.getFullAccounts(fullAccountIds, true, true);
+
+		try {
+			await Promise.all([
+				objectByIdsPromise,
+				fullAccountsPromise,
+			]);
+		} catch (_) {
+			console.error('[Subscriber] >---- error ----> Couldn\'t resubscribe cache');
+		}
 	}
 
 }

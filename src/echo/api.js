@@ -520,21 +520,27 @@ class API {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = array[i];
+		if (force) {
+			requestedObjectsKeys = array;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = array[i];
 
-			if (!force) {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
+		}
+
+		if (requestedObjectsKeys.length === 0) {
+			return resultArray;
 		}
 
 		let requestedObjects;
@@ -723,22 +729,25 @@ class API {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = array[i];
+		if (force) {
+			requestedObjectsKeys = array;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = array[i];
 
-			if (!force) {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
+
 
 		if (requestedObjectsKeys.length === 0) {
 			return resultArray;
@@ -1050,21 +1059,24 @@ class API {
 		const { length } = accountIds;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = accountIds[i];
+		if (force) {
+			requestedObjectsKeys = accountIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = accountIds[i];
 
-			if (!force) {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+
+				requestedObjectsKeys.push(key);
+			}
 		}
 
 		if (requestedObjectsKeys.length === 0) {
@@ -1126,27 +1138,28 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = accountNamesOrIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = accountNamesOrIds[i];
-			let cacheValue = null;
+				const key = accountNamesOrIds[i];
 
-			if (!force) {
 				let id = key;
 
 				if (!isAccountId(key)) {
 					id = this.cache.accountsByName.get(key);
 				}
 
-				cacheValue = this.cache.fullAccounts.get(id);
+				const cacheValue = this.cache.fullAccounts.get(id);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
 
 		if (requestedObjects.length === 0) {
@@ -1292,12 +1305,14 @@ class API {
 		const { length } = accountNames;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = accountNames[i];
+		if (force) {
+			requestedObjectsKeys = accountNames;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = accountNames[i];
 
-			if (!force) {
 				const id = this.cache.accountsByName.get(key);
 
 				const cacheValue = this.cache.objectsById.get(id);
@@ -1306,9 +1321,9 @@ class API {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
 
 		let requestedObjects;
@@ -1465,21 +1480,28 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = assetIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = assetIds[i];
+				const key = assetIds[i];
 
-			if (!force) {
 				const cacheValue = this.cache.assetByAssetId.get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
+
+		if (requestedObjects.length === 0) {
+			return resultArray;
+		}
+
 
 		try {
 			requestedObjects = await this.wsApi.database.getAssets(requestedObjects);
@@ -1549,11 +1571,13 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = symbolsOrIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = symbolsOrIds[i];
+				const key = symbolsOrIds[i];
 
-			if (!force) {
 				let cacheValue = null;
 
 				if (isAssetId(key)) {
@@ -1566,10 +1590,11 @@ class API {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
+
 
 		try {
 			requestedObjects = await this.wsApi.database.lookupAssetSymbols(requestedObjects);
@@ -1930,22 +1955,25 @@ class API {
 		const { length } = votes;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = votes[i];
+		if (force) {
+			requestedObjectsKeys = votes;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = votes[i];
 
-			if (!force) {
 				const cacheValue = this.cache[CacheMaps.OBJECTS_BY_VOTE_ID].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
+
 
 		let requestedObjects;
 
@@ -2558,7 +2586,7 @@ class API {
 		return this.wsApi.asset.getAllAssetHolders();
 	}
 
-	setOptions() {}
+	setOptions() { }
 
 }
 
