@@ -1,4 +1,4 @@
-import "babel-polyfill";
+import "@babel/polyfill";
 import { expect } from 'chai';
 import WS from '../src/echo/ws'
 import WSAPI from '../src/echo/ws-api'
