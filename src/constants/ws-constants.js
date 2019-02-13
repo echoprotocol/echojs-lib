@@ -3,20 +3,29 @@ export const MAX_RETRIES = 1000;
 export const PING_TIMEOUT = 10 * 1000;
 export const PING_DELAY = 10 * 1000;
 export const DEBUG = false;
+
+export const DATABASE_API = 'database';
+export const NETWORK_BROADCAST_API = 'network_broadcast';
+export const HISTORY_API = 'history';
+export const REGISTRATION_API = 'registration';
+export const ASSET_API = 'asset';
+export const LOGIN_API = 'login';
+export const NETWORK_NODE_API = 'network_node';
+
 export const CHAIN_APIS = [
-	'database',
-	'network_broadcast',
-	'history',
-	'registration',
-	'asset',
-	'login',
-	'network_node',
+	DATABASE_API,
+	NETWORK_BROADCAST_API,
+	HISTORY_API,
+	REGISTRATION_API,
+	ASSET_API,
+	LOGIN_API,
+	NETWORK_NODE_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
-	'database',
-	'network_broadcast',
-	'history',
-	'login',
+	DATABASE_API,
+	NETWORK_BROADCAST_API,
+	HISTORY_API,
+	LOGIN_API,
 ];
 
 export const STATUS = {
@@ -26,6 +35,13 @@ export const STATUS = {
 };
 
 export default {
+	DATABASE_API,
+	NETWORK_BROADCAST_API,
+	HISTORY_API,
+	REGISTRATION_API,
+	ASSET_API,
+	LOGIN_API,
+	NETWORK_NODE_API,
 	CONNECTION_TIMEOUT,
 	MAX_RETRIES,
 	PING_TIMEOUT,

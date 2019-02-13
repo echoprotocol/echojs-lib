@@ -8,8 +8,6 @@ import cacheReducer from '../src/redux/reducer'
 
 const defaultReducer = (state = {}, { type, payload }) => type === 'SET' ? { ...state, ...payload } : state;
 
-// console.log(store.getState())
-
 describe('redux', () => {
     describe(('create reducer'), () => {
         it('pass not array and throw caches is invalid', (done) => {
