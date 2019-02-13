@@ -5,16 +5,14 @@
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {
-		"postinstall": "npm run build",
+		"prepare": "npm run build",
 		"test": "mocha --require babel-core/register --require babel-polyfill --exit",
 		"test-api": "mocha --compilers js:babel-core/register --require babel-polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:babel-core/register --require babel-polyfill test/subscriber.test.js",
 		"build": "npx babel-cli src --out-dir dist",
-		"prepublishOnly": "npm run build",
 		"lint": "eslint .",
 		"lint:debug": "npm run lint -- --debug",
-		"lint:fix": "npm run lint -- --fix",
-		"jsdoc2md": "jsdoc2md src/echo/api.js > api.md"
+		"lint:fix": "npm run lint -- --fix"
 	},
 	"homepage": "https://github.com/echoprotocol/echojs-lib",
 	"repository": {
@@ -62,7 +60,6 @@
 		"eslint-plugin-import": "^2.9.0",
 		"eslint-plugin-jsx-a11y": "^6.1.2",
 		"eslint-plugin-react": "^7.11.1",
-		"jsdoc-to-markdown": "^4.0.1",
 		"mocha": "^5.2.0",
 		"redux": "^4.0.1"
 	}
