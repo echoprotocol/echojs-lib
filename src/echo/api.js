@@ -2217,22 +2217,11 @@ class API {
      *  @param  {String} contractId
      *  @param {Boolean} force
      *
-     *  @return {
-     *  	Promise.<{
-     *  		contract_info:{
-     *  			id:String,
-     *  			statistics:String,
-     *  			suicided:Boolean
-     *  		},
-     *  		code:String,
-     *  		storage:Array.<Array>
-     *      }>
-     *  }
+     *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
      */
 	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-
 		return this._getSingleDataWithMultiSave(
 			contractId,
 			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,

@@ -131,7 +131,7 @@ try {
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
 <dd></dd>
-<dt><a href="#getContract">getContract(contractId, force)</a> ⇒ <code>Promise.&lt;{contract_info: {id:String, statistics:String, suicided:Boolean}, code:String, storage:Array.&lt;Array&gt;}&gt;</code></dt>
+<dt><a href="#getContract">getContract(contractId, force)</a> ⇒ <code>Promise.&lt;[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]&gt;</code></dt>
 <dd></dd>
 <dt><a href="#callContractNoChangingState">callContractNoChangingState(contractId, accountId, assetId, bytecode)</a> ⇒ <code>Promise.&lt;String&gt;</code></dt>
 <dd></dd>
@@ -747,7 +747,7 @@ try {
 
 <a name="getContract"></a>
 
-## getContract(contractId, force) ⇒ <code>Promise.&lt;{contract\_info: {id:String, statistics:String, suicided:Boolean}, code:String, storage:Array.&lt;Array&gt;}&gt;</code>
+## getContract(contractId, force) ⇒ <code>Promise.&lt;[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]&gt;</code>
 **Kind**: global function
 
 | Param | Type |
