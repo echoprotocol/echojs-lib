@@ -442,23 +442,25 @@ import { PublicKey } from '../crypto';
 *  	} ContractLogs */
 
 /** @typedef {
-*	{
-*  		exec_res:{
-*  			excepted:String,
-*  			new_address:String,
-*  			output:String,
-*  			code_deposit:String,
-*  			gas_refunded:String,
-*  			deposit_size:Number,
-*  			gas_for_deposit:String
-*  		},
-*  		tr_receipt:{
-*  			status_code:String,
-*  			gas_used:String,
-*  			bloom:String,
-*  			log:Array
+*	[0,
+*		{
+*  			exec_res:{
+*  				excepted:String,
+*  				new_address:String,
+*  				output:String,
+*  				code_deposit:String,
+*  				gas_refunded:String,
+*  				deposit_size:Number,
+*  				gas_for_deposit:String
+*  			},
+*  			tr_receipt:{
+*  				status_code:String,
+*  				gas_used:String,
+*  				bloom:String,
+*  				log:Array
+*  			}
 *  		}
-*  	}
+*	] | [1, { output: String }]
 *  	} ContractResult */
 
 
