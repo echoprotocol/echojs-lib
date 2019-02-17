@@ -45,6 +45,12 @@ import {
 	TRANSFER_FROM_BLIND,
 	ASSET_SETTLE_CANCEL,
 	ASSET_CLAIM_FEES,
+	FBA_DISTRIBUTE,
+	BID_COLLATERAL,
+	EXECUTE_BID,
+	CREATE_CONTRACT,
+	CALL_CONTRACT,
+	CONTRACT_TRANSFER,
 } from '../constants/operations-ids';
 
 const noFee = serializable({});
@@ -117,4 +123,10 @@ export default {
 	[TRANSFER_FROM_BLIND]: defaultFee,
 	[ASSET_SETTLE_CANCEL]: noFee,
 	[ASSET_CLAIM_FEES]: defaultFee,
+	[FBA_DISTRIBUTE]: noFee,
+	[BID_COLLATERAL]: defaultFee,
+	[EXECUTE_BID]: noFee,
+	[CREATE_CONTRACT]: defaultFee,
+	[CALL_CONTRACT]: defaultFee,
+	[CONTRACT_TRANSFER]: defaultFee,
 };
