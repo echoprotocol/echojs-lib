@@ -46,12 +46,10 @@ class ContractFrame {
 	 *  @param {String} bytecode - required
 	 *  @param {String} feeAssetId - optional (default = '1.3.0')
 	 *  @param {Number} amount - optional (default = 0)
-	 *  @param {Number} gas - optional (default = 4700000)
-	 *  @param {Number} gasPrice - optional (default = 0)
 	 *  @param  {PrivateKey} privateKey
 	 */
 	callContract({
-		accountId, contractId, bytecode, feeAssetId, amount, gas, gasPrice,
+		accountId, contractId, bytecode, feeAssetId, amount,
 	}, privateKey) {
 
 		const options = {
@@ -60,8 +58,6 @@ class ContractFrame {
 			code: bytecode,
 			asset_id: feeAssetId || '1.3.0',
 			value: amount || 0,
-			gasPrice: gasPrice || 0,
-			gas: gas || 4700000,
 		};
 
 		const tr = new TransactionBuilder();
@@ -79,19 +75,15 @@ class ContractFrame {
 	 *  @param {String} accountId - required
 	 *  @param {String} bytecode - required
 	 *  @param {String} feeAssetId - optional (default = '1.3.0')
-	 *  @param {Number} gas - optional (default = 4700000)
-	 *  @param {Number} gasPrice - optional (default = 0)
 	 *  @param  {PrivateKey} privateKey
 	 */
 	deployContract({
-		accountId, bytecode, feeAssetId, gas, gasPrice,
+		accountId, bytecode, feeAssetId,
 	}, privateKey) {
 
 		const options = {
 			registrar: accountId,
 			value: { amount: 0, asset_id: '1.3.0' },
-			gasPrice: gasPrice || 0,
-			gas: gas || 4700000,
 			code: bytecode,
 			eth_accuracy: false,
 			supported_asset_id: feeAssetId || '1.3.0',

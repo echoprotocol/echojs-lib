@@ -30,7 +30,7 @@ declare module 'echojs-lib' {
 	export const ChainValidation: ChainValidation_interface;
 
 	export class ContractFrame {
-		deployContract(params: { accountId: string, gas: number, bytecode: string }, privateKey: PrivateKey): Promise<[{
+		deployContract(params: { accountId: string, bytecode: string }, privateKey: PrivateKey): Promise<[{
 			trx: {
 				operation_results: [[any, string]],
 			},
@@ -44,8 +44,6 @@ declare module 'echojs-lib' {
 			receiver?: string,
 			asset_id?: string,
 			value?: { amount: number | string, asset_id: string },
-			gasPrice?: number,
-			gas?: number,
 			code?: string,
 			callee?: string,
 		}): void;
