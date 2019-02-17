@@ -298,6 +298,30 @@ feeParameters.asset_claim_fees_operation_fee_parameters = new Serializer(
 	{ fee: uint64 },
 );
 
+feeParameters.fba_distribute_operation_fee_parameters = new Serializer('fba_distribute_operation_fee_parameters');
+
+feeParameters.bid_collateral_operation_fee_parameters = new Serializer(
+	'bid_collateral_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.execute_bid_operation_fee_parameters = new Serializer('execute_bid_operation_fee_parameters');
+
+feeParameters.create_contract_operation_fee_parameters = new Serializer(
+	'create_contract_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.call_contract_operation_fee_parameters = new Serializer(
+	'call_contract_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.contract_transfer_operation_fee_parameters = new Serializer(
+	'contract_transfer_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
 const fee_parameters = static_variant([
 	feeParameters.transfer_operation_fee_parameters,
 	feeParameters.limit_order_create_operation_fee_parameters,
@@ -343,6 +367,12 @@ const fee_parameters = static_variant([
 	feeParameters.transfer_from_blind_operation_fee_parameters,
 	feeParameters.asset_settle_cancel_operation_fee_parameters,
 	feeParameters.asset_claim_fees_operation_fee_parameters,
+	feeParameters.fba_distribute_operation_fee_parameters,
+	feeParameters.bid_collateral_operation_fee_parameters,
+	feeParameters.execute_bid_operation_fee_parameters,
+	feeParameters.create_contract_operation_fee_parameters,
+	feeParameters.call_contract_operation_fee_parameters,
+	feeParameters.contract_transfer_operation_fee_parameters,
 ]);
 
 const Operations = {};
