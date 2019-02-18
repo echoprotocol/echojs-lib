@@ -13,4 +13,5 @@ export default class Api {
 	getKeyReferences(keys: Array<string|PublicKey>, force: boolean = false): Promise<Array<any>>;
 	getObject<T extends OBJECTS_TYPES>(objectId: string, force: boolean = false): Promise<OBJECT[T]>;
 	callContractNoChangingState(contractId: string, accountId: string, assetId: string, bytecode: string): Promise<string>;
+	getContractResult(resultContractId: string, force: boolean): Promise<Object>;
 }

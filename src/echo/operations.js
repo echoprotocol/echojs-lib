@@ -21,21 +21,20 @@ import {
 
 import {
 	array,
+	bytes,
 	bool,
 	empty,
 	int64,
 	objectId,
 	optional,
 	protocolId,
+	publicKey,
 	set,
 	string,
 	timePointSec,
 	uint8,
 	uint16,
-	publicKey,
 	uint32,
-	bytes,
-	uint64,
 } from '../serializer/basic-types';
 
 import {
@@ -473,8 +472,6 @@ export const createContract = operation(CREATE_CONTRACT, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
 	value: asset,
-	gasPrice: uint64,
-	gas: uint64,
 	code: string,
 	eth_accuracy: bool,
 	supported_asset_id: optional(protocolId(ASSET)),
@@ -484,8 +481,6 @@ export const callContract = operation(CALL_CONTRACT, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
 	value: asset,
-	gasPrice: uint64,
-	gas: uint64,
 	code: string,
 	callee: protocolId(CONTRACT),
 });

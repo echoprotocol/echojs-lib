@@ -55,8 +55,6 @@ const options = {
     },
     registrar: '1.2.20',
     value: { asset_id: '1.3.0', amount: 1 }, // transfer asset to contract
-    gas: 1e7,
-    gasPrice: 0,
     code: bytecode + constructorParameters,
     eth_accuracy: false,
 };
@@ -91,8 +89,6 @@ const options = {
         asset_id: '1.3.0',
         amount: 1,
     },
-    gasPrice: 0,
-    gas: 1e7,
     code: method + methodParameters,
     callee: contractId,
 };
