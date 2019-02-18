@@ -27,6 +27,7 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
+	isEthereumAddress,
 } from '../utils/validators';
 
 import { operationById } from './operations';
@@ -2586,6 +2587,23 @@ class API {
 	*/
 	getAllAssetHolders() {
 		return this.wsApi.asset.getAllAssetHolders();
+	}
+
+	/**
+	 *  @method getRecentTransactionById
+	 *
+	 * 	@param  {String} receiver
+	 *
+	 * 	@return {
+	 * 		Promise.<Array.<{
+	 * 			transfer_id: Number, receiver: String, amount: Number, signatures: String, withdraw_code: String
+	 * 		}>>
+	 * 	}
+	 */
+	getSidechainTransfers(receiver) {
+		if (!isEthereumAddress(receiver)) return Promise.reject(new Error('Invalid receiver address'));
+
+		return this.wsApi.database.getSidechainTransfers(receiver);
 	}
 
 	setOptions() { }

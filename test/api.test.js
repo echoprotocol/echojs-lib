@@ -9,7 +9,8 @@ import { inspect } from 'util';
 import echo, { constants } from '../src';
 
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
-const url = 'wss://testnet.echo-dev.io/ws';
+// const url = 'wss://testnet.echo-dev.io/ws';
+const url = 'ws://195.201.164.54:63101';
 
 describe('API', () => {
 	describe('ASSET API', () => {
@@ -744,6 +745,22 @@ describe('API', () => {
 
                     const history = await api.getContractHistory(contractId, stop, limit, start);
                     expect(history).to.be.an('object');
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getSidechainTransfers()', () => {
+            it('should get subchain transfer', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const ethereumAddress = '17A686Cc581e0582e0213Ec49153Af6c1941CAc7';
+
+                    const history = await api.getSidechainTransfers(ethereumAddress);
+                    expect(history).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }

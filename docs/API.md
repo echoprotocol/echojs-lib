@@ -181,6 +181,8 @@ try {
  Array of all asset IDs with the number of holders.">getAllAssetHolders
  Array of all asset IDs with the number of holders.()</a> ⇒ <code>Promise.&lt;Array.&lt;{asset_id: String, count: Number}&gt;&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getSidechainTransfers">getSidechainTransfers(receiver)</a> ⇒ <code>Promise.&lt;Array.&lt;SidechainTransfer&gt;&gt;</code></dt>
+<dd></dd>
 </dl>
 
 ## Typedefs
@@ -221,6 +223,8 @@ try {
 <dt><a href="#AccountName">AccountName</a> : <code>String</code></dt>
 <dd></dd>
 <dt><a href="#AccountId">AccountId</a> : <code>String</code></dt>
+<dd></dd>
+<dt><a href="#SidechainTransfer">SidechainTransfer</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
 
@@ -917,6 +921,15 @@ try {
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
 
+<a name="getSidechainTransfers"></a>
+
+## getSidechainTransfers(receiver) ⇒ [<code>Promise.&lt;Array.&lt;SidechainTransfer&gt;&gt;</code>](#SidechainTransfer)
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| receiver | <code>String</code> | ethereum address |
+
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
 
@@ -1379,6 +1392,19 @@ try {
 or
 ```javascript
 [1, { output: String }]
+```
+
+## SidechainTransfer : <code>Object</code>
+<a name="SidechainTransfer"></a>
+
+```javascript
+{
+    transfer_id: Number,
+    receiver: String,
+    amount: Number,
+    signatures: String,
+    withdraw_code: String
+}
 ```
 ## AccountName : <code>String</code>
 <a name="AccountName"></a>
