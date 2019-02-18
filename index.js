@@ -17,6 +17,7 @@ const Signature = require('./ecc/src/signature');
 const brainKey = require('./ecc/src/BrainKey');
 const hash = require('./ecc/src/hash');
 const key = require('./ecc/src/KeyUtils');
+const ED25519 = require('./ecc/src/ed25519');
 
 /* Chain */
 const ChainStore = require('./chain/src/ChainStore');
@@ -48,6 +49,7 @@ module.exports = {
 	brainKey,
 	hash,
 	key,
+	ED25519,
 	ChainStore,
 	TransactionBuilder,
 	FetchChainObjects,
