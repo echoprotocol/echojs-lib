@@ -1,7 +1,7 @@
 import staticVariant from './basic-types/static-variant';
 import feeTypes from './fee-types';
 import serializable from './serializable';
-import { ACCOUNT, ASSET } from '../constants/object-types';
+import { ACCOUNT, ASSET, CONTRACT } from '../constants/object-types';
 
 import {
 	address,
@@ -90,6 +90,32 @@ export const feeSchedule = serializable({
 	scale: uint32,
 });
 
+export const echorandConfig = serializable({
+	_time_net_1mb: uint32,
+	_time_net_256b: uint32,
+	_creator_count: uint32,
+	_verifier_count: uint32,
+	_ok_threshold: uint32,
+	_max_bba_steps: uint32,
+	_gc1_delay: uint32,
+});
+
+export const sidechainConfig = serializable({
+	echo_contract_id: protocolId(CONTRACT),
+	echo_vote_method: string,
+	echo_sign_method: string,
+	echo_transfer_topic: string,
+	echo_transfer_ready_topic: string,
+	eth_contract_address: string,
+	eth_committee_method: string,
+	eth_transfer_topic: string,
+});
+
+export const gasPrice = serializable({
+	price: uint64,
+	gas_amount: uint64,
+});
+
 export const chainParameters = serializable({
 	current_fees: feeSchedule,
 	block_interval: uint8,
@@ -119,6 +145,9 @@ export const chainParameters = serializable({
 	accounts_per_fee_scale: uint16,
 	account_fee_scale_bitshifts: uint8,
 	max_authority_depth: uint8,
+	echorand_config: echorandConfig,
+	sidechain_config: sidechainConfig,
+	gas_price: gasPrice,
 	extensions: set(empty),
 });
 

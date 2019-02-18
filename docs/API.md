@@ -1054,6 +1054,29 @@ try {
        accounts_per_fee_scale:Number,
        account_fee_scale_bitshifts:Number,
        max_authority_depth:Number,
+       echorand_config:{
+           _time_net_1mb:Number,
+           _time_net_256b:Number,
+           _creator_count:Number,
+           _verifier_count:Number,
+           _ok_threshold:Number,
+           _max_bba_steps:Number,
+           _gc1_delay:Number
+       },
+       sidechain_config:{
+           echo_contract_id:String,
+           echo_vote_method:String,
+           echo_sign_method:String,
+           echo_transfer_topic:String,
+           echo_transfer_ready_topic:String,
+           eth_contract_address:String,
+           eth_committee_method:String,
+           eth_transfer_topic:String,
+       },
+       gas_price:{
+           price:Number|String,
+           gas_amount:Number|String,
+       },
        extensions:Array
    },
    next_available_vote_id:Number,

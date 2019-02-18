@@ -65,7 +65,7 @@ describe('API', () => {
     describe('database', () => {
         const ws = new WS();
         beforeEach(async () => {
-            await ws.connect(url, { debug: false,  apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
+            await ws.connect(url, { debug: false,  apis: constants.WS_CONSTANTS.CHAIN_APIS });
         });
         afterEach(async () => {
             await ws.close();
