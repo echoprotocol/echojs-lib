@@ -26,6 +26,8 @@ import {
 	isDynamicAssetDataId,
 	isEchoRandKey,
 	isOperationId,
+	isDynamicGlobalObjectId,
+	isEthereumAddress,
 } from '../utils/validators';
 
 import { operationById } from './operations';
@@ -33,7 +35,7 @@ import { operationById } from './operations';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
-import { ECHO_ASSET_ID } from '../constants';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import * as ApiConfig from '../constants/api-config';
 import * as CacheMaps from '../constants/cache-maps';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
@@ -150,6 +152,29 @@ import { PublicKey } from '../crypto';
 * 	 			accounts_per_fee_scale:Number,
 * 	 			account_fee_scale_bitshifts:Number,
 * 	 			max_authority_depth:Number,
+* 	 			echorand_config:{
+* 	 				_time_net_1mb:Number,
+* 	 				_time_net_256b:Number,
+* 	 				_creator_count:Number,
+* 	 				_verifier_count:Number,
+* 	 				_ok_threshold:Number,
+* 	 				_max_bba_steps:Number,
+* 	 				_gc1_delay:Number
+* 	 			},
+* 	 			sidechain_config:{
+* 	 				echo_contract_id:String,
+* 	 				echo_vote_method:String,
+* 	 				echo_sign_method:String,
+* 	 				echo_transfer_topic:String,
+* 	 				echo_transfer_ready_topic:String,
+* 	 				eth_contract_address:String,
+* 	 				eth_committee_method:String,
+* 	 				eth_transfer_topic:String,
+* 	 			},
+* 	 			gas_price:{
+* 	 				price:Number|String,
+* 	 				gas_amount:Number|String,
+* 	 			},
 * 	 			extensions:Array
 * 	 		},
 * 	 		next_available_vote_id:Number,
@@ -441,23 +466,25 @@ import { PublicKey } from '../crypto';
 *  	} ContractLogs */
 
 /** @typedef {
-*	{
-*  		exec_res:{
-*  			excepted:String,
-*  			new_address:String,
-*  			output:String,
-*  			code_deposit:String,
-*  			gas_refunded:String,
-*  			deposit_size:Number,
-*  			gas_for_deposit:String
-*  		},
-*  		tr_receipt:{
-*  			status_code:String,
-*  			gas_used:String,
-*  			bloom:String,
-*  			log:Array
+*	[0,
+*		{
+*  			exec_res:{
+*  				excepted:String,
+*  				new_address:String,
+*  				output:String,
+*  				code_deposit:String,
+*  				gas_refunded:String,
+*  				deposit_size:Number,
+*  				gas_for_deposit:String
+*  			},
+*  			tr_receipt:{
+*  				status_code:String,
+*  				gas_used:String,
+*  				bloom:String,
+*  				log:Array
+*  			}
 *  		}
-*  	}
+*	] | [1, { output: String }]
 *  	} ContractResult */
 
 
@@ -519,21 +546,27 @@ class API {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = array[i];
+		if (force) {
+			requestedObjectsKeys = array;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = array[i];
 
-			if (!force) {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
+		}
+
+		if (requestedObjectsKeys.length === 0) {
+			return resultArray;
 		}
 
 		let requestedObjects;
@@ -722,22 +755,25 @@ class API {
 		const { length } = array;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = array[i];
+		if (force) {
+			requestedObjectsKeys = array;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = array[i];
 
-			if (!force) {
 				const cacheValue = this.cache[cacheName].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
+
 
 		if (requestedObjectsKeys.length === 0) {
 			return resultArray;
@@ -776,6 +812,8 @@ class API {
 					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
 						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
 
+				} else if (isDynamicGlobalObjectId(key)) {
+					this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, requestedObject);
 				} else if (isWitnessId(key)) {
 
 					const accountId = requestedObject.get('witness_account');
@@ -1009,9 +1047,9 @@ class API {
      *  }
      */
 	async getDynamicGlobalProperties(force = false) {
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
+		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
-		return this._getConfigurations(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, 'getDynamicGlobalProperties', force);
+		return this.getObject(DYNAMIC_GLOBAL_OBJECT_ID, force);
 	}
 
 	/**
@@ -1047,21 +1085,24 @@ class API {
 		const { length } = accountIds;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = accountIds[i];
+		if (force) {
+			requestedObjectsKeys = accountIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = accountIds[i];
 
-			if (!force) {
 				const cacheValue = this.cache.objectsById.get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+
+				requestedObjectsKeys.push(key);
+			}
 		}
 
 		if (requestedObjectsKeys.length === 0) {
@@ -1123,27 +1164,28 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = accountNamesOrIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = accountNamesOrIds[i];
-			let cacheValue = null;
+				const key = accountNamesOrIds[i];
 
-			if (!force) {
 				let id = key;
 
 				if (!isAccountId(key)) {
 					id = this.cache.accountsByName.get(key);
 				}
 
-				cacheValue = this.cache.fullAccounts.get(id);
+				const cacheValue = this.cache.fullAccounts.get(id);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
 
 		if (requestedObjects.length === 0) {
@@ -1289,12 +1331,14 @@ class API {
 		const { length } = accountNames;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = accountNames[i];
+		if (force) {
+			requestedObjectsKeys = accountNames;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = accountNames[i];
 
-			if (!force) {
 				const id = this.cache.accountsByName.get(key);
 
 				const cacheValue = this.cache.objectsById.get(id);
@@ -1303,9 +1347,9 @@ class API {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
 
 		let requestedObjects;
@@ -1462,21 +1506,28 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = assetIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = assetIds[i];
+				const key = assetIds[i];
 
-			if (!force) {
 				const cacheValue = this.cache.assetByAssetId.get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
+
+		if (requestedObjects.length === 0) {
+			return resultArray;
+		}
+
 
 		try {
 			requestedObjects = await this.wsApi.database.getAssets(requestedObjects);
@@ -1546,11 +1597,13 @@ class API {
 		const resultArray = new Array(length).fill(null);
 		let requestedObjects = [];
 
-		for (let i = 0; i < length; i += 1) {
+		if (force) {
+			requestedObjects = symbolsOrIds;
+		} else {
+			for (let i = 0; i < length; i += 1) {
 
-			const key = symbolsOrIds[i];
+				const key = symbolsOrIds[i];
 
-			if (!force) {
 				let cacheValue = null;
 
 				if (isAssetId(key)) {
@@ -1563,10 +1616,11 @@ class API {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjects.push(key);
+				requestedObjects.push(key);
+			}
 		}
+
 
 		try {
 			requestedObjects = await this.wsApi.database.lookupAssetSymbols(requestedObjects);
@@ -1927,22 +1981,25 @@ class API {
 		const { length } = votes;
 
 		const resultArray = new Array(length).fill(null);
-		const requestedObjectsKeys = [];
+		let requestedObjectsKeys = [];
 
-		for (let i = 0; i < length; i += 1) {
-			const key = votes[i];
+		if (force) {
+			requestedObjectsKeys = votes;
+		} else {
+			for (let i = 0; i < length; i += 1) {
+				const key = votes[i];
 
-			if (!force) {
 				const cacheValue = this.cache[CacheMaps.OBJECTS_BY_VOTE_ID].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
 					continue;
 				}
-			}
 
-			requestedObjectsKeys.push(key);
+				requestedObjectsKeys.push(key);
+			}
 		}
+
 
 		let requestedObjects;
 
@@ -2183,22 +2240,11 @@ class API {
      *  @param  {String} contractId
      *  @param {Boolean} force
      *
-     *  @return {
-     *  	Promise.<{
-     *  		contract_info:{
-     *  			id:String,
-     *  			statistics:String,
-     *  			suicided:Boolean
-     *  		},
-     *  		code:String,
-     *  		storage:Array.<Array>
-     *      }>
-     *  }
+     *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
      */
 	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-
 		return this._getSingleDataWithMultiSave(
 			contractId,
 			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
@@ -2555,7 +2601,24 @@ class API {
 		return this.wsApi.asset.getAllAssetHolders();
 	}
 
-	setOptions() {}
+	/**
+	 *  @method getRecentTransactionById
+	 *
+	 * 	@param  {String} receiver
+	 *
+	 * 	@return {
+	 * 		Promise.<Array.<{
+	 * 			transfer_id: Number, receiver: String, amount: Number, signatures: String, withdraw_code: String
+	 * 		}>>
+	 * 	}
+	 */
+	getSidechainTransfers(receiver) {
+		if (!isEthereumAddress(receiver)) return Promise.reject(new Error('Invalid receiver address'));
+
+		return this.wsApi.database.getSidechainTransfers(receiver);
+	}
+
+	setOptions() { }
 
 }
 

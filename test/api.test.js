@@ -9,7 +9,8 @@ import { inspect } from 'util';
 import echo, { constants } from '../src';
 
 // const url = 'wss://echo-devnet-node.pixelplex.io/ws';
-const url = 'wss://testnet.echo-dev.io/ws';
+// const url = 'wss://testnet.echo-dev.io/ws';
+const url = 'ws://195.201.164.54:63101';
 
 describe('API', () => {
 	describe('ASSET API', () => {
@@ -18,7 +19,7 @@ describe('API', () => {
 				connectionTimeout: 5000,
 				maxRetries: 5,
 				pingTimeout: 3000,
-				pingInterval: 3000,
+				pingDelay: 10000,
 				debug: false,
 				apis: constants.WS_CONSTANTS.CHAIN_APIS,
 			});
@@ -64,7 +65,7 @@ describe('API', () => {
     describe('database', () => {
         const ws = new WS();
         beforeEach(async () => {
-            await ws.connect(url, { debug: false,  apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node']});
+            await ws.connect(url, { debug: false,  apis: constants.WS_CONSTANTS.CHAIN_APIS });
         });
         afterEach(async () => {
             await ws.close();
@@ -744,6 +745,22 @@ describe('API', () => {
 
                     const history = await api.getContractHistory(contractId, stop, limit, start);
                     expect(history).to.be.an('object');
+                } catch (e) {
+                    throw e;
+                }
+            }).timeout(5000);
+        });
+        describe('#getSidechainTransfers()', () => {
+            it('should get subchain transfer', async () => {
+                try {
+                    const wsApi = new WSAPI(ws);
+                    const cache = new Cache();
+                    const api = new API(cache, wsApi);
+
+                    const ethereumAddress = '17A686Cc581e0582e0213Ec49153Af6c1941CAc7';
+
+                    const history = await api.getSidechainTransfers(ethereumAddress);
+                    expect(history).to.be.an('array');
                 } catch (e) {
                     throw e;
                 }

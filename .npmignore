@@ -72,3 +72,5 @@ test
 .gitlab-ci.yml
 .idea
 package-lock.json
+# documents
+docs/

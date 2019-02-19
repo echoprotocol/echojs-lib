@@ -46,7 +46,7 @@ const vestingBalanceIdRegex = /^1\.13\.[1-9]\d*$/;
 const workerIdRegex = /^1\.14\.[1-9]\d*$/;
 const balanceIdRegex = /^1\.15\.[1-9]\d*$/;
 const contractIdRegex = /^1\.16\.(0|[1-9]\d*)$/;
-const contractResultIdRegex = /^1\.17\.[1-9]\d*$/;
+const contractResultIdRegex = /^1\.17\.(0|[1-9]\d*)$/;
 
 const dynamicGlobalObjectIdRegex = /^2.1.0$/;
 const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
@@ -58,7 +58,7 @@ const blockSummaryIdRegex = /^2\.8\.[1-9]\d*$/;
 const accountTransactionHistoryIdRegex = /^2\.9\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
-const bytecodeRegex = /^[\da-fA-F]{8}([\da-fA-F]{64})*$/;
+const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
 const voteIdTypeRegex = /^[0-3]{1}:[0-9]+/;
 
 const MAX_UINTX_VALUES = {
@@ -164,6 +164,8 @@ export const isBytes = (v, length) => isHex(v) && v.length === length * 2;
 export const isBytecode = (v) => isString(v) && bytecodeRegex.test(v);
 
 export const isRipemd160 = (v) => isHex(v) && v.length === 40;
+
+export const isEthereumAddress = (v) => isBytes(v, 20);
 
 export const isAssetName = (v) =>
 	!isEmpty(v) &&
@@ -301,8 +303,8 @@ export const validateOptionsError = (options) => {
 		errorParameter = 'maxRetries';
 	} else if (!(Number.isInteger(options.pingTimeout) || typeof options.pingTimeout === 'undefined')) {
 		errorParameter = 'pingTimeout';
-	} else if (!(Number.isInteger(options.pingInterval) || typeof options.pingInterval === 'undefined')) {
-		errorParameter = 'pingInterval';
+	} else if (!(Number.isInteger(options.pingDelay) || typeof options.pingDelay === 'undefined')) {
+		errorParameter = 'pingDelay';
 	} else if (!(typeof options.debug === 'boolean' || typeof options.debug === 'undefined')) {
 		errorParameter = 'debug';
 	} else if (!((Array.isArray(options.apis) && options.apis.every((api) => CHAIN_APIS.includes(api))) || typeof options.apis === 'undefined')) {

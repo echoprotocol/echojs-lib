@@ -2,20 +2,21 @@ import { strictEqual, ok } from 'assert';
 import BigNumber from 'bignumber.js';
 import ByteBuffer from 'bytebuffer';
 
-import { Echo } from '../../src';
+import { Echo, constants } from '../../src';
 import { transfer } from '../../src/echo/operations';
 import PublicKey from '../../src/crypto/public-key';
 import Transaction from '../../src/echo/transaction';
+
+const { OPERATIONS_IDS } = constants;
 
 const echo = new Echo();
 
 describe('transfer', () => {
 	before(() => echo.connect('wss://testnet.echo-dev.io/ws'));
 
-	// describe('failure creation', () => { });
 	describe('successful validation', () => {
 		it('full object', () => {
-			transfer.validate([0, {
+			transfer.validate([OPERATIONS_IDS.TRANSFER, {
 				fee: { asset_id: '1.3.1', amount: 20 },
 				from: '1.2.123',
 				to: '1.2.456',
@@ -29,6 +30,7 @@ describe('transfer', () => {
 			}]);
 		});
 	});
+
 	describe('converting to bytebuffer', () => {
 		it('minimal object', () => {
 			const transaction = new Transaction(echo.api);
@@ -41,7 +43,6 @@ describe('transfer', () => {
 			});
 			const result = transaction.toByteBuffer();
 			ok(result instanceof ByteBuffer);
-			console.log(result.toHex());
 			strictEqual(result.toHex(), '1400000000000000017bc8031e00000000000000020000');
 		});
 	});

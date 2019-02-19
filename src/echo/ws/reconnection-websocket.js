@@ -5,9 +5,11 @@ import {
 	CONNECTION_TIMEOUT,
 	MAX_RETRIES,
 	PING_TIMEOUT,
-	PING_INTERVAL,
+	PING_DELAY,
 	DEBUG,
 } from '../../constants/ws-constants';
+
+import { isVoid } from '../../utils/validators';
 
 class ReconnectionWebSocket {
 
@@ -17,7 +19,7 @@ class ReconnectionWebSocket {
 		this.onError = null;
 
 		this._currentRetry = 0;
-		this._pingIntervalId = null;
+		this._pingDelayId = null;
 		this._options = {};
 
 		this._cbId = 0;
@@ -35,7 +37,7 @@ class ReconnectionWebSocket {
 	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
 	 * @param {Number} options.maxRetries - max count retries before close socket.
 	 * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
-	 * @param {Number} options.pingInterval - interval in ms between ping requests.
+	 * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
 	 * @param {Boolean} options.debug - debug mode status.
 	 * @returns {Promise}
 	 */
@@ -52,12 +54,11 @@ class ReconnectionWebSocket {
 		}
 
 		this._options = {
-			connectionTimeout: typeof options.connectionTimeout === 'undefined' ?
-				CONNECTION_TIMEOUT : options.connectionTimeout,
-			maxRetries: typeof options.maxRetries === 'undefined' ? MAX_RETRIES : options.maxRetries,
-			pingTimeout: typeof options.pingTimeout === 'undefined' ? PING_TIMEOUT : options.pingTimeout,
-			pingInterval: typeof options.pingInterval === 'undefined' ? PING_INTERVAL : options.pingInterval,
-			debug: typeof options.debug === 'undefined' ? DEBUG : options.debug,
+			connectionTimeout: isVoid(options.connectionTimeout) ? CONNECTION_TIMEOUT : options.connectionTimeout,
+			maxRetries: isVoid(options.maxRetries) ? MAX_RETRIES : options.maxRetries,
+			pingTimeout: isVoid(options.pingTimeout) ? PING_TIMEOUT : options.pingTimeout,
+			pingDelay: isVoid(options.pingDelay) ? PING_DELAY : options.pingDelay,
+			debug: isVoid(options.debug) ? DEBUG : options.debug,
 		};
 
 		this.url = url;
@@ -107,9 +108,7 @@ class ReconnectionWebSocket {
 
 				if (this.onOpen) this.onOpen();
 
-				this._clearPingInterval();
-
-				this._pingIntervalId = setInterval(() => this._loginPing(), this._options.pingInterval);
+				this._setPingDelay();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
 				return true;
@@ -124,6 +123,9 @@ class ReconnectionWebSocket {
 				this._responseHandler(JSON.parse(message.data));
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
+
+				this._setPingDelay();
+
 				return true;
 			};
 
@@ -300,7 +302,7 @@ class ReconnectionWebSocket {
 		} else if (callback && sub) {
 			callback(response.params[1]);
 		} else {
-			console.log('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
+			this._debugLog('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
 		}
 	}
 
@@ -311,19 +313,17 @@ class ReconnectionWebSocket {
 	 * @param {Number} timeout - timeout before reject
 	 * @returns {Promise}
 	 */
-	login(user, password, timeout = this._options.connectionTimeout) {
+	login(user, password, timeout = this._options.pingTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
 	/**
-	 * clear ping interval
-	 * @private
+	 * 	update ping delay timeout
+	 *  @private
 	 */
-	_clearPingInterval() {
-		if (this._pingIntervalId) {
-			clearInterval(this._pingIntervalId);
-			this._pingIntervalId = null;
-		}
+	_setPingDelay() {
+		this._clearPingDelay();
+		this._pingDelayId = setTimeout(() => this._ping(), this._options.pingDelay);
 	}
 
 	/**
@@ -338,11 +338,14 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-	 * reset calls id
-	 * @private
+	 * 	clear ping delay timeout
+	 *  @private
 	 */
-	_resetId() {
-		this._cbId = 0;
+	_clearPingDelay() {
+		if (this._pingDelayId) {
+			clearTimeout(this._pingDelayId);
+			this._pingDelayId = null;
+		}
 	}
 
 	/**
@@ -358,13 +361,22 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-	 * make call for check connection
+	 * reset calls id
+	 * @private
 	 */
-	async _loginPing() {
+	_resetId() {
+		this._cbId = 0;
+	}
+
+	/**
+	 * make call for check connection
+	 * @private
+	 */
+	async _ping() {
 		try {
-			await this.login('', '', this._options.pingTimeout);
+			await this.login();
 		} catch (_) {
-			if (this.ws.readyState !== WebSocket.OPEN) return;
+			if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 			this._forceClose();
 		}
 	}
@@ -417,7 +429,7 @@ class ReconnectionWebSocket {
 		}
 
 		this._clearWaitingCallPromises();
-		this._clearPingInterval();
+		this._clearPingDelay();
 		this._clearReconnectionTimeout();
 		this._resetId();
 

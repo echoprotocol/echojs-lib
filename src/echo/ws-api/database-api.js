@@ -716,6 +716,17 @@ class DatabaseAPI {
 		return this.db.exec('get_recent_transaction_by_id', [transactionId]);
 	}
 
+	/**
+	 *  @method getRecentTransactionById
+	 *
+	 * 	@param  {String} receiver
+	 *
+	 * 	@return {Promise}
+	 */
+	getSidechainTransfers(receiver) {
+		return this.db.exec('get_sidechain_transfers', [receiver]);
+	}
+
 }
 
 export default DatabaseAPI;

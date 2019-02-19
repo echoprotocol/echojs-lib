@@ -6,6 +6,8 @@ import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
 import * as converters from './utils/converters';
+import serializer from './serializer';
+import Signature from './crypto/signature';
 
 require('buffer');
 
@@ -24,6 +26,8 @@ export {
 	converters,
 	aes,
 	hash,
+	Signature,
+	serializer,
 };
 
 export default new Echo();

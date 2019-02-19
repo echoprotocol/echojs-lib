@@ -75,5 +75,4 @@ export default class Api {
 
 	// FIXME: fix result type
 	getTransaction(blockNum: number, txIndex: number): Promise<any>;
-
 }
