@@ -321,11 +321,15 @@ class Subscriber extends EventEmitter {
 			if (this.cache.objectsById.get(object.id)) {
 
 				const mutableObj = obj.withMutations((map) => {
-					map.deleteAll([
+					const fieldsToDelete = [
 						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name',
 						'votes', 'balances', 'vesting_balances', 'limit_orders', 'call_orders',
 						'settle_orders', 'proposals', 'assets', 'withdraws',
-					]);
+					];
+
+					fieldsToDelete.forEach((field) => {
+						map.delete(field);
+					});
 				});
 
 				this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, mutableObj)
