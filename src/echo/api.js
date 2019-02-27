@@ -487,6 +487,33 @@ import { PublicKey } from '../crypto';
 *	] | [1, { output: String }]
 *  	} ContractResult */
 
+/** @typedef {
+*	{
+*  		block_num:Number,
+*  		id:String,
+*  		op:[
+*			Number,
+*			{
+*				amount:{
+*					amount:Number,
+*					asset_id:String
+*				},
+*				extensions: [],
+*				fee:{
+*					amount:Number,
+*					asset_id:String
+*				},
+*				from:String,
+*				to:String
+*			}
+*		],
+*  		op_in_trx:Number,
+*		result: [0, {}],
+*  		trx_in_block:Number,
+*  		virtual_op:Number
+*  	}
+* 	} ContractHistory */
+
 
 class API {
 
@@ -2472,7 +2499,7 @@ class API {
      *  @param {Number} limit     [count operations (max 100)]
      *  @param {String} start [Id of the most recent operation to retrieve]
      *
-     *  @return {Promise.<Array.<*>>}
+     *  @return {Promise.<Array.<ContractHistory>>}
      */
 	async getContractHistory(
 		contractId,

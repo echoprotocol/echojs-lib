@@ -159,7 +159,7 @@ try {
 <dd></dd>
 <dt><a href="#getContractHistory
  Get operations relevant to the specified account.">getContractHistory
- Get operations relevant to the specified account.(contractId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;*&gt;&gt;</code></dt>
+ Get operations relevant to the specified account.(contractId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractHistory&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#broadcastTransaction
 	Broadcast a transaction to the network.">broadcastTransaction
@@ -225,6 +225,8 @@ try {
 <dt><a href="#AccountId">AccountId</a> : <code>String</code></dt>
 <dd></dd>
 <dt><a href="#SidechainTransfer">SidechainTransfer</a> : <code>Object</code></dt>
+<dd></dd>
+<dt><a href="#ContractHistory">ContractHistory</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
 
@@ -848,7 +850,7 @@ try {
 
 <a name="getContractHistory"></a>
 
-## getContractHistory(contractId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;\*&gt;&gt;</code>
+## getContractHistory(contractId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;ContractHistory&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -1429,6 +1431,37 @@ or
     withdraw_code: String
 }
 ```
+
+## ContractHistory : <code>Object</code>
+<a name="ContractHistory"></a>
+
+```javascript
+{
+   block_num:Number,
+   id:String,
+   op:[
+       Number,
+       {
+           amount:{
+               amount: Number,
+               asset_id: String
+           },
+           extensions: [],
+           fee:{
+               amount:Number,
+               asset_id:String
+           },
+           from:String,
+           to:String
+       }
+   ],
+   op_in_trx:Number,
+   result: [0, {}],
+   trx_in_block:Number,
+   virtual_op:Number,
+}
+```
+
 ## AccountName : <code>String</code>
 <a name="AccountName"></a>
 
