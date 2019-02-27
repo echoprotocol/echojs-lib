@@ -2,7 +2,7 @@ import "mocha";
 
 import { constants } from "../../src/index";
 
-import { accountId } from "../_testAccount";
+import { accountId } from "../_test-data";
 
 import { assetCreate } from '../../src/echo/operations';
 

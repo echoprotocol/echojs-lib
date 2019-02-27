@@ -5,8 +5,7 @@ import WSAPI from '../src/echo/ws-api'
 import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
-// const url = 'wss:echo-devnet-node.pixelplex.io/ws';
-const url = 'wss://testnet.echo-dev.io/ws';
+import { url } from './_test-data';
 
 // describe('API', () => {
 // 	const ws = new WS();

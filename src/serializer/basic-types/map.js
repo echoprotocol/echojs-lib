@@ -48,11 +48,13 @@ class MapType extends Type {
 			if (!Array.isArray(element)) throw new Error('element of a value is not an array');
 			if (element.length !== 2) throw new Error('expected 2 subelements (key and value)');
 			const [key, elementValue] = element;
+
 			const keyByteBuffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
 			this.keyType.appendToByteBuffer(key, keyByteBuffer);
-			const keyBytes = keyByteBuffer.toString('binary');
+			const keyBytes = keyByteBuffer.copy(0, keyByteBuffer.offset).toString('binary');
 			if (keysSet.has(keyBytes)) throw new Error('keys duplicates');
 			keysSet.add(keyBytes);
+
 			this.valueType.validate(elementValue);
 		}
 	}

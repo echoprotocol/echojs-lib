@@ -153,6 +153,7 @@ export const accountCreate = operation(ACCOUNT_CREATE, {
 	name: string,
 	owner: authority,
 	active: authority,
+	ed_key: optional(bytes(32)),
 	options: accountOptions,
 	extensions: optional(empty),
 });
@@ -162,6 +163,7 @@ export const accountUpdate = operation(ACCOUNT_UPDATE, {
 	account: protocolId(ACCOUNT),
 	owner: optional(authority),
 	active: optional(authority),
+	ed_key: optional(bytes(32)),
 	new_options: optional(accountOptions),
 	extensions: optional(empty),
 });

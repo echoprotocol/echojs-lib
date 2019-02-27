@@ -6,6 +6,8 @@ import { combineReducers, createStore } from 'redux';
 
 import cacheReducer from '../src/redux/reducer'
 
+import { url } from './_test-data';
+
 const defaultReducer = (state = {}, { type, payload }) => type === 'SET' ? { ...state, ...payload } : state;
 
 describe('redux', () => {
@@ -73,7 +75,7 @@ describe('redux', () => {
         beforeEach(async () => {
             echo = new Echo();
             await echo.connect(
-                'wss://testnet.echo-dev.io/ws',
+                url,
                 {
                     apis: [
                         'database',
