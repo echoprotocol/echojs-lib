@@ -7,12 +7,14 @@ import { transfer } from '../../src/echo/operations';
 import PublicKey from '../../src/crypto/public-key';
 import Transaction from '../../src/echo/transaction';
 
+import { url } from '../_test-data';
+
 const { OPERATIONS_IDS } = constants;
 
 const echo = new Echo();
 
 describe('transfer', () => {
-	before(() => echo.connect('wss://testnet.echo-dev.io/ws'));
+	before(() => echo.connect(url));
 
 	describe('successful validation', () => {
 		it('full object', () => {

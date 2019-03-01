@@ -149,6 +149,40 @@ await echo
     .broadcast();
 ```
 
+
+#### Account update operation
+```javascript
+import echo, { constants, PrivateKey } from 'echolib-js';
+
+await echo.connect('ws://127.0.0.1:9000');
+
+const privateKey = PrivateKey
+	.fromWif('P5JtT3rnTcNfw4RhzDBCC99kDyr8k3YnDZ4m7LCCcRf6r');
+
+const options = {
+    fee: { // optional, default fee asset: 1.3.0, amount: will be calculated
+        asset_id: '1.3.0'        
+    },
+    account: '1.2.20',
+    ed_key: '342bb415d4dbefb4924e0d8a0c3041cc18c0c73fc077757197a937e5f9555eab', // optional
+    active: { // optional
+        weight_threshold: 1,
+        account_auths: [],
+        key_auths: [[
+            'ECHO4tmRW8HFwLSJR1wxPp5at3qeJ2XcfSwpKpAM6AQE8dZugqBtU7',
+            1
+          ]],
+        address_auths: []
+    }
+};
+
+await echo
+    .createTransaction()
+    .addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, options)
+    .addSigner(privateKey)
+    .broadcast();
+```
+
 You can add few operations and signers using this constructions:
 
 ```javascript

@@ -3,6 +3,8 @@ import spies from 'chai-spies';
 
 import echo, { Echo, constants } from '../src';
 
+import { url } from './_test-data';
+
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
@@ -10,7 +12,7 @@ describe('SUBSCRIBER', () => {
 
 	before(async () => {
 		await echo.connect(
-			'wss://testnet.echo-dev.io/ws',
+			url,
 			{
 				apis: [
 					'database',

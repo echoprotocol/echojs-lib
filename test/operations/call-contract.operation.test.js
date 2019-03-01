@@ -5,7 +5,7 @@ import { Echo, constants } from "../../src/index";
 
 import { options } from "./create-contract.operation.test";
 
-import { privateKey, accountId } from "../_testAccount";
+import { privateKey, accountId, url } from "../_test-data";
 
 const { OPERATIONS_IDS } = constants;
 
@@ -14,7 +14,7 @@ describe('call contract', () => {
 	/** @type {import("../../types/index").Echo} */
 	const echo = new Echo();
 
-	before(() => echo.connect(options.netAddress));
+	before(() => echo.connect(url));
 
 	after(() => echo.disconnect());
 

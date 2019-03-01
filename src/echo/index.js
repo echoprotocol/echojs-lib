@@ -14,6 +14,10 @@ class Echo {
 		this._isInitModules = false;
 	}
 
+	get isConnected() {
+		return this._ws._connected;
+	}
+
 	async connect(address, options = {}) {
 		if (this._ws._connected) throw new Error('Connected');
 		try {

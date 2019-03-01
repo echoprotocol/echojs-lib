@@ -8,9 +8,7 @@ import { inspect } from 'util';
 
 import echo, { constants } from '../src';
 
-// const url = 'wss://echo-devnet-node.pixelplex.io/ws';
-// const url = 'wss://testnet.echo-dev.io/ws';
-const url = 'ws://195.201.164.54:63101';
+import { url } from './_test-data';
 
 describe('API', () => {
 	describe('ASSET API', () => {

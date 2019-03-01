@@ -6,11 +6,14 @@ import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 
+import { url } from './_test-data';
+
+
 const echo = new Echo();
 
 describe('Transaction', () => {
 
-	before(() => echo.connect('wss://echo-dev.io/ws'));
+	before(() => echo.connect(url));
 
 	// describe('initialization', () => {
 	// 	it('echo is not instance of Echo', () => {
