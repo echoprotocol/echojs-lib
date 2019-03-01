@@ -9,7 +9,7 @@ import Transaction from '../../src/echo/transaction';
 
 import { url } from '../_test-data';
 
-const { OPERATIONS_IDS } = constants;
+const { OPERATIONS } = constants;
 
 const echo = new Echo();
 
@@ -18,7 +18,7 @@ describe('transfer', () => {
 
 	describe('successful validation', () => {
 		it('full object', () => {
-			transfer.validate([OPERATIONS_IDS.TRANSFER, {
+			transfer.validate([OPERATIONS.TRANSFER, {
 				fee: { asset_id: '1.3.1', amount: 20 },
 				from: '1.2.123',
 				to: '1.2.456',

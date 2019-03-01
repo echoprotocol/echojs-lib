@@ -9,7 +9,7 @@ import { assetCreate } from '../../src/echo/operations';
 describe('create asset', () => {
 	describe('successful validation', () => {
 		it('full object', () => {
-			assetCreate.validate([constants.OPERATIONS_IDS.ASSET_CREATE, {
+			assetCreate.validate([constants.OPERATIONS.ASSET_CREATE, {
                 fee: { asset_id: '1.3.0' },
                 issuer: accountId,
                 symbol: 'NEWASSET',

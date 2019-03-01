@@ -187,7 +187,7 @@ console.log(constants.CACHE_MAPS) // cache maps
 }
 */
     
-console.log(constants.OPERATIONS_IDS); // operation id
+console.log(constants.OPERATIONS); // operation id
 
 /*
 {

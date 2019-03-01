@@ -7,7 +7,7 @@ import { options } from "./create-contract.operation.test";
 
 import { privateKey, accountId, url } from "../_test-data";
 
-const { OPERATIONS_IDS } = constants;
+const { OPERATIONS } = constants;
 
 describe('call contract', () => {
 
@@ -20,7 +20,7 @@ describe('call contract', () => {
 
 	it('successful', async () => {
 		const result = await echo.createTransaction()
-            .addOperation(OPERATIONS_IDS.CALL_CONTRACT, {
+            .addOperation(OPERATIONS.CALL_CONTRACT, {
                 registrar: accountId,
                 value: {
                     asset_id: '1.3.0',

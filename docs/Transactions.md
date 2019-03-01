@@ -31,7 +31,7 @@ const options = {
     extensions: [],
 };
 
-tx.addOperation(constants.OPERATIONS_IDS.TRANSFER, options);
+tx.addOperation(constants.OPERATIONS.TRANSFER, options);
 
 tx.addSigner(privateKey);
 
@@ -61,7 +61,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, options)
+    .addOperation(constants.OPERATIONS.CREATE_CONTRACT, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -95,7 +95,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS.CALL_CONTRACT, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -144,7 +144,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.ASSET_CREATE, options)
+    .addOperation(constants.OPERATIONS.ASSET_CREATE, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -178,7 +178,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, options)
+    .addOperation(constants.OPERATIONS.ACCOUNT_UPDATE, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -188,9 +188,9 @@ You can add few operations and signers using this constructions:
 ```javascript
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS.TRANSFER, options)
+    .addOperation(constants.OPERATIONS.TRANSFER, options)
+    .addOperation(constants.OPERATIONS.CALL_CONTRACT, options)
     .addSigner(privateKey)
     .addSigner(privateKey)
     .addSigner(privateKey)
@@ -202,7 +202,7 @@ If you have only one signer you can reduce parts of code:
 ```javascript
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+    .addOperation(constants.OPERATIONS.TRANSFER, options)
     .broadcast(privateKey);
 ```
 
@@ -211,7 +211,7 @@ Or sign first and then broadcast:
 ```javascript
 const tr = await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
+    .addOperation(constants.OPERATIONS.TRANSFER, options)
     .sign(privateKey)
 await tr.broadcast();
 ```

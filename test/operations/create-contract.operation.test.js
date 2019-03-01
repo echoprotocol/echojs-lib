@@ -4,7 +4,7 @@ import { bytecode } from "./_contract.test";
 import { privateKey, accountId, url } from "../_test-data";
 import { Echo, constants } from "../../src/index";
 
-const { OPERATIONS_IDS } = constants;
+const { OPERATIONS } = constants;
 import { ECHO_ASSET_ID } from "../../src/constants";
 
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
@@ -24,7 +24,7 @@ describe('create contract', () => {
 	it('successful', async () => {
 		/** @type {import("../../types/index").Transaction} */
 		const tx = echo.createTransaction();
-		tx.addOperation(OPERATIONS_IDS.CREATE_CONTRACT, {
+		tx.addOperation(OPERATIONS.CREATE_CONTRACT, {
 			code: bytecode + options.startValue,
 			eth_accuracy: false,
 			registrar: accountId,

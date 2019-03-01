@@ -17,7 +17,7 @@ describe('operations', () => {
 		it('successful', async () => {
 
             const result = await echo.createTransaction()
-            .addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
+            .addOperation(constants.OPERATIONS.ACCOUNT_UPDATE, {
                 fee: { asset_id: '1.3.0' },
                 account: accountId,
                 ed_key: 'eaf7ac57fb67e9c5ca51e4b9c12a2741db7fe3035c54eec44c182b9bf75f1a55',
