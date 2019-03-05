@@ -153,7 +153,7 @@ export const accountCreate = operation(ACCOUNT_CREATE, {
 	name: string,
 	owner: authority,
 	active: authority,
-	ed_key: optional(bytes(32)),
+	ed_key: bytes(32),
 	options: accountOptions,
 	extensions: optional(empty),
 });
