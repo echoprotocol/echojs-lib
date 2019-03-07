@@ -47,6 +47,7 @@ export const authority = serializable({
 export const accountOptions = serializable({
 	memo_key: publicKey,
 	voting_account: protocolId(ACCOUNT),
+	delegating_account: protocolId(ACCOUNT),
 	num_witness: uint16,
 	num_committee: uint16,
 	votes: set(voteId),
