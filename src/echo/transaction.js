@@ -256,7 +256,7 @@ class Transaction {
 		});
 		this._signatures = this._signers.map(({ privateKey }) => {
 			const chainBuffer = Buffer.from(chainId, 'hex');
-			return Signature.signBuffer(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
+			return Signature.signSha256(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
 		});
 	}
 

@@ -7,12 +7,12 @@ import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
 import * as converters from './utils/converters';
 import serializer from './serializer';
-import Signature from './crypto/signature';
 
 require('buffer');
 
 export { default as BigNumber } from 'bignumber.js';
 export { OPERATIONS, CACHE_MAPS } from './constants';
+export { Signature } from './crypto';
 
 export {
 	Echo,
@@ -26,7 +26,6 @@ export {
 	converters,
 	aes,
 	hash,
-	Signature,
 	serializer,
 };
 
