@@ -59,7 +59,3 @@ export function HmacSHA256(buffer, secret) {
 export function ripemd160(data) {
 	return createHash('rmd160').update(data).digest();
 }
-
-export default {
-	sha1, sha256, sha512, HmacSHA256, ripemd160,
-};

@@ -1,9 +1,9 @@
-import AES from 'crypto-js/aes';
-import encHex from 'crypto-js/enc-hex';
-import encBase64 from 'crypto-js/enc-base64';
 import assert from 'assert';
-import { sha256, sha512 } from './hash';
+import AES from 'crypto-js/aes';
+import encBase64 from 'crypto-js/enc-base64';
+import encHex from 'crypto-js/enc-hex';
 
+import { sha256, sha512 } from './hash';
 
 /** Provides symetric encrypt and decrypt via AES. */
 class Aes {

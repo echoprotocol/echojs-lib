@@ -12,6 +12,7 @@ require('buffer');
 
 export { default as BigNumber } from 'bignumber.js';
 export { OPERATIONS, CACHE_MAPS } from './constants';
+export { Signature } from './crypto';
 
 export {
 	Echo,
@@ -25,7 +26,6 @@ export {
 	converters,
 	aes,
 	hash,
-	Signature,
 	serializer,
 };
 
