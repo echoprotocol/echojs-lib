@@ -59,9 +59,9 @@ export default class Signature {
 	 * @param {Buffer} hash
 	 * @param {PrivateKey} privateKey
 	 */
-	static signBufferSha256(hash, privateKey) {
+	static signHash(hash, privateKey) {
 		if (!Buffer.isBuffer(hash)) throw new Error('invalid hash type');
-		if (hash.length !== 32) throw new Error('invalid sha256 hash length');
+		if (hash.length !== 32) throw new Error('invalid hash length');
 		for (let nonce = 0; ; nonce += 1) {
 			if (nonce && !(nonce % 10)) console.warn(`[WARN]: ${nonce} attempts to find canonical signature`);
 			const ecs = sign(secp256k1, hash, privateKey.d, nonce);
@@ -81,9 +81,9 @@ export default class Signature {
 	 * @param {Buffer} buffer
 	 * @param {PrivateKey} privateKey
 	 */
-	static signBuffer(buffer, privateKey) {
+	static signBufferSha256(buffer, privateKey) {
 		const hash = sha256(buffer);
-		return Signature.signBufferSha256(hash, privateKey);
+		return Signature.signHash(hash, privateKey);
 	}
 
 	/** @returns {Buffer} */

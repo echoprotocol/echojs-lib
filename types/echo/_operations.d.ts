@@ -6,7 +6,7 @@ type uint64 = string | number;
 type bytes = Buffer | string;
 type publicKey = PublicKey | string;
 
-interface asset {
+interface AssetAmount {
 	asset_id: string;
 	amount: int64;
 }
@@ -20,10 +20,10 @@ interface MemoData {
 
 type OPERATION_PROPS = {
 	[OPERATIONS.TRANSFER]: {
-		fee?: asset,
+		fee?: AssetAmount,
 		from: string,
 		to: string,
-		amount: asset,
+		amount: AssetAmount,
 		memo?: MemoData,
 		extensions?: void,
 	},
@@ -41,9 +41,9 @@ type OPERATION_PROPS = {
 	[OPERATIONS.ASSET_UPDATE_BITASSET]: void,
 	[OPERATIONS.ASSET_UPDATE_FEED_PRODUCERS]: void,
 	[OPERATIONS.ASSET_ISSUE]: {
-		fee?: asset,
+		fee?: AssetAmount,
 		issuer: string,
-		asset_to_issue: asset,
+		asset_to_issue: AssetAmount,
 		issue_to_account: string,
 		extensions?: Set<void>,
 	},
@@ -80,21 +80,17 @@ type OPERATION_PROPS = {
 	[OPERATIONS.BID_COLLATERAL]: void,
 	[OPERATIONS.EXECUTE_BID]: void,
 	[OPERATIONS.CREATE_CONTRACT]: {
-		fee?: asset,
+		fee?: AssetAmount,
 		registrar: string,
-		value: asset,
-		gasPrice: uint64,
-		gas: uint64,
+		value: AssetAmount,
 		code: string,
 		eth_accuracy: boolean,
 		supported_asset_id?: string,
 	},
 	[OPERATIONS.CALL_CONTRACT]: {
-		fee?: asset,
+		fee?: AssetAmount,
 		registrar: string,
-		value: asset,
-		gasPrice: uint64,
-		gas: uint64,
+		value: AssetAmount,
 		code: string,
 		callee: string,
 	},
@@ -102,3 +98,4 @@ type OPERATION_PROPS = {
 }
 
 export default OPERATION_PROPS;
+export { AssetAmount };

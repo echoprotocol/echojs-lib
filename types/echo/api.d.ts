@@ -58,6 +58,7 @@ export default class Api {
 
 	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<Array<Array<string>>>;
 	getAccountBalances(accountId: string, assetsIds: Array<string>, force?: boolean): Promise<any>;
+	getChainId(force?: boolean): Promise<string>;
 	getContractResult(resultId: string, force?: boolean): Promise<[0, ContractResult]>;
 	getContract(contractId: string, force?: boolean): Promise<any>; // FIXME: result type
 
