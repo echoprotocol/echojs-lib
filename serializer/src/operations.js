@@ -532,6 +532,7 @@ Operations.account_options = new Serializer(
 	{
 		memo_key: public_key,
 		voting_account: protocol_id_type('account'),
+		delegating_account: protocol_id_type('account'),
 		num_witness: uint16,
 		num_committee: uint16,
 		votes: set(vote_id),
@@ -549,6 +550,7 @@ Operations.account_create = new Serializer(
 		name: string,
 		owner: Operations.authority,
 		active: Operations.authority,
+		ed_key: bytes(32),
 		options: Operations.account_options,
 		extensions: set(futureExtensions),
 	},
@@ -561,6 +563,7 @@ Operations.account_update = new Serializer(
 		account: protocol_id_type('account'),
 		owner: optional(Operations.authority),
 		active: optional(Operations.authority),
+		ed_key: optional(bytes(32)),
 		new_options: optional(Operations.account_options),
 		extensions: set(futureExtensions),
 	},
