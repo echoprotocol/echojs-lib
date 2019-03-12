@@ -13,9 +13,10 @@ declare module 'echojs-lib' {
 	}
 
 	export interface ChainStore_interface {
-		FetchChain(method: string, arg: any): Promise<{ toJS(): [any] }>;
+		FetchChain(method: string, arg: any): Promise<{ toJS(): any }>;
 		FetchChain(method: 'getAccountRefsOfKey', arg: string): Promise<{ toJS(): [string] }>;
-		FetchChain(method: 'getAsset', arg: '2.1.0'): Promise<{ toJS(): { head_block_number: number } }>
+		FetchChain(method: 'getAsset', arg: '2.1.0'): Promise<{ toJS(): { head_block_number: number } }>;
+		getObject(id: string): Promise<any>;
 		init(): Promise<void>;
         resetCache(): void;
         unsubscribe(callback: () => any): any;
