@@ -17,15 +17,15 @@ Launched echo node (https://github.com/echoprotocol/echo-core) with open port
 ## Usage
 
 ```javascript
-import echo from 'echojs-lib';
+const { default: echo } = require('echojs-lib');	
 
 await echo.connect('ws://127.0.0.1:9000');
 const account = await echo.api.getObject('1.2.0');
 ```
 
-You also can use it with require
+You also can use it with import
 ```javascript
-const { default: echo } = require('echojs-lib');	
+import echo from 'echojs-lib';
 
 await echo.connect('ws://127.0.0.1:9000');
 const account = await echo.api.getObject('1.2.0');
