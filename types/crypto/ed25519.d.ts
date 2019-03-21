@@ -1,3 +1,4 @@
 export default class ED25519 {
-    keyPairFromSeed(seed: string|Buffer): { privateKey:Uint8Array, publicKey:Uint8Array };
+    createKeyPair(): { privateKey:Buffer, publicKey:Buffer };
+    keyPairFromPrivateKey(privateKey: string|Buffer): { privateKey:Buffer, publicKey:Buffer };
 };
