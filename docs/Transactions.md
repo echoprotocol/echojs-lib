@@ -276,21 +276,13 @@ await echo
     .broadcast();
 ```
 
-If you have only one signer you can reduce parts of code:
-
-```javascript
-await echo
-    .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .broadcast(privateKey);
-```
-
 Or sign first and then broadcast:
 
 ```javascript
 const tr = await echo
     .createTransaction()
     .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .sign(privateKey)
+    .sign(privateKey);
+
 await tr.broadcast();
 ```
