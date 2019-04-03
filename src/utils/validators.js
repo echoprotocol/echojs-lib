@@ -208,7 +208,9 @@ export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) =
 };
 
 export const isAccountName = (v) => {
-	if (!isString(v)) return false;
+	if (!isString(v)) {
+		return false;
+	}
 
 	if (isEmpty(v)) {
 		return false;
@@ -226,7 +228,7 @@ export const isAccountName = (v) => {
 
 		const label = ref[i];
 
-		if (!(/^[a-z][a-z0-9-]*$/.test(label) && !/--/.test(label) && /[a-z0-9]$/.test(label))) {
+		if (!(/^[a-z][a-z0-9-]*[a-z0-9]$/.test(label) && label.length >= NAME_MIN_LENGTH)) {
 			return false;
 		}
 
@@ -264,17 +266,14 @@ export const checkAccountName = (value) => {
 
 	for (let i = 0; i < ref.length; i += 1) {
 		const label = ref[i];
-		if (!/^[~a-z]/.test(label)) {
-			return `${suffix} start with a letter.`;
+		if (!/^[a-z]/.test(label)) {
+			return `${suffix} start with a lowercase letter.`;
 		}
-		if (!/^[~a-z0-9-]*$/.test(label)) {
-			return `${suffix} have only letters, digits, or dashes.`;
-		}
-		if (/--/.test(label)) {
-			return `${suffix} have only one dash in a row.`;
+		if (!/^[a-z0-9-]*$/.test(label)) {
+			return `${suffix} have only lowercase letters, digits, or dashes.`;
 		}
 		if (!/[a-z0-9]$/.test(label)) {
-			return `${suffix} end with a letter or digit.`;
+			return `${suffix} end with a lowercase letter or digit.`;
 		}
 		if (!(label.length >= NAME_MIN_LENGTH)) {
 			return `${suffix} be longer.`;
@@ -290,8 +289,9 @@ export const checkAccountName = (value) => {
  * Check cheap name
  *
  * @param {String} name
+ * @deprecated
  */
-export const checkCheapName = (name) => /[0-9-]/.test(name) || !/[aeiouy]/.test(name);
+export const checkCheapName = (name) => /[a-z0-9-]/.test(name) || !/[aeiouy]/.test(name);
 
 export const validateOptionsError = (options) => {
 	if (!options || typeof options !== 'object') return 'Options should be an object';
