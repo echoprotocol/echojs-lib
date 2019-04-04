@@ -5,6 +5,11 @@ import { isFunction, isObject, isVoid } from '../utils/validators';
 
 class Cache {
 
+	/**
+	 * @constructor
+	 *
+	 * Init cache and redux
+	 */
 	constructor() {
 		this.isUsed = true;
 
@@ -15,6 +20,11 @@ class Cache {
 		this.reset();
 	}
 
+	/**
+	 * @method reset
+	 *
+	 * Reset cache and redux
+	 */
 	reset() {
 		this.subbedAccounts = new Map();
 		this.subbedWitnesses = new Map();
@@ -82,6 +92,16 @@ class Cache {
 		}
 	}
 
+	/**
+	 * @method setInMap
+	 *
+	 * Set in cache and redux
+	 *
+	 * @param {Object} map
+	 * @param {String} key
+	 * @param {Object} value
+	 * @returns {Cache}
+	 */
 	setInMap(map, key, value) {
 		if (this.isUsed) {
 			this.set(map, this[map].set(key, value));
@@ -89,6 +109,15 @@ class Cache {
 		return this;
 	}
 
+	/**
+	 * @method set
+	 *
+	 * Set field in cache and redux
+	 *
+	 * @param {String} field
+	 * @param {Object} value
+	 * @returns {Cache}
+	 */
 	set(field, value) {
 		if (this.isUsed) {
 			this[field] = value;
@@ -106,9 +135,21 @@ class Cache {
 	}
 
 	/**
+	 * @method removeRedux
 	 *
-     * @param {Object} store
-     */
+	 * Reset redux object
+	 */
+	removeRedux() {
+		this.redux.store = null;
+	}
+
+	/**
+	 * @method setStore
+	 *
+	 * Reset redux object
+	 *
+	 * @param {Object} store
+	 */
 	setStore({ store }) {
 		if (isVoid(store)) return;
 
@@ -120,6 +161,13 @@ class Cache {
 		this._copyCacheToRedux();
 	}
 
+	/**
+	 * @method setStore
+	 *
+	 * Set redux store options
+	 *
+	 * @param {Object} options
+	 */
 	setOptions(options) {
 
 		if (!isObject(options)) return;
