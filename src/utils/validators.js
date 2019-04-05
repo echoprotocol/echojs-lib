@@ -228,7 +228,7 @@ export const isAccountName = (v) => {
 
 		const label = ref[i];
 
-		if (!(/^[a-z][a-z0-9-]*[a-z0-9]$/.test(label) && label.length >= NAME_MIN_LENGTH)) {
+		if (!(/^[a-z][a-z0-9-]*$/.test(label) && label.length >= NAME_MIN_LENGTH)) {
 			return false;
 		}
 
