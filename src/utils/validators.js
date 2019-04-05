@@ -75,7 +75,7 @@ const MAX_INTX_VALUES = {
 	8: new BN(2).pow(7).minus(1),
 };
 
-const NAME_MIN_LENGTH = 3;
+const NAME_MIN_LENGTH = 1;
 const NAME_MAX_LENGTH = 63;
 
 export const validateUrl = (url) => urlRegex.test(String(url));
