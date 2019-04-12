@@ -11,7 +11,7 @@ import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
-import { EXPIRATION_MAX_LAG_SECONDS } from '../constants/api-config';
+import { EXPIRATION_SECONDS } from '../constants/api-config';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -225,12 +225,7 @@ class Transaction {
 		const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 		if (this.expiration === undefined) {
 			const headBlockTimeSeconds = Math.ceil(new Date(`${dynamicGlobalChainData.time}Z`).getTime() / 1000);
-			const nowSeconds = Math.ceil(new Date().getTime() / 1000);
-			// the head block time should be updated every 3 seconds
-			// if it isn't then help the transaction to expire (using head_block_sec)
-			// if the user's clock is very far behind, use the head block time.
-			this.expiration = nowSeconds - headBlockTimeSeconds > EXPIRATION_MAX_LAG_SECONDS ?
-				headBlockTimeSeconds : Math.max(nowSeconds, headBlockTimeSeconds);
+			this.expiration = headBlockTimeSeconds + EXPIRATION_SECONDS;
 		}
 		const chainId = await this.api.getChainId();
 		// one more check to avoid that the sign method was called several times

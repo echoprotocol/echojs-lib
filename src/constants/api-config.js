@@ -34,4 +34,4 @@ export const ORDER_BOOK_MAX_DEPTH = 50;
 export const START_OPERATION_HISTORY_ID = '1.11.0';
 export const STOP_OPERATION_HISTORY_ID = '1.11.0';
 
-export const EXPIRATION_MAX_LAG_SECONDS = 30;
+export const EXPIRATION_SECONDS = 5 * 60;
