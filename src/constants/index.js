@@ -4,7 +4,7 @@ import WS_CONSTANTS from './ws-constants';
 import * as OPERATIONS_IDS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
 
-export const START_OPERATION_ID = '1.11.0';
+export const START_OPERATION_ID = '1.10.0';
 export const CORE_ASSET_ID = '1.3.0';
 
 export const ECHORAND_TYPES = {
