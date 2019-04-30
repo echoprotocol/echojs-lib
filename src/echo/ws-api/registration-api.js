@@ -13,6 +13,7 @@ class RegistrationAPI {
 	/**
      *  @method registerAccount
      *
+	 *  @param  {Function} callback
      *  @param  {String} name
      * 	@param  {String} ownerKey
      * 	@param  {String} activeKey
@@ -21,8 +22,8 @@ class RegistrationAPI {
      *
      *  @return {Promise}
      */
-	registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) {
-		return this.db.exec('register_account', [name, ownerKey, activeKey, memoKey, echoRandKey]);
+	registerAccount(callback, name, ownerKey, activeKey, memoKey, echoRandKey) {
+		return this.db.exec('register_account', [callback, name, ownerKey, activeKey, memoKey, echoRandKey]);
 	}
 
 }

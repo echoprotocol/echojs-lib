@@ -727,6 +727,17 @@ class DatabaseAPI {
 		return this.db.exec('get_sidechain_transfers', [receiver]);
 	}
 
+	/**
+	 *  @method getBalanceObjects
+	 *
+	 *  @param  {Array<String>} keys [public keys]
+	 *
+	 * 	@return {Promise}
+	 */
+	getBalanceObjects(keys) {
+		return this.db.exec('get_balance_objects', [keys]);
+	}
+
 }
 
 export default DatabaseAPI;

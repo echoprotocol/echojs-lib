@@ -477,7 +477,7 @@ class Subscriber extends EventEmitter {
 			}
 		}
 
-		if (isProposalId(object.id)) {
+		if (isProposalId(object.id) && object.required_active_approvals) {
 			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
 				let impactedAccount = this.cache.fullAccounts.get(id);
 				if (impactedAccount) {

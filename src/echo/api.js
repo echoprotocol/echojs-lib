@@ -2386,17 +2386,25 @@ class API {
      * 	@param  {String} activeKey
      * 	@param  {String} memoKey
      * 	@param  {String} echoRandKey
+	 *  @param  {Function} wasBroadcastedCallback
      *
      *  @return {Promise.<null>}
      */
-	async registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) {
+	async registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(ownerKey)) throw new Error('Owner public key is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
-		if (!isPublicKey(memoKey)) throw new Error('Memo public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.registration.registerAccount((res) =>
+					resolve(res), name, ownerKey, activeKey, memoKey, echoRandKey);
+			} catch (error) {
+				reject(error);
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
 
-		return this.wsApi.registration.registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey);
 	}
 
 	/**
@@ -2643,6 +2651,17 @@ class API {
 		if (!isEthereumAddress(receiver)) return Promise.reject(new Error('Invalid receiver address'));
 
 		return this.wsApi.database.getSidechainTransfers(receiver);
+	}
+
+	/**
+	 *
+	 * @param {Object} keys
+	 * @return {*}
+	 */
+	getBalanceObjects(keys) {
+		if (!isArray(keys)) return Promise.reject(new Error('Invalid keys'));
+
+		return this.wsApi.database.getBalanceObjects(keys);
 	}
 
 	setOptions() { }

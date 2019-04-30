@@ -141,7 +141,7 @@ try {
 <dd></dd>
 <dt><a href="#getRecentTransactionById">getRecentTransactionById(transactionId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#registerAccount">registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey)</a> ⇒ <code>Promise.&lt;null&gt;</code></dt>
+<dt><a href="#registerAccount">registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;Array&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
@@ -800,7 +800,7 @@ try {
 
 <a name="registerAccount"></a>
 
-## registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey) ⇒ <code>Promise.&lt;null&gt;</code>
+## registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;Array&gt;</code>
 **Kind**: global function
 
 | Param | Type |
