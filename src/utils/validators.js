@@ -59,7 +59,7 @@ const accountTransactionHistoryIdRegex = /^2\.9\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
-const voteIdTypeRegex = /^[0-3]{1}:[0-9]+/;
+const voteIdTypeRegex = /^[0]{1}:[0-9]+/;
 
 const MAX_UINTX_VALUES = {
 	64: new BN(2).pow(64).minus(1),

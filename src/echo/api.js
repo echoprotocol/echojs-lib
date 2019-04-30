@@ -110,7 +110,6 @@ import { PublicKey } from '../crypto';
 *  		chain_id:String,
 *  		immutable_parameters:{
 *  			min_committee_member_count:Number,
-*  			min_witness_count:Number,
 *  			num_special_accounts:Number,
 *  			num_special_assets:Number
 *  		}
@@ -178,8 +177,7 @@ import { PublicKey } from '../crypto';
 * 	 			extensions:Array
 * 	 		},
 * 	 		next_available_vote_id:Number,
-* 	 		active_committee_members:Array.<String>,
-* 	 		active_witnesses:Array.<String>
+* 	 		active_committee_members:Array.<String>
 *      }
 *  	} GlobalProperties */
 
@@ -270,10 +268,9 @@ import { PublicKey } from '../crypto';
 *  		head_block_number:Number,
 *  		head_block_id:String,
 *  		time:String,
-*  		current_witness:String,
 *  		next_maintenance_time:String,
 *  		last_budget_time:String,
-*  		witness_budget:Number,
+*  		committee_budget:Number,
 *  		accounts_registered_this_interval:Number,
 *  		recently_missed_count:Number,
 *  		current_aslot:Number,

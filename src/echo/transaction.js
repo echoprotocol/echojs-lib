@@ -227,6 +227,7 @@ class Transaction {
 			const headBlockTimeSeconds = Math.ceil(new Date(`${dynamicGlobalChainData.time}Z`).getTime() / 1000);
 			this.expiration = headBlockTimeSeconds + EXPIRATION_SECONDS;
 		}
+
 		const chainId = await this.api.getChainId();
 		// one more check to avoid that the sign method was called several times
 		// without waiting for the first call to be executed
@@ -249,10 +250,12 @@ class Transaction {
 			operations: this.operations,
 			extensions: [],
 		});
+
 		this._signatures = this._signers.map(({ privateKey }) => {
 			const chainBuffer = Buffer.from(chainId, 'hex');
 			return Signature.signBuffer(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
 		});
+
 	}
 
 	/**
@@ -274,7 +277,7 @@ class Transaction {
 	}
 
 	/**
-	 * @readonly
+	 , add	 * @readonly
 	 * @type {import('../serializer/transaction-type').SignedTransactionObject}
 	 */
 	get transactionObject() {
@@ -295,6 +298,7 @@ class Transaction {
 	 */
 	async broadcast(wasBroadcastedCallback) {
 		if (!this.finalized) await this.sign();
+		console.log('this.transactionObject', this.transactionObject);
 		return this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
 	}
 

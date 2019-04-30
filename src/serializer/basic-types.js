@@ -17,6 +17,7 @@ export { default as map } from './basic-types/map';
 export { default as objectId } from './basic-types/object-id';
 export { default as optional } from './basic-types/optional';
 export { default as publicKey } from './basic-types/public-key-type';
+export { default as publicKeyECDSA } from './basic-types/public-key-type-ecdsa';
 export { default as set } from './basic-types/set';
 export { default as staticVariant } from './basic-types/static-variant';
 export { default as string } from './basic-types/string';

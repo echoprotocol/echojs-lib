@@ -4,13 +4,13 @@ import serializable from './serializable';
 import { ACCOUNT, ASSET, CONTRACT } from '../constants/object-types';
 
 import {
-	address,
 	bytes,
 	empty,
 	int64,
 	map,
 	protocolId,
 	publicKey,
+	publicKeyECDSA,
 	set,
 	string,
 	uint8,
@@ -19,7 +19,6 @@ import {
 	uint64,
 	voteId,
 	bool,
-	optional,
 } from './basic-types';
 
 export { default as predicate } from './predicate';
@@ -41,14 +40,12 @@ export const authority = serializable({
 	weight_threshold: uint32,
 	account_auths: map(protocolId(ACCOUNT), uint16),
 	key_auths: map(publicKey, uint16),
-	address_auths: map(address, uint16),
 });
 
 export const accountOptions = serializable({
-	memo_key: publicKey,
+	memo_key: publicKeyECDSA,
 	voting_account: protocolId(ACCOUNT),
 	delegating_account: protocolId(ACCOUNT),
-	num_witness: uint16,
 	num_committee: uint16,
 	votes: set(voteId),
 	extensions: set(empty),
@@ -129,7 +126,6 @@ export const chainParameters = serializable({
 	maximum_proposal_lifetime: uint32,
 	maximum_asset_whitelist_authorities: uint8,
 	maximum_asset_feed_publishers: uint8,
-	maximum_witness_count: uint16,
 	maximum_committee_count: uint16,
 	maximum_authority_membership: uint16,
 	reserve_percent_of_fee: uint16,
@@ -139,8 +135,6 @@ export const chainParameters = serializable({
 	cashback_vesting_threshold: int64,
 	count_non_member_votes: bool,
 	allow_non_member_whitelists: bool,
-	witness_pay_per_block: int64,
-	worker_budget_per_day: int64,
 	max_predicate_opcode: uint16,
 	fee_liquidation_threshold: int64,
 	accounts_per_fee_scale: uint16,
@@ -150,20 +144,4 @@ export const chainParameters = serializable({
 	sidechain_config: sidechainConfig,
 	gas_price: gasPrice,
 	extensions: set(empty),
-});
-
-export const blindOutput = serializable({
-	commitment: bytes(33),
-	range_proof: bytes(),
-	owner: authority,
-	stealth_memo: optional(serializable({
-		one_time_key: publicKey,
-		to: optional(publicKey),
-		encrypted_memo: bytes(),
-	})),
-});
-
-export const blindInput = serializable({
-	commitment: bytes(33),
-	owner: authority,
 });

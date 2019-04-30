@@ -53,6 +53,7 @@ class Serializable extends Type {
 	 * @returns {{[key:string]:*}}
 	 */
 	toObject(serializedObject) {
+
 		if (typeof serializedObject !== 'object' || serializedObject === null) {
 			throw new Error('invalid serializedObject type');
 		}

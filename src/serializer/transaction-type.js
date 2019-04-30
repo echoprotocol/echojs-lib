@@ -27,7 +27,7 @@ export const signedTransaction = serializable({
 	expiration: timePointSec,
 	operations: array(operationWrapper),
 	extensions: set(empty),
-	signatures: array(bytes(65)),
+	signatures: array(bytes(64)),
 });
 
 export default transaction;

@@ -1,57 +1,17 @@
-import BigInteger from 'bigi';
-import { getCurveByName } from 'ecurve';
+import * as ed25519 from 'ed25519.js';
 
 import { sha256 } from './hash';
-import { sign, calcPubKeyRecoveryParam } from './ecdsa';
 
 /** @typedef {import('./private-key').default} PrivateKey */
 
-const secp256k1 = getCurveByName('secp256k1');
 
 export default class Signature {
 
 	/**
-	 * @readonly
-	 * @type {BigInteger}
+	 * @param {Buffer} signature
 	 */
-	get r() { return this._r.clone(); }
-
-	/**
-	 * @readonly
-	 * @type {BigInteger}
-	 */
-	get s() { return this._s.clone(); }
-
-	/**
-	 * @readonly
-	 * @type {number}
-	 */
-	get i() { return this._i; }
-
-	/**
-	 * @param {BigInteger} r
-	 * @param {BigInteger} s
-	 * @param {number} i
-	 */
-	constructor(r, s, i) {
-		/**
-		 * @private
-		 * @readonly
-		 * @type {BigInteger}
-		 */
-		this._r = r.clone();
-		/**
-		 * @private
-		 * @readonly
-		 * @type {BigInteger}
-		 */
-		this._s = s.clone();
-		/**
-		 * @private
-		 * @readonly
-		 * @type {number}
-		 */
-		this._i = i;
+	constructor(signature) {
+		this.signat = signature;
 	}
 
 	/**
@@ -62,18 +22,8 @@ export default class Signature {
 	static signBufferSha256(hash, privateKey) {
 		if (!Buffer.isBuffer(hash)) throw new Error('invalid hash type');
 		if (hash.length !== 32) throw new Error('invalid sha256 hash length');
-		for (let nonce = 0; ; nonce += 1) {
-			if (nonce && !(nonce % 10)) console.warn(`[WARN]: ${nonce} attempts to find canonical signature`);
-			const ecs = sign(secp256k1, hash, privateKey.d, nonce);
-			const der = ecs.toDER();
-			const lenR = der[3];
-			const lenS = der[5 + lenR];
-			if ([lenR, lenS].every((len) => len === 32)) {
-				const e = BigInteger.fromBuffer(hash);
-				const i = calcPubKeyRecoveryParam(secp256k1, e, ecs, privateKey.toPublicKey().Q) + 31;
-				return new Signature(ecs.r, ecs.s, i);
-			}
-		}
+		const signat = ed25519.sign(hash, privateKey.toPublicKey().toBuffer(), privateKey.toBuffer());
+		return new Signature(signat);
 	}
 
 	/**
@@ -88,11 +38,7 @@ export default class Signature {
 
 	/** @returns {Buffer} */
 	toBuffer() {
-		const result = Buffer.alloc(65);
-		result.writeUInt8(this.i, 0);
-		this.r.toBuffer(32).copy(result, 1);
-		this.s.toBuffer(32).copy(result, 33);
-		return result;
+		return this.signat;
 	}
 
 }
