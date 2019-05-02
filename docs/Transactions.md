@@ -1,7 +1,7 @@
 ### Transactions
 Using transaction builder you can build and broadcast transaction.
 
-#### Transfer with memo 
+#### Transfer with memo
 ```javascript
 import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
 
@@ -38,7 +38,7 @@ tx.addSigner(privateKey);
 await tx.broadcast(() => console.log('was broadcasted'));
 ```
 
-#### Account create 
+#### Account create
 ```javascript
 import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
 
@@ -77,7 +77,6 @@ const options = {
         memo_key: "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
         voting_account: "1.2.1",
         delegating_account: "1.2.1",
-        num_witness: 0,
         num_committee: 0,
         votes: [],
         extensions: [],
@@ -92,7 +91,7 @@ await tx.broadcast();
 
 ```
 
-#### Account upgrade 
+#### Account upgrade
 ```javascript
 import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
 
@@ -125,7 +124,7 @@ await echo.connect('ws://127.0.0.1:9000');
 const privateKey = PrivateKey
 	.fromWif('P5JtT3rnTcNfw4RhzDBCC99kDyr8k3YnDZ4m7LCCcRf6r');
 
-const bytecode = '...'; // contract bytecode 
+const bytecode = '...'; // contract bytecode
 const constructorParameters = '...'; // constructor parameters
 
 const options = {
@@ -155,7 +154,7 @@ const privateKey = PrivateKey
 	.fromWif('P5JtT3rnTcNfw4RhzDBCC99kDyr8k3YnDZ4m7LCCcRf6r');
 
 const method = '...'; // method
-const methodParameters = '...'; // parameters 
+const methodParameters = '...'; // parameters
 
 const contractId = '1.16.20';
 

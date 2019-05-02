@@ -20,7 +20,6 @@ import {
 	isRipemd160,
 	isPublicKey,
 	isVoteId,
-	isWitnessId,
 	isCommitteeMemberId,
 	isBitAssetId,
 	isDynamicAssetDataId,
@@ -45,7 +44,6 @@ import { PublicKey } from '../crypto';
 *	{
 *  		previous:String,
 *  		timestamp:String,
-*  		witness:String,
 *  		account:String,
 *  		transaction_merkle_root:String,
 *  		state_root_hash:String,
@@ -58,15 +56,12 @@ import { PublicKey } from '../crypto';
 *	{
 *  		previous:String,
 *  		timestamp:String,
-*  		witness:String,
 *  		account:String,
 *  		transaction_merkle_root:String,
 *  		state_root_hash:String,
 *  		result_root_hash:String,
 *  		extensions:Array,
-*  		witness_signature:String,
 *  		ed_signature:String,
-*  		verifications:Array,
 *  		round:Number,
 *  		rand:String,
 *  		cert:{
@@ -134,7 +129,6 @@ import { PublicKey } from '../crypto';
 * 	 			maximum_proposal_lifetime:Number,
 * 	 			maximum_asset_whitelist_authorities:Number,
 * 	 			maximum_asset_feed_publishers:Number,
-* 	 			maximum_witness_count:Number,
 * 	 			maximum_committee_count:Number,
 * 	 			maximum_authority_membership:Number,
 * 	 			reserve_percent_of_fee:Number,
@@ -144,8 +138,6 @@ import { PublicKey } from '../crypto';
 * 	 			cashback_vesting_threshold:Number,
 * 	 			count_non_member_votes:Boolean,
 * 	 			allow_non_member_whitelists:Boolean,
-* 	 			witness_pay_per_block:Number,
-* 	 			worker_budget_per_day:String,
 * 	 			max_predicate_opcode:Number,
 * 	 			fee_liquidation_threshold:Number,
 * 	 			accounts_per_fee_scale:Number,
@@ -227,7 +219,6 @@ import { PublicKey } from '../crypto';
 *  		ECHO_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,
 *  		ECHO_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,
 *  		ECHO_DEFAULT_MARGIN_PERIOD_SEC:Number,
-*  		ECHO_DEFAULT_MAX_WITNESSES:Number,
 *  		ECHO_DEFAULT_MAX_COMMITTEE:Number,
 *  		ECHO_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
 *  		ECHO_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
@@ -239,23 +230,17 @@ import { PublicKey } from '../crypto';
 *  		ECHO_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
 *  		ECHO_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
 *  		ECHO_DEFAULT_BURN_PERCENT_OF_FEE:Number,
-*  		ECHO_WITNESS_PAY_PERCENT_PRECISION:Number,
 *  		ECHO_DEFAULT_MAX_ASSERT_OPCODE:Number,
 *  		ECHO_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
 *  		ECHO_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
 *  		ECHO_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
-*  		ECHO_MAX_WORKER_NAME_LENGTH:Number,
 *  		ECHO_MAX_URL_LENGTH:Number,
 *  		ECHO_NEAR_SCHEDULE_CTR_IV:String,
 *  		ECHO_FAR_SCHEDULE_CTR_IV:String,
 *  		ECHO_CORE_ASSET_CYCLE_RATE:Number,
 *  		ECHO_CORE_ASSET_CYCLE_RATE_BITS:Number,
-*  		ECHO_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,
-*  		ECHO_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,
-*  		ECHO_DEFAULT_WORKER_BUDGET_PER_DAY:String,
 *  		ECHO_MAX_INTEREST_APR:Number,
 *  		ECHO_COMMITTEE_ACCOUNT:String,
-*  		ECHO_WITNESS_ACCOUNT:String,
 *  		ECHO_RELAXED_COMMITTEE_ACCOUNT:String,
 *  		ECHO_NULL_ACCOUNT:String,
 *  		ECHO_TEMP_ACCOUNT:String
@@ -279,22 +264,6 @@ import { PublicKey } from '../crypto';
 *  		last_irreversible_block_num:Number
 *  	}
 *  	} DynamicGlobalProperties */
-
-/** @typedef {
-* 	{
-*  		id:String,
-*  		witness_account:String,
-*  		last_aslot:Number,
-*  		signing_key:String,
-*  		pay_vb:String,
-*  		vote_id:String,
-*  		total_votes:Number,
-*  		url:String,
-*  		total_missed:Number,
-*  		last_confirmed_block_num:Number,
-*  		ed_signing_key:String
-*  	}
-*  	} Witness */
 
 /** @typedef {
 * 	{
@@ -334,7 +303,6 @@ import { PublicKey } from '../crypto';
 * 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
-* 					num_witness:Number,
 * 					num_committee:Number,
 * 					votes:Array,
 * 					extensions:Array
@@ -390,7 +358,6 @@ import { PublicKey } from '../crypto';
 * 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
-* 					num_witness:Number,
 * 					num_committee:Number,
 * 					votes:Array,
 * 					extensions:Array
@@ -441,7 +408,6 @@ import { PublicKey } from '../crypto';
 *	{
 *  		id:String,
 *  		committee_member_account:(String|undefined),
-*  		witness_account:(String|undefined),
 *  		vote_id:String,
 *  		total_votes:Number,
 *  		url:String,
@@ -838,15 +804,6 @@ class API {
 
 				} else if (isDynamicGlobalObjectId(key)) {
 					this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, requestedObject);
-				} else if (isWitnessId(key)) {
-
-					const accountId = requestedObject.get('witness_account');
-					const voteId = requestedObject.get('vote_id');
-
-					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, voteId, requestedObject)
-						.setInMap(CacheMaps.WITNESS_BY_ACCOUNT_ID, accountId, requestedObject)
-						.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, key, requestedObject);
-
 				} else if (isCommitteeMemberId(key)) {
 
 					const accountId = requestedObject.get('committee_member_account');
@@ -1811,92 +1768,6 @@ class API {
 	}
 
 	/**
-     *  @method getWitnesses
-     *
-     *  @param  {Array<String>} witnessIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Witness>>}
-     */
-	getWitnesses(witnessIds, force = false) {
-		if (!isArray(witnessIds)) return Promise.reject(new Error('Witness ids should be an array'));
-		if (!witnessIds.every((id) => isWitnessId(id))) {
-			return Promise.reject(new Error('Witness ids should contain valid object ids'));
-		}
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-
-		const cacheParams = [
-			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
-			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
-			{ param: 'witness_account', cache: CacheMaps.WITNESS_BY_ACCOUNT_ID },
-		];
-
-		return this._getArrayDataWithMultiSave(
-			witnessIds,
-			CacheMaps.WITNESS_BY_WITNESS_ID,
-			'getWitnesses',
-			force,
-			cacheParams,
-		);
-	}
-
-	/**
-     *  @method getWitnessByAccount
-     *
-     *  @param  {String} accountId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Witness>}
-     */
-	getWitnessByAccount(accountId, force = false) {
-		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-
-		const cacheParams = [
-			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
-			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
-			{ param: 'id', cache: CacheMaps.WITNESS_BY_WITNESS_ID },
-		];
-
-		return this._getSingleDataWithMultiSave(
-			accountId,
-			CacheMaps.WITNESS_BY_ACCOUNT_ID,
-			'getWitnessByAccount',
-			force,
-			cacheParams,
-		);
-	}
-
-	/**
-     *  @method lookupWitnessAccounts
-     *
-     *  @param  {String} lowerBoundName
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
-	async lookupWitnessAccounts(
-		lowerBoundName,
-		limit = ApiConfig.LOOKUP_WITNESS_ACCOUNTS_DEFAULT_LIMIT,
-	) {
-		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.LOOKUP_WITNESS_ACCOUNTS_MAX_LIMIT}`);
-		}
-
-		return this.wsApi.database.lookupWitnessAccounts(lowerBoundName, limit);
-	}
-
-	/**
-     *  @method getWitnessCount
-     *
-     *  @return {Promise.<Number>}
-     */
-	getWitnessCount() {
-		return this.wsApi.database.getWitnessCount();
-	}
-
-	/**
      *  @method getCommitteeMembers
      *
      *  @param  {Array<String>} committeeMemberIds
@@ -1976,19 +1847,6 @@ class API {
 	}
 
 	/**
-     *  @method getWorkersByAccount
-     *
-     *  @param  {String} accountId
-     *
-     *  @return {Promise.<*>}
-     */
-	async getWorkersByAccount(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsApi.database.getWorkersByAccount(accountId);
-	}
-
-	/**
      *  @method lookupVoteIds
      *
      *  @param  {Array<String>} votes
@@ -2056,13 +1914,6 @@ class API {
 				this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
 					.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, id, requestedObject);
 
-			} else if (requestedObject.has('witness_account')) {
-
-				const accountId = requestedObject.get('witness_account');
-
-				this.cache.setInMap(CacheMaps.WITNESS_BY_ACCOUNT_ID, accountId, requestedObject)
-					.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, id, requestedObject);
-
 			}
 
 			resultArray[i] = requestedObject.toJS();
@@ -2112,18 +1963,6 @@ class API {
 	async getPotentialSignatures(tr) {
 		transaction.validate(tr);
 		return this.wsApi.database.getPotentialSignatures(tr);
-	}
-
-	/**
-     *  @method getPotentialAddressSignatures
-     *
-     *  @param  {Object} transaction
-     *
-     *  @return {Promise.<*>}
-     */
-	async getPotentialAddressSignatures(tr) {
-		transaction.validate(tr);
-		return this.wsApi.database.getPotentialAddressSignatures(tr);
 	}
 
 	/**
@@ -2553,13 +2392,10 @@ class API {
 	 *  @param  {Object} block
 	 *  @param  {Number} block.previous  [previous block id]
 	 *  @param  {Number} block.timestamp  [block timestamp]
-	 *  @param  {String} block.witness  [witness id]
 	 *  @param  {String} block.transaction_merkle_root  [merkle root]
 	 *  @param  {String} block.state_root_hash  [hash]
 	 *  @param  {String} block.result_root_hash  [result hash]
-	 *  @param  {String} block.witness_signature  [witness signature]
 	 *  @param  {String} block.ed_signature  [eddsa signature]
-	 *  @param  {Array} block.verifications  [{witness-id, witness-signature}]
 	 *  @param  {Number} block.round  [round id]
 	 *  @param  {Number} block.rand  [rand]
 	 *  @param  {String} block.cert  [certificate]
@@ -2572,7 +2408,7 @@ class API {
 			return Promise.reject(new Error('Block is required'));
 		}
 
-		if (!block.previous || !block.timestamp || !block.witness) {
+		if (!block.previous || !block.timestamp) {
 			return Promise.reject(new Error('Invalid block'));
 		}
 

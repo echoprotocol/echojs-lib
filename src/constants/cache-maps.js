@@ -1,5 +1,4 @@
 export const SUBBED_ACCOUNTS = 'subbedAccounts';
-export const SUBBED_WITNESSES = 'subbedWitnesses';
 export const SUBBED_COMMITTEE = 'subbedCommittee';
 export const GET_FULL_ACCOUNTS_SUBSCRIPTIONS = 'getFullAccountsSubscriptions';
 
@@ -20,9 +19,6 @@ export const BLOCK_HEADERS_BY_BLOCK_NUMBER = 'blockHeadersByBlockNumber';
 export const BLOCKS = 'blocks';
 
 export const TRANSACTIONS_BY_BLOCK_AND_INDEX = 'transactionsByBlockAndIndex';
-
-export const WITNESS_BY_ACCOUNT_ID = 'witnessByAccountId';
-export const WITNESS_BY_WITNESS_ID = 'witnessByWitnessId';
 
 export const COMMITTEE_MEMBERS_BY_ACCOUNT_ID = 'committeeMembersByAccountId';
 export const COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID = 'committeeMembersByCommitteeMemberId';

@@ -89,21 +89,11 @@ try {
 <dd></dd>
 <dt><a href="#getTradeHistory">getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getWitnesses">getWitnesses(witnessIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Witness&gt;&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getWitnessByAccount">getWitnessByAccount(accountId, force)</a> ⇒ <code><a href="#Witness">Promise.&lt;Witness&gt;</a></code></dt>
-<dd></dd>
-<dt><a href="#lookupWitnessAccounts">lookupWitnessAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getWitnessCount">getWitnessCount()</a> ⇒ <code>Promise.&lt;Number&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getCommitteeMembers">getCommitteeMembers(committeeMemberIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Committee&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getCommitteeMemberByAccount">getCommitteeMemberByAccount(accountId, force)</a> ⇒ <code><a href="#Committee">Promise.&lt;Committee&gt;</a></code></dt>
 <dd></dd>
 <dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getWorkersByAccount">getWorkersByAccount(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#lookupVoteIds">lookupVoteIds(votes, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code></dt>
 <dd></dd>
@@ -112,8 +102,6 @@ try {
 <dt><a href="#getRequiredSignatures">getRequiredSignatures(transaction, availableKeys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getPotentialSignatures">getPotentialSignatures(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getPotentialAddressSignatures">getPotentialAddressSignatures(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#verifyAuthority">verifyAuthority(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
@@ -201,8 +189,6 @@ try {
 <dt><a href="#Config">Config</a> : <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#DynamicGlobalProperties">DynamicGlobalProperties</a> : <code>Object</code></dt>
-<dd></dd>
-<dt><a href="#Witness">Witness</a> : <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#Committee">Committee</a> : <code>Object</code></dt>
 <dd></dd>
@@ -555,40 +541,6 @@ try {
 | stop | <code>Number</code> |
 | limit | <code>Number</code> |
 
-<a name="getWitnesses"></a>
-
-## getWitnesses(witnessIds, force) ⇒ <code>Promise.&lt;Array.&lt;Witness&gt;&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| witnessIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
-
-<a name="getWitnessByAccount"></a>
-
-## getWitnessByAccount(accountId, force) ⇒ [<code>Promise.&lt;Witness&gt;</code>](#Witness)
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
-| force | <code>Boolean</code> |
-
-<a name="lookupWitnessAccounts"></a>
-
-## lookupWitnessAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| lowerBoundName | <code>String</code> |
-| limit | <code>Number</code> |
-
-<a name="getWitnessCount"></a>
-
-## getWitnessCount() ⇒ <code>Promise.&lt;Number&gt;</code>
-**Kind**: global function
 <a name="getCommitteeMembers"></a>
 
 ## getCommitteeMembers(committeeMemberIds, force) ⇒ <code>Promise.&lt;Array.&lt;Committee&gt;&gt;</code>
@@ -618,15 +570,6 @@ try {
 | --- | --- |
 | lowerBoundName | <code>String</code> |
 | limit | <code>Number</code> |
-
-<a name="getWorkersByAccount"></a>
-
-## getWorkersByAccount(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
 
 <a name="lookupVoteIds"></a>
 
@@ -660,15 +603,6 @@ try {
 <a name="getPotentialSignatures"></a>
 
 ## getPotentialSignatures(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| transaction | <code>Object</code> |
-
-<a name="getPotentialAddressSignatures"></a>
-
-## getPotentialAddressSignatures(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
 | Param | Type |
@@ -883,13 +817,10 @@ try {
 | block | <code>Object</code> |  |
 | block.previous | <code>Number</code> | [previous block id] |
 | block.timestamp | <code>Number</code> | [block timestamp] |
-| block.witness | <code>String</code> | [witness id] |
 | block.transaction_merkle_root | <code>String</code> | [merkle root] |
 | block.state_root_hash | <code>String</code> | [hash] |
 | block.result_root_hash | <code>String</code> | [result hash] |
-| block.witness_signature | <code>String</code> | [witness signature] |
 | block.ed_signature | <code>String</code> | [eddsa signature] |
-| block.verifications | <code>Array</code> | [{witness-id, witness-signature}] |
 | block.round | <code>Number</code> | [round id] |
 | block.rand | <code>Number</code> | [rand] |
 | block.cert | <code>String</code> | [certificate] |
@@ -939,7 +870,6 @@ try {
 {
     previous:String,
     timestamp:String,
-    witness:String,
     account:String,
     transaction_merkle_root:String,
     state_root_hash:String,
@@ -954,15 +884,12 @@ try {
 {
     previous:String,
     timestamp:String,
-    witness:String,
     account:String,
     transaction_merkle_root:String,
     state_root_hash:String,
     result_root_hash:String,
     extensions:Array,
-    witness_signature:String,
     ed_signature:String,
-    verifications:Array,
     round:Number,
     rand:String,
     cert:{
@@ -1011,7 +938,6 @@ try {
     chain_id:String,
     immutable_parameters:{
         min_committee_member_count:Number,
-        min_witness_count:Number,
         num_special_accounts:Number,
         num_special_assets:Number
     }
@@ -1039,7 +965,6 @@ try {
        maximum_proposal_lifetime:Number,
        maximum_asset_whitelist_authorities:Number,
        maximum_asset_feed_publishers:Number,
-       maximum_witness_count:Number,
        maximum_committee_count:Number,
        maximum_authority_membership:Number,
        reserve_percent_of_fee:Number,
@@ -1049,8 +974,6 @@ try {
        cashback_vesting_threshold:Number,
        count_non_member_votes:Boolean,
        allow_non_member_whitelists:Boolean,
-       witness_pay_per_block:Number,
-       worker_budget_per_day:String,
        max_predicate_opcode:Number,
        fee_liquidation_threshold:Number,
        accounts_per_fee_scale:Number,
@@ -1083,7 +1006,6 @@ try {
    },
    next_available_vote_id:Number,
    active_committee_members:Array.<String>,
-   active_witnesses:Array.<String>
 }
 ```
 ## Config : <code>Object</code>
@@ -1135,7 +1057,6 @@ try {
     ECHO_DEFAULT_MAINTENANCE_COLLATERAL_RATIO:Number,
     ECHO_DEFAULT_MAX_SHORT_SQUEEZE_RATIO:Number,
     ECHO_DEFAULT_MARGIN_PERIOD_SEC:Number,
-    ECHO_DEFAULT_MAX_WITNESSES:Number,
     ECHO_DEFAULT_MAX_COMMITTEE:Number,
     ECHO_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
     ECHO_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
@@ -1147,23 +1068,17 @@ try {
     ECHO_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
     ECHO_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
     ECHO_DEFAULT_BURN_PERCENT_OF_FEE:Number,
-    ECHO_WITNESS_PAY_PERCENT_PRECISION:Number,
     ECHO_DEFAULT_MAX_ASSERT_OPCODE:Number,
     ECHO_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
     ECHO_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
     ECHO_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
-    ECHO_MAX_WORKER_NAME_LENGTH:Number,
     ECHO_MAX_URL_LENGTH:Number,
     ECHO_NEAR_SCHEDULE_CTR_IV:String,
     ECHO_FAR_SCHEDULE_CTR_IV:String,
     ECHO_CORE_ASSET_CYCLE_RATE:Number,
     ECHO_CORE_ASSET_CYCLE_RATE_BITS:Number,
-    ECHO_DEFAULT_WITNESS_PAY_PER_BLOCK:Number,
-    ECHO_DEFAULT_WITNESS_PAY_VESTING_SECONDS:Number,
-    ECHO_DEFAULT_WORKER_BUDGET_PER_DAY:String,
     ECHO_MAX_INTEREST_APR:Number,
     ECHO_COMMITTEE_ACCOUNT:String,
-    ECHO_WITNESS_ACCOUNT:String,
     ECHO_RELAXED_COMMITTEE_ACCOUNT:String,
     ECHO_NULL_ACCOUNT:String,
     ECHO_TEMP_ACCOUNT:String
@@ -1178,35 +1093,15 @@ try {
     head_block_number:Number,
     head_block_id:String,
     time:String,
-    current_witness:String,
     next_maintenance_time:String,
     last_budget_time:String,
-    witness_budget:Number,
+    committee_budget:Number,
     accounts_registered_this_interval:Number,
     recently_missed_count:Number,
     current_aslot:Number,
     recent_slots_filled:String,
     dynamic_flags:Number,
     last_irreversible_block_num:Number
-}
-```
-
-## Witness : <code>Object</code>
-<a name="Witness"></a>
-
-```javascript
-{
-    id:String,
-    witness_account:String,
-    last_aslot:Number,
-    signing_key:String,
-    pay_vb:String,
-    vote_id:String,
-    total_votes:Number,
-    url:String,
-    total_missed:Number,
-    last_confirmed_block_num:Number,
-    ed_signing_key:String
 }
 ```
 
@@ -1253,7 +1148,6 @@ try {
         memo_key:String,
         voting_account:String,
         delegating_account:String,
-        num_witness:Number,
         num_committee:Number,
         votes:Array,
         extensions:Array
@@ -1313,7 +1207,6 @@ try {
         memo_key:String,
         voting_account:String,
         delegating_account:String,
-        num_witness:Number,
         num_committee:Number,
         votes:Array,
         extensions:Array
@@ -1368,7 +1261,6 @@ try {
 {
     id:String,
     committee_member_account:(String|undefined),
-    witness_account:(String|undefined),
     vote_id:String,
     total_votes:Number,
     url:String,

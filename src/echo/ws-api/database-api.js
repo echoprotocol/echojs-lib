@@ -408,49 +408,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getWitnesses
-	 *
-	 *  @param  {Array<String>} witnessIds
-	 *
-	 *  @return {Promise}
-	 */
-	getWitnesses(witnessIds) {
-		return this.db.exec('get_witnesses', [witnessIds]);
-	}
-
-	/**
-	 *  @method getWitnessByAccount
-	 *
-	 *  @param  {String} accountId
-	 *
-	 *  @return {Promise}
-	 */
-	getWitnessByAccount(accountId) {
-		return this.db.exec('get_witness_by_account', [accountId]);
-	}
-
-	/**
-	 *  @method lookupWitnessAccounts
-	 *
-	 *  @param  {String} lowerBoundName
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise}
-	 */
-	lookupWitnessAccounts(lowerBoundName, limit) {
-		return this.db.exec('lookup_witness_accounts', [lowerBoundName, limit]);
-	}
-
-	/**
-	 *  @method getWitnessCount
-	 *
-	 *  @return {Promise}
-	 */
-	getWitnessCount() {
-		return this.db.exec('get_witness_count', []);
-	}
-
-	/**
 	 *  @method getCommitteeMembers
 	 *
 	 *  @param  {Array<String>} committeeMemberIds
@@ -482,17 +439,6 @@ class DatabaseAPI {
 	 */
 	lookupCommitteeMemberAccounts(lowerBoundName, limit) {
 		return this.db.exec('lookup_committee_member_accounts', [lowerBoundName, limit]);
-	}
-
-	/**
-	 *  @method getWorkersByAccount
-	 *
-	 *  @param  {String} accountId
-	 *
-	 *  @return {Promise}
-	 */
-	getWorkersByAccount(accountId) {
-		return this.db.exec('get_workers_by_account', [accountId]);
 	}
 
 	/**
@@ -539,17 +485,6 @@ class DatabaseAPI {
 	 */
 	getPotentialSignatures(transaction) {
 		return this.db.exec('get_potential_signatures', [transaction]);
-	}
-
-	/**
-     *  @method getPotentialAddressSignatures
-     *
-     *  @param  {Object} transaction
-     *
-     *  @return {Promise}
-     */
-	getPotentialAddressSignatures(transaction) {
-		return this.db.exec('get_potential_address_signatures', [transaction]);
 	}
 
 	/**

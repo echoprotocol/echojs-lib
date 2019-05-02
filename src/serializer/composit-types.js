@@ -23,7 +23,6 @@ import {
 
 export { default as predicate } from './predicate';
 export { default as vestingPolicyInitializer } from './vesting-policy';
-export { default as workerInitializer } from './worker';
 
 export const operationWrapper = staticVariant({});
 export const asset = serializable({ amount: int64, asset_id: protocolId(ASSET) });

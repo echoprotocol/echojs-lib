@@ -259,7 +259,7 @@ class Transaction {
 	}
 
 	/**
-	 * @returns {Promise<{ publicKeys:Array<string>, addresses:Array<string> }>}
+	 * @returns {Promise<{ publicKeys:Array<string> }>}
 	 */
 	async getPotentialSignatures() {
 		const transactionObject = this.finalized ? this.transactionObject : transaction.toObject({
@@ -269,11 +269,8 @@ class Transaction {
 			operations: this.operations.map(([id, op]) => [id, { fee: { asset_id: ECHO_ASSET_ID, amount: 0 }, ...op }]),
 			extensions: [],
 		});
-		const [publicKeys, addresses] = await Promise.all([
-			this.api.getPotentialSignatures(transactionObject),
-			this.api.getPotentialAddressSignatures(transactionObject),
-		]);
-		return { publicKeys, addresses };
+		const publicKeys = await this.api.getPotentialSignatures(transactionObject);
+		return { publicKeys };
 	}
 
 	/**

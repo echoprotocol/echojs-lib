@@ -35,13 +35,10 @@ class NetworkAPI {
 	 *  	block: {
 	 *  		previous: previous-block-id,
 	 *  		timestamp: block-timestamp,
-	 *  		witness: "witness-id",
 	 *  		transaction_merkle_root: "merkle-root",
 	 *  		state_root_hash: "hash",
 	 *  		result_root_hash: "result-hash",
-	 *  		witness_signature: "sig",
 	 *  		ed_signature: "eddsa signature",
-	 *  		verifications: [{witness-id, witness-signature}],
 	 *  		round: round-id,
 	 *  		rand: rand,
 	 *  		cert: "certificate",

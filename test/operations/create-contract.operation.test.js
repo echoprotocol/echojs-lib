@@ -34,8 +34,8 @@ describe('create contract', () => {
 		/** @type {string} */
 		const operationResultId = await tx.broadcast().then((res) => res[0].trx.operation_results[0][1]);
 		const newAddress = await echo.api.getContractResult(operationResultId).then((res) => res[1].exec_res.new_address);
-		const contractId = `1.16.${parseInt(newAddress.slice(2), 16)}`;
-		
+		const contractId = `1.14.${parseInt(newAddress.slice(2), 16)}`;
+
 		ok(/^1\.16\.[1-9]\d*$/.test(contractId));
 		options.contractAddress = contractId;
 		// strictEqual(

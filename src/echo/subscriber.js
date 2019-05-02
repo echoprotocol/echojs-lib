@@ -14,13 +14,11 @@ import {
 	isBlockSummaryId,
 	isAccountTransactionHistoryId,
 	isOperationHistoryId,
-	isWitnessId,
 	isCommitteeMemberId,
 	isDynamicGlobalObjectId,
 	isAccountId,
 	isAssetId,
 	isDynamicAssetDataId,
-	isWorkerId,
 	isBitAssetId,
 	isProposalId,
 	isArray,
@@ -63,7 +61,6 @@ class Subscriber extends EventEmitter {
 		this.subscribers = {
 			global: [], // "global" means all updates from setSubscribeCallback
 			account: [], // { ids: [], callback: () => {} }
-			witness: [], // { ids: [], callback: () => {} }
 			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
@@ -132,7 +129,6 @@ class Subscriber extends EventEmitter {
 		this.subscribers = {
 			global: [],
 			account: [],
-			witness: [],
 			committeeMember: [],
 			echorand: [],
 			block: [],
@@ -155,7 +151,6 @@ class Subscriber extends EventEmitter {
 		this.subscribers = {
 			global: [],
 			account: [],
-			witness: [],
 			committeeMember: [],
 			echorand: [],
 			block: [],
@@ -191,10 +186,6 @@ class Subscriber extends EventEmitter {
 			[],
 		));
 
-		const subscribedWitnesses = this.subscribers.witness.reduce(
-			(arr, { ids }) => arr.concat(ids),
-			[],
-		);
 		const subscribedCommitteeMembers = this.subscribers.committeeMember.reduce(
 			(arr, { ids }) => arr.concat(ids),
 			[],
@@ -237,9 +228,6 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
-		if (isWitnessId(object.id) && !subscribedWitnesses.includes(object.id)) {
-			return null;
-		}
 
 		if (isCommitteeMemberId(object.id) && !subscribedCommitteeMembers.includes(object.id)) {
 			return null;
@@ -292,13 +280,6 @@ class Subscriber extends EventEmitter {
 			} catch (err) {
 				//
 			}
-		}
-
-		if (isWitnessId(object.id)) {
-			this.cache.setInMap(CacheMaps.WITNESS_BY_ACCOUNT_ID, object.witness_account, obj)
-				.setInMap(CacheMaps.WITNESS_BY_WITNESS_ID, object.id, obj)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj)
-				.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_id, obj);
 		}
 
 		if (isCommitteeMemberId(object.id)) {
@@ -408,12 +389,6 @@ class Subscriber extends EventEmitter {
 
 		}
 
-		if (isWorkerId(object.id)) {
-			this.cache.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, obj);
-			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_for, obj);
-			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, object.vote_against, obj);
-		}
-
 		if (isBitAssetId(object.id)) {
 			const assetId = this.cache.bitAssetIdToAssetId.get(object.id);
 
@@ -448,7 +423,7 @@ class Subscriber extends EventEmitter {
 					this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account)
 						.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, fromJS(object));
 
-					// Force subscription to the object in the witness node by calling get_objects
+					// Force subscription to the object by calling get_objects
 					this._api.getObjects([object.id]);
 					this._notifyAccountSubscribers(account);
 				}
@@ -470,7 +445,7 @@ class Subscriber extends EventEmitter {
 					this.cache.setInMap(CacheMaps.FULL_ACCOUNTS, account.get('id'), account)
 						.setInMap(CacheMaps.OBJECTS_BY_ID, object.id, fromJS(object));
 
-					// Force subscription to the object in the witness node by calling get_objects
+					// Force subscription to the object by calling get_objects
 					this._api.getObjects([object.id]);
 					this._notifyAccountSubscribers(account);
 				}

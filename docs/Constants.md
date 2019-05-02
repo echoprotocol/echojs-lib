@@ -16,30 +16,32 @@ console.log(constants.CHAIN_TYPES) // information about ids
     },
     IMPLEMENTATION_OBJECT_TYPE: {
         GLOBAL_PROPERTY: 0,
-        DYNAMIC_GLOBAL_PROPERTY: 1,
-        INDEX_META: 2,
-        ASSET_DYNAMIC_DATA: 3,
-        ASSET_BITASSET_DATA: 4,
-        ACCOUNT_BALANCE: 5,
-        ACCOUNT_STATISTICS: 6,
-        TRANSACTION: 7,
-        BLOCK_SUMMARY: 8,
-        ACCOUNT_TRANSACTION_HISTORY: 9,
-        BLINDED_BALANCE: 10,
-        CHAIN_PROPERTY: 11,
-        WITNESS_SCHEDULE: 12,
-        BUDGET_RECORD: 13,
+    	DYNAMIC_GLOBAL_PROPERTY: 1,
+    	INDEX_META: 2,
+    	ASSET_DYNAMIC_DATA: 3,
+    	ASSET_BITASSET_DATA: 4,
+    	ACCOUNT_BALANCE: 5,
+    	ACCOUNT_STATISTICS: 6,
+    	TRANSACTION: 7,
+    	BLOCK_SUMMARY: 8,
+    	ACCOUNT_TRANSACTION_HISTORY: 9,
+    	CHAIN_PROPERTY: 10,
+    	BUDGET_RECORD: 11,
+    	SPECIAL_AUTHORITY: 12,
+    	BUYBACK_OBJECT: 13,
+    	COLLATERAL_BID: 14,
+    	CONTRACT_BALANCE: 15,
+    	CONTRACT_HISTORY: 16,
+    	CONTRACT_STATISTICS: 17,
     },
     VOTE_TYPE: {
         COMMITTEE: 0,
-        WITNESS: 1,
-        WORKER: 2,
     },
 }
 */
 
 console.log(constants.CHAIN_CONFIG) // Generai information about chain
-    
+
 /*
 {
     CORE_ASSET: 'ECHO',
@@ -101,7 +103,7 @@ console.log(constants.WS_CONSTANTS) // websocket constants
 console.log(constants.START_OPERATION_ID) // start operation id
 
 /*
-    1.11.0
+    1.10.0
 */
 
 console.log(constants.CORE_ASSET_ID) // core asset id
@@ -149,7 +151,6 @@ console.log(constants.CACHE_MAPS) // cache maps
 /*
 {
     SUBBED_ACCOUNTS: 'subbedAccounts',
-    SUBBED_WITNESSES: 'subbedWitnesses',
     SUBBED_COMMITTEE: 'subbedCommittee',
     GET_FULL_ACCOUNTS_SUBSCRIPTIONS: 'getFullAccountsSubscriptions',
     OBJECTS_BY_ID: 'objectsById',
@@ -164,8 +165,6 @@ console.log(constants.CACHE_MAPS) // cache maps
     BLOCK_HEADERS_BY_BLOCK_NUMBER: 'blockHeadersByBlockNumber',
     BLOCKS: 'blocks',
     TRANSACTIONS_BY_BLOCK_AND_INDEX: 'transactionsByBlockAndIndex',
-    WITNESS_BY_ACCOUNT_ID: 'witnessByAccountId',
-    WITNESS_BY_WITNESS_ID: 'witnessByWitnessId',
     COMMITTEE_MEMBERS_BY_ACCOUNT_ID: 'committeeMembersByAccountId',
     COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID:'committeeMembersByCommitteeMemberId',
     OBJECTS_BY_VOTE_ID: 'objectsByVoteId',
@@ -186,7 +185,7 @@ console.log(constants.CACHE_MAPS) // cache maps
     DYNAMIC_GLOBAL_PROPERTIES: 'dynamicGlobalProperties',
 }
 */
-    
+
 console.log(constants.OPERATIONS_IDS); // operation id
 
 /*
@@ -211,36 +210,29 @@ console.log(constants.OPERATIONS_IDS); // operation id
     ASSET_SETTLE: 17,
     ASSET_GLOBAL_SETTLE: 18,
     ASSET_PUBLISH_FEED: 19,
-    WITNESS_CREATE: 20,
-    WITNESS_UPDATE: 21,
-    PROPOSAL_CREATE: 22,
-    PROPOSAL_UPDATE: 23,
-    PROPOSAL_DELETE: 24,
-    WITHDRAW_PERMISSION_CREATE: 25,
-    WITHDRAW_PERMISSION_UPDATE: 26,
-    WITHDRAW_PERMISSION_CLAIM: 27,
-    WITHDRAW_PERMISSION_DELETE: 28,
-    COMMITTEE_MEMBER_CREATE: 29,
-    COMMITTEE_MEMBER_UPDATE: 30,
-    COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS: 31,
-    VESTING_BALANCE_CREATE: 32,
-    VESTING_BALANCE_WITHDRAW: 33,
-    WORKER_CREATE: 34,
-    CUSTOM: 35,
-    ASSERT: 36,
-    BALANCE_CLAIM: 37,
-    OVERRIDE_TRANSFER: 38,
-    TRANSFER_TO_BLIND: 39,
-    BLIND_TRANSFER: 40,
-    TRANSFER_FROM_BLIND: 41,
-    ASSET_SETTLE_CANCEL: 42,
-    ASSET_CLAIM_FEES: 43,
-    FBA_DISTRIBUTE: 44,
-    BID_COLLATERAL: 45,
-    EXECUTE_BID: 46,
-    CREATE_CONTRACT: 47,
-    CALL_CONTRACT: 48,
-    CONTRACT_TRANSFER: 49,
+    PROPOSAL_CREATE: 20,
+    PROPOSAL_UPDATE: 21,
+    PROPOSAL_DELETE: 22,
+    WITHDRAW_PERMISSION_CREATE: 23,
+    WITHDRAW_PERMISSION_UPDATE: 24,
+    WITHDRAW_PERMISSION_CLAIM: 25,
+    WITHDRAW_PERMISSION_DELETE: 26,
+    COMMITTEE_MEMBER_CREATE: 27,
+    COMMITTEE_MEMBER_UPDATE: 28,
+    COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS: 29,
+    VESTING_BALANCE_CREATE: 30,
+    VESTING_BALANCE_WITHDRAW: 31,
+    CUSTOM: 32,
+    ASSERT: 33,
+    BALANCE_CLAIM: 34,
+    OVERRIDE_TRANSFER: 35,
+    ASSET_SETTLE_CANCEL: 36,
+    ASSET_CLAIM_FEES: 37,
+    BID_COLLATERAL: 38,
+    EXECUTE_BID: 39,
+    CREATE_CONTRACT: 40,
+    CALL_CONTRACT: 41,
+    CONTRACT_TRANSFER: 42,
 }
 */
  ```

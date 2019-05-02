@@ -4,7 +4,6 @@ import { isArray, isString, isVoid } from '../utils/validators';
 
 let DEFAULT_FIELDS = Map({
 	subbedAccounts: new Map(),
-	subbedWitnesses: new Map(),
 	subbedCommittee: new Map(),
 	getFullAccountsSubscriptions: new Map(),
 
@@ -26,9 +25,6 @@ let DEFAULT_FIELDS = Map({
 	blocks: new Map(),
 
 	transactionsByBlockAndIndex: new Map(),
-
-	witnessByAccountId: new Map(),
-	witnessByWitnessId: new Map(),
 
 	committeeMembersByAccountId: new Map(),
 	committeeMembersByCommitteeMemberId: new Map(),

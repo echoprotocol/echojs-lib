@@ -13,7 +13,6 @@ console.log(CACHE_MAPS)
 /*
 {
     SUBBED_ACCOUNTS: 'subbedAccounts',
-    SUBBED_WITNESSES: 'subbedWitnesses',
     SUBBED_COMMITTEE: 'subbedCommittee',
     GET_FULL_ACCOUNTS_SUBSCRIPTIONS: 'getFullAccountsSubscriptions',
     OBJECTS_BY_ID: 'objectsById',
@@ -28,8 +27,6 @@ console.log(CACHE_MAPS)
     BLOCK_HEADERS_BY_BLOCK_NUMBER: 'blockHeadersByBlockNumber',
     BLOCKS: 'blocks',
     TRANSACTIONS_BY_BLOCK_AND_INDEX: 'transactionsByBlockAndIndex',
-    WITNESS_BY_ACCOUNT_ID: 'witnessByAccountId',
-    WITNESS_BY_WITNESS_ID: 'witnessByWitnessId',
     COMMITTEE_MEMBERS_BY_ACCOUNT_ID: 'committeeMembersByAccountId',
     COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID:'committeeMembersByCommitteeMemberId',
     OBJECTS_BY_VOTE_ID: 'objectsByVoteId',
@@ -53,5 +50,3 @@ console.log(CACHE_MAPS)
 ```
 
 > Cache data stored in Immutable.js objects
-    
-   

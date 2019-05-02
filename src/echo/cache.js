@@ -27,7 +27,6 @@ class Cache {
 	 */
 	reset() {
 		this.subbedAccounts = new Map();
-		this.subbedWitnesses = new Map();
 		this.subbedCommittee = new Map();
 		this.getFullAccountsSubscriptions = new Map();
 
@@ -55,9 +54,6 @@ class Cache {
 		this.blocks = new Map();
 
 		this.transactionsByBlockAndIndex = new Map();
-
-		this.witnessByAccountId = new Map();
-		this.witnessByWitnessId = new Map();
 
 		this.committeeMembersByAccountId = new Map();
 		this.committeeMembersByCommitteeMemberId = new Map();

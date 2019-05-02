@@ -10,7 +10,7 @@ Following examples represent usage different subscribers and example result whic
 ```javascript
 import echo from "echojs-lib";
 
-const callback = (result) => { 
+const callback = (result) => {
 console.log(result);
 /*
 ["0001bbf91d02b003c115f4238c3de0a0c032b598"]
@@ -29,7 +29,7 @@ echo.subscriber.removeBlockApplySubscribe(callback);
 ```javascript
 import echo from "echojs-lib";
 
-const callback = (result) => { 
+const callback = (result) => {
 console.log(result);
 /*
 { type: "round_started", round: 113782 }
@@ -63,7 +63,7 @@ echo.subscriber.removeEchorandSubscribe(callback);
 ```javascript
 import echo from "echojs-lib";
 
-const callback = (result) => { 
+const callback = (result) => {
 console.log(result);
 /*
 {
@@ -88,7 +88,6 @@ console.log(result);
         extensions: [],
         memo_key: "ECHO5QoiCGa6pXBUTTqQqeuJCXZgX6eBmJ2uZRxZZtLc2bZcWPLMMd",
         num_committee: 0,
-        num_witness: 0,
         votes: [],
         voting_account: "1.2.5"
     },
@@ -124,7 +123,7 @@ Returning whole objects which has been updated
 ```javascript
 import echo from "echojs-lib";
 
-const callback = (result) => { 
+const callback = (result) => {
 console.log(result);
 /*
 {id: "1.18.114111", results_id: []}
@@ -156,14 +155,14 @@ echo.subscriber.removePendingTransactionSubscribe(callback);
 ```javascript
 import echo from "echojs-lib";
 
-const callbackOnConnect = (result) => { 
+const callbackOnConnect = (result) => {
 console.log(result);
 /*
 "OPEN"
 */
 };
 
-const callbackOnDisconnect = (result) => { 
+const callbackOnDisconnect = (result) => {
 console.log(result);
 /*
 "CLOSE"

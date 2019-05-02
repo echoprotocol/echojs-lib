@@ -3,7 +3,7 @@ import WS_CONSTANTS from './ws-constants';
 import OPERATIONS_IDS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
 
-const START_OPERATION_ID = '1.11.0';
+const START_OPERATION_ID = '1.10.0';
 const CORE_ASSET_ID = '1.3.0';
 
 const ECHORAND_TYPES = {
