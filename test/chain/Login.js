@@ -11,7 +11,7 @@ let auths = {
 describe("AccountLogin", () => {
 
 	afterEach(function() {
-		login.setRoles(["active", "owner", "memo"]);
+		login.setRoles(["active", "memo"]);
 	});
 
 	describe("Instance", function() {
@@ -20,8 +20,7 @@ describe("AccountLogin", () => {
 
 			assert(roles.length);
 			assert(roles[0] === "active");
-			assert(roles[1] === "owner");
-			assert(roles[2] === "memo");
+			assert(roles[1] === "memo");
 		});
 
 		it("Is singleton", function() {

@@ -9,7 +9,7 @@ const _keyCachePub = {};
 class AccountLogin {
 
 	constructor() {
-		const state = { loggedIn: false, roles: ['active', 'owner', 'memo'] };
+		const state = { loggedIn: false, roles: ['active', 'memo'] };
 		this.get = get(state);
 		this.set = set(state);
 		this.subs = {};

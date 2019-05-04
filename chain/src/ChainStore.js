@@ -1371,7 +1371,6 @@ const ChainStore = {
 		} else if (object.id.substring(0, accountPrefix.length) === accountPrefix) {
 			// ACCOUNT OBJECT
 			current = current.set('active', Immutable.fromJS(object.active));
-			current = current.set('owner', Immutable.fromJS(object.owner));
 			current = current.set('options', Immutable.fromJS(object.options));
 			current = current.set('whitelisting_accounts', Immutable.fromJS(object.whitelisting_accounts));
 			current = current.set('blacklisting_accounts', Immutable.fromJS(object.blacklisting_accounts));

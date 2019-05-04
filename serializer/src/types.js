@@ -9,7 +9,7 @@ const fp = require('./FastParser');
 const ChainTypes = require('../../chain/src/ChainTypes');
 const ObjectId = require('../../chain/src/ObjectId');
 
-const { PublicKey, Address } = require('../../ecc');
+const { PublicKey, Address, PublicKeyECDSA } = require('../../ecc');
 
 const Types = {};
 
@@ -894,6 +894,40 @@ Types.address = {
 	},
 	compare(a, b) {
 		return strCmp(a.toString(), b.toString());
+	},
+};
+
+Types.public_key_ecdsa = {
+	toPublic(object) {
+		if (object.resolve !== undefined) {
+			object = object.resolve;
+		}
+		return !object || object.Q ? object : PublicKeyECDSA.fromStringOrThrow(object);
+	},
+	fromByteBuffer(b) {
+		return fp.publicKey(b);
+	},
+	appendByteBuffer(b, object) {
+		v.required(object);
+		fp.publicKey(b, Types.public_key_ecdsa.toPublic(object));
+
+	},
+	fromObject(object) {
+		v.required(object);
+		if (object.Q) {
+			return object;
+		}
+		return Types.public_key_ecdsa.toPublic(object);
+	},
+	toObject(object, debug = {}) {
+		if (debug.use_default && object === undefined) {
+			return `${ChainConfig.address_prefix_ecdsa}859gxfnXyUriMgUeThh1fWv3oqcpLFyHa3TfFYC4PK2HqhToVM`;
+		}
+		v.required(object);
+		return object.toString();
+	},
+	compare(a, b) {
+		return strCmp(a.toAddressString(), b.toAddressString());
 	},
 };
 

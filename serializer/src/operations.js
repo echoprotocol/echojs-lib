@@ -9,7 +9,7 @@ const {
 	uint8, uint16, uint32, int64, uint64,
 	string, bytes, bool, array, protocol_id_type, object_id_type, vote_id,
 	static_variant, map, set,
-	public_key, address,
+	public_key, public_key_ecdsa,
 	time_point_sec,
 	optional,
 } = types;
@@ -523,14 +523,13 @@ Operations.authority = new Serializer(
 		weight_threshold: uint32,
 		account_auths: map((protocol_id_type('account')), (uint16)),
 		key_auths: map((public_key), (uint16)),
-		address_auths: map((address), (uint16)),
 	},
 );
 
 Operations.account_options = new Serializer(
 	'account_options',
 	{
-		memo_key: public_key,
+		memo_key: public_key_ecdsa,
 		voting_account: protocol_id_type('account'),
 		delegating_account: protocol_id_type('account'),
 		num_witness: uint16,
@@ -548,7 +547,6 @@ Operations.account_create = new Serializer(
 		referrer: protocol_id_type('account'),
 		referrer_percent: uint16,
 		name: string,
-		owner: Operations.authority,
 		active: Operations.authority,
 		ed_key: bytes(32),
 		options: Operations.account_options,
@@ -561,7 +559,6 @@ Operations.account_update = new Serializer(
 	{
 		fee: Operations.asset,
 		account: protocol_id_type('account'),
-		owner: optional(Operations.authority),
 		active: optional(Operations.authority),
 		ed_key: optional(bytes(32)),
 		new_options: optional(Operations.account_options),
@@ -1097,7 +1094,6 @@ Operations.blind_output = new Serializer(
 	{
 		commitment: bytes(33),
 		range_proof: bytes(),
-		owner: Operations.authority,
 		stealth_memo: optional(Operations.stealth_confirmation),
 	},
 );
@@ -1117,7 +1113,6 @@ Operations.blind_input = new Serializer(
 	'blind_input',
 	{
 		commitment: bytes(33),
-		owner: Operations.authority,
 	},
 );
 

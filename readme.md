@@ -22,7 +22,7 @@ The login class uses the following format for keys:
 const keySeed = accountName + role + password
 ```
 
-Using this seed, private keys are generated for either the default roles `active, owner, memo`, or as specified. A minimum password length of 12 characters is enforced, but an even longer password is recommended. Three methods are provided:
+Using this seed, private keys are generated for either the default roles `active, memo`, or as specified. A minimum password length of 12 characters is enforced, but an even longer password is recommended. Three methods are provided:
 
 ```javascript
 import { Login } from 'echojs-lib';
