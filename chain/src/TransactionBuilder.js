@@ -120,8 +120,8 @@ class TransactionBuilder {
         @arg {array<string>} [signer_pubkeys = null] - Optional ["ECHO1Abc9Def0...", ...].
 		These are additional signing keys.
 		Some balance claims require propritary address formats,
-		the witness node can't tell us which ones are needed so they must be passed in.
-		If the witness node can figure out a signing key (mostly all other transactions),
+		the node can't tell us which ones are needed so they must be passed in.
+		If the node can figure out a signing key (mostly all other transactions),
 		it should not be passed in here.
 
         @arg {boolean} [broadcast = false]
@@ -400,7 +400,7 @@ class TransactionBuilder {
 		return hasProposed;
 	}
 
-	/** optional: the fees can be obtained = require(the witness node */
+	/** optional: the fees can be obtained = require(the node */
 	set_required_fees(asset_id) {
 		let fee_pool;
 		if (this.tr_buffer) {

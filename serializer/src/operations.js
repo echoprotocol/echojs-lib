@@ -163,16 +163,6 @@ feeParameters.asset_publish_feed_operation_fee_parameters = new Serializer(
 	{ fee: uint64 },
 );
 
-feeParameters.witness_create_operation_fee_parameters = new Serializer(
-	'witness_create_operation_fee_parameters',
-	{ fee: uint64 },
-);
-
-feeParameters.witness_update_operation_fee_parameters = new Serializer(
-	'witness_update_operation_fee_parameters',
-	{ fee: int64 },
-);
-
 feeParameters.proposal_create_operation_fee_parameters = new Serializer(
 	'proposal_create_operation_fee_parameters',
 	{
@@ -242,11 +232,6 @@ feeParameters.vesting_balance_withdraw_operation_fee_parameters = new Serializer
 	{ fee: uint64 },
 );
 
-feeParameters.worker_create_operation_fee_parameters = new Serializer(
-	'worker_create_operation_fee_parameters',
-	{ fee: uint64 },
-);
-
 feeParameters.custom_operation_fee_parameters = new Serializer(
 	'custom_operation_fee_parameters',
 	{
@@ -270,35 +255,12 @@ feeParameters.override_transfer_operation_fee_parameters = new Serializer(
 	},
 );
 
-feeParameters.transfer_to_blind_operation_fee_parameters = new Serializer(
-	'transfer_to_blind_operation_fee_parameters',
-	{
-		fee: uint64,
-		price_per_output: uint32,
-	},
-);
-
-feeParameters.blind_transfer_operation_fee_parameters = new Serializer(
-	'blind_transfer_operation_fee_parameters',
-	{
-		fee: uint64,
-		price_per_output: uint32,
-	},
-);
-
-feeParameters.transfer_from_blind_operation_fee_parameters = new Serializer(
-	'transfer_from_blind_operation_fee_parameters',
-	{ fee: uint64 },
-);
-
 feeParameters.asset_settle_cancel_operation_fee_parameters = new Serializer('asset_settle_cancel_operation_fee_parameters');
 
 feeParameters.asset_claim_fees_operation_fee_parameters = new Serializer(
 	'asset_claim_fees_operation_fee_parameters',
 	{ fee: uint64 },
 );
-
-feeParameters.fba_distribute_operation_fee_parameters = new Serializer('fba_distribute_operation_fee_parameters');
 
 feeParameters.bid_collateral_operation_fee_parameters = new Serializer(
 	'bid_collateral_operation_fee_parameters',
@@ -343,8 +305,6 @@ const fee_parameters = static_variant([
 	feeParameters.asset_settle_operation_fee_parameters,
 	feeParameters.asset_global_settle_operation_fee_parameters,
 	feeParameters.asset_publish_feed_operation_fee_parameters,
-	feeParameters.witness_create_operation_fee_parameters,
-	feeParameters.witness_update_operation_fee_parameters,
 	feeParameters.proposal_create_operation_fee_parameters,
 	feeParameters.proposal_update_operation_fee_parameters,
 	feeParameters.proposal_delete_operation_fee_parameters,
@@ -357,17 +317,12 @@ const fee_parameters = static_variant([
 	feeParameters.committee_member_update_global_parameters_operation_fee_parameters,
 	feeParameters.vesting_balance_create_operation_fee_parameters,
 	feeParameters.vesting_balance_withdraw_operation_fee_parameters,
-	feeParameters.worker_create_operation_fee_parameters,
 	feeParameters.custom_operation_fee_parameters,
 	feeParameters.assert_operation_fee_parameters,
 	feeParameters.balance_claim_operation_fee_parameters,
 	feeParameters.override_transfer_operation_fee_parameters,
-	feeParameters.transfer_to_blind_operation_fee_parameters,
-	feeParameters.blind_transfer_operation_fee_parameters,
-	feeParameters.transfer_from_blind_operation_fee_parameters,
 	feeParameters.asset_settle_cancel_operation_fee_parameters,
 	feeParameters.asset_claim_fees_operation_fee_parameters,
-	feeParameters.fba_distribute_operation_fee_parameters,
 	feeParameters.bid_collateral_operation_fee_parameters,
 	feeParameters.execute_bid_operation_fee_parameters,
 	feeParameters.create_contract_operation_fee_parameters,
@@ -419,10 +374,8 @@ Operations.signed_block = new Serializer(
 	{
 		previous: bytes(20),
 		timestamp: time_point_sec,
-		witness: protocol_id_type('witness'),
 		transaction_merkle_root: bytes(20),
 		extensions: set(futureExtensions),
-		witness_signature: bytes(65),
 		transactions: array(Operations.processed_transaction),
 	},
 );
@@ -432,7 +385,6 @@ Operations.block_header = new Serializer(
 	{
 		previous: bytes(20),
 		timestamp: time_point_sec,
-		witness: protocol_id_type('witness'),
 		transaction_merkle_root: bytes(20),
 		extensions: set(futureExtensions),
 	},
@@ -443,10 +395,8 @@ Operations.signed_block_header = new Serializer(
 	{
 		previous: bytes(20),
 		timestamp: time_point_sec,
-		witness: protocol_id_type('witness'),
 		transaction_merkle_root: bytes(20),
 		extensions: set(futureExtensions),
-		witness_signature: bytes(65),
 	},
 );
 
@@ -532,7 +482,6 @@ Operations.account_options = new Serializer(
 		memo_key: public_key_ecdsa,
 		voting_account: protocol_id_type('account'),
 		delegating_account: protocol_id_type('account'),
-		num_witness: uint16,
 		num_committee: uint16,
 		votes: set(vote_id),
 		extensions: set(futureExtensions),
@@ -759,27 +708,6 @@ Operations.asset_publish_feed = new Serializer(
 	},
 );
 
-Operations.witness_create = new Serializer(
-	'witness_create',
-	{
-		fee: Operations.asset,
-		witness_account: protocol_id_type('account'),
-		url: string,
-		block_signing_key: public_key,
-	},
-);
-
-Operations.witness_update = new Serializer(
-	'witness_update',
-	{
-		fee: Operations.asset,
-		witness: protocol_id_type('witness'),
-		witness_account: protocol_id_type('account'),
-		new_url: optional(string),
-		new_signing_key: optional(public_key),
-	},
-);
-
 Operations.op_wrapper = new Serializer(
 	'op_wrapper',
 	{ op: operation },
@@ -906,7 +834,6 @@ Operations.chain_parameters = new Serializer(
 		maximum_proposal_lifetime: uint32,
 		maximum_asset_whitelist_authorities: uint8,
 		maximum_asset_feed_publishers: uint8,
-		maximum_witness_count: uint16,
 		maximum_committee_count: uint16,
 		maximum_authority_membership: uint16,
 		reserve_percent_of_fee: uint16,
@@ -916,8 +843,6 @@ Operations.chain_parameters = new Serializer(
 		cashback_vesting_threshold: int64,
 		count_non_member_votes: bool,
 		allow_non_member_whitelists: bool,
-		witness_pay_per_block: int64,
-		worker_budget_per_day: int64,
 		max_predicate_opcode: uint16,
 		fee_liquidation_threshold: int64,
 		accounts_per_fee_scale: uint16,
@@ -975,35 +900,6 @@ Operations.vesting_balance_withdraw = new Serializer(
 		vesting_balance: protocol_id_type('vesting_balance'),
 		owner: protocol_id_type('account'),
 		amount: Operations.asset,
-	},
-);
-
-Operations.refund_worker_initializer = new Serializer('refund_worker_initializer');
-
-Operations.vesting_balance_worker_initializer = new Serializer(
-	'vesting_balance_worker_initializer',
-	{ pay_vesting_period_days: uint16 },
-);
-
-Operations.burn_worker_initializer = new Serializer('burn_worker_initializer');
-
-const worker_initializer = static_variant([
-	Operations.refund_worker_initializer,
-	Operations.vesting_balance_worker_initializer,
-	Operations.burn_worker_initializer,
-]);
-
-Operations.worker_create = new Serializer(
-	'worker_create',
-	{
-		fee: Operations.asset,
-		owner: protocol_id_type('account'),
-		work_begin_date: time_point_sec,
-		work_end_date: time_point_sec,
-		daily_pay: int64,
-		name: string,
-		url: string,
-		initializer: worker_initializer,
 	},
 );
 
@@ -1077,62 +973,6 @@ Operations.override_transfer = new Serializer(
 		amount: Operations.asset,
 		memo: optional(Operations.memo_data),
 		extensions: set(futureExtensions),
-	},
-);
-
-Operations.stealth_confirmation = new Serializer(
-	'stealth_confirmation',
-	{
-		one_time_key: public_key,
-		to: optional(public_key),
-		encrypted_memo: bytes(),
-	},
-);
-
-Operations.blind_output = new Serializer(
-	'blind_output',
-	{
-		commitment: bytes(33),
-		range_proof: bytes(),
-		stealth_memo: optional(Operations.stealth_confirmation),
-	},
-);
-
-Operations.transfer_to_blind = new Serializer(
-	'transfer_to_blind',
-	{
-		fee: Operations.asset,
-		amount: Operations.asset,
-		from: protocol_id_type('account'),
-		blinding_factor: bytes(32),
-		outputs: array(Operations.blind_output),
-	},
-);
-
-Operations.blind_input = new Serializer(
-	'blind_input',
-	{
-		commitment: bytes(33),
-	},
-);
-
-Operations.blind_transfer = new Serializer(
-	'blind_transfer',
-	{
-		fee: Operations.asset,
-		inputs: array(Operations.blind_input),
-		outputs: array(Operations.blind_output),
-	},
-);
-
-Operations.transfer_from_blind = new Serializer(
-	'transfer_from_blind',
-	{
-		fee: Operations.asset,
-		amount: Operations.asset,
-		to: protocol_id_type('account'),
-		blinding_factor: bytes(32),
-		inputs: array(Operations.blind_input),
 	},
 );
 
@@ -1212,36 +1052,29 @@ operation.st_operations = [
 	/* 17 */ Operations.asset_settle,
 	/* 18 */ Operations.asset_global_settle,
 	/* 19 */ Operations.asset_publish_feed,
-	/* 20 */ Operations.witness_create,
-	/* 21 */ Operations.witness_update,
-	/* 22 */ Operations.proposal_create,
-	/* 23 */ Operations.proposal_update,
-	/* 24 */ Operations.proposal_delete,
-	/* 25 */ Operations.withdraw_permission_create,
-	/* 26 */ Operations.withdraw_permission_update,
-	/* 27 */ Operations.withdraw_permission_claim,
-	/* 28 */ Operations.withdraw_permission_delete,
-	/* 29 */ Operations.committee_member_create,
-	/* 30 */ Operations.committee_member_update,
-	/* 31 */ Operations.committee_member_update_global_parameters,
-	/* 32 */ Operations.vesting_balance_create,
-	/* 33 */ Operations.vesting_balance_withdraw,
-	/* 34 */ Operations.worker_create,
-	/* 35 */ Operations.custom,
-	/* 36 */ Operations.assert,
-	/* 37 */ Operations.balance_claim,
-	/* 38 */ Operations.override_transfer,
-	/* 39 */ Operations.transfer_to_blind,
-	/* 40 */ Operations.blind_transfer,
-	/* 41 */ Operations.transfer_from_blind,
-	/* 42 */ Operations.asset_settle_cancel,
-	/* 43 */ Operations.asset_claim_fees,
-	/* 44 */ {},
-	/* 45 */ {},
-	/* 46 */ {},
-	/* 47 */ Operations.create_contract,
-	/* 48 */ Operations.call_contract,
-	/* 49 */ Operations.contract_transfer,
+	/* 20 */ Operations.proposal_create,
+	/* 21 */ Operations.proposal_update,
+	/* 22 */ Operations.proposal_delete,
+	/* 23 */ Operations.withdraw_permission_create,
+	/* 24 */ Operations.withdraw_permission_update,
+	/* 25 */ Operations.withdraw_permission_claim,
+	/* 26 */ Operations.withdraw_permission_delete,
+	/* 27 */ Operations.committee_member_create,
+	/* 28 */ Operations.committee_member_update,
+	/* 29 */ Operations.committee_member_update_global_parameters,
+	/* 30 */ Operations.vesting_balance_create,
+	/* 31 */ Operations.vesting_balance_withdraw,
+	/* 32 */ Operations.custom,
+	/* 33 */ Operations.assert,
+	/* 34 */ Operations.balance_claim,
+	/* 35 */ Operations.override_transfer,
+	/* 36 */ Operations.asset_settle_cancel,
+	/* 37 */ Operations.asset_claim_fees,
+	/* 38 */ Operations.bid_collateral,
+	/* 39 */ Operations.execute_bid,
+	/* 40 */ Operations.create_contract,
+	/* 41 */ Operations.call_contract,
+	/* 42 */ Operations.contract_transfer,
 ];
 
 Operations.transaction = new Serializer(
@@ -1279,12 +1112,6 @@ Operations.stealth_memo_data = new Serializer('stealth_memo_data', {
 	commitment: bytes(33),
 	check: uint32,
 });
-//	let stealth_confirmation = new Serializer(
-//	 'stealth_confirmation', {
-//	 one_time_key: public_key,
-//	 to: optional( public_key ),
-//	 encrypted_memo: stealth_memo_data
-// })
 
 module.exports = {
 	...Operations,

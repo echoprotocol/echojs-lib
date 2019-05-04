@@ -149,7 +149,7 @@ describe("ECC", function() {
 		let secret = one_time_private.getSharedSecret(to_public);
 		let child = hash.sha256(secret);
 
-		// Check everything above with `wdump((child));` from the witness_node:
+		// Check everything above with `wdump((child));` from the node:
 		assert.equal(child.toString("hex"), "1f296fa48172d9af63ef3fb6da8e369e6cc33c1fb7c164207a3549b39e8ef698");
 
 		let nonce = hash.sha256(one_time_private.toBuffer());

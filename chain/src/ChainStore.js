@@ -14,8 +14,6 @@ const orderPrefix = `1.${parseInt(objectType.limit_order, 10)}.`;
 const callOrderPrefix = `1.${parseInt(objectType.call_order, 10)}.`;
 const proposalPrefix = `1.${parseInt(objectType.proposal, 10)}.`;
 const operationHistoryPrefix = `1.${parseInt(objectType.operation_history, 10)}.`;
-const witnessPrefix = `1.${parseInt(objectType.witness, 10)}.`;
-const workerPrefix = `1.${parseInt(objectType.worker, 10)}.`;
 const committeePrefix = `1.${parseInt(objectType.committee_member, 10)}.`;
 const accountPrefix = `1.${parseInt(objectType.account, 10)}.`;
 const assetPrefix = `1.${parseInt(objectType.asset, 10)}.`;
@@ -71,7 +69,6 @@ const ChainStore = {
 	 */
 	clearCache() {
 		ChainStore.subbed_accounts = new Set();
-		ChainStore.subbed_witnesses = new Set();
 		ChainStore.subbed_committee = new Set();
 
 		ChainStore.objects_by_id = new Map();
@@ -84,7 +81,6 @@ const ChainStore = {
 		ChainStore.get_account_refs_of_keys_calls = new Set();
 		ChainStore.get_account_refs_of_accounts_calls = new Set();
 		ChainStore.account_history_requests = new Map(); //	/< tracks pending history requests
-		ChainStore.witness_by_account_id = new Map();
 		ChainStore.committee_by_account_id = new Map();
 		ChainStore.objects_by_vote_id = new Map();
 		ChainStore.fetching_get_full_accounts = new Map();
@@ -130,7 +126,7 @@ const ChainStore = {
 
 						/**
 						 *  Because 2.1.0 gets fetched here before the set_subscribe_callback,
-						 *  the new witness_node subscription model makes it so we
+						 *  the new subscription model makes it so we
 						 *  never get subscribed to that object, therefore
 						 *  ChainStore._updateObject is commented out here
 						 */
@@ -561,10 +557,6 @@ const ChainStore = {
 			return ChainStore.fetchFullAccount(id, autosubscribe);
 		}
 
-		if (id.search(witnessPrefix) === 0) {
-			ChainStore._subTo('witnesses', id);
-		}
-
 		if (id.search(committeePrefix) === 0) {
 			ChainStore._subTo('committee', id);
 		}
@@ -663,25 +655,6 @@ const ChainStore = {
 	},
 
 	/**
-	 *  This method will attempt to lookup witness by accountId.
-	 *  If witness doesn't exist it will return null,
-	 *  if witness is found it will return witness object,
-	 *  if it's not fetched yet it will return undefined.
-	 *  @param accountId - account id
-	 */
-	getWitnessById(accountId) {
-		const witnessId = ChainStore.witness_by_account_id.get(accountId);
-		if (witnessId === undefined) {
-			ChainStore.fetchWitnessByAccount(accountId);
-			return undefined;
-		} else if (witnessId) {
-			ChainStore._subTo('witnesses', witnessId);
-		}
-
-		return witnessId ? ChainStore.getObject(witnessId) : null;
-	},
-
-	/**
 	 *  This method will attempt to lookup committee member by accountId.
 	 *  If committee member doesn't exist it will return null,
 	 *  if committee member is found it will return committee member object,
@@ -700,165 +673,8 @@ const ChainStore = {
 	},
 
 	/**
-	 *  Obsolete! Please use getWitnessById
-	 *  This method will attempt to lookup the account,
-	 *  and then query to see whether or not there is
-	 *  a witness for this account.
-	 *  If the answer is known, it will return the witness_object, otherwise
-	 *  it will attempt to look it up and return null.
-	 *  Once the lookup has completed on_update will be called.
 	 *
-	 *  @param idOrAccount may either be an accountId, a witnessId, or an account_name
-	 */
-	// getWitness(idOrAccount) {
-	// 	const account = ChainStore.getAccount(idOrAccount);
-	// 	if (!account) { return null; }
-	//
-	// 	const accountId = account.get('id');
-	//
-	// 	const witnessId = ChainStore.witness_by_account_id.get(accountId);
-	// 	if (witnessId === undefined) {
-	// 		ChainStore.fetchWitnessByAccount(accountId);
-	// 		return ChainStore.getObject(witnessId);
-	// 	}
-	//
-	// 	const isAccountName = ChainValidation.is_account_name(idOrAccount, true);
-	// 	const isAccountPrefix = idOrAccount.substring(0, 4) === '1.2.';
-	//
-	// 	if (isAccountName || isAccountPrefix) {
-	// 		const account = ChainStore.getAccount(idOrAccount);
-	//
-	// 		if (!account) {
-	// 			ChainStore.lookupAccountByName(idOrAccount).then(
-	// 				(account) => {
-	// 					if (!account) { return null; }
-	//
-	// 					const accountId = account.get('id');
-	// 					const witnessId = ChainStore.witness_by_account_id.get(accountId);
-	// 					if (ChainValidation.is_object_id(witnessId)) {
-	// 						return ChainStore.getObject(witnessId, on_update);
-	// 					}
-	//
-	// 					if (witnessId == undefined) {
-	// 						ChainStore.fetchWitnessByAccount(accountId).then((witness) => {
-	// 							ChainStore.witness_by_account_id
-	//                           .set(accountId, witness ? witness.get('id') : null);
-	// 							if (witness && on_update) { on_update(); }
-	// 						});
-	// 					}
-	//
-	// 				},
-	// 				() => {
-	// 					let witnessId = ChainStore.witness_by_account_id.set( idOrAccount, null )
-	// 				},
-	// 			);
-	// 		} else {
-	// 			const accountId = account.get('id')
-	// 			const witnessId = ChainStore.witness_by_account_id.get( accountId )
-	// 			if( ChainValidation.is_object_id( witnessId ) )
-	// 			return ChainStore.getObject( witnessId, on_update )
-	//
-	// 			if( witnessId == undefined )
-	// 			ChainStore.fetchWitnessByAccount( accountId ).then( witness => {
-	// 			ChainStore.witness_by_account_id.set( accountId, witness?witness.get('id'):null )
-	// 			if( witness && on_update ) on_update()
-	// 			})
-	// 		}
-	//
-	// 		return null;
-	// 	}
-	//
-	// 	return null;
-	// },
-
-	// Obsolete! Please use getCommitteeMemberById
-	// getCommitteeMember( id_or_account, on_update = null )
-	// {
-	// 	const isAccountName = ChainValidation.is_account_name(idOrAccount, true);
-	// 	const isAccountPrefix = idOrAccount.substring(0, 4) === '1.2.';
-	//
-	// 	if (isAccountName || isAccountPrefix) {
-	//		 let account = ChainStore.getAccount( id_or_account )
-	//
-	//		 if( !account )
-	//		 {
-	//			 ChainStore.lookupAccountByName( id_or_account ).then( account=>{
-	//				 let accountId = account.get('id')
-	//				 let committee_id = ChainStore.committee_by_account_id.get( accountId )
-	//
-	//				 if( ChainValidation.is_object_id( committee_id ) )
-	//				 	return ChainStore.getObject( committee_id, on_update )
-	//
-	//				 if( committee_id == undefined ) {
-	//					 ChainStore.fetchCommitteeMemberByAccount( accountId )
-	//					 	.then( committee => {
-	//							 ChainStore.committee_by_account_id.set(
-	//							 	accountId,
-	//							 	committee ? committee.get('id') : null,
-	//							 )
-	//
-	//							 if( on_update && committee) on_update()
-	//					 	} )
-	//				 }
-	//			 }, error => {
-	//				 let witness_id = ChainStore.committee_by_account_id.set( id_or_account, null )
-	//			 })
-	//		 }
-	//		 else
-	//		 {
-	//			 let accountId = account.get('id')
-	//			 let committee_id = ChainStore.committee_by_account_id.get( accountId )
-	//			 if( ChainValidation.is_object_id( committee_id ) )
-	//			 	return ChainStore.getObject( committee_id, on_update )
-	//
-	//			 if( committee_id == undefined )
-	//			 {
-	//				 ChainStore.fetchCommitteeMemberByAccount( accountId )
-	//				 	.then( committee => {
-	//					 	ChainStore.committee_by_account_id.set(
-	//					 		accountId,
-	//					 		committee ? committee.get('id') : null,
-	//					 	)
-	//
-	//					 	if( on_update && committee) on_update()
-	//				 } )
-	//			 }
-	//		 }
-	//	 }
-	//	 return null
-	// },
-
-	/**
-	 *
-	 *  @return a promise with the witness object
-	 */
-	fetchWitnessByAccount(accountId) {
-		return new Promise((resolve, reject) => {
-			Apis.instance().dbApi().exec('get_witness_by_account', [accountId])
-				.then((optionalWitnessObject) => {
-					if (optionalWitnessObject) {
-						ChainStore._subTo('witnesses', optionalWitnessObject.id);
-
-						ChainStore.witness_by_account_id = ChainStore.witness_by_account_id.set(
-							optionalWitnessObject.witness_account,
-							optionalWitnessObject.id,
-						);
-
-						resolve(ChainStore._updateObject(optionalWitnessObject, true));
-					} else {
-						ChainStore.witness_by_account_id
-							= ChainStore.witness_by_account_id.set(accountId, null);
-						ChainStore.notifySubscribers();
-						resolve(null);
-					}
-
-				}, reject);
-		});
-	},
-
-	/**
-	 *
-	 *  @return a promise with the witness object
+	 *  @return a promise with the committee member object
 	 */
 	fetchCommitteeMemberByAccount(accountId) {
 		return new Promise((resolve, reject) => {
@@ -1279,11 +1095,6 @@ const ChainStore = {
 			if (!ChainStore._isSubbedTo('accounts', object.owner)) {
 				return null; // console.log('not interested in stats of', object.owner);
 			}
-		} else if (object.id.substring(0, witnessPrefix.length) === witnessPrefix) {
-			// witness object
-			if (!ChainStore._isSubbedTo('witnesses', object.id)) {
-				return null;
-			}
 		} else if (object.id.substring(0, committeePrefix.length) === committeePrefix) {
 			// committee_member object
 			if (!ChainStore._isSubbedTo('committee', object.id)) {
@@ -1291,7 +1102,7 @@ const ChainStore = {
 			}
 		} else if (object.id.substring(0, 4) === '0.0.' || object.id.substring(0, 4) === '5.1.') {
 			/**
-			 *  The witness node spams these random objects related to markets,
+			 *  The node spams these random objects related to markets,
 			 *  they are never needed by the GUI and thus only fill up the memory,
 			 *  so we ignore them
 			 */
@@ -1351,14 +1162,6 @@ const ChainStore = {
 				}
 			} catch (err) {
 				// console.log('prior error:', 'object:', object, 'prior', prior, 'err:', err);
-			}
-		} else if (object.id.substring(0, witnessPrefix.length) === witnessPrefix) {
-			// WITNESS OBJECT
-			if (ChainStore._isSubbedTo('witnesses', object.id)) {
-				ChainStore.witness_by_account_id.set(object.witness_account, object.id);
-				ChainStore.objects_by_vote_id.set(object.vote_id, object.id);
-			} else {
-				return null;
 			}
 		} else if (object.id.substring(0, committeePrefix.length) === committeePrefix) {
 			// COMMITTEE MEMBER OBJECT
@@ -1430,10 +1233,6 @@ const ChainStore = {
 				}
 			}
 
-		} else if (object.id.substring(0, workerPrefix.length) === workerPrefix) {
-			// WORKER OBJECT
-			ChainStore.objects_by_vote_id.set(object.vote_for, object.id);
-			ChainStore.objects_by_vote_id.set(object.vote_against, object.id);
 		} else if (object.id.substring(0, bitassetDataPrefix.length) === bitassetDataPrefix) {
 			// BITASSET DATA OBJECT
 			const assetId = current.get('asset_id');
@@ -1461,7 +1260,7 @@ const ChainStore = {
 				if (!callOrders.has(object.id)) {
 					account = account.set('call_orders', callOrders.add(object.id));
 					ChainStore.objects_by_id.set(account.get('id'), account);
-					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the witness node by calling get_objects
+					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the node by calling get_objects
 				}
 			}
 		} else if (object.id.substring(0, orderPrefix.length) === orderPrefix) {
@@ -1475,7 +1274,7 @@ const ChainStore = {
 				if (!limitOrders.has(object.id)) {
 					account = account.set('orders', limitOrders.add(object.id));
 					ChainStore.objects_by_id.set(account.get('id'), account);
-					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the witness node by calling get_objects
+					Apis.instance().dbApi().exec('get_objects', [[object.id]]); // Force subscription to the object in the node by calling get_objects
 				}
 			}
 		} else if (object.id.substring(0, proposalPrefix.length) === proposalPrefix) {
@@ -1514,8 +1313,7 @@ const ChainStore = {
 						// console.log('vote objects ===========> ', voteObjArray);
 						for (let i = 0; i < voteObjArray.length; i += 1) {
 							if (voteObjArray[i]) {
-								const prefix = voteObjArray[i].id.substring(0, witnessPrefix.length);
-								ChainStore._subTo(prefix === witnessPrefix ? 'witnesses' : 'committee', voteObjArray[i].id);
+								ChainStore._subTo('committee', voteObjArray[i].id);
 								ChainStore._updateObject(voteObjArray[i]);
 							}
 						}
