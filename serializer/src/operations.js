@@ -1268,7 +1268,7 @@ Operations.signed_transaction = new Serializer(
 		expiration: time_point_sec,
 		operations: array(operation),
 		extensions: set(futureExtensions),
-		signatures: array(bytes(65)),
+		signatures: array(bytes(64)),
 	},
 );
 // # -------------------------------

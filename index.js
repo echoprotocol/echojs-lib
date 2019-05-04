@@ -18,6 +18,7 @@ const brainKey = require('./ecc/src/BrainKey');
 const hash = require('./ecc/src/hash');
 const key = require('./ecc/src/KeyUtils');
 const ED25519 = require('./ecc/src/ed25519');
+const PublicKeyECDSA = require('./ecc/src/ECDSA/PublicKey');
 
 /* Chain */
 const ChainStore = require('./chain/src/ChainStore');
@@ -50,6 +51,7 @@ module.exports = {
 	hash,
 	key,
 	ED25519,
+	PublicKeyECDSA,
 	ChainStore,
 	TransactionBuilder,
 	FetchChainObjects,

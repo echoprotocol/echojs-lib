@@ -1,10 +1,14 @@
+const { Point, getCurveByName } = require('ecurve');
 const BigInteger = require('bigi');
 const { encode, decode } = require('bs58');
 const deepEqual = require('deep-equal');
 const assert = require('assert');
-const ed25519 = require('ed25519.js');
-const { sha256 } = require('./hash');
+const { sha256, sha512 } = require('../hash');
 const PublicKey = require('./PublicKey');
+
+const secp256k1 = getCurveByName('secp256k1');
+const { n } = secp256k1;
+const toPublic = (data) => (!data || data.Q ? data : PublicKey.fromStringOrThrow(data));
 
 class PrivateKey {
 
@@ -76,14 +80,19 @@ class PrivateKey {
 		return encode(privateWIF);
 	}
 
+	/**
+		@return {Point}
+	*/
+	toPublicKeyPoint() {
+		return secp256k1.G.multiply(this.d);
+	}
+
 	toPublicKey() {
 		if (this.public_key) {
 			return this.public_key;
 		}
 
-		const publicKey = ed25519.derivePublicKey(this.toBuffer());
-
-		this.public_key = PublicKey.fromBuffer(publicKey);
+		this.public_key = PublicKey.fromPoint(this.toPublicKeyPoint());
 
 		return this.public_key;
 	}
@@ -92,6 +101,69 @@ class PrivateKey {
 		return this.d.toBuffer(32);
 	}
 
+
+	/** ECIES */
+	getSharedSecret(publickey, legacy = false) {
+		publickey = toPublic(publickey);
+		const KB = publickey.toUncompressed().toBuffer();
+		const KBP = Point.fromAffine(
+			secp256k1,
+			BigInteger.fromBuffer(KB.slice(1, 33)), // x
+			BigInteger.fromBuffer(KB.slice(33, 65)), // y
+		);
+		const r = this.toBuffer();
+		const P = KBP.multiply(BigInteger.fromBuffer(r));
+		let S = P.affineX.toBuffer({ size: 32 });
+		/*
+		the input to sha512 must be exactly 32-bytes, to match the c++ implementation
+		of getSharedSecret.  Right now S will be shorter if the most significant
+		byte(s) is zero.  Pad it back to the full 32-bytes
+		*/
+		if (!legacy && S.length < 32) {
+			const pad = Buffer.alloc(32 - S.length).fill(0);
+			S = Buffer.concat([pad, S]);
+		}
+
+		// SHA512 used in ECIES
+		return sha512(S);
+	}
+
+	// /** ECIES (does not always match the Point.fromAffine version above) */
+	// getSharedSecret(publickey){
+	//	 publickey = toPublic(publickey)
+	//		let P = publickey.Q.multiply( this.d );
+	//		let S = P.affineX.toBuffer({size: 32});
+	//	 // ECIES, adds an extra sha512
+	//	 return sha512(S);
+	// }
+
+	/** @throws {Error} - overflow of the key could not be derived */
+	child(offset) {
+		offset = Buffer.concat([this.toPublicKey().toBuffer(), offset]);
+		offset = sha256(offset);
+		const c = BigInteger.fromBuffer(offset);
+
+		if (c.compareTo(n) >= 0) {
+			throw new Error('Child offset went out of bounds, try again');
+		}
+
+		const derived = this.d.add(c);	//	.mod(n)
+
+		if (derived.signum() === 0) {
+			throw new Error('Child offset derived to an invalid key, try again');
+		}
+
+		return new PrivateKey(derived);
+	}
+
+	/* <helper_functions> */
+
+	// toByteBuffer() {
+	// 	let b = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+	// 	this.appendByteBuffer(b);
+	// 	return b.copy(0, b.offset);
+	// }
+
 	static fromHex(hex) {
 		return PrivateKey.fromBuffer(Buffer.from(hex, 'hex'));
 	}
@@ -99,11 +171,6 @@ class PrivateKey {
 	toHex() {
 		return this.toBuffer().toString('hex');
 	}
-
-	getSharedSecret() {
-		throw new Error('Need to implement');
-	}
-
 
 	/* </helper_functions> */
 
