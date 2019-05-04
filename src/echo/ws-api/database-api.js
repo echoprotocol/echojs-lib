@@ -632,6 +632,17 @@ class DatabaseAPI {
 	}
 
 	/**
+	 *  @method subscribeContracts
+	 *
+	 *  @param  {Array<String>} contractIds
+	 *
+	 *  @return {Promise}
+	 */
+	subscribeContracts(contractIds) {
+		return this.db.exec('subscribe_contracts', [contractIds]);
+	}
+
+	/**
 	 *  @method getRecentTransactionById
 	 *
 	 *  @param  {String} transactionId

@@ -377,6 +377,24 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
+    describe('setContractsSubscribe', () => {
+        it('test', async () => {
+            await echo.subscriber.setContractsSubscribe(['1.14.23'], () => {});
+            expect(echo.subscriber.subscribers.contract.length).to.equal(1);
+        });
+    });
+
+    describe('removeContractSubscribe', () => {
+        it('test', async () => {
+            const callback = () => {};
+            await echo.subscriber.setContractsSubscribe(['1.14.23'], callback);
+
+            const { length } = echo.subscriber.subscribers.contract;
+            await echo.subscriber.removeContractSubscribe(callback);
+            expect(echo.subscriber.subscribers.contract.length).to.equal(length - 1);
+        });
+    });
+
 	describe('setContractLogsSubscribe', () => {
 		it('test', async () => {
 			await echo.subscriber.setContractLogsSubscribe('1.14.0', () => {});

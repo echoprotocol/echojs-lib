@@ -49,6 +49,7 @@ class Cache {
 		this.contractsByContractId = new Map();
 		this.fullContractsByContractId = new Map();
 		this.contractResultsByContractResultId = new Map();
+		this.contractHistoryByContractId = new Map();
 
 		this.blockHeadersByBlockNumber = Map();
 		this.blocks = new Map();

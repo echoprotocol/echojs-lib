@@ -54,6 +54,7 @@ const accountStatisticsIdRegex = /^2\.6\.[1-9]\d*$/;
 const transactionIdRegex = /^2\.7\.[1-9]\d*$/;
 const blockSummaryIdRegex = /^2\.8\.[1-9]\d*$/;
 const accountTransactionHistoryIdRegex = /^2\.9\.[1-9]\d*$/;
+const contractHistoryIdRegex = /^2\.16\.[1-9]\d*$/;
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
@@ -183,6 +184,7 @@ export const isBlockSummaryId = (v) => isString(v) && blockSummaryIdRegex.test(v
 export const isAccountTransactionHistoryId = (v) => (
 	isString(v) && accountTransactionHistoryIdRegex.test(v)
 );
+export const isContractHistoryId = (v) => isString(v) && contractHistoryIdRegex.test(v);
 export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObjectIdRegex.test(v);
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {

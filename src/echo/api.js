@@ -667,6 +667,42 @@ class API {
 
 	/**
 	 *
+	 * @param {String} key
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {...Array} params
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
+	async _getSingleHistoryDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
+		if (!force) {
+			const cacheValue = this.cache[cacheName].get(key);
+
+			if (cacheValue) {
+				return cacheValue.toJS();
+			}
+		}
+
+		try {
+
+			const requestedObject = await this.wsApi.history[methodName](...params);
+
+			if (!requestedObject) {
+				return requestedObject;
+			}
+
+			this.cache.setInMap(cacheName, key, fromJS(requestedObject));
+
+			return requestedObject;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	/**
+	 *
      * @param {Map} requestedObject
      * @param {Boolean} force
      * @return {Promise.<Asset>}
@@ -2343,7 +2379,41 @@ class API {
 		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
-		return this.wsApi.history.getContractHistory(contractId, stop, limit, start);
+		return this._getSingleHistoryDataByCompositeParams(
+			contractId,
+			CacheMaps.CONTRACT_HISTORY_BY_CONTRACT_ID,
+			'getContractHistory',
+			false,
+			contractId,
+			stop,
+			limit,
+			start,
+		);
+	}
+
+	/**
+	 *  @method getContractHistory
+	 *  Get operations relevant to the specified account.
+	 *
+	 *  @param {String} contractId
+	 *  @param {String} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {String} start [Id of the most recent operation to retrieve]
+	 *  @param force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getFullContract(
+		contractId,
+		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
+		limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT,
+		start = ApiConfig.START_OPERATION_HISTORY_ID,
+		force = false,
+	) {
+		const contract = await this.getContract(contractId, force);
+		const history = await this.getContractHistory(contractId, stop, limit, start);
+
+		return { contract, history };
 	}
 
 	/**

@@ -22,6 +22,8 @@ import {
 	isBitAssetId,
 	isProposalId,
 	isArray,
+	isContractId,
+	isContractHistoryId,
 } from '../utils/validators';
 
 import {
@@ -67,6 +69,7 @@ class Subscriber extends EventEmitter {
 			transaction: [],
 			market: {}, // [base_quote]: []
 			logs: {},	// [contractId]: []
+			contract: [],
 			connect: [],
 			disconnect: [],
 		};
@@ -217,6 +220,16 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isOperationHistoryId(object.id)) {
+			const contractId = object.op[1].callee;
+			let history = this.cache.contractHistoryByContractId.get(contractId);
+
+			if (!history || history.find((h) => h.get('id') === object.id)) {
+				return null;
+			}
+
+			history = history.unshift(fromJS(object));
+
+			this.cache.setInMap(CacheMaps.CONTRACT_HISTORY_BY_CONTRACT_ID, contractId, history);
 			return null;
 		}
 
@@ -468,6 +481,10 @@ class Subscriber extends EventEmitter {
 					}
 				}
 			});
+		}
+
+		if (isContractHistoryId(object.id)) {
+			this._notifyContractSubscribers(obj);
 		}
 
 		return null;
@@ -991,10 +1008,70 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
+	 *  @method _subscribeContracts
+	 *
+	 *  @param  {Array<String>} contractIds
+	 *
+	 *  @return {undefined}
+	 */
+	async _subscribeContracts(contractIds) {
+		await this._wsApi.database.subscribeContracts(contractIds);
+	}
+
+	/**
+	 *  @method setContractLogsSubscribe
+	 *
+	 *  @param  {Array<String>} contracts
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async setContractsSubscribe(contracts, callback) {
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		if (!isArray(contracts)) throw new Error('Contracts should be an array');
+		if (contracts.length < 1) throw new Error('Contracts length should be more then 0');
+		if (!contracts.every((id) => isContractId(id))) throw new Error('Contracts should contain valid contract ids');
+
+		await this._subscribeContracts(contracts);
+
+		this.subscribers.contract.push({ callback, contracts });
+	}
+
+	/**
+	 *  @method removeContractSubscribe
+	 *
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	removeContractSubscribe(callback) {
+		this.subscribers.contract = this.subscribers.contract
+			.filter(({ callback: innerCallback }) => innerCallback !== callback);
+	}
+
+	/**
+	 *
+	 * @param {Map} obj
+	 * @private
+	 */
+	_notifyContractSubscribers(obj) {
+		const { length } = this.subscribers.contract;
+
+		for (let i = 0; i < length; i += 1) {
+			if (this.subscribers.contract[i].contracts.includes(obj.get('id'))) {
+				this.subscribers.contract[i].callback(obj.toJS());
+			}
+		}
+	}
+
+	/**
 	 *  @method _contractLogsUpdate
 	 *
 	 *  @param  {String} contractId
-	 *  @param  {*} fromBlock
+	 *  @param  {*} result
 	 *
 	 *  @return {undefined}
 	 */

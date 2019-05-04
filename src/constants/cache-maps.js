@@ -14,6 +14,7 @@ export const ASSET_BY_SYMBOL = 'assetBySymbol';
 export const CONTRACTS_BY_CONTRACT_ID = 'contractsByContractId';
 export const FULL_CONTRACTS_BY_CONTRACT_ID = 'fullContractsByContractId';
 export const CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID = 'contractResultsByContractResultId';
+export const CONTRACT_HISTORY_BY_CONTRACT_ID = 'contractHistoryByContractId';
 
 export const BLOCK_HEADERS_BY_BLOCK_NUMBER = 'blockHeadersByBlockNumber';
 export const BLOCKS = 'blocks';
