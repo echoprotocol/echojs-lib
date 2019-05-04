@@ -31,7 +31,7 @@ describe('call contract', () => {
             })
     	.addSigner(privateKey).broadcast();
 		const resultId = result[0].trx.operation_results[0][1];
-        ok(/^1\.17\.[1-9]\d*$/.test(resultId));
+        ok(/^1\.15\.[1-9]\d*$/.test(resultId));
 
         const contractResult = await echo.api.getContractResult(resultId);
 		const excepted = contractResult[1].exec_res.excepted;

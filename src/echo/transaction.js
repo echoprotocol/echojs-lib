@@ -295,7 +295,6 @@ class Transaction {
 	 */
 	async broadcast(wasBroadcastedCallback) {
 		if (!this.finalized) await this.sign();
-		console.log('this.transactionObject', this.transactionObject);
 		return this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
 	}
 
