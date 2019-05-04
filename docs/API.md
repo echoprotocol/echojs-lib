@@ -113,8 +113,6 @@ try {
 <dd></dd>
 <dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getAllContracts">getAllContracts()</a> ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getContractLogs">getContractLogs(contractId, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
@@ -656,10 +654,6 @@ try {
 | --- | --- |
 | accountNameOrId | <code>String</code> |
 
-<a name="getAllContracts"></a>
-
-## getAllContracts() ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code>
-**Kind**: global function
 <a name="getContractLogs"></a>
 
 ## getContractLogs(contractId, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>

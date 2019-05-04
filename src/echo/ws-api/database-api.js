@@ -547,15 +547,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getAllContracts
-	 *
-	 *  @return {Promise}
-	 */
-	getAllContracts() {
-		return this.db.exec('get_all_contracts', []);
-	}
-
-	/**
 	 *  @method getContractLogs
 	 *
 	 *  @param  {String} contractId

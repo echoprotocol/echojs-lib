@@ -2043,21 +2043,6 @@ class API {
 	}
 
 	/**
-     *  @method getAllContracts
-     *
-     *  @return {
-     *  	Promise.<Array<{
-     *  		id:String,
-     *  		statistics:String,
-     *  		suicided:Boolean
-     *  	}>>
-     *  }
-	 */
-	getAllContracts() {
-		return this.wsApi.database.getAllContracts();
-	}
-
-	/**
      *  @method getContractLogs
      *
      *  @param  {String} contractId
