@@ -664,6 +664,17 @@ class DatabaseAPI {
 		return this.db.exec('get_balance_objects', [keys]);
 	}
 
+	/**
+	 *  @method getBlockVirtualOperations
+	 *
+	 *  @param  {Number} blockNum
+	 *
+	 * 	@return {Promise}
+	 */
+	getBlockVirtualOperations(blockNum) {
+		return this.db.exec('get_block_virtual_ops', [blockNum]);
+	}
+
 }
 
 export default DatabaseAPI;

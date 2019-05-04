@@ -2482,6 +2482,17 @@ class API {
 		return this.wsApi.database.getBalanceObjects(keys);
 	}
 
+	/**
+	 *
+	 * @param {Number} blockNum
+	 * @return {*}
+	 */
+	getBlockVirtualOperations(blockNum) {
+		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+
+		return this.wsApi.database.getBlockVirtualOperations(blockNum);
+	}
+
 	setOptions() { }
 
 }
