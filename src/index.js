@@ -1,7 +1,7 @@
 /* Chain */
 import Echo from './echo';
 import constants from './constants';
-import { aes, hash, PrivateKey, PublicKey, ED25519 } from './crypto';
+import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
 import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
@@ -27,6 +27,8 @@ export {
 	hash,
 	Signature,
 	serializer,
+	PrivateKeyECDSA,
+	PublicKeyECDSA,
 };
 
 export default new Echo();
