@@ -19,7 +19,7 @@ const chainValidation = {
 
 		const { length } = value;
 
-		if ((!allowShort && length < 3) || length > 63) {
+		if (length > 63) {
 			return false;
 		}
 
