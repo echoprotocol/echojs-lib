@@ -836,10 +836,11 @@ Types.map = (keyStOperation, valueStOperation) => ({
 
 Types.public_key = {
 	toPublic(object) {
+		if (object instanceof PublicKey) return object;
 		if (object.resolve !== undefined) {
 			object = object.resolve;
 		}
-		return !object || object.Q ? object : PublicKey.fromStringOrThrow(object);
+		return PublicKey.fromStringOrThrow(object);
 	},
 	fromByteBuffer(b) {
 		return fp.publicKey(b);
@@ -862,9 +863,6 @@ Types.public_key = {
 		}
 		v.required(object);
 		return object.toString();
-	},
-	compare(a, b) {
-		return strCmp(a.toAddressString(), b.toAddressString());
 	},
 };
 
