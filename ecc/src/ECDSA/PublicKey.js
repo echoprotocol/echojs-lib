@@ -55,7 +55,7 @@ class PublicKey {
 	}
 
 	/** Alias for {@link toPublicKeyString} */
-	toString(addressPrefix = ChainConfig.address_prefix) {
+	toString(addressPrefix = ChainConfig.address_prefix_ecdsa) {
 		return this.toPublicKeyString(addressPrefix);
 	}
 
@@ -63,7 +63,7 @@ class PublicKey {
 		Full public key
 		{return} string
 	*/
-	toPublicKeyString(addressPrefix = ChainConfig.address_prefix) {
+	toPublicKeyString(addressPrefix = ChainConfig.address_prefix_ecdsa) {
 		const pubBuf = this.toBuffer();
 		const checksum = ripemd160(pubBuf);
 		const addy = Buffer.concat([pubBuf, checksum.slice(0, 4)]);
@@ -75,7 +75,7 @@ class PublicKey {
 		@arg {string} addressPrefix - like ECHO
 		@return PublicKey or `null` (if the publicKey string is invalid)
 	*/
-	static fromPublicKeyString(publicKey, addressPrefix = ChainConfig.address_prefix) {
+	static fromPublicKeyString(publicKey, addressPrefix = ChainConfig.address_prefix_ecdsa) {
 		try {
 			return PublicKey.fromStringOrThrow(publicKey, addressPrefix);
 		} catch (e) {
@@ -89,7 +89,7 @@ class PublicKey {
 		@throws {Error} if public key is invalid
 		@return PublicKey
 	*/
-	static fromStringOrThrow(publicKey, addressPrefix = ChainConfig.address_prefix) {
+	static fromStringOrThrow(publicKey, addressPrefix = ChainConfig.address_prefix_ecdsa) {
 		const prefix = publicKey.slice(0, addressPrefix.length);
 		assert.equal(
 			addressPrefix,
@@ -110,7 +110,7 @@ class PublicKey {
 		return PublicKey.fromBuffer(publicKey);
 	}
 
-	toAddressString(addressPrefix = ChainConfig.address_prefix) {
+	toAddressString(addressPrefix = ChainConfig.address_prefix_ecdsa) {
 		const pubBuf = this.toBuffer();
 		const pubSha = sha512(pubBuf);
 		let addy = ripemd160(pubSha);
