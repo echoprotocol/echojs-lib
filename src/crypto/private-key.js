@@ -7,6 +7,8 @@ import * as ed25519 from 'ed25519.js';
 import { sha256 } from './hash';
 import PublicKey from './public-key';
 
+import CHAIN_CONFIG from '../constants/chain-config';
+
 class PrivateKey {
 
 	/**
@@ -154,6 +156,62 @@ class PrivateKey {
 	 */
 	toHex() {
 		return this.toBuffer().toString('hex');
+	}
+
+	/**
+	 *  @method toPrivateKeyString
+	 *  Full public key
+	 *
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
+	 *
+	 *  @return {String}
+	 */
+	toPrivateKeyString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+		const buf = this.toBuffer();
+		return addressPrefix + encode(buf);
+	}
+
+	/**
+	 *  @method fromPublicKeyString
+	 *
+	 *  @param  {String} privateKeyStringWithPrefix
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
+	 *
+	 *  @return {PrivateKey|null} (if the private string is invalid)
+	 */
+	static fromPrivateKeyString(privateKeyStringWithPrefix, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+		try {
+			return PrivateKey.fromPrivateKeyStringOrThrow(privateKeyStringWithPrefix, addressPrefix);
+		} catch (e) {
+			return null;
+		}
+	}
+
+	/**
+	 *  @method fromPrivateKeyStringOrThrow
+	 *
+	 *  @param  {String} privateKeyStringWithPrefix
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
+	 *
+	 *  @throws {Error} if private key is invalid
+	 *
+	 *  @return {PrivateKey}
+	 */
+	static fromPrivateKeyStringOrThrow(privateKeyStringWithPrefix, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+
+		const prefix = privateKeyStringWithPrefix.slice(0, addressPrefix.length);
+
+		assert.equal(
+			addressPrefix,
+			prefix,
+			`Expecting key to begin with ${addressPrefix}, instead got ${prefix}`,
+		);
+
+		const privateKeyString = privateKeyStringWithPrefix.slice(addressPrefix.length);
+
+		const privateKeyBuffer = Buffer.from(decode(privateKeyString), 'binary');
+
+		return PrivateKey.fromBuffer(privateKeyBuffer);
 	}
 
 }
