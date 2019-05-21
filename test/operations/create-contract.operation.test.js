@@ -32,10 +32,7 @@ describe('create contract', () => {
 		});
 		await tx.sign(privateKey);
 		/** @type {string} */
-		let operationResultId = await tx.broadcast().then((res) => res[0].trx.operation_results[0][1]);
-
-		// TEMP: NEED TO BE DELETED AFTER BUG FIXED
-		operationResultId = `1.15.${operationResultId.split('.')[2] - 1}`;
+		const operationResultId = await tx.broadcast().then((res) => res[0].trx.operation_results[0][1]);
 
 		const newAddress = await echo.api.getContractResult(operationResultId).then((res) => res[1].exec_res.new_address).catch((e) => console.log(e));
 		const contractId = `1.14.${parseInt(newAddress.slice(2), 16)}`;
