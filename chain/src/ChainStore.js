@@ -699,6 +699,34 @@ const ChainStore = {
 		});
 	},
 
+	/**
+	 *
+	 * @param {String} lowerBoundName
+	 * @param {Number} limit
+	 * @returns {Promise<any>}
+	 */
+	lookupCommitteeMemberAccounts(lowerBoundName, limit = 30) {
+		return new Promise((resolve, reject) => {
+			Apis.instance().dbApi().exec('lookup_committee_member_accounts', [lowerBoundName, limit])
+				.then((committeesObject) => {
+					resolve(committeesObject);
+				}, reject);
+		});
+	},
+
+	/**
+	 *
+	 * @param {Array} committeeMembersIds
+	 * @returns {Promise<any>}
+	 */
+	getCommitteeMembers(committeeMembersIds) {
+		return new Promise((resolve, reject) => {
+			Apis.instance().dbApi().exec('get_committee_members', [committeeMembersIds])
+				.then((committeesObject) => {
+					resolve(committeesObject);
+				}, reject);
+		});
+	},
 
 	/**
 	 *  Fetches an account and all of its associated data in a single query
