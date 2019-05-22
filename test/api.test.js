@@ -429,7 +429,7 @@ describe('API', () => {
                 }
             }).timeout(5000);
         });
-        describe.skip('#getContract()', () => {
+        describe('#getFullContract()', () => {
             it('should get contract', async () => {
                 try {
                     const wsApi = new WSAPI(ws);
@@ -437,9 +437,9 @@ describe('API', () => {
                     const api = new API(cache, wsApi);
 
                     const contractId = '1.14.0';
-                    const contract =  await api.getContract(contractId);
+                    const contract =  await api.getFullContract(contractId);
 
-                    expect(contract).to.deep.equal(cache.fullContractsByContractId.get(contractId));
+                    expect(contract).to.deep.equal(cache.fullContractsByContractId.get(contractId).toJS());
                 } catch (e) {
                     throw e;
                 }

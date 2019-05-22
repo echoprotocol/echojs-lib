@@ -105,6 +105,11 @@ class Subscriber extends EventEmitter {
 			this._subscribeToMarket(base, quote);
 		});
 
+		if (this.subscribers.contract.length !== 0) {
+			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
+			this._setContractSubscribe(contracts);
+		}
+
 		await this._subscribeCache();
 	}
 
@@ -485,6 +490,7 @@ class Subscriber extends EventEmitter {
 
 		if (isContractHistoryId(object.id)) {
 			this._notifyContractSubscribers(obj);
+			this._api.getFullContract(object.contract, true);
 		}
 
 		return null;
@@ -1008,25 +1014,25 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _subscribeContracts
+	 *  @method _subscribeContract
 	 *
 	 *  @param  {Array<String>} contractIds
 	 *
 	 *  @return {undefined}
 	 */
-	async _subscribeContracts(contractIds) {
+	async _setContractSubscribe(contractIds) {
 		await this._wsApi.database.subscribeContracts(contractIds);
 	}
 
 	/**
-	 *  @method setContractLogsSubscribe
+	 *  @method setContractSubscribe
 	 *
 	 *  @param  {Array<String>} contracts
 	 *  @param  {Function} callback
 	 *
 	 *  @return {undefined}
 	 */
-	async setContractsSubscribe(contracts, callback) {
+	async setContractSubscribe(contracts, callback) {
 		if (!isFunction(callback)) {
 			throw new Error('Callback is not a function');
 		}
@@ -1035,7 +1041,7 @@ class Subscriber extends EventEmitter {
 		if (contracts.length < 1) throw new Error('Contracts length should be more then 0');
 		if (!contracts.every((id) => isContractId(id))) throw new Error('Contracts should contain valid contract ids');
 
-		await this._subscribeContracts(contracts);
+		await this._setContractSubscribe(contracts);
 
 		this.subscribers.contract.push({ callback, contracts });
 	}
@@ -1058,13 +1064,11 @@ class Subscriber extends EventEmitter {
 	 * @private
 	 */
 	_notifyContractSubscribers(obj) {
-		const { length } = this.subscribers.contract;
-
-		for (let i = 0; i < length; i += 1) {
-			if (this.subscribers.contract[i].contracts.includes(obj.get('id'))) {
-				this.subscribers.contract[i].callback(obj.toJS());
+		this.subscribers.contract.forEach(({ contracts, callback }) => {
+			if (contracts.includes(obj.get('contract'))) {
+				callback(obj.toJS());
 			}
-		}
+		});
 	}
 
 	/**
@@ -1151,14 +1155,18 @@ class Subscriber extends EventEmitter {
 	async _subscribeCache() {
 		const [...objectIds] = this.cache.objectsById.keys();
 		const [...fullAccountIds] = this.cache.fullAccounts.keys();
+		const [...fullContractIds] = this.cache.fullContractsByContractId.keys();
+
 
 		const objectByIdsPromise = this._api.getObjects(objectIds, true);
 		const fullAccountsPromise = this._api.getFullAccounts(fullAccountIds, true, true);
+		const fullContractPromises = fullContractIds.map((id) => this._api.getFullContract(id, true));
 
 		try {
 			await Promise.all([
 				objectByIdsPromise,
 				fullAccountsPromise,
+				...fullContractPromises,
 			]);
 		} catch (_) {
 			console.error('[Subscriber] >---- error ----> Couldn\'t resubscribe cache');

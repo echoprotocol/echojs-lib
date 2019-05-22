@@ -667,42 +667,6 @@ class API {
 
 	/**
 	 *
-	 * @param {String} key
-	 * @param {String} cacheName
-	 * @param {String} methodName
-	 * @param {Boolean} force
-	 * @param {...Array} params
-	 *
-	 * @return {Promise.<Object>}
-	 * @private
-	 */
-	async _getSingleHistoryDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
-		if (!force) {
-			const cacheValue = this.cache[cacheName].get(key);
-
-			if (cacheValue) {
-				return cacheValue.toJS();
-			}
-		}
-
-		try {
-
-			const requestedObject = await this.wsApi.history[methodName](...params);
-
-			if (!requestedObject) {
-				return requestedObject;
-			}
-
-			this.cache.setInMap(cacheName, key, fromJS(requestedObject));
-
-			return requestedObject;
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	/**
-	 *
      * @param {Map} requestedObject
      * @param {Boolean} force
      * @return {Promise.<Asset>}
@@ -2122,19 +2086,13 @@ class API {
      *  @method getContract
      *
      *  @param  {String} contractId
-     *  @param {Boolean} force
      *
      *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
      */
-	getContract(contractId, force = false) {
+	getContract(contractId) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
-		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
-		return this._getSingleDataWithMultiSave(
-			contractId,
-			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
-			'getContract',
-			force,
-		);
+
+		return this.wsApi.database.getContract(contractId);
 	}
 
 	/**
@@ -2379,11 +2337,7 @@ class API {
 		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
-		return this._getSingleHistoryDataByCompositeParams(
-			contractId,
-			CacheMaps.CONTRACT_HISTORY_BY_CONTRACT_ID,
-			'getContractHistory',
-			false,
+		return this.wsApi.history.getContractHistory(
 			contractId,
 			stop,
 			limit,
@@ -2392,28 +2346,35 @@ class API {
 	}
 
 	/**
-	 *  @method getContractHistory
-	 *  Get operations relevant to the specified account.
+	 *  @method getFullContract
+	 *  Get contract info.
 	 *
 	 *  @param {String} contractId
-	 *  @param {String} stop [Id of the earliest operation to retrieve]
-	 *  @param {Number} limit     [count operations (max 100)]
-	 *  @param {String} start [Id of the most recent operation to retrieve]
-	 *  @param force
+	 *  @param {Boolean} force
 	 *
 	 *  @return {Promise.<Object>}
 	 */
-	async getFullContract(
-		contractId,
-		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
-		limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT,
-		start = ApiConfig.START_OPERATION_HISTORY_ID,
-		force = false,
-	) {
-		const contract = await this.getContract(contractId, force);
-		const history = await this.getContractHistory(contractId, stop, limit, start);
+	async getFullContract(contractId, force = false) {
 
-		return { contract, history };
+		if (!force) {
+			const cacheValue = this.cache[CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID].get(contractId);
+
+			if (cacheValue) {
+				return cacheValue.toJS();
+			}
+		}
+
+		const contract = await this.getContract(contractId, force);
+		const balances = await this.getContractBalances(contractId);
+		const history = await this.getContractHistory(contractId);
+
+		this.cache.setInMap(
+			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
+			contractId,
+			fromJS({ contract, history, balances }),
+		);
+
+		return { contract, history, balances };
 	}
 
 	/**

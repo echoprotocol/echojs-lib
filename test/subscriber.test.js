@@ -377,9 +377,9 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-    describe('setContractsSubscribe', () => {
+    describe('setContractSubscribe', () => {
         it('test', async () => {
-            await echo.subscriber.setContractsSubscribe(['1.14.23'], () => {});
+            await echo.subscriber.setContractSubscribe(['1.14.23'], () => {});
             expect(echo.subscriber.subscribers.contract.length).to.equal(1);
         });
     });
@@ -387,7 +387,7 @@ describe('SUBSCRIBER', () => {
     describe('removeContractSubscribe', () => {
         it('test', async () => {
             const callback = () => {};
-            await echo.subscriber.setContractsSubscribe(['1.14.23'], callback);
+            await echo.subscriber.setContractSubscribe(['1.14.23'], callback);
 
             const { length } = echo.subscriber.subscribers.contract;
             await echo.subscriber.removeContractSubscribe(callback);
