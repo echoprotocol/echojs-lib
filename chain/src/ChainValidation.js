@@ -58,10 +58,6 @@ const chainValidation = {
 			return `${suffix} not be empty.`;
 		}
 
-		if (!allowShort && value.length < 3) {
-			return `${suffix} be longer.`;
-		}
-
 		if (value.length > 63) {
 			return `${suffix} be shorter then 63 symbols.`;
 		}
@@ -85,9 +81,6 @@ const chainValidation = {
 			}
 			if (!/[a-z0-9]$/.test(label)) {
 				return `${suffix} end with a latin letter or digit.`;
-			}
-			if (!(label.length >= 3)) {
-				return `${suffix} be longer.`;
 			}
 		}
 		return null;
