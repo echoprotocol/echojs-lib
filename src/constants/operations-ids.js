@@ -49,3 +49,7 @@ export const CREATE_ETH_ADDRESS = 47;
 export const DEPOSIT_ETH = 48;
 export const WITHDRAW_ETH = 49;
 export const APPROVE_WITHDRAW_ETH = 50;
+export const CONTRACT_FUND_POOL = 51;
+export const CONTRACT_WHITELIST = 52;
+export const SIDECHAIN_ISSUE = 53;
+export const SIDECHAIN_BURN = 54;
