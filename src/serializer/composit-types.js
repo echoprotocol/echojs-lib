@@ -4,7 +4,6 @@ import serializable from './serializable';
 import { ACCOUNT, ASSET, CONTRACT } from '../constants/object-types';
 
 import {
-	bytes,
 	empty,
 	int64,
 	map,
@@ -27,13 +26,6 @@ export { default as vestingPolicyInitializer } from './vesting-policy';
 export const operationWrapper = staticVariant({});
 export const asset = serializable({ amount: int64, asset_id: protocolId(ASSET) });
 export const price = serializable({ base: asset, quote: asset });
-
-export const memoData = serializable({
-	from: publicKey,
-	to: publicKey,
-	nonce: uint64,
-	message: bytes(undefined),
-});
 
 export const authority = serializable({
 	weight_threshold: uint32,

@@ -2197,9 +2197,7 @@ class API {
      *  @method registerAccount
      *
      *  @param  {String} name
-     * 	@param  {String} ownerKey
      * 	@param  {String} activeKey
-     * 	@param  {String} memoKey
      * 	@param  {String} echoRandKey
 	 *  @param  {Function} wasBroadcastedCallback
      *

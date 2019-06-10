@@ -7,7 +7,6 @@ import {
 	assetOptions,
 	authority,
 	bitassetOptions,
-	memoData,
 	price,
 	priceFeed,
 	chainParameters,
@@ -100,7 +99,6 @@ export const transfer = operation(TRANSFER, {
 	from: protocolId(ACCOUNT),
 	to: protocolId(ACCOUNT),
 	amount: asset,
-	memo: optional(memoData),
 	extensions: optional(empty),
 }); // 0
 
@@ -222,7 +220,6 @@ export const assetIssue = operation(ASSET_ISSUE, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_issue: asset,
 	issue_to_account: protocolId(ACCOUNT),
-	memo: optional(memoData),
 	extensions: optional(empty),
 }); // 14
 
@@ -321,7 +318,6 @@ export const withdrawPermissionClaim = operation(WITHDRAW_PERMISSION_CLAIM, {
 	withdraw_from_account: protocolId(ACCOUNT),
 	withdraw_to_account: protocolId(ACCOUNT),
 	amount_to_withdraw: asset,
-	memo: optional(memoData),
 }); // 25
 
 export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
@@ -394,7 +390,6 @@ export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
 	from: protocolId(ACCOUNT),
 	to: protocolId(ACCOUNT),
 	amount: asset,
-	memo: optional(memoData),
 	extensions: optional(empty),
 }); // 35
 
