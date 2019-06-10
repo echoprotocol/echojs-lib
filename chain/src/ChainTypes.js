@@ -97,6 +97,18 @@ ChainTypes.operations = {
 	create_contract: 40,
 	call_contract: 41,
 	contract_transfer: 42,
+	change_sidechain_config: 43,
+	account_address_create: 44,
+	transfer_to_address: 45,
+	generate_eth_address: 46,
+	create_eth_address: 47,
+	deposit_eth: 48,
+	withdraw_eth: 49,
+	approve_withdraw_eth: 50,
+	contract_fund_pool: 51,
+	contract_whitelist: 52,
+	sidechain_issue: 53,
+	sidechain_burn: 54
 };
 
 module.exports = ChainTypes;
