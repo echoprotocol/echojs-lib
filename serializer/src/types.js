@@ -919,7 +919,7 @@ Types.public_key_ecdsa = {
 	},
 	toObject(object, debug = {}) {
 		if (debug.use_default && object === undefined) {
-			return `${ChainConfig.address_prefix_ecdsa}859gxfnXyUriMgUeThh1fWv3oqcpLFyHa3TfFYC4PK2HqhToVM`;
+			return `${ChainConfig.address_prefix}859gxfnXyUriMgUeThh1fWv3oqcpLFyHa3TfFYC4PK2HqhToVM`;
 		}
 		v.required(object);
 		return object.toString();
