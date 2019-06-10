@@ -142,7 +142,7 @@ export const accountCreate = operation(ACCOUNT_CREATE, {
 	referrer_percent: uint16,
 	name: string,
 	active: authority,
-	ed_key: publicKey,
+	echorand_key: publicKey,
 	options: accountOptions,
 	extensions: optional(empty),
 }); // 5
@@ -152,7 +152,7 @@ export const accountUpdate = operation(ACCOUNT_UPDATE, {
 	account: protocolId(ACCOUNT),
 	active: optional(authority),
 	// ed_key: optional(bytes(32)),
-	ed_key: optional(publicKey),
+	echorand_key: optional(publicKey),
 	new_options: optional(accountOptions),
 	extensions: optional(empty),
 }); // 6

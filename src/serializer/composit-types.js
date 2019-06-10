@@ -9,7 +9,6 @@ import {
 	map,
 	protocolId,
 	publicKey,
-	publicKeyECDSA,
 	set,
 	string,
 	uint8,
@@ -34,7 +33,6 @@ export const authority = serializable({
 });
 
 export const accountOptions = serializable({
-	memo_key: publicKeyECDSA,
 	voting_account: protocolId(ACCOUNT),
 	delegating_account: protocolId(ACCOUNT),
 	num_committee: uint16,
