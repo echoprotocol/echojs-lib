@@ -2205,15 +2205,14 @@ class API {
      *
      *  @return {Promise.<null>}
      */
-	async registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback) {
+	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
-		if (!isPublicKey(ownerKey)) throw new Error('Owner public key is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.registerAccount((res) =>
-					resolve(res), name, ownerKey, activeKey, memoKey, echoRandKey);
+					resolve(res), name, activeKey, echoRandKey);
 			} catch (error) {
 				reject(error);
 			}

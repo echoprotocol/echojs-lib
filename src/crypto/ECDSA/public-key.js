@@ -99,11 +99,11 @@ class PublicKey {
 	 *  @method toString
 	 *  Alias for {@link toPublicKeyString}
 	 *
-	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA]
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
 	 *
 	 *  @return {String}
 	 */
-	toString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA) {
+	toString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
 		return this.toPublicKeyString(addressPrefix);
 	}
 
@@ -111,11 +111,11 @@ class PublicKey {
 	 *  @method toPublicKeyString
 	 *  Full public key
 	 *
-	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA]
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
 	 *
 	 *  @return {String}
 	 */
-	toPublicKeyString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA) {
+	toPublicKeyString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
 		const pubBuf = this.toBuffer();
 		const checksum = ripemd160(pubBuf);
 		const addy = Buffer.concat([pubBuf, checksum.slice(0, 4)]);
@@ -126,11 +126,11 @@ class PublicKey {
 	 *  @method fromPublicKeyString
 	 *
 	 *  @param  {String} publicKey
-	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA]
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
 	 *
 	 *  @return {PublicKey|null} (if the publicKey string is invalid)
 	 */
-	static fromPublicKeyString(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA) {
+	static fromPublicKeyString(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
 		try {
 			return PublicKey.fromStringOrThrow(publicKey, addressPrefix);
 		} catch (e) {
@@ -142,13 +142,13 @@ class PublicKey {
 	 *  @method fromStringOrThrow
 	 *
 	 *  @param  {String} publicKey
-	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA]
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
 	 *
 	 *  @throws {Error} if public key is invalid
 	 *
 	 *  @return {PublicKey}
 	 */
-	static fromStringOrThrow(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA) {
+	static fromStringOrThrow(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
 		const prefix = publicKey.slice(0, addressPrefix.length);
 		assert.equal(
 			addressPrefix,
@@ -172,11 +172,11 @@ class PublicKey {
 	/**
 	 *  @method toAddressString
 	 *
-	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA]
+	 *  @param  {String} [addressPrefix=CHAIN_CONFIG.ADDRESS_PREFIX]
 	 *
 	 *  @return {String}
 	 */
-	toAddressString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX_ECDSA) {
+	toAddressString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
 		const pubBuf = this.toBuffer();
 		const pubSha = sha512(pubBuf);
 		let addy = ripemd160(pubSha);
