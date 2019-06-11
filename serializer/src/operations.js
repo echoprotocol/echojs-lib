@@ -9,7 +9,7 @@ const {
 	uint8, uint16, uint32, int64, uint64,
 	string, bytes, bool, array, protocol_id_type, object_id_type, vote_id,
 	static_variant, map, set,
-	public_key, public_key_ecdsa,
+	public_key,
 	time_point_sec,
 	optional,
 } = types;
@@ -400,16 +400,6 @@ Operations.signed_block_header = new Serializer(
 	},
 );
 
-Operations.memo_data = new Serializer(
-	'memo_data',
-	{
-		from: public_key,
-		to: public_key,
-		nonce: uint64,
-		message: bytes(),
-	},
-);
-
 Operations.transfer = new Serializer(
 	'transfer',
 	{
@@ -417,7 +407,6 @@ Operations.transfer = new Serializer(
 		from: protocol_id_type('account'),
 		to: protocol_id_type('account'),
 		amount: Operations.asset,
-		memo: optional(Operations.memo_data),
 		extensions: set(futureExtensions),
 	},
 );
@@ -479,7 +468,6 @@ Operations.authority = new Serializer(
 Operations.account_options = new Serializer(
 	'account_options',
 	{
-		memo_key: public_key_ecdsa,
 		voting_account: protocol_id_type('account'),
 		delegating_account: protocol_id_type('account'),
 		num_committee: uint16,
@@ -497,7 +485,7 @@ Operations.account_create = new Serializer(
 		referrer_percent: uint16,
 		name: string,
 		active: Operations.authority,
-		ed_key: bytes(32),
+		echorand_key: bytes(32),
 		options: Operations.account_options,
 		extensions: set(futureExtensions),
 	},
@@ -509,7 +497,7 @@ Operations.account_update = new Serializer(
 		fee: Operations.asset,
 		account: protocol_id_type('account'),
 		active: optional(Operations.authority),
-		ed_key: optional(bytes(32)),
+		echorand_key: optional(bytes(32)),
 		new_options: optional(Operations.account_options),
 		extensions: set(futureExtensions),
 	},
@@ -640,7 +628,6 @@ Operations.asset_issue = new Serializer(
 		issuer: protocol_id_type('account'),
 		asset_to_issue: Operations.asset,
 		issue_to_account: protocol_id_type('account'),
-		memo: optional(Operations.memo_data),
 		extensions: set(futureExtensions),
 	},
 );
@@ -787,7 +774,6 @@ Operations.withdraw_permission_claim = new Serializer(
 		withdraw_from_account: protocol_id_type('account'),
 		withdraw_to_account: protocol_id_type('account'),
 		amount_to_withdraw: Operations.asset,
-		memo: optional(Operations.memo_data),
 	},
 );
 
@@ -971,7 +957,6 @@ Operations.override_transfer = new Serializer(
 		from: protocol_id_type('account'),
 		to: protocol_id_type('account'),
 		amount: Operations.asset,
-		memo: optional(Operations.memo_data),
 		extensions: set(futureExtensions),
 	},
 );
