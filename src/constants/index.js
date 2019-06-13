@@ -3,6 +3,8 @@ import CHAIN_CONFIG from './chain-config';
 import WS_CONSTANTS from './ws-constants';
 import * as OPERATIONS_IDS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
+import * as API_CONFIG from './api-config';
+import * as OBJECT_TYPES from './object-types';
 
 export const START_OPERATION_ID = '1.10.0';
 export const CORE_ASSET_ID = '1.3.0';
@@ -30,10 +32,10 @@ export default {
 	BITASSET_UPDATE,
 	CACHE_MAPS,
 	OPERATIONS_IDS,
+	API_CONFIG,
+	OBJECT_TYPES,
 };
 
-export { default as CHAIN_TYPES } from './chain-types';
-export { default as CHAIN_CONFIG } from './chain-config';
 export const ECHO_ASSET_ID = '1.3.0';
 export const DYNAMIC_GLOBAL_OBJECT_ID = '2.1.0';
-export { OPERATIONS_IDS, CACHE_MAPS };
+export { OPERATIONS_IDS, CACHE_MAPS, CHAIN_TYPES, CHAIN_CONFIG };
