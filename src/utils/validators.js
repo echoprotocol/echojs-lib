@@ -189,7 +189,7 @@ export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObject
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 
-	if (!isString(v) || v.length !== (ChainConfig.PUBLIC_KEY_LENGTH + addressPrefix.length)) return false;
+	if (!isString(v) || Buffer.from(v).length !== ChainConfig.BUFFER_PUBLIC_KEY_LENGTH) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
