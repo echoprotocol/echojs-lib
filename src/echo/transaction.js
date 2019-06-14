@@ -164,7 +164,10 @@ class Transaction {
 				if (defaultAssetOperations.length === 0) return;
 				const fees = await this.api.getRequiredFees(defaultAssetOperations);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
-					const fee = fees[opIndex];
+					let fee = fees[opIndex];
+					if (fee.fee) {
+						({ fee } = fee);
+					}
 					defaultAssetOperations[opIndex][1].fee = { asset_id: fee.asset_id, amount: fee.amount };
 				}
 			})(),
@@ -177,7 +180,10 @@ class Transaction {
 				]);
 				const totalFees = new BigNumber(0);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
-					const fee = fees[opIndex];
+					let fee = fees[opIndex];
+					if (fee.fee) {
+						({ fee } = fee);
+					}
 					ops[opIndex][1].fee = { asset_id: fee.asset_id, amount: fee.amount };
 					totalFees.plus(fee.amount);
 				}
