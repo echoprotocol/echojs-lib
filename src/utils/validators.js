@@ -192,7 +192,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 	if (!isString(v)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
-	
+
 	if (addressPrefix !== prefix || bs58.decode(v.slice(addressPrefix.length)).length !== ChainConfig.LENGTH_DECODE_PUBLIC_KEY) return false;
 
 	return true;
