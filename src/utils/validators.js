@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import BN from 'bignumber.js';
+import bs58 from 'bs58';
 
 import ChainConfig from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
@@ -188,12 +189,13 @@ export const isContractHistoryId = (v) => isString(v) && contractHistoryIdRegex.
 export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObjectIdRegex.test(v);
 
 export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
-
-	if (!isString(v) || Buffer.from(v).length !== ChainConfig.BUFFER_PUBLIC_KEY_LENGTH) return false;
+	if (!isString(v)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
+	
+	if (addressPrefix !== prefix || bs58.decode(v.slice(addressPrefix.length)).length !== ChainConfig.LENGTH_DECODE_PUBLIC_KEY) return false;
 
-	return addressPrefix === prefix;
+	return true;
 };
 
 export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) => {
