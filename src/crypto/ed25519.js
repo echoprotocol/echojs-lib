@@ -35,6 +35,54 @@ class ED25519 {
 		return ed25519.createKeyPair();
 	}
 
+	/**
+	 *  @method signMessage
+     *  @param {Buffer} message
+	 *  @param {Buffer} publicKey
+ 	 *  @param {Buffer} privateKey
+	 *  @return {{signature:Buffer}}
+	 */
+	static signMessage(message, publicKey, privateKey) {
+
+		if (!isBuffer(message)) {
+			throw new Error('message must be buffer');
+		}
+
+		if (!isBuffer(publicKey)) {
+			throw new Error('public key must be buffer');
+		}
+
+		if (!isBuffer(privateKey)) {
+			throw new Error('private key must be buffer');
+		}
+
+		return ed25519.sign(message, publicKey, privateKey);
+	}
+
+	/**
+	 *  @method verifyMessage
+	 *  @param {Buffer} signature
+	 *  @param {Buffer} message
+	 *  @param {Buffer} publicKey
+	 *  @return {Boolean}
+	 */
+	static verifyMessage(signature, message, publicKey) {
+
+		if (!isBuffer(signature)) {
+			throw new Error('signature must be buffer');
+		}
+
+		if (!isBuffer(message)) {
+			throw new Error('message key must be buffer');
+		}
+
+		if (!isBuffer(publicKey)) {
+			throw new Error('public key must be buffer');
+		}
+
+		return ed25519.verify(signature, message, publicKey);
+	}
+
 }
 
 export default ED25519;
