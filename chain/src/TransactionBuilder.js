@@ -485,8 +485,12 @@ class TransactionBuilder {
 					if (!operation.fee || operation.fee.amount === 0
 						|| (operation.fee.amount.toString && operation.fee.amount.toString() === '0')// Long
 					) {
-						operation.fee = flat_assets[asset_index];
-						// console.log("new operation.fee", operation.fee)
+						if (flat_assets[asset_index].fee) {
+							operation.fee = flat_assets[asset_index].fee;
+						} else {
+							operation.fee = flat_assets[asset_index];
+						}
+						// console.log("new operation.fee", operation.fee);
 					} else {
 						// console.log("old operation.fee", operation.fee)
 					}
