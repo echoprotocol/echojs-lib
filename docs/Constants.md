@@ -46,7 +46,6 @@ console.log(constants.CHAIN_CONFIG) // Generai information about chain
 {
     CORE_ASSET: 'ECHO',
     ADDRESS_PREFIX: 'ECHO',
-    ECHORAND_PREFIX: 'DET',
     EXPIRE_IN_SECONDS: 15,
     EXPIRE_IN_SECONDS_PROPOSAL: 24 * 60 * 60,
     REVIEW_IN_SECONDS_COMMITTEE: 24 * 60 * 60,
@@ -54,7 +53,6 @@ console.log(constants.CHAIN_CONFIG) // Generai information about chain
         ECHO_DEV: {
             CORE_ASSET: 'ECHO',
             ADDRESS_PREFIX: 'ECHO',
-            ECHORAND_PREFIX: 'DET',
             CHAIN_ID:'233ae92c7218173c76b5ffad9487b063933eec714a12e3f2ea48026a4526294',
         },
     }

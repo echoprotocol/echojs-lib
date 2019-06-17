@@ -198,14 +198,7 @@ export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
 	return true;
 };
 
-export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ECHORAND_PREFIX) => {
-
-	if (!isString(v) || v.length !== (ChainConfig.ECHORAND_KEY_LENGTH + echorandPrefix.length)) return false;
-
-	const prefix = v.slice(0, echorandPrefix.length);
-
-	return echorandPrefix === prefix;
-};
+export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ADDRESS_PREFIX) => isPublicKey(v, echorandPrefix);
 
 export const isAccountName = (v) => {
 	if (!isString(v)) {
