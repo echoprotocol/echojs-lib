@@ -27,29 +27,34 @@ ChainTypes.object_type = {
 	eth_address: 17,
 	deposit_eth: 18,
 	withdraw_eth: 19,
-	OBJECT_TYPE_COUNT: 20
+	erc20_token: 20,
+	deposit_erc20_token: 21,
+	withdraw_erc20_token: 22,
+	OBJECT_TYPE_COUNT: 23,
 };
 
 ChainTypes.impl_object_type = {
 	global_property: 0,
 	dynamic_global_property: 1,
-	asset_dynamic_data: 2,
-	asset_bitasset_data: 3,
-	account_balance: 4,
-	account_statistics: 5,
-	transaction: 6,
-	block_summary: 7,
-	account_transaction_history: 8,
-	chain_property: 9,
-	budget_record: 10,
-	special_authority: 11,
-	buyback: 12,
-	collateral_bid: 13,
-	contract_balance: 14,
-	contract_history: 15,
-	contract_statistics: 16,
-	account_address: 17,
-	contract_pool: 18
+	reserved: 2,
+	asset_dynamic_data: 3,
+	asset_bitasset_data: 4,
+	account_balance: 5,
+	account_statistics: 6,
+	transaction: 7,
+	block_summary: 8,
+	account_transaction_history: 9,
+	chain_property: 10,
+	budget_record: 11,
+	special_authority: 12,
+	buyback: 13,
+	collateral_bid: 14,
+	contract_balance: 15,
+	contract_history: 16,
+	contract_statistics: 17,
+	account_address: 18,
+	contract_pool: 19,
+	malicious_committeemen: 20,
 };
 
 ChainTypes.vote_type = {
@@ -111,7 +116,12 @@ ChainTypes.operations = {
 	contract_fund_pool: 51,
 	contract_whitelist: 52,
 	sidechain_issue: 53,
-	sidechain_burn: 54
+	sidechain_burn: 54,
+	register_erc20_token: 55,
+	deposit_erc20_token: 56,
+	withdraw_erc20_token: 57,
+	approve_erc20_token_withdraw: 58,
+	contract_update: 59,
 };
 
 module.exports = ChainTypes;
