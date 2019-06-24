@@ -1,7 +1,5 @@
 const BigInteger = require('bigi');
 const { encode, decode } = require('bs58');
-const deepEqual = require('deep-equal');
-const assert = require('assert');
 const ed25519 = require('ed25519.js');
 const { sha256 } = require('./hash');
 const PublicKey = require('./PublicKey');
@@ -48,32 +46,11 @@ class PrivateKey {
 
 	/** @return {string} Wallet const Format (still a secret, Not encrypted) */
 	static fromWif(_privateWIF) {
-		const privateWIF = Buffer.from(decode(_privateWIF));
-		const version = privateWIF.readUInt8(0);
-		assert.equal(0x80, version, `Expected version ${0x80}, instead got ${version}`);
-		// checksum includes the version
-		let privateKey = privateWIF.slice(0, -4);
-		const checksum = privateWIF.slice(-4);
-		let newChecksum = sha256(privateKey);
-		newChecksum = sha256(newChecksum);
-		newChecksum = newChecksum.slice(0, 4);
-		const isEqual = deepEqual(checksum, newChecksum); //	, 'Invalid checksum'
-		if (!isEqual) {
-			throw new Error('Checksum did not match');
-		}
-		privateKey = privateKey.slice(1);
-		return PrivateKey.fromBuffer(privateKey);
+		return PrivateKey.fromBuffer(decode(_privateWIF));
 	}
 
 	toWif() {
-		let privateKey = this.toBuffer();
-		// checksum includes the version
-		privateKey = Buffer.concat([Buffer.from([0x80]), privateKey]);
-		let checksum = sha256(privateKey);
-		checksum = sha256(checksum);
-		checksum = checksum.slice(0, 4);
-		const privateWIF = Buffer.concat([privateKey, checksum]);
-		return encode(privateWIF);
+		return encode(this.toBuffer());
 	}
 
 	toPublicKey() {

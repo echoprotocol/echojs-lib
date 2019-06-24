@@ -5,7 +5,7 @@ const { ChainStore, ED25519 } = require('../../index');
 
 describe("API", () => {
     it("Create account", () => {
-        return Apis.instance('ws://195.201.164.54:6311/', true).init_promise.then((res) => {
+        return Apis.instance('wss://testnet.echo-dev.io/ws/', true).init_promise.then((res) => {
             const EchoRandKeyBuffer = ED25519.createKeyPair();
             const echoRandPublicKey = EchoRandKeyBuffer.publicKey;
             const echoRandKey = `DET${bs58.encode(echoRandPublicKey)}`;

@@ -7,7 +7,7 @@ describe("ChainStore", () => {
 	// Connect once for all tests
 	before(function() {
 		/* use wss://echo-devnet-node.pixelplex.io/ws if no local node is available */
-		return Apis.instance("ws://195.201.164.54:6311", true).init_promise.then(function() {
+		return Apis.instance("wss://testnet.echo-dev.io/ws", true).init_promise.then(function() {
 		});
 	});
 

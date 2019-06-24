@@ -8,7 +8,7 @@ process.on('unhandledRejection', (error) => console.error(error));
 describe('ChainStore', () => {
 	// Connect once for all tests
 	before(() => {
-		return Apis.instance('ws://195.201.164.54:6311', true).init_promise.then((result) => {
+		return Apis.instance('wss://testnet.echo-dev.io/ws', true).init_promise.then((result) => {
 			coreAsset = result[0].network.core_asset;
 			return ChainStore.init();
 		});
