@@ -44,10 +44,7 @@ const feeParameters = {};
 // ## -------------------------------
 feeParameters.transfer_operation_fee_parameters = new Serializer(
 	'transfer_operation_fee_parameters',
-	{
-		fee: uint64,
-		price_per_kbyte: uint32,
-	},
+	{ fee: uint64 },
 );
 
 feeParameters.limit_order_create_operation_fee_parameters = new Serializer(
@@ -196,10 +193,7 @@ feeParameters.withdraw_permission_update_operation_fee_parameters = new Serializ
 
 feeParameters.withdraw_permission_claim_operation_fee_parameters = new Serializer(
 	'withdraw_permission_claim_operation_fee_parameters',
-	{
-		fee: uint64,
-		price_per_kbyte: uint32,
-	},
+	{ fee: uint64 },
 );
 
 feeParameters.withdraw_permission_delete_operation_fee_parameters = new Serializer(
@@ -249,10 +243,7 @@ feeParameters.balance_claim_operation_fee_parameters = new Serializer('balance_c
 
 feeParameters.override_transfer_operation_fee_parameters = new Serializer(
 	'override_transfer_operation_fee_parameters',
-	{
-		fee: uint64,
-		price_per_kbyte: uint32,
-	},
+	{ fee: uint64 },
 );
 
 feeParameters.asset_settle_cancel_operation_fee_parameters = new Serializer('asset_settle_cancel_operation_fee_parameters');
@@ -453,6 +444,7 @@ Operations.fill_order = new Serializer(
 		account_id: protocol_id_type('account'),
 		pays: Operations.asset,
 		receives: Operations.asset,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -774,6 +766,7 @@ Operations.withdraw_permission_claim = new Serializer(
 		withdraw_from_account: protocol_id_type('account'),
 		withdraw_to_account: protocol_id_type('account'),
 		amount_to_withdraw: Operations.asset,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -784,6 +777,7 @@ Operations.withdraw_permission_delete = new Serializer(
 		withdraw_from_account: protocol_id_type('account'),
 		authorized_account: protocol_id_type('account'),
 		withdrawal_permission: protocol_id_type('withdraw_permission'),
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -793,6 +787,7 @@ Operations.committee_member_create = new Serializer(
 		fee: Operations.asset,
 		committee_member_account: protocol_id_type('account'),
 		url: string,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -803,6 +798,7 @@ Operations.committee_member_update = new Serializer(
 		committee_member: protocol_id_type('committee_member'),
 		committee_member_account: protocol_id_type('account'),
 		new_url: optional(string),
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -843,6 +839,7 @@ Operations.committee_member_update_global_parameters = new Serializer(
 	{
 		fee: Operations.asset,
 		new_parameters: Operations.chain_parameters,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -876,6 +873,7 @@ Operations.vesting_balance_create = new Serializer(
 		owner: protocol_id_type('account'),
 		amount: Operations.asset,
 		policy: vesting_policy_initializer,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -886,6 +884,7 @@ Operations.vesting_balance_withdraw = new Serializer(
 		vesting_balance: protocol_id_type('vesting_balance'),
 		owner: protocol_id_type('account'),
 		amount: Operations.asset,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -897,6 +896,7 @@ Operations.custom = new Serializer(
 		required_auths: set(protocol_id_type('account')),
 		id: uint16,
 		data: bytes(),
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -946,6 +946,7 @@ Operations.balance_claim = new Serializer(
 		balance_to_claim: protocol_id_type('balance'),
 		balance_owner_key: public_key,
 		total_claimed: Operations.asset,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -991,6 +992,7 @@ Operations.create_contract = new Serializer(
 		code: string,
 		supported_asset_id: optional(protocol_id_type('asset')),
 		eth_accuracy: bool,
+		extensions: set(futureExtensions),
 	},
 );
 
@@ -1002,6 +1004,7 @@ Operations.call_contract = new Serializer(
 		value: Operations.asset,
 		code: string,
 		callee: protocol_id_type('contract'),
+		extensions: set(futureExtensions),
 	},
 );
 
