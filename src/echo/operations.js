@@ -133,6 +133,7 @@ export const fillOrder = operation(FILL_ORDER, {
 	account_id: protocolId(ACCOUNT),
 	pays: asset,
 	receives: asset,
+	extensions: optional(empty),
 }); // 4
 
 export const accountCreate = operation(ACCOUNT_CREATE, {
@@ -318,6 +319,7 @@ export const withdrawPermissionClaim = operation(WITHDRAW_PERMISSION_CLAIM, {
 	withdraw_from_account: protocolId(ACCOUNT),
 	withdraw_to_account: protocolId(ACCOUNT),
 	amount_to_withdraw: asset,
+	extensions: optional(empty),
 }); // 25
 
 export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
@@ -325,12 +327,14 @@ export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
 	withdraw_from_account: protocolId(ACCOUNT),
 	authorized_account: protocolId(ACCOUNT),
 	withdrawal_permission: protocolId(WITHDRAW_PERMISSION),
+	extensions: optional(empty),
 }); // 26
 
 export const committeeMemberCreate = operation(COMMITTEE_MEMBER_CREATE, {
 	fee: asset,
 	committee_member_account: protocolId(ACCOUNT),
 	url: string,
+	extensions: optional(empty),
 }); // 27
 
 export const committeeMemberUpdate = operation(COMMITTEE_MEMBER_UPDATE, {
@@ -338,11 +342,13 @@ export const committeeMemberUpdate = operation(COMMITTEE_MEMBER_UPDATE, {
 	committee_member: protocolId(COMMITTEE_MEMBER),
 	committee_member_account: protocolId(ACCOUNT),
 	new_url: optional(string),
+	extensions: optional(empty),
 }); // 28
 
 export const committeeMemberUpdateGlobalParameters = operation(COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS, {
 	fee: asset,
 	new_parameters: chainParameters,
+	extensions: optional(empty),
 }); // 29
 
 export const vestingBalanceCreate = operation(VESTING_BALANCE_CREATE, {
@@ -351,6 +357,7 @@ export const vestingBalanceCreate = operation(VESTING_BALANCE_CREATE, {
 	owner: protocolId(ACCOUNT),
 	amount: asset,
 	policy: vestingPolicyInitializer,
+	extensions: optional(empty),
 }); // 30
 
 export const vestingBalanceWithdraw = operation(VESTING_BALANCE_WITHDRAW, {
@@ -358,6 +365,7 @@ export const vestingBalanceWithdraw = operation(VESTING_BALANCE_WITHDRAW, {
 	vesting_balance: protocolId(VESTING_BALANCE),
 	owner: protocolId(ACCOUNT),
 	amount: asset,
+	extensions: optional(empty),
 }); // 31
 
 export const custom = operation(CUSTOM, {
@@ -366,6 +374,7 @@ export const custom = operation(CUSTOM, {
 	required_auths: set(protocolId(ACCOUNT)),
 	id: uint16,
 	data: bytes(),
+	extensions: optional(empty),
 }); // 32
 
 export const assert = operation(ASSERT, {
@@ -382,6 +391,7 @@ export const balanceClaim = operation(BALANCE_CLAIM, {
 	balance_to_claim: protocolId(BALANCE),
 	balance_owner_key: publicKey,
 	total_claimed: asset,
+	extensions: optional(empty),
 }); // 34
 
 export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
@@ -421,6 +431,7 @@ export const executeBid = operation(EXECUTE_BID, {
 	bidder: protocolId(ACCOUNT),
 	debt: asset,
 	collateral: asset,
+	extensions: optional(empty),
 }); // 39
 
 export const createContract = operation(CREATE_CONTRACT, {
@@ -430,6 +441,7 @@ export const createContract = operation(CREATE_CONTRACT, {
 	code: string,
 	eth_accuracy: bool,
 	supported_asset_id: optional(protocolId(ASSET)),
+	extensions: optional(empty),
 }); // 40
 
 export const callContract = operation(CALL_CONTRACT, {
@@ -438,6 +450,7 @@ export const callContract = operation(CALL_CONTRACT, {
 	value: asset,
 	code: string,
 	callee: protocolId(CONTRACT),
+	extensions: optional(empty),
 }); // 41
 
 export const contractTransfer = operation(CONTRACT_TRANSFER, {

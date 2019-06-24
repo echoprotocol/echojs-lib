@@ -55,7 +55,7 @@ const withPricePerKB = serializable({
 });
 
 export default {
-	[TRANSFER]: withPricePerKB,
+	[TRANSFER]: defaultFee,
 	[LIMIT_ORDER_CREATE]: defaultFee,
 	[LIMIT_ORDER_CANCEL]: defaultFee,
 	[CALL_ORDER_UPDATE]: defaultFee,
@@ -92,7 +92,7 @@ export default {
 	[PROPOSAL_DELETE]: defaultFee,
 	[WITHDRAW_PERMISSION_CREATE]: defaultFee,
 	[WITHDRAW_PERMISSION_UPDATE]: defaultFee,
-	[WITHDRAW_PERMISSION_CLAIM]: withPricePerKB,
+	[WITHDRAW_PERMISSION_CLAIM]: defaultFee,
 	[WITHDRAW_PERMISSION_DELETE]: defaultFee,
 	[COMMITTEE_MEMBER_CREATE]: defaultFee,
 	[COMMITTEE_MEMBER_UPDATE]: defaultFee,
@@ -102,7 +102,7 @@ export default {
 	[CUSTOM]: withPricePerKB,
 	[ASSERT]: defaultFee,
 	[BALANCE_CLAIM]: noFee,
-	[OVERRIDE_TRANSFER]: withPricePerKB,
+	[OVERRIDE_TRANSFER]: defaultFee,
 	[ASSET_SETTLE_CANCEL]: noFee,
 	[ASSET_CLAIM_FEES]: defaultFee,
 	[BID_COLLATERAL]: defaultFee,
