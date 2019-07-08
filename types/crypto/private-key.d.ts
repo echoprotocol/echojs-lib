@@ -14,4 +14,4 @@ export default class PrivateKey {
 	toHex(): String;
 	toPrivateKeyString(): String;
 	static fromPrivateKeyString(privateKeyString: String): PrivateKey|null;
-};
+}

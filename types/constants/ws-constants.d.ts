@@ -1,32 +1,24 @@
-export const CONNECTION_TIMEOUT = 5 * 1000;
-export const MAX_RETRIES = 0;
-export const PING_TIMEOUT = 13 * 1000;
-export const PING_INTERVAL = 20 * 1000;
-export const DEBUG = false;
-export const CHAIN_APIS = [
-    'database',
-    'network_broadcast',
-    'history',
-    'registration',
-    'asset',
-    'login',
-    'network_node',
-];
-export const DEFAULT_CHAIN_APIS = ['database', 'network_broadcast', 'history', 'login'];
+export declare const CONNECTION_TIMEOUT: number;
+export declare const MAX_RETRIES: number;
+export declare const PING_TIMEOUT: number;
+export declare const PING_INTERVAL: number;
+export declare const DEBUG: boolean;
+export declare const CHAIN_APIS: string[];
+export declare const DEFAULT_CHAIN_APIS: string[];
 
-export const STATUS = {
-    OPEN: 'open',
-    ERROR: 'error',
-    CLOSE: 'close',
-};
+export declare interface STATUS {
+    OPEN: string,
+    ERROR: string,
+    CLOSE: string,
+}
 
-export default {
-    CONNECTION_TIMEOUT,
-    MAX_RETRIES,
-    PING_TIMEOUT,
-    PING_INTERVAL,
-    DEBUG,
-    CHAIN_APIS,
-    DEFAULT_CHAIN_APIS,
-    STATUS,
-};
+export interface WsConstants {
+    CONNECTION_TIMEOUT: number,
+    MAX_RETRIES: number,
+    PING_TIMEOUT: number,
+    PING_INTERVAL: number,
+    DEBUG: boolean,
+    CHAIN_APIS: string[],
+    DEFAULT_CHAIN_APIS: string[],
+    STATUS: STATUS,
+}

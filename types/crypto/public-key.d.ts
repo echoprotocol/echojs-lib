@@ -1,3 +1,5 @@
+import * as ByteBuffer from "bytebuffer";
+
 export default class PublicKey {
 	toString(addressPrefix?: string): string;
 	static fromPublicKeyString(publicKey: string, addressPrefix?: string): PublicKey | null;
@@ -11,4 +13,4 @@ export default class PublicKey {
 	static fromHex(hex: String): PublicKey;
 	toHex(): String;
 	static fromPublicKeyStringHex(hex: String): PublicKey;
-};
+}

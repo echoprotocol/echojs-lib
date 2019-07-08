@@ -1,4 +1,4 @@
-import { OPERATIONS_IDS } from "../constants";
+import { OPERATIONS_IDS } from "../constants/operations-ids";
 import PrivateKey from "../crypto/private-key";
 import PublicKey from "../crypto/public-key";
 
@@ -36,9 +36,9 @@ type OPERATIONS_PROPS = {
 	},
 };
 
-type OPERATION<T extends OPERATIONS_IDS> = [T, OPERATIONS_PROPS[T]];
+type OPERATION<T extends OPERATIONS_IDS> = [T, OPERATIONS_PROPS];
 
-enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 };
+declare enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 }
 
 // TODO: check second element on all result variants
 type OPERATION_RESULT<T extends OPERATION_RESULT_VARIANT> = [T, {
@@ -55,7 +55,7 @@ interface BroadcastingResult {
 		ref_block_num: number,
 		ref_block_prefix: number,
 		expiration: string,
-		operations: Array<OPERATION>,
+		operations: Array<OPERATION<OPERATIONS_IDS>>,
 		extensions: Array<void>,
 		signatures: Array<string>,
 		operation_results: Array<OPERATION_RESULT<OPERATION_RESULT_VARIANT>>,
@@ -63,7 +63,7 @@ interface BroadcastingResult {
 }
 
 export default class Transaction {
-	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATIONS_PROPS[T]): Transaction;
+	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATIONS_PROPS): Transaction;
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;

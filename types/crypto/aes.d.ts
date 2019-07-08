@@ -1,5 +1,5 @@
 import AES from 'crypto-js/aes';
-import {Buffer} from "buffer";
+import { Buffer } from "buffer";
 import PrivateKey from "./private-key";
 import PublicKey from "./public-key";
 
@@ -18,4 +18,4 @@ export default class Aes {
     decryptHexToBuffer(cipher: string): Buffer;
     decryptHexToText(cipher: string, encoding: string): string;
     encryptHex(plainhex: string): string;
-};
+}

@@ -1,41 +1,40 @@
-import CHAIN_TYPES from './chain-types';
-import CHAIN_CONFIG from './chain-config';
-import API_CONFIG from './api-config';
-import OBJECT_TYPES from './object-types';
-import WS_CONSTANTS from './ws-constants';
-import OPERATIONS_IDS from './operations-ids';
 import * as CACHE_MAPS from './cache-maps';
+import * as API_CONFIG from './api-config';
+import * as OBJECT_TYPES from './object-types';
 
-const START_OPERATION_ID = '1.10.0';
-const CORE_ASSET_ID = '1.3.0';
+export declare const START_OPERATION_ID: string;
+export declare const CORE_ASSET_ID: string;
 
-const ECHORAND_TYPES = {
-    START_NOTIFICATION: 1,
-    BLOCK_NOTIFICATION: 2,
+export declare const ECHO_ASSET_ID: string;
+export declare const DYNAMIC_GLOBAL_OBJECT_ID: string;
+
+export declare const CANCEL_LIMIT_ORDER: string;
+export declare const UPDATE_CALL_ORDER: string;
+export declare const CLOSE_CALL_ORDER: string;
+export declare const BITASSET_UPDATE: string;
+
+declare interface ECHORAND_TYPES {
+    START_NOTIFICATION: number,
+    BLOCK_NOTIFICATION: number,
+}
+
+declare let _default: {
+    START_OPERATION_ID: string,
+    CORE_ASSET_ID: string,
+    CANCEL_LIMIT_ORDER: string,
+    UPDATE_CALL_ORDER: string,
+    CLOSE_CALL_ORDER: string,
+    BITASSET_UPDATE: string,
+    ECHORAND_TYPES: ECHORAND_TYPES,
+    CACHE_MAPS: import('./cache-maps').CacheMaps,
+    API_CONFIG: import('./api-config').ApiConfig,
+    OBJECT_TYPES: import('./object-types').ObjectTypes,
+    CHAIN_TYPES: import('./chain-types').ChainTypes,
+    CHAIN_CONFIG: import('./chain-config').ChainConfig,
+    WS_CONSTANTS: import('./ws-constants').WsConstants,
+    OPERATIONS_IDS: import('./operations-ids').OPERATIONS_IDS,
 };
 
-const CANCEL_LIMIT_ORDER = 'cancel-limit-order';
-const UPDATE_CALL_ORDER = 'update-call-order';
-const CLOSE_CALL_ORDER = 'close-call-order';
-const BITASSET_UPDATE = 'bitasset-update';
+export default _default;
 
-export default {
-    CHAIN_TYPES,
-    CHAIN_CONFIG,
-    WS_CONSTANTS,
-    OPERATIONS_IDS,
-    START_OPERATION_ID,
-    CORE_ASSET_ID,
-    ECHORAND_TYPES,
-    CANCEL_LIMIT_ORDER,
-    UPDATE_CALL_ORDER,
-    CLOSE_CALL_ORDER,
-    BITASSET_UPDATE,
-    CACHE_MAPS,
-    API_CONFIG,
-    OBJECT_TYPES,
-};
-
-export const ECHO_ASSET_ID = '1.3.0';
-export const DYNAMIC_GLOBAL_OBJECT_ID = '2.1.0';
-export { OPERATIONS_IDS, CHAIN_TYPES, CHAIN_CONFIG, CACHE_MAPS, API_CONFIG, OBJECT_TYPES };
+export { CACHE_MAPS, API_CONFIG, OBJECT_TYPES };
