@@ -12,8 +12,8 @@ describe('PrivateKey EdDSA', () => {
 		const edPrivateWithoutPrefixHex = edPrivateWithoutPrefix.toString('hex');
 		const res = ED25519.keyPairFromPrivateKey(edPrivateWithoutPrefixHex);
 
-		const publicKey = `DET${bs58.encode(res.publicKey)}`;
-		const privateKey = `DET${bs58.encode(res.privateKey)}`;
+		const publicKey = `ECHO${bs58.encode(res.publicKey)}`;
+		const privateKey = `ECHO${bs58.encode(res.privateKey)}`;
 		const prKey = PrivateKey.fromBuffer(res.privateKey);
 
 		strictEqual(publicKey, prKey.toPublicKey().toPublicKeyString());
@@ -27,8 +27,8 @@ describe('PrivateKey EdDSA', () => {
 		const edPrivateWithoutPrefixHex = edPrivateWithoutPrefix.toString('hex');
 		const res = ED25519.keyPairFromPrivateKey(edPrivateWithoutPrefixHex);
 
-		const publicKey = `DET${bs58.encode(res.publicKey)}`;
-		const privateKey = `DET${bs58.encode(res.privateKey)}`;
+		const publicKey = `ECHO${bs58.encode(res.publicKey)}`;
+		const privateKey = `ECHO${bs58.encode(res.privateKey)}`;
 		const prKey = PrivateKey.fromBuffer(res.privateKey);
 
 		const privateKeyString = prKey.toPrivateKeyString();

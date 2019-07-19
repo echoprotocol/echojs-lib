@@ -31,7 +31,7 @@ import { ED25519 } from 'echojs-lib';
 import bs58 from 'bs58';
 
 const edKeyPair = ED25519.createKeyPair();
-const echoRandPublicKey = `DET${bs58.encode(edKeyPaire.publicKey)}`;
+const echoRandPublicKey = `ECHO${bs58.encode(edKeyPaire.publicKey)}`;
 
 console.log('Public echo rand key :', echoRandPublicKey);
 console.log('Private echo rand key :', edKeyPaire.privateKey.toString('hex'));

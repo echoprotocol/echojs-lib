@@ -20,12 +20,12 @@ describe('operations', () => {
             .addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
                 fee: { asset_id: '1.3.0' },
                 account: accountId,
-                ed_key: 'DETJDUP9qKT8rLzho8djKfuDMhAC4nanuVmLR8opgvjAXyt',
+                echorand_key: 'ECHOJDUP9qKT8rLzho8djKfuDMhAC4nanuVmLR8opgvjAXyt',
                 active: {
                     weight_threshold: 1,
                     account_auths: [],
                     key_auths: [[
-                        'DETJDUP9qKT8rLzho8djKfuDMhAC4nanuVmLR8opgvjAXyt',
+                        'ECHOJDUP9qKT8rLzho8djKfuDMhAC4nanuVmLR8opgvjAXyt',
                         1
 					]],
                 },

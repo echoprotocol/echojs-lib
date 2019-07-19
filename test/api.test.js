@@ -472,7 +472,7 @@ describe('API', () => {
                     const ownerKey = 'ECHO59St8wBpta2ZREBnA3dQQTVFBrEcx5UK12Tm5geG7kv7Hwyzyc';
                     const activeKey = 'ECHO59St8wBpta2ZREBnA3dQQTVFBrEcx5UK12Tm5geG7kv7Hwyzyc';
                     const memo = 'ECHO59St8wBpta2ZREBnA3dQQTVFBrEcx5UK12Tm5geG7kv7Hwyzyc';
-                    const echoRandKey = 'DET3vw54ewEd7G8aKGHSzC5QbKpGhWEaRH1EvscHMbwZNVW';
+                    const echoRandKey = 'ECHO3vw54ewEd7G8aKGHSzC5QbKpGhWEaRH1EvscHMbwZNVW';
 
                     await api.registerAccount(accountName, ownerKey, activeKey, memo, echoRandKey);
 

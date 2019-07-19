@@ -22,10 +22,10 @@ describe('API register account', () => {
 
 			const result = await echo.api.registerAccount(
 				'test-1-' + Date.now(),
-				'DETDvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				'DETDvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHO1111111111111111111111111111111114T1Anm',
-				'DETDvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				() => {
 					console.log('was broadcasted');
 				}
