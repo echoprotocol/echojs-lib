@@ -275,6 +275,91 @@ feeParameters.contract_transfer_operation_fee_parameters = new Serializer(
 	{ fee: uint64 },
 );
 
+feeParameters.change_sidechain_config_operation_fee_parameters = new Serializer(
+	'change_sidechain_config_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.account_address_create_operation_fee_parameters = new Serializer(
+	'account_address_create_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.transfer_to_address_operation_fee_parameters = new Serializer(
+	'transfer_to_address_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.generate_eth_address_operation_fee_parameters = new Serializer(
+	'generate_eth_address_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.create_eth_address_operation_fee_parameters = new Serializer(
+	'generate_eth_address_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.deposit_eth_operation_fee_parameters = new Serializer(
+	'deposit_eth_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.withdraw_eth_operation_fee_parameters = new Serializer(
+	'withdraw_eth_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.approve_withdraw_eth_operation_fee_parameters = new Serializer(
+	'approve_withdraw_eth_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.contract_fund_pool_operation_fee_parameters = new Serializer(
+	'contract_fund_pool_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.contract_whitelist_operation_fee_parameters = new Serializer(
+	'contract_whitelist_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.sidechain_issue_operation_fee_parameters = new Serializer(
+	'sidechain_issue_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.sidechain_burn_operation_fee_parameters = new Serializer(
+	'sidechain_burn_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.register_erc20_token_operation_fee_parameters = new Serializer(
+	'register_erc20_token_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.deposit_erc20_token_operation_fee_parameters = new Serializer(
+	'deposit_erc20_token_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.withdraw_erc20_token_operation_fee_parameters = new Serializer(
+	'withdraw_erc20_token_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.approve_erc20_token_withdraw_operation_fee_parameters = new Serializer(
+	'approve_erc20_token_withdraw_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
+feeParameters.contract_update_operation_fee_parameters = new Serializer(
+	'contract_update_operation_fee_parameters',
+	{ fee: uint64 },
+);
+
 const fee_parameters = static_variant([
 	feeParameters.transfer_operation_fee_parameters,
 	feeParameters.limit_order_create_operation_fee_parameters,
@@ -319,6 +404,23 @@ const fee_parameters = static_variant([
 	feeParameters.create_contract_operation_fee_parameters,
 	feeParameters.call_contract_operation_fee_parameters,
 	feeParameters.contract_transfer_operation_fee_parameters,
+	feeParameters.change_sidechain_config_operation_fee_parameters,
+	feeParameters.account_address_create_operation_fee_parameters,
+	feeParameters.transfer_to_address_operation_fee_parameters,
+	feeParameters.generate_eth_address_operation_fee_parameters,
+	feeParameters.generate_eth_address_operation_fee_parameters,
+	feeParameters.create_eth_address_operation_fee_parameters,
+	feeParameters.withdraw_eth_operation_fee_parameters,
+	feeParameters.approve_withdraw_eth_operation_fee_parameters,
+	feeParameters.contract_fund_pool_operation_fee_parameters,
+	feeParameters.contract_whitelist_operation_fee_parameters,
+	feeParameters.sidechain_issue_operation_fee_parameters,
+	feeParameters.sidechain_burn_operation_fee_parameters,
+	feeParameters.register_erc20_token_operation_fee_parameters,
+	feeParameters.withdraw_erc20_token_operation_fee_parameters,
+	feeParameters.deposit_erc20_token_operation_fee_parameters,
+	feeParameters.approve_erc20_token_withdraw_operation_fee_parameters,
+	feeParameters.contract_update_operation_fee_parameters,
 ]);
 
 const Operations = {};
@@ -1019,6 +1121,171 @@ Operations.contract_transfer = new Serializer(
 	},
 );
 
+Operations.change_sidechain_config = new Serializer(
+	'change_sidechain_config',
+	{
+		fee: Operations.asset,
+		from: protocol_id_type('contract'),
+		amount: Operations.asset,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.account_address_create = new Serializer(
+	'account_address_create',
+	{
+		fee: Operations.asset,
+		owner: protocol_id_type('account'),
+		label: string,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.generate_eth_address = new Serializer(
+	'generate_eth_address',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.create_eth_address = new Serializer(
+	'create_eth_address',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		committee_member_id: protocol_id_type('committee_member'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.deposit_eth = new Serializer(
+	'deposit_eth',
+	{
+		fee: Operations.asset,
+		from: protocol_id_type('account'),
+		committee_member_id: protocol_id_type('committee_member'),
+		amount: Operations.asset,
+	},
+);
+
+Operations.withdraw_eth = new Serializer(
+	'withdraw_eth',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		eth_addr: string,
+		amount: Operations.asset,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.approve_withdraw_eth = new Serializer(
+	'approve_withdraw_eth',
+	{
+		fee: Operations.asset,
+		committee_member_id: protocol_id_type('committee_member'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.contract_fund_pool = new Serializer(
+	'contract_fund_pool',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		committee_member_id: protocol_id_type('contract'),
+		amount: Operations.asset,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.contract_whitelist = new Serializer(
+	'contract_whitelist',
+	{
+		fee: Operations.asset,
+		sender: protocol_id_type('account'),
+		contract: protocol_id_type('contract'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.sidechain_issue = new Serializer(
+	'sidechain_issue',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		deposit_id: protocol_id_type('deposit_eth'),
+		amount: Operations.asset,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.sidechain_burn = new Serializer(
+	'sidechain_burn',
+	{
+		fee: Operations.asset,
+		sender: protocol_id_type('account'),
+		contract: protocol_id_type('contract'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.register_erc20_token = new Serializer(
+	'register_erc20_token',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		eth_addr: protocol_id_type('eth_address'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.deposit_erc20_token = new Serializer(
+	'deposit_erc20_token',
+	{
+		fee: Operations.asset,
+		committee_member_id: protocol_id_type('account'),
+		erc20_token_addr: protocol_id_type('eth_address'),
+		transaction_hash: uint64,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.withdrawErc20Token = new Serializer(
+	'withdrawErc20Token',
+	{
+		fee: Operations.asset,
+		account: protocol_id_type('account'),
+		to: protocol_id_type('eth_address'),
+		erc20_token: protocol_id_type('erc20_token'),
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.approve_erc20_token_withdraw = new Serializer(
+	'approve_erc20_token_withdraw',
+	{
+		fee: Operations.asset,
+		committee_member_id: protocol_id_type('account'),
+		to: protocol_id_type('eth_address'),
+		ransaction_hash: uint64,
+		extensions: set(futureExtensions),
+	},
+);
+
+Operations.contract_update = new Serializer(
+	'contract_update',
+	{
+		fee: Operations.asset,
+		committee_member_id: protocol_id_type('account'),
+		to: protocol_id_type('eth_address'),
+		ransaction_hash: uint64,
+		extensions: set(futureExtensions),
+	},
+);
+
 operation.st_operations = [
 	/*  0 */ Operations.transfer,
 	/*  1 */ Operations.limit_order_create,
@@ -1063,6 +1330,23 @@ operation.st_operations = [
 	/* 40 */ Operations.create_contract,
 	/* 41 */ Operations.call_contract,
 	/* 42 */ Operations.contract_transfer,
+	/* 43 */ Operations.change_sidechain_config,
+	/* 44 */ Operations.account_address_create,
+	/* 45 */ Operations.transfer_to_address,
+	/* 46 */ Operations.generate_eth_address,
+	/* 47 */ Operations.create_eth_address,
+	/* 48 */ Operations.deposit_eth,
+	/* 49 */ Operations.withdraw_eth,
+	/* 50 */ Operations.approve_withdraw_eth,
+	/* 51 */ Operations.contract_fund_pool,
+	/* 52 */ Operations.contract_whitelist,
+	/* 53 */ Operations.sidechain_issue,
+	/* 54 */ Operations.sidechain_burn,
+	/* 55 */ Operations.register_erc20_token,
+	/* 56 */ Operations.deposit_erc20_token,
+	/* 57 */ Operations.withdraw_erc20_token,
+	/* 58 */ Operations.approve_erc20_token_withdraw,
+	/* 59 */ Operations.contract_update,
 ];
 
 Operations.transaction = new Serializer(
