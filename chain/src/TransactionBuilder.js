@@ -517,7 +517,6 @@ class TransactionBuilder {
 		const tr_object = ops.signed_transaction.toObject(this);
 		return Promise.all([
 			Apis.instance().dbApi().exec('get_potential_signatures', [tr_object]),
-			Apis.instance().dbApi().exec('get_potential_address_signatures', [tr_object]),
 		]).then((results) => ({ pubkeys: results[0], addys: results[1] }));
 	}
 
