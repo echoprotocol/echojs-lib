@@ -65,6 +65,8 @@ interface BroadcastingResult {
 export default class Transaction {
 	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATIONS_PROPS): Transaction;
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
+	getPotentialSignatures(): Promise<{publicKeys:Array<string>}>;
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
+	setRequiredFees(assetId: string): Promise<void>;
 }
