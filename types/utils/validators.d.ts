@@ -50,6 +50,7 @@ export declare function isAccountStatisticsId(url?: any): boolean;
 export declare function isTransactionId(url?: any): boolean;
 export declare function isBlockSummaryId(url?: any): boolean;
 export declare function isAccountTransactionHistoryId(url?: any): boolean;
+export declare function isContractHistoryId(url?: any): boolean;
 export declare function isDynamicGlobalObjectId(url?: any): boolean;
 
 export declare function isPublicKey(url?: any): boolean;
