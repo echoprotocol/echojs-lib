@@ -2,4 +2,5 @@ language: node_js
 node_js:
   - "10"
 script:
-  - audit-ci --moderate
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then audit-ci --moderate; fi'
+
