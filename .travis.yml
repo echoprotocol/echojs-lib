@@ -1,7 +1,20 @@
 language: node_js
 node_js:
   - "10"
+
+services:
+  - docker
+
+stages:
+  - audit
+  - test
+
+before_install:
+  - docker pull carlad/sinatra
+  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+  - docker ps -a
+  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then audit-ci --moderate; fi'
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
-
