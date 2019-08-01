@@ -10,7 +10,7 @@ interface Asset {
 	amount: int64;
 }
 
-type OPERATIONS_PROPS = {
+type KNOWN_OPERATIONS_PROPS = {
 	[OPERATIONS_IDS.TRANSFER]: {
 		fee?: Asset,
 		from: string,
@@ -36,7 +36,10 @@ type OPERATIONS_PROPS = {
 	},
 };
 
-type OPERATION<T extends OPERATIONS_IDS> = [T, OPERATIONS_PROPS];
+type OPERATION_PROPS<T extends OPERATIONS_IDS> = T extends keyof KNOWN_OPERATIONS_PROPS ?
+	KNOWN_OPERATIONS_PROPS[T] : unknown;
+
+type OPERATION<T extends OPERATIONS_IDS> = [T, OPERATION_PROPS<T>];
 
 declare enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 }
 
@@ -63,7 +66,7 @@ interface BroadcastingResult {
 }
 
 export default class Transaction {
-	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATIONS_PROPS): Transaction;
+	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATION_PROPS<T>): Transaction;
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
