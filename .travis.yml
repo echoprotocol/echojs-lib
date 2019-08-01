@@ -3,4 +3,5 @@ node_js:
   - "10"
 script:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then audit-ci --moderate; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
 
