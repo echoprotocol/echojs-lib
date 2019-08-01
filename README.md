@@ -1,5 +1,10 @@
 # Echojs-lib (echojs-lib)
 
+[![Travis (.org)](https://img.shields.io/travis/viktor32/echojs-lib?branch=master)](https://travis-ci.org/viktor32/echojs-lib)
+[![David](https://img.shields.io/david/echoprotocol/echojs-lib)](https://github.com/echoprotocol/echojs-lib)
+[![npm](https://img.shields.io/npm/dw/echojs-lib)](https://www.npmjs.com/package/echojs-lib)
+[![npm](https://img.shields.io/npm/v/echojs-lib)](https://www.npmjs.com/package/echojs-lib)
+
 Pure JavaScript ECHO library for node.js and browsers. Can be used to construct, sign and broadcast transactions in JavaScript, and to easily obtain data from the blockchain via public apis.
 
 
@@ -17,7 +22,7 @@ Launched echo node (https://github.com/echoprotocol/echo-core) with open port
 ## Usage
 
 ```javascript
-const { default: echo } = require('echojs-lib');	
+const { default: echo } = require('echojs-lib');
 
 await echo.connect('ws://127.0.0.1:9000');
 const account = await echo.api.getObject('1.2.0');
