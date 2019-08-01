@@ -45,13 +45,13 @@ class Subscriber extends EventEmitter {
 	 *  @param {API} api
 	 *  @param {WS} ws
 	 */
-	constructor(cache, wsApi, api, ws) {
+	constructor(/*cache, wsApi, api, ws*/) {
 		super();
 
-		this.cache = cache;
-		this._wsApi = wsApi;
-		this._api = api;
-		this._ws = ws;
+		// this.cache = cache;
+		// this._wsApi = wsApi;
+		// this._api = api;
+		// this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -71,7 +71,7 @@ class Subscriber extends EventEmitter {
 			logs: {},	// [contractId]: []
 			contract: [],
 			connect: [],
-			disconnect: [],
+			disconnect: []
 		};
 
 	}
@@ -81,7 +81,15 @@ class Subscriber extends EventEmitter {
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init() {
+	async init(cache, wsApi, api, ws) {
+
+		this.cache = cache;
+		this._wsApi = wsApi;
+		this._api = api;
+		this._ws = ws;
+
+		this.emit('onConnect', this.subscribers.connect.forEach((cb) => cb()));
+
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {

@@ -12,6 +12,8 @@ class Echo {
 	constructor() {
 		this._ws = new WS();
 		this._isInitModules = false;
+
+		this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
@@ -51,9 +53,9 @@ class Echo {
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
+		// this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
 
-		await this.subscriber.init();
+		await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
 
 		this.onOpen = async () => {
 			try {
