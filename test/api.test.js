@@ -23,9 +23,9 @@ describe('API', () => {
 			});
 		});
 
-		describe('- get asset holders (start = 1, limit = 1)', () => {
+		describe('- get asset holders (start = 0, limit = 1)', () => {
 			it('test', async () => {
-				const result = await echo.api.getAssetHolders(constants.CORE_ASSET_ID, 1, 1);
+				const result = await echo.api.getAssetHolders(constants.CORE_ASSET_ID, 0, 1);
 
 				expect(result)
 					.to
