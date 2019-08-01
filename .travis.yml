@@ -1,7 +1,17 @@
 language: node_js
 node_js:
   - "10"
-script:
-  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then audit-ci --moderate; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
 
+before_install:
+  - docker pull echoprotocol/echo:v0.8.2
+  - docker run --name echotest -p 6311:6311 -v $PWD/.test/genesis_devnet.json:/echo/genesis_devnet.json -v $PWD/.test/access.json:/echo/access.json echoprotocol/echo:v0.8.3 --devnet --start-echorand --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]" --account-info="[\"1.2.7\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]" --account-info="[\"1.2.8\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]" --account-info="[\"1.2.9\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]" --account-info="[\"1.2.10\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]" --rpc-endpoint=0.0.0.0:6311 --plugins=registration --api-access=/echo/access.json
+
+jobs:
+  include:
+    - stage: "Tests"
+      script:
+        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then audit-ci --moderate; fi'
+        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
+    - stage: deploy
+      name: "Deploy to GCP"
+      script: "echo \"deploy\""
