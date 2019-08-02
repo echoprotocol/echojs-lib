@@ -23,12 +23,14 @@ jobs:
         - audit-ci --moderate
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
-      if: tag IS present
+#      if: tag IS present
       name: "Deploy to npm"
-      script: echo "Deploy to npm"
+      script: npm i
       deploy:
         provider: npm
         email: $NPM_EMAIL
-        api_key: $NPM_TOKEN
         on:
-          tags: true
+          all_branches: true
+        api_key: $NPM_TOKEN
+#        on:
+#          tags: true
