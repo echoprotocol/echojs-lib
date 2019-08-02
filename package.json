@@ -5,7 +5,7 @@
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {
-		"prepare": "npm run build",
+		"prepare": "ls -la node_modules && npm run build",
 		"pretest": "babel-node ./test/preparation/preparation.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
