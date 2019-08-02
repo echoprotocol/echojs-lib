@@ -31,12 +31,12 @@ jobs:
     - stage: deploy
 #      if: tag IS present
       name: "Deploy to npm"
-      script: "echo \"Deploy\""
+      script:
+        - npm install
+        - npm run build
       deploy:
+        skip_cleanup: true
         provider: npm
-        script:
-          - npm i
-          - npm run prepare
         email: $NPM_EMAIL
         on:
           all_branches: true
