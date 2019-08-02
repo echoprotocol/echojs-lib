@@ -18,8 +18,8 @@ jobs:
     - stage: test
       name: "Test lint (push), audit (push) and unit tests (pr)"
       script:
-        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run lint; fi'
-        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then audit-ci --moderate; fi'
+        - npm run lint
+        - audit-ci --moderate
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
       name: "Deploy to npm"
