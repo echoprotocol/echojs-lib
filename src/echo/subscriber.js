@@ -39,19 +39,9 @@ class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
-	 *
-	 *  @param {Cache} cache
-	 *  @param {WSAPI} wsApi
-	 *  @param {API} api
-	 *  @param {WS} ws
 	 */
-	constructor(/*cache, wsApi, api, ws*/) {
+	constructor() {
 		super();
-
-		// this.cache = cache;
-		// this._wsApi = wsApi;
-		// this._api = api;
-		// this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -71,13 +61,17 @@ class Subscriber extends EventEmitter {
 			logs: {},	// [contractId]: []
 			contract: [],
 			connect: [],
-			disconnect: []
+			disconnect: [],
 		};
 
 	}
 
 	/**
 	 *  @method init
+	 *  @param {Cache} cache
+	 *  @param {WSAPI} wsApi
+	 *  @param {API} api
+	 *  @param {WS} ws
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
@@ -87,8 +81,26 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 		this._ws = ws;
+		console.log('1111111111111');
 
-		this.emit('onConnect', this.subscribers.connect.forEach((cb) => cb()));
+		// this._ws =
+		// this._ws.dbApi().exec('ersd', []);
+
+
+		console.log('YYyyAAAAAA');
+		if (this.subscribers.connect.length) {
+			console.log('!!!!!!!!!!');
+			this._ws.on(STATUS.OPEN, () => {
+				console.log('IT works!!!!!!!!!!!!');
+				this.subscribers.connect.forEach((cb) => cb());
+			});
+		}
+
+		if (this.subscribers.disconnect.length) {
+			this._ws.on(STATUS.CLOSE, () => {
+				this.subscribers.disconnect.forEach((cb) => cb());
+			});
+		}
 
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
@@ -879,10 +891,10 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.on(STATUS.OPEN, callback);
+			// this._ws.on(STATUS.OPEN, callback);
 			this.subscribers.connect.push(callback);
 		} else {
-			this._ws.on(STATUS.CLOSE, callback);
+			// this._ws.on(STATUS.CLOSE, callback);
 			this.subscribers.disconnect.push(callback);
 		}
 

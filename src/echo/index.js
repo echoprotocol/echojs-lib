@@ -53,7 +53,6 @@ class Echo {
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
-		// this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
 
 		await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
 
