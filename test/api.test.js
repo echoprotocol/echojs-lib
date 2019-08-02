@@ -4,8 +4,6 @@ import WSAPI from '../src/echo/ws-api';
 import Cache from '../src/echo/cache';
 import API from '../src/echo/api';
 
-import { inspect } from 'util';
-
 import echo, { constants } from '../src';
 
 import { url } from './_test-data';
