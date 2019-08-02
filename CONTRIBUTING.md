@@ -18,7 +18,10 @@ are a couple of guidelines we ask you to follow:
 3. Make sure your code does not violate the lint rules.
 4. Make sure the CI processes are successful
 5. If your request is associated with a bug or issue from the issues
-   list, specify a reference to it in the request description
+   list, add the line `Fixes #$ISSUE_NUMBER`. Ex. For closing issue
+   `418`, include the line `Fixes #418`. If it doesn't close the issue
+   but addresses it partially, just include a reference to the issue
+   number, like `#418`.
 6. You can merge the request after you have at least one approval of
    core contributor, or, if you do not have permission to do so, you may
    request the second reviewer to merge it for you
