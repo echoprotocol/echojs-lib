@@ -12,8 +12,7 @@ stages:
 jobs:
   include:
     - stage: audit
-#      if: tag IS blank
-      if: branch = master
+      if: tag IS blank
       name: "Test lint and audit"
       script:
         - npm run lint
@@ -29,17 +28,15 @@ jobs:
       script:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
-#      if: tag IS present
+      if: tag IS present
       name: "Deploy to npm"
       script:
         - npm install
         - npm run build
       deploy:
-        skip_cleanup: true
         provider: npm
+        skip_cleanup: true
         email: $NPM_EMAIL
-        on:
-          all_branches: true
         api_key: $NPM_TOKEN
-#        on:
-#          tags: true
+        on:
+          tags: true
