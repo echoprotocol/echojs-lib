@@ -54,3 +54,21 @@ To more examples and options look at section below
 [Crypto](docs/Crypto.md) - Create private/public keys example
 
 [Constants](docs/Constants.md) - List of constants you can use
+
+## Run Tests
+
+Tests use a locally running Echo node. Therefore, before starting the tests, 
+you need to start Echo with predefined configuration parameters.
+
+The easiest way is to use docker-compose:
+
+```bash
+cd .test
+docker-compose up
+```
+
+After the node is started, you can run the tests:
+
+```bash
+npm run test
+```
