@@ -71,7 +71,6 @@ export default class Api {
 	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
 	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;
 	getSettleOrders(assetId: string, limit: number): Promise<any>;
-	getSidechainTransfers(receiver: string): Promise<Array<{transfer_id: number, receiver: string, amount: number, signatures: string, withdraw_code: string}>>;
 	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
 	getTransaction(blockNum: number, transactionIndex: number): Promise<Transaction>;
