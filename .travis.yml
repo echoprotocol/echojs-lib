@@ -12,6 +12,7 @@ stages:
 jobs:
   include:
     - stage: test
+      if: tag IS blank
       name: "Test lint (push), audit (push) and unit tests (pr)"
       before_install:
         - docker pull echoprotocol/echo:v0.8.2
@@ -21,6 +22,7 @@ jobs:
         - audit-ci --moderate
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
+      if: tag IS present
       name: "Deploy to npm"
       script: echo "Deploy to npm"
       deploy:
