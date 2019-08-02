@@ -1,6 +1,6 @@
 # Echojs-lib (echojs-lib)
 
-[![Travis (.org)](https://img.shields.io/travis/viktor32/echojs-lib?branch=master)](https://travis-ci.org/viktor32/echojs-lib)
+[![Build Status](https://travis-ci.com/echoprotocol/echojs-lib.svg?branch=master)](https://travis-ci.com/echoprotocol/echojs-lib)
 [![David](https://img.shields.io/david/echoprotocol/echojs-lib)](https://github.com/echoprotocol/echojs-lib)
 [![npm](https://img.shields.io/npm/dw/echojs-lib)](https://www.npmjs.com/package/echojs-lib)
 [![npm](https://img.shields.io/npm/v/echojs-lib)](https://www.npmjs.com/package/echojs-lib)
