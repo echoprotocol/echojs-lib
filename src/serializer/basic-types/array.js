@@ -27,7 +27,7 @@ class ArrayType extends Type {
 				const element = value[i];
 				this.type.validate(element);
 			} catch (error) {
-				throw new Error(`dynamic array element with index ${i}: ${error.message}`);
+				throw new Error(`array element with index ${i}: ${error.message}`);
 			}
 		}
 	}
