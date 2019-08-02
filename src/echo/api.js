@@ -26,7 +26,6 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
-	isEthereumAddress,
 } from '../utils/validators';
 
 import { operationById } from './operations';
