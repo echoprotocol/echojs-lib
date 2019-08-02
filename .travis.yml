@@ -22,5 +22,10 @@ jobs:
         - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then audit-ci --moderate; fi'
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
-      name: "Deploy to GCP"
-      script: "echo \"deploy\""
+      name: "Deploy to npm"
+      deploy:
+        provider: npm
+        email: $NPM_EMAIL
+        api_key: $NPM_TOKEN
+        on:
+          tags: true
