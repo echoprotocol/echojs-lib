@@ -22,6 +22,7 @@ jobs:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
       name: "Deploy to npm"
+      script: echo "Deploy to npm"
       deploy:
         provider: npm
         email: $NPM_EMAIL
