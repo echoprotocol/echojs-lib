@@ -167,8 +167,6 @@ try {
  Array of all asset IDs with the number of holders.">getAllAssetHolders
  Array of all asset IDs with the number of holders.()</a> ⇒ <code>Promise.&lt;Array.&lt;{asset_id: String, count: Number}&gt;&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getSidechainTransfers">getSidechainTransfers(receiver)</a> ⇒ <code>Promise.&lt;Array.&lt;SidechainTransfer&gt;&gt;</code></dt>
-<dd></dd>
 </dl>
 
 ## Typedefs
@@ -847,15 +845,6 @@ try {
 ## getAllAssetHolders() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
-
-<a name="getSidechainTransfers"></a>
-
-## getSidechainTransfers(receiver) ⇒ [<code>Promise.&lt;Array.&lt;SidechainTransfer&gt;&gt;</code>](#SidechainTransfer)
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| receiver | <code>String</code> | ethereum address |
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>

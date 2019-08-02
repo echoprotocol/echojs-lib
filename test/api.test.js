@@ -640,21 +640,5 @@ describe('API', () => {
                 }
             }).timeout(5000);
         });
-        describe('#getSidechainTransfers()', () => {
-            it('should get subchain transfer', async () => {
-                try {
-                    const wsApi = new WSAPI(ws);
-                    const cache = new Cache();
-                    const api = new API(cache, wsApi);
-
-                    const ethereumAddress = '17A686Cc581e0582e0213Ec49153Af6c1941CAc7';
-
-                    const history = await api.getSidechainTransfers(ethereumAddress);
-                    expect(history).to.be.an('array');
-                } catch (e) {
-                    throw e;
-                }
-            }).timeout(5000);
-        });
     });
 });
