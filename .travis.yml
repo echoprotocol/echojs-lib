@@ -12,7 +12,8 @@ stages:
 jobs:
   include:
     - stage: audit
-      if: tag IS blank
+#      if: tag IS blank
+      if: branch = master
       name: "Test lint and audit"
       script:
         - npm run lint
@@ -30,9 +31,12 @@ jobs:
     - stage: deploy
 #      if: tag IS present
       name: "Deploy to npm"
-      script: npm i
+      script: "echo \"Deploy\""
       deploy:
         provider: npm
+        script:
+          - npm i
+          - npm run prepare
         email: $NPM_EMAIL
         on:
           all_branches: true
