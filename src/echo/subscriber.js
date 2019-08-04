@@ -81,19 +81,18 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 		this._ws = ws;
-		console.log('1111111111111');
 
-		// this._ws =
 		// this._ws.dbApi().exec('ersd', []);
 
 
 		console.log('YYyyAAAAAA');
 		if (this.subscribers.connect.length) {
-			console.log('!!!!!!!!!!');
+			console.log(this.subscribers.connect.length);
 			this._ws.on(STATUS.OPEN, () => {
 				console.log('IT works!!!!!!!!!!!!');
 				this.subscribers.connect.forEach((cb) => cb());
 			});
+			// this._ws.emit(STATUS.OPEN);
 		}
 
 		if (this.subscribers.disconnect.length) {

@@ -45,8 +45,11 @@ class ReconnectionWebSocket {
 		url,
 		options = {},
 	) {
+		console.log('rec-websoc ws.rpc.connect');
+
 		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
 			try {
+                console.log('ws.rpc.connect this.close');
 				await this.close();
 			} catch (error) {
 				throw error;
@@ -86,6 +89,7 @@ class ReconnectionWebSocket {
 
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
+			console.log('rec-soc _connect');
 			let ws = null;
 			try {
 				ws = new WebSocket(this.url);
@@ -105,6 +109,9 @@ class ReconnectionWebSocket {
 					this._isFirstConnection = false;
 					resolve();
 				}
+
+
+                console.log('reconnection-websoc.ws.onopen');
 
 				if (this.onOpen) this.onOpen();
 
@@ -176,6 +183,7 @@ class ReconnectionWebSocket {
 		}
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
+        console.log('reconnection-websoc reconnect');
 		await this.connect(this.url, this._options);
 	}
 

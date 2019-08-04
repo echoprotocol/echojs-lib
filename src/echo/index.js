@@ -26,13 +26,15 @@ class Echo {
 		}
 
 		try {
-			await this._ws.connect(address, options);
+
+			// await this._ws.connect(address, options);
 
 			if (this._isInitModules) {
 				return;
 			}
 
 			await this._initModules();
+            await this._ws.connect(address, options);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -65,6 +67,7 @@ class Echo {
 		};
 
 		this._ws.on(STATUS.OPEN, this.onOpen);
+        // this._ws._onOpen();
 	}
 
 	syncCacheWithStore(store) {
