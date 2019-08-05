@@ -21,7 +21,7 @@ import ContractHistory from '../interfaces/ContractHistory';
 
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
-	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback: Function): Promise<any>;
+	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
 	getAccountBalances(accountId: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
@@ -84,7 +84,7 @@ export default class Api {
 	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
 	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
-	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback: Function): Promise<null>
+	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;

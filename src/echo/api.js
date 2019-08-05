@@ -611,13 +611,11 @@ class API {
 
 		try {
 			let requestedObject = await this.wsApi.database[methodName](key);
-
 			if (!requestedObject) {
 				return requestedObject;
 			}
 
 			requestedObject = fromJS(requestedObject);
-
 			this.cache.setInMap(cacheName, key, requestedObject);
 			for (const { param, cache } of cacheParams) {
 				this.cache.setInMap(cache, requestedObject.get(param), requestedObject);
