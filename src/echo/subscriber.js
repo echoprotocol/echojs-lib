@@ -82,23 +82,12 @@ class Subscriber extends EventEmitter {
 		this._api = api;
 		this._ws = ws;
 
-		// this._ws.dbApi().exec('ersd', []);
-
-
-		console.log('YYyyAAAAAA');
 		if (this.subscribers.connect.length) {
-			console.log(this.subscribers.connect.length);
-			this._ws.on(STATUS.OPEN, () => {
-				console.log('IT works!!!!!!!!!!!!');
-				this.subscribers.connect.forEach((cb) => cb());
-			});
-			// this._ws.emit(STATUS.OPEN);
+			this.subscribers.connect.forEach((cb) => cb());
 		}
 
 		if (this.subscribers.disconnect.length) {
-			this._ws.on(STATUS.CLOSE, () => {
-				this.subscribers.disconnect.forEach((cb) => cb());
-			});
+			this.subscribers.disconnect.forEach((cb) => cb());
 		}
 
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
@@ -153,19 +142,7 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {},
-			logs: {},
-			connect: [],
-			disconnect: [],
-		};
-
+		this.cancelAllSubscribers();
 
 	}
 
@@ -184,6 +161,7 @@ class Subscriber extends EventEmitter {
 			transaction: [],
 			market: {},
 			logs: {},
+			contract: [],
 			connect: [],
 			disconnect: [],
 		};

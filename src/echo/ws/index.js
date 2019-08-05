@@ -63,7 +63,6 @@ class WS extends EventEmitter {
 			await this._initEchoApi();
 		}
 
-		console.log('ales here', this.onOpenCb);
 		if (this.onOpenCb) this.onOpenCb('open');
 		this.emit(STATUS.OPEN);
 
@@ -132,9 +131,6 @@ class WS extends EventEmitter {
 		this.apis = options.apis || DEFAULT_CHAIN_APIS;
 		this._connected = false;
 		this._isFirstTime = true;
-
-        console.log('ws.connect = this.onOpenCb!!!!!!');
-		console.log(this.onOpenCb);
 		if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
 		if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;
 		if (options.onError && typeof options.onError === 'function') this.onErrorCb = options.onError;
@@ -142,16 +138,12 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) this._ws_rpc = new ReconnectionWebSocket();
 
 		this._ws_rpc.onOpen = () => this._onOpen();
-        console.log('ws.index connect this._ws_rpc.onOpen = () => this._onOpen()');
 		this._ws_rpc.onClose = () => this._onClose();
 		this._ws_rpc.onError = () => this._onError();
 
 		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
 
 		try {
-
-            // this._onOpen();
-
 			await this._ws_rpc.connect(url, this.options);
 			await this._initEchoApi();
 		} catch (err) {

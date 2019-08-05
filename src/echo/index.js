@@ -27,14 +27,14 @@ class Echo {
 
 		try {
 
-			// await this._ws.connect(address, options);
+			await this._ws.connect(address, options);
 
 			if (this._isInitModules) {
 				return;
 			}
 
 			await this._initModules();
-            await this._ws.connect(address, options);
+			this._ws.emit(STATUS.OPEN);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -56,18 +56,15 @@ class Echo {
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
 
-		await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
-
 		this.onOpen = async () => {
 			try {
-				await this.subscriber.init();
+				await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
 			} catch (err) {
 				console.log('ONOPEN init error', err);
 			}
 		};
 
 		this._ws.on(STATUS.OPEN, this.onOpen);
-        // this._ws._onOpen();
 	}
 
 	syncCacheWithStore(store) {
@@ -86,6 +83,7 @@ class Echo {
 		this.cache.reset();
 		await this._ws.close();
 		this._ws.removeListener(STATUS.OPEN, this.onOpen);
+		this._ws.emit(STATUS.CLOSE);
 		this.onOpen = null;
 		this._isInitModules = false;
 	}
