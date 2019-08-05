@@ -133,8 +133,8 @@ describe('Transaction', () => {
 			const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
 			const transaction = echo.createTransaction();
 			transaction.addOperation(TRANSFER, {
-				from: '1.2.16',
-				to: '1.2.17',
+				from: '1.2.6',
+				to: '1.2.7',
 				amount: { asset_id: '1.3.0', amount: 1000 },
 			});
 			// await transaction.sign(PrivateKey.fromWif(pk));
