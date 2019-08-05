@@ -26,7 +26,6 @@ class Echo {
 		}
 
 		try {
-
 			await this._ws.connect(address, options);
 
 			if (this._isInitModules) {

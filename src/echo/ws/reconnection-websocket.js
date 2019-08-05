@@ -45,7 +45,6 @@ class ReconnectionWebSocket {
 		url,
 		options = {},
 	) {
-
 		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
 			try {
 				await this.close();

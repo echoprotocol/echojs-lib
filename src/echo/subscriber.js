@@ -50,19 +50,7 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
-		this.subscribers = {
-			global: [], // "global" means all updates from setSubscribeCallback
-			account: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {}, // [base_quote]: []
-			logs: {},	// [contractId]: []
-			contract: [],
-			connect: [],
-			disconnect: [],
-		};
+		this.cancelAllSubscribers();
 
 	}
 
@@ -153,14 +141,14 @@ class Subscriber extends EventEmitter {
 	 */
 	cancelAllSubscribers() {
 		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
+			global: [], // "global" means all updates from setSubscribeCallback
+			account: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
 			transaction: [],
-			market: {},
-			logs: {},
+			market: {}, // [base_quote]: []
+			logs: {},	// [contractId]: []
 			contract: [],
 			connect: [],
 			disconnect: [],
@@ -868,10 +856,8 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			// this._ws.on(STATUS.OPEN, callback);
 			this.subscribers.connect.push(callback);
 		} else {
-			// this._ws.on(STATUS.CLOSE, callback);
 			this.subscribers.disconnect.push(callback);
 		}
 
