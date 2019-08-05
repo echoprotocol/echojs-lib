@@ -6,6 +6,8 @@ import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
+import { IS_USE_CACHE, CACHE_EXPIRE_TIME } from '../constants/index';
+
 
 class Echo {
 
@@ -49,7 +51,7 @@ class Echo {
 
 		this._wsApi = new WSAPI(this._ws);
 
-		this.cache = new Cache();
+		this.cache = new Cache(IS_USE_CACHE, CACHE_EXPIRE_TIME);
 		this.api = new API(this.cache, this._wsApi);
 		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
 

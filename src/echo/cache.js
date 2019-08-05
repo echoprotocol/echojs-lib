@@ -10,14 +10,19 @@ class Cache {
 	 *
 	 * Init cache and redux
 	 */
-	constructor() {
-		this.isUsed = true;
+	constructor(isUsed, expirationTime) {
+		this.isUsed = isUsed;
+		this.expirationTime = expirationTime;
 
 		this.redux = {
 			store: null,
 		};
 
+		this.expirations = [];
+		this.timeout = null;
+
 		this.reset();
+
 	}
 
 	/**
@@ -75,6 +80,9 @@ class Cache {
 		this.chainId = null;
 		this.dynamicGlobalProperties = new Map();
 
+		this._clearTimeout();
+		this.expirations = [];
+
 		this._resetRedux();
 	}
 
@@ -87,6 +95,40 @@ class Cache {
 			const value = this[field];
 			this.redux.store.dispatch({ type: 'ECHO_SET_CACHE', payload: { field, value } });
 		}
+	}
+
+	_removeExpired() {
+		const date = Date.now();
+		const [{ map, key }] = this.expirations;
+
+		this.set(map, this[map].delete(key));
+
+		let deleteCounter = 0;
+
+		for (let i = 0; i <= this.expirations.length - 1; i += 1) {
+			const { time } = this.expirations[i];
+
+			if (date > time) {
+				deleteCounter += 1;
+				continue;
+			}
+
+			break;
+		}
+
+		this.expirations = this.expirations.slice(deleteCounter);
+
+		this._clearTimeout();
+
+		if (this.expirations.length) {
+			const [{ time }] = this.expirations;
+			this.timeout = setTimeout(this._removeExpired.bind(this), Math.max(time - date), 500);
+		}
+	}
+
+	_clearTimeout() {
+		clearTimeout(this.timeout);
+		this.timeout = null;
 	}
 
 	/**
@@ -102,6 +144,12 @@ class Cache {
 	setInMap(map, key, value) {
 		if (this.isUsed) {
 			this.set(map, this[map].set(key, value));
+			if (this.expirationTime !== undefined) {
+				this.expirations.push({ time: Date.now() + this.expirationTime, map, key });
+				if (!this.timeout) {
+					this.timeout = setTimeout(this._removeExpired.bind(this), this.expirationTime);
+				}
+			}
 		}
 		return this;
 	}

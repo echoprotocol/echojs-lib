@@ -39,3 +39,6 @@ export default {
 export const ECHO_ASSET_ID = '1.3.0';
 export const DYNAMIC_GLOBAL_OBJECT_ID = '2.1.0';
 export { OPERATIONS_IDS, CACHE_MAPS, CHAIN_TYPES, CHAIN_CONFIG };
+
+export const IS_USE_CACHE = true;
+export const CACHE_EXPIRE_TIME = 60 * 60 * 1000;
