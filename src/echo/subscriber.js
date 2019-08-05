@@ -224,15 +224,37 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
+		console.log('_updateObject Object');
+		console.log(object);
+
 		if (isOperationHistoryId(object.id)) {
+
+			console.log('isOperationHistoryId');
+
 			const contractId = object.op[1].callee;
 			let history = this.cache.contractHistoryByContractId.get(contractId);
+
+			console.log('this.cache.contractHistoryByContractId.get(contractId)');
+			console.log(this.cache.contractHistoryByContractId.has(contractId));
+			console.log(this.cache.contractHistoryByContractId.size);
+
+			console.log('history');
+			console.log(history);
+			const check = history.find((h) => h.get('id'));
+			console.log(check);
 
 			if (!history || history.find((h) => h.get('id') === object.id)) {
 				return null;
 			}
 
+			console.log('history 2222222222');
+			console.log(history);
+
 			history = history.unshift(fromJS(object));
+
+
+			console.log('new history');
+			console.log(history);
 
 			this.cache.setInMap(CacheMaps.CONTRACT_HISTORY_BY_CONTRACT_ID, contractId, history);
 			return null;
