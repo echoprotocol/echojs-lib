@@ -6,8 +6,8 @@ import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
-import { IS_USE_CACHE, CACHE_EXPIRE_TIME } from '../constants/index';
 
+/** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
 class Echo {
 
@@ -20,6 +20,10 @@ class Echo {
 		return this._ws._connected;
 	}
 
+	/**
+	 * @param {string} address
+	 * @param {Options} options
+	 */
 	async connect(address, options = {}) {
 		if (this._ws._connected) {
 			throw new Error('Connected');
@@ -32,7 +36,7 @@ class Echo {
 				return;
 			}
 
-			await this._initModules();
+			await this._initModules(options);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -46,12 +50,13 @@ class Echo {
 
 	}
 
-	async _initModules() {
+	/** @param {Options} options */
+	async _initModules(options) {
 		this._isInitModules = true;
 
 		this._wsApi = new WSAPI(this._ws);
 
-		this.cache = new Cache(IS_USE_CACHE, CACHE_EXPIRE_TIME);
+		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
 		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
 
