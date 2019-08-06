@@ -32,7 +32,7 @@ declare let _default: {
     CHAIN_TYPES: import('./chain-types').ChainTypes,
     CHAIN_CONFIG: import('./chain-config').ChainConfig,
     WS_CONSTANTS: import('./ws-constants').WsConstants,
-    OPERATIONS_IDS: import('./operations-ids').OPERATIONS_IDS,
+    OPERATIONS_IDS: typeof import('./operations-ids').OPERATIONS_IDS,
 };
 
 export default _default;
