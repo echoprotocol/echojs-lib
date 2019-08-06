@@ -1,5 +1,5 @@
 export default interface ContractLogs {
-    address: string,
-    log: Array<string>,
-    data: string
+	address: string,
+	log: Array<string>,
+	data: string
 }

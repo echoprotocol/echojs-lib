@@ -479,10 +479,10 @@ import { PublicKey } from '../crypto';
 class API {
 
 	/**
-     *
-     * @param {Cache} cache
-     * @param {WSAPI} wsApi
-     */
+	 *
+	 * @param {Cache} cache
+	 * @param {WSAPI} wsApi
+	 */
 	constructor(cache, wsApi) {
 		this.cache = cache;
 		this.wsApi = wsApi;
@@ -490,13 +490,13 @@ class API {
 
 	/**
 	 *
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getConfigurations(cacheName, methodName, force = false) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName];
@@ -520,16 +520,16 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Array} array
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @return {Promise.<Array.<Object>>}
-     * @private
-     */
+	 *
+	 * @param {Array} array
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {Array} cacheParams
+	 *
+	 * @return {Promise.<Array.<Object>>}
+	 * @private
+	 */
 	async _getArrayDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams = []) {
 		const { length } = array;
 
@@ -589,15 +589,15 @@ class API {
 
 	/**
 	 *
-     * @param {*} key
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 * @param {*} key
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {Array} cacheParams
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getSingleDataWithMultiSave(key, cacheName, methodName, force = false, cacheParams = []) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
@@ -626,16 +626,16 @@ class API {
 	}
 
 	/**
-     *
-     * @param {String} key
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {...Array} params
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 *
+	 * @param {String} key
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {...Array} params
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getSingleDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
@@ -663,11 +663,11 @@ class API {
 
 	/**
 	 *
-     * @param {Map} requestedObject
-     * @param {Boolean} force
-     * @return {Promise.<Asset>}
-     * @private
-     */
+	 * @param {Map} requestedObject
+	 * @param {Boolean} force
+	 * @return {Promise.<Asset>}
+	 * @private
+	 */
 	async _addAssetExtraFields(requestedObject, force = false) {
 		const bitAssetId = requestedObject.get('bitasset_data_id');
 		const dynamicAssetDataId = requestedObject.get('dynamic_asset_data_id');
@@ -697,12 +697,12 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Map} account
-     * @param {Number} limit
-     * @return {Promise.<FullAccount>}
-     * @private
-     */
+	 *
+	 * @param {Map} account
+	 * @param {Number} limit
+	 * @return {Promise.<FullAccount>}
+	 * @private
+	 */
 	async _addHistory(account, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
 		const start = API_CONFIG.START_OPERATION_HISTORY_ID;
 		let stop = start;
@@ -730,13 +730,13 @@ class API {
 
 	/**
 	 *
-     * @param {Array} array
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @return {Promise.<Array.<*>>}
-     * @private
-     */
+	 * @param {Array} array
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @return {Promise.<Array.<*>>}
+	 * @private
+	 */
 	async _getObjectsById(array, cacheName, methodName, force = false) {
 		const { length } = array;
 
@@ -831,12 +831,12 @@ class API {
 	}
 
 	/**
-     *  @method getObjects
-     *  @param  {Array<String>} objectIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Object>>}
-     */
+	 *  @method getObjects
+	 *  @param  {Array<String>} objectIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Object>>}
+	 */
 	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
 		if (!objectIds.every((id) => isObjectId(id))) {
@@ -848,12 +848,12 @@ class API {
 	}
 
 	/**
-     *  @method getObject
-     *  @param  {String} objectId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getObject
+	 *  @param  {String} objectId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	async getObject(objectId, force = false) {
 		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -863,11 +863,11 @@ class API {
 
 	/**
 	 *
-     * 	@param {String} bitAssetId
-     *  @param {Boolean} force
-     * 	@return  {Promise.<Object>}
-     * 	@private
-     */
+	 * 	@param {String} bitAssetId
+	 *  @param {Boolean} force
+	 * 	@return  {Promise.<Object>}
+	 * 	@private
+	 */
 	getBitAssetData(bitAssetId, force = false) {
 		if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -877,12 +877,12 @@ class API {
 
 
 	/**
-     *
-     * 	@param {String} dynamicAssetDataId
-     *  @param {Boolean} force
-     * 	@return  {Promise.<Object>}
-     * 	@private
-     */
+	 *
+	 * 	@param {String} dynamicAssetDataId
+	 *  @param {Boolean} force
+	 * 	@return  {Promise.<Object>}
+	 * 	@private
+	 */
 	getDynamicAssetData(dynamicAssetDataId, force = false) {
 		if (!isDynamicAssetDataId(dynamicAssetDataId)) {
 			return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
@@ -893,13 +893,13 @@ class API {
 	}
 
 	/**
-     *  @method getBlockHeader
-     *  @param  {Number} blockNum
-     *
-     *  @return {
-     *  	Promise.<BlockHeader>
-     *  }
-     */
+	 *  @method getBlockHeader
+	 *  @param  {Number} blockNum
+	 *
+	 *  @return {
+	 *  	Promise.<BlockHeader>
+	 *  }
+	 */
 	getBlockHeader(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
@@ -907,13 +907,13 @@ class API {
 	}
 
 	/**
-     *  @method getBlock
-     *  @param  {Number} blockNum
-     *
-     *  @return {
-     *  	Promise.<Block>
-     *  }
-     */
+	 *  @method getBlock
+	 *  @param  {Number} blockNum
+	 *
+	 *  @return {
+	 *  	Promise.<Block>
+	 *  }
+	 */
 	getBlock(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
@@ -921,14 +921,14 @@ class API {
 	}
 
 	/**
-     *  @method getTransaction
-     *  @param  {Number} blockNum
-     *  @param  {Number} transactionIndex
-     *
-     *  @return {
-     *  	Promise.<Transaction>
-     *  }
-     */
+	 *  @method getTransaction
+	 *  @param  {Number} blockNum
+	 *  @param  {Number} transactionIndex
+	 *
+	 *  @return {
+	 *  	Promise.<Transaction>
+	 *  }
+	 */
 	getTransaction(blockNum, transactionIndex) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 		if (!isUInt64(transactionIndex)) {
@@ -948,13 +948,13 @@ class API {
 	}
 
 	/**
-     *  @method getChainProperties
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<ChainProperties>
-     * 	}
-     */
+	 *  @method getChainProperties
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<ChainProperties>
+	 * 	}
+	 */
 	getChainProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
@@ -962,12 +962,12 @@ class API {
 	}
 
 	/**
-     *  @method getGlobalProperties
-     *
-     *  @return {
-     *  	Promise.<GlobalProperties>
-     *  }
-     */
+	 *  @method getGlobalProperties
+	 *
+	 *  @return {
+	 *  	Promise.<GlobalProperties>
+	 *  }
+	 */
 	getGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
@@ -975,13 +975,13 @@ class API {
 	}
 
 	/**
-     *  @method getConfig
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Config>
-     *  }
-     */
+	 *  @method getConfig
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Config>
+	 *  }
+	 */
 	async getConfig(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
@@ -989,11 +989,11 @@ class API {
 	}
 
 	/**
-     *  @method getChainId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<String>}
-     */
+	 *  @method getChainId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<String>}
+	 */
 	async getChainId(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
@@ -1017,12 +1017,12 @@ class API {
 	}
 
 	/**
-     *  @method getDynamicGlobalProperties
-     *
-     *  @return {
-     *  	Promise.<DynamicGlobalProperties>
-     *  }
-     */
+	 *  @method getDynamicGlobalProperties
+	 *
+	 *  @return {
+	 *  	Promise.<DynamicGlobalProperties>
+	 *  }
+	 */
 	async getDynamicGlobalProperties(force = false) {
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
@@ -1030,12 +1030,12 @@ class API {
 	}
 
 	/**
-     *  @method getKeyReferences
-     *  @param  {Array<String|PublicKey>} keys [public keys]
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<*>>}
-     */
+	 *  @method getKeyReferences
+	 *  @param  {Array<String|PublicKey>} keys [public keys]
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<*>>}
+	 */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
 		keys = keys.map((value) => ((value instanceof PublicKey) ? value.toString() : value));
@@ -1048,12 +1048,12 @@ class API {
 	}
 
 	/**
-     *  @method getAccounts
-     *  @param  {Array<String>} accountIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Account>>}
-     */
+	 *  @method getAccounts
+	 *  @param  {Array<String>} accountIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Account>>}
+	 */
 	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) throw new Error('Account ids should be an array');
 		if (!accountIds.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
@@ -1119,13 +1119,13 @@ class API {
 	}
 
 	/**
-     *  @method getFullAccounts
-     *  @param  {Array<String>} accountNamesOrIds
-     *  @param  {Boolean} subscribe
-     *  @param 	{Boolean} force
-     *
-     *  @return {Promise.<Array.<FullAccount>>}
-     */
+	 *  @method getFullAccounts
+	 *  @param  {Array<String>} accountNamesOrIds
+	 *  @param  {Boolean} subscribe
+	 *  @param 	{Boolean} force
+	 *
+	 *  @return {Promise.<Array.<FullAccount>>}
+	 */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 		if (!isArray(accountNamesOrIds)) {
 			throw new Error('Account names or ids should be an array');
@@ -1232,12 +1232,12 @@ class API {
 	}
 
 	/**
-     *  @method getAccountByName
-     *  @param  {String} accountName
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Account>}
-     */
+	 *  @method getAccountByName
+	 *  @param  {String} accountName
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Account>}
+	 */
 	async getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) throw new Error('Account name is invalid');
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
@@ -1273,12 +1273,12 @@ class API {
 	}
 
 	/**
-     *  @method getAccountReferences
-     *  @param  {String} accountId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getAccountReferences
+	 *  @param  {String} accountId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getAccountReferences(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -1292,12 +1292,12 @@ class API {
 	}
 
 	/**
-     *  @method lookupAccountNames
-     *  @param  {Array<String>} accountNames
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Account>>}
-     */
+	 *  @method lookupAccountNames
+	 *  @param  {Array<String>} accountNames
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Account>>}
+	 */
 	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) throw new Error('Account names should be an array');
 		if (!accountNames.every((id) => isAccountName(id))) {
@@ -1365,12 +1365,12 @@ class API {
 	/** @typedef {String} AccountId */
 
 	/**
-     *  @method lookupAccounts
-     *  @param  {String} lowerBoundName
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<Array<AccountName, AccountId>>}
-     */
+	 *  @method lookupAccounts
+	 *  @param  {String} lowerBoundName
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<Array<AccountName, AccountId>>}
+	 */
 	async lookupAccounts(lowerBoundName, limit = API_CONFIG.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('Lower bound name should be a string');
 		if (!isUInt64(limit) || limit > API_CONFIG.LOOKUP_ACCOUNTS_MAX_LIMIT) {
@@ -1381,22 +1381,22 @@ class API {
 	}
 
 	/**
-     *  @method getAccountCount
-     *
-     *  @return {Promise<Number>}
-     */
+	 *  @method getAccountCount
+	 *
+	 *  @return {Promise<Number>}
+	 */
 	getAccountCount() {
 		return this.wsApi.database.getAccountCount();
 	}
 
 	/**
-     *  @method getAccountBalances
-     *  @param  {String} accountId
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getAccountBalances
+	 *  @param  {String} accountId
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getAccountBalances(accountId, assetIds, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -1416,13 +1416,13 @@ class API {
 	}
 
 	/**
-     *  @method getNamedAccountBalances
-     *  @param  {String} accountName
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getNamedAccountBalances
+	 *  @param  {String} accountName
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getNamedAccountBalances(accountName, assetIds, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -1442,11 +1442,11 @@ class API {
 	}
 
 	/**
-     *  @method getVestedBalances
-     *  @param  {Array<String>} balanceIds
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getVestedBalances
+	 *  @param  {Array<String>} balanceIds
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getVestedBalances(balanceIds) {
 		if (!isArray(balanceIds)) throw new Error('Balance ids should be an array');
 		if (!balanceIds.every((id) => isBalanceId(id))) throw new Error('Balance ids should contain valid balance ids');
@@ -1455,11 +1455,11 @@ class API {
 	}
 
 	/**
-     *  @method getVestingBalances
-     *  @param  {String} accountId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getVestingBalances
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getVestingBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
@@ -1467,12 +1467,12 @@ class API {
 	}
 
 	/**
-     *  @method getAssets
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
+	 *  @method getAssets
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) throw new Error('Asset ids should be an array');
 		if (!assetIds.every((id) => isAssetId(id))) throw new Error('Assets ids should contain valid asset ids');
@@ -1540,12 +1540,12 @@ class API {
 	}
 
 	/**
-     *  @method listAssets
-     *  @param  {String} lowerBoundSymbol
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
+	 *  @method listAssets
+	 *  @param  {String} lowerBoundSymbol
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
 	async listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
 		if (!isUInt64(limit) || limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
@@ -1556,12 +1556,12 @@ class API {
 	}
 
 	/**
-     *  @method lookupAssetSymbols
-     *  @param  {Array<String>} symbolsOrIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
+	 *  @method lookupAssetSymbols
+	 *  @param  {Array<String>} symbolsOrIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
 		if (!symbolsOrIds.every((key) => isAssetId(key) || isAssetName(key))) {
@@ -1631,13 +1631,13 @@ class API {
 	}
 
 	/**
-     *  @method getOrderBook
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *  @param  {Number} depth
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getOrderBook
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *  @param  {Number} depth
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getOrderBook(baseAssetName, quoteAssetName, depth = API_CONFIG.ORDER_BOOK_DEFAULT_DEPTH) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
@@ -1649,13 +1649,13 @@ class API {
 	}
 
 	/**
-     *  @method getLimitOrders
-     *  @param  {String} baseAssetId
-     *  @param  {String} quoteAssetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getLimitOrders
+	 *  @param  {String} baseAssetId
+	 *  @param  {String} quoteAssetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getLimitOrders(baseAssetId, quoteAssetId, limit) {
 		if (!isAssetId(baseAssetId)) throw new Error('Base asset id is invalid');
 		if (!isAssetId(quoteAssetId)) throw new Error('Quote asset id is invalid');
@@ -1665,12 +1665,12 @@ class API {
 	}
 
 	/**
-     *  @method getCallOrders
-     *  @param  {String} assetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getCallOrders
+	 *  @param  {String} assetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getCallOrders(assetId, limit) {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
@@ -1679,12 +1679,12 @@ class API {
 	}
 
 	/**
-     *  @method getSettleOrders
-     *  @param  {String} assetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getSettleOrders
+	 *  @param  {String} assetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getSettleOrders(assetId, limit) {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
@@ -1693,11 +1693,11 @@ class API {
 	}
 
 	/**
-     *  @method getMarginPositions
-     *  @param  {String} accountId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getMarginPositions
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getMarginPositions(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
@@ -1705,13 +1705,13 @@ class API {
 	}
 
 	/**
-     *  @method getTicker
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTicker
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTicker(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
@@ -1720,13 +1720,13 @@ class API {
 	}
 
 	/**
-     *  @method get24Volume
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method get24Volume
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async get24Volume(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
@@ -1735,16 +1735,16 @@ class API {
 	}
 
 	/**
-     *  @method getTradeHistory
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *  @param  {Number} start
-     *  @param  {Number} stop
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTradeHistory
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *  @param  {Number} start
+	 *  @param  {Number} stop
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTradeHistory(
 		baseAssetName,
 		quoteAssetName,
@@ -1764,15 +1764,15 @@ class API {
 	}
 
 	/**
-     *  @method getCommitteeMembers
-     *
-     *  @param  {Array<String>} committeeMemberIds
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Array.<Committee>>
-     *  }
-     */
+	 *  @method getCommitteeMembers
+	 *
+	 *  @param  {Array<String>} committeeMemberIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<Committee>>
+	 *  }
+	 */
 	getCommitteeMembers(committeeMemberIds, force = false) {
 		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
 		if (!committeeMemberIds.every((id) => isCommitteeMemberId(id))) {
@@ -1796,13 +1796,13 @@ class API {
 	}
 
 	/**
-     *  @method getCommitteeMemberByAccount
-     *
-     *  @param  {String} accountId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Committee>}
-     */
+	 *  @method getCommitteeMemberByAccount
+	 *
+	 *  @param  {String} accountId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Committee>}
+	 */
 	getCommitteeMemberByAccount(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -1823,13 +1823,13 @@ class API {
 	}
 
 	/**
-     *  @method lookupCommitteeMemberAccounts
-     *
-     *  @param  {String} lowerBoundName
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method lookupCommitteeMemberAccounts
+	 *
+	 *  @param  {String} lowerBoundName
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async lookupCommitteeMemberAccounts(
 		lowerBoundName,
 		limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
@@ -1843,15 +1843,15 @@ class API {
 	}
 
 	/**
-     *  @method lookupVoteIds
-     *
-     *  @param  {Array<String>} votes
-     *  @param  {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Array.<Vote>>
-     *  }
-     */
+	 *  @method lookupVoteIds
+	 *
+	 *  @param  {Array<String>} votes
+	 *  @param  {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<Vote>>
+	 *  }
+	 */
 	async lookupVoteIds(votes, force = false) {
 		if (!isArray(votes)) throw new Error('Votes should be an array');
 		if (!votes.every((id) => isVoteId(id))) throw new Error('Votes should contain valid vote_id_type ids');
@@ -1919,12 +1919,12 @@ class API {
 	}
 
 	/**
-     *  @method getTransactionHex
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTransactionHex
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTransactionHex(tr) {
 		transaction.validate(tr);
 		// transaction is signed
@@ -1932,13 +1932,13 @@ class API {
 	}
 
 	/**
-     *  @method getRequiredSignatures
-     *
-     *  @param  {Object} tr
-     *  @param  {Array<String>} availableKeys [public keys]
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getRequiredSignatures
+	 *
+	 *  @param  {Object} tr
+	 *  @param  {Array<String>} availableKeys [public keys]
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getRequiredSignatures(tr, availableKeys) {
 		transaction.validate(tr);
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
@@ -1950,37 +1950,37 @@ class API {
 	}
 
 	/**
-     *  @method getPotentialSignatures
-     *
-     *  @param  {Object} transaction
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getPotentialSignatures
+	 *
+	 *  @param  {Object} transaction
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getPotentialSignatures(tr) {
 		transaction.validate(tr);
 		return this.wsApi.database.getPotentialSignatures(tr);
 	}
 
 	/**
-     *  @method verifyAuthority
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method verifyAuthority
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async verifyAuthority(tr) {
 		transaction.validate(tr);
 		return this.wsApi.database.verifyAuthority(tr);
 	}
 
 	/**
-     *  @method verifyAccountAuthority
-     *
-     *  @param  {Object} accountNameOrId
-     *  @param  {Array<String>} signers [public keys]
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method verifyAccountAuthority
+	 *
+	 *  @param  {Object} accountNameOrId
+	 *  @param  {Array<String>} signers [public keys]
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async verifyAccountAuthority(accountNameOrId, signers) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
 			throw new Error('Account name or id is invalid');
@@ -1992,12 +1992,12 @@ class API {
 	}
 
 	/**
-     *  @method validateTransaction
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method validateTransaction
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async validateTransaction(tr) {
 		signedTransaction.validate(tr);
 		// signed transaction
@@ -2005,18 +2005,18 @@ class API {
 	}
 
 	/**
-     *  @method getRequiredFees
-     *
-     *  @param  {Array<Object>} operations
-     *  @param  {String} assetId
-     *
-     *  @return {
-     *  	Promise.<Array<{
-     *  		asset_id:String,
-     *  		amount:Number
-     *  	}>>
-     *  }
-     */
+	 *  @method getRequiredFees
+	 *
+	 *  @param  {Array<Object>} operations
+	 *  @param  {String} assetId
+	 *
+	 *  @return {
+	 *  	Promise.<Array<{
+	 *  		asset_id:String,
+	 *  		amount:Number
+	 *  	}>>
+	 *  }
+	 */
 	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
 		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
@@ -2024,12 +2024,12 @@ class API {
 	}
 
 	/**
-     *  @method getProposedTransactions
-     *
-     *  @param  {String} accountNameOrId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getProposedTransactions
+	 *
+	 *  @param  {String} accountNameOrId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getProposedTransactions(accountNameOrId) {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
 			throw new Error('AccountNameOrId is invalid');
@@ -2039,16 +2039,16 @@ class API {
 	}
 
 	/**
-     *  @method getContractLogs
-     *
-     *  @param  {String} contractId
-     *  @param  {Number} fromBlock
-     *  @param  {Number} toBlock
-     *
-     *  @return {
-     *  	Promise.<Array.<ContractLogs>>
-     *  }
-     */
+	 *  @method getContractLogs
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Number} fromBlock
+	 *  @param  {Number} toBlock
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<ContractLogs>>
+	 *  }
+	 */
 	async getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
@@ -2059,13 +2059,13 @@ class API {
 	}
 
 	/**
-     *  @method getContractResult
-     *
-     *  @param  {String} resultContractId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<ContractResult>}
-     */
+	 *  @method getContractResult
+	 *
+	 *  @param  {String} resultContractId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<ContractResult>}
+	 */
 	getContractResult(resultContractId, force = false) {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -2079,12 +2079,12 @@ class API {
 	}
 
 	/**
-     *  @method getContract
-     *
-     *  @param  {String} contractId
-     *
-     *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
-     */
+	 *  @method getContract
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
+	 */
 	getContract(contractId) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 
@@ -2092,15 +2092,15 @@ class API {
 	}
 
 	/**
-     *  @method callContractNoChangingState
-     *
-     *  @param  {String} contractId
-     *  @param  {String} accountId
-     *  @param  {String} assetId
-     *  @param  {String} bytecode
-     *
-     *  @return {Promise<String>}
-     */
+	 *  @method callContractNoChangingState
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {String} accountId
+	 *  @param  {String} assetId
+	 *  @param  {String} bytecode
+	 *
+	 *  @return {Promise<String>}
+	 */
 	async callContractNoChangingState(contractId, accountId, assetId, bytecode) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isAccountId(accountId)) throw new Error('AccountId is invalid');
@@ -2112,13 +2112,13 @@ class API {
 	}
 
 	/**
-     *  @method getContracts
-     *
-     *  @param  {Array<String>} contractIds
+	 *  @method getContracts
+	 *
+	 *  @param  {Array<String>} contractIds
 	 *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
-     */
+	 *
+	 *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
+	 */
 	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
 		if (!contractIds.every((id) => isContractId(id))) {
@@ -2129,13 +2129,13 @@ class API {
 	}
 
 	/**
-     *  @method getContractBalances
-     *
-     *  @param  {String} contractId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getContractBalances
+	 *
+	 *  @param  {String} contractId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	async getContractBalances(contractId, force = false) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
@@ -2144,12 +2144,12 @@ class API {
 	}
 
 	/**
-     *  @method getRecentTransactionById
-     *
-     *  @param  {String} transactionId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getRecentTransactionById
+	 *
+	 *  @param  {String} transactionId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getRecentTransactionById(transactionId) {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
@@ -2190,15 +2190,15 @@ class API {
 	}
 
 	/**
-     *  @method registerAccount
-     *
-     *  @param  {String} name
-     * 	@param  {String} activeKey
-     * 	@param  {String} echoRandKey
+	 *  @method registerAccount
+	 *
+	 *  @param  {String} name
+	 * 	@param  {String} activeKey
+	 * 	@param  {String} echoRandKey
 	 *  @param  {Function} wasBroadcastedCallback
-     *
-     *  @return {Promise.<null>}
-     */
+	 *
+	 *  @return {Promise.<null>}
+	 */
 	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
@@ -2216,18 +2216,18 @@ class API {
 	}
 
 	/**
-     *  @method getAccountHistory
-     *  Get operations relevant to the specified account.
-     *
-     *  @param {String} accountId
-     *  @param {String} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {String} start [Id of the most recent operation to retrieve]
-     *
-     *  @return {
-     *  	Promise.<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getAccountHistory
+	 *  Get operations relevant to the specified account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {String} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {String} start [Id of the most recent operation to retrieve]
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getAccountHistory(
 		accountId,
 		stop = API_CONFIG.START_OPERATION_HISTORY_ID,
@@ -2245,19 +2245,19 @@ class API {
 	}
 
 	/**
-     *  @method getRelativeAccountHistory
-     *  Get operations relevant to the specified account referenced
-     *  by an event numbering specific to the account.
-     *
-     *  @param {String} accountId
-     *  @param {Number} stop [Sequence number of earliest operation]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {Number} start [Sequence number of the most recent operation to retrieve]
-     *
-     *  @return {
-     *  	Promise.<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getRelativeAccountHistory
+	 *  Get operations relevant to the specified account referenced
+	 *  by an event numbering specific to the account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {Number} stop [Sequence number of earliest operation]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {Number} start [Sequence number of the most recent operation to retrieve]
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getRelativeAccountHistory(
 		accountId,
 		stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP,
@@ -2275,19 +2275,19 @@ class API {
 	}
 
 	/**
-     *  @method getAccountHistoryOperations
-     *  Get only asked operations relevant to the specified account.
-     *
-     *  @param {String} accountId
-     *  @param {String} operationId
-     *  @param {Number} start [Id of the most recent operation to retrieve]
-     *  @param {Number} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *
-     *  @return {
-     *  	Promise<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getAccountHistoryOperations
+	 *  Get only asked operations relevant to the specified account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {String} operationId
+	 *  @param {Number} start [Id of the most recent operation to retrieve]
+	 *  @param {Number} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *
+	 *  @return {
+	 *  	Promise<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getAccountHistoryOperations(
 		accountId,
 		operationId,
@@ -2307,16 +2307,16 @@ class API {
 	}
 
 	/**
-     *  @method getContractHistory
-     *  Get operations relevant to the specified account.
-     *
-     *  @param {String} contractId
-     *  @param {String} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {String} start [Id of the most recent operation to retrieve]
-     *
-     *  @return {Promise.<Array.<ContractHistory>>}
-     */
+	 *  @method getContractHistory
+	 *  Get operations relevant to the specified account.
+	 *
+	 *  @param {String} contractId
+	 *  @param {String} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {String} start [Id of the most recent operation to retrieve]
+	 *
+	 *  @return {Promise.<Array.<ContractHistory>>}
+	 */
 	async getContractHistory(
 		contractId,
 		stop = API_CONFIG.STOP_OPERATION_HISTORY_ID,

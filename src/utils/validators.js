@@ -167,12 +167,12 @@ export const isEthereumAddress = (v) => isBytes(v, 20);
 
 export const isAssetName = (v) =>
 	!isEmpty(v) &&
-    (v.split('.').length <= 2) &&
-    (v.length >= 3) &&
-    (v.length <= 16) &&
-    (/^[A-Z]/.test(v)) &&
-    (/[A-Z]$/.test(v)) &&
-    (!/^[A-Z0-9.]$/.test(v));
+	(v.split('.').length <= 2) &&
+	(v.length >= 3) &&
+	(v.length <= 16) &&
+	(/^[A-Z]/.test(v)) &&
+	(/[A-Z]$/.test(v)) &&
+	(!/^[A-Z0-9.]$/.test(v));
 
 export const isBitAssetId = (v) => isString(v) && bitAssetIdRegex.test(v);
 

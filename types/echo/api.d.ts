@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js';
 
 import PublicKey from "../crypto/public-key";
-import { string } from "../../src/serializer/basic-types";
-import transaction from "../../src/serializer/transaction-type";
 
 import BlockHeader from '../interfaces/BlockHeader';
 import Transaction from '../interfaces/Transaction';
