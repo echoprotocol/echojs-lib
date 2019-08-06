@@ -131,6 +131,7 @@ class WS extends EventEmitter {
 		this.apis = options.apis || DEFAULT_CHAIN_APIS;
 		this._connected = false;
 		this._isFirstTime = true;
+
 		if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
 		if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;
 		if (options.onError && typeof options.onError === 'function') this.onErrorCb = options.onError;
