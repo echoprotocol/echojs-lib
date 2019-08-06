@@ -1,6 +1,6 @@
 /* Chain */
 import Echo from './echo';
-import constants from './constants';
+import * as constants from './constants';
 import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
 import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
@@ -11,7 +11,7 @@ import Signature from './crypto/signature';
 
 require('buffer');
 
-export { OPERATIONS_IDS, CACHE_MAPS } from './constants';
+const { OPERATIONS_IDS, CACHE_MAPS } = constants;
 
 export {
 	Echo,
@@ -29,6 +29,8 @@ export {
 	serializer,
 	PrivateKeyECDSA,
 	PublicKeyECDSA,
+	OPERATIONS_IDS,
+	CACHE_MAPS,
 };
 
 export default new Echo();

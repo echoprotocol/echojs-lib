@@ -31,9 +31,3 @@ export interface IMPLEMENTATION_OBJECT_TYPE {
 export interface VOTE_TYPE {
     COMMITTEE: number,
 }
-
-export interface ChainTypes {
-    RESERVED_SPACES: RESERVED_SPACES,
-    IMPLEMENTATION_OBJECT_TYPE: IMPLEMENTATION_OBJECT_TYPE,
-    VOTE_TYPE: VOTE_TYPE,
-}

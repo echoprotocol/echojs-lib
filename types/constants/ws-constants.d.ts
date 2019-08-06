@@ -1,24 +1,15 @@
-export declare const CONNECTION_TIMEOUT: number;
-export declare const MAX_RETRIES: number;
-export declare const PING_TIMEOUT: number;
-export declare const PING_INTERVAL: number;
-export declare const DEBUG: boolean;
-export declare const CHAIN_APIS: string[];
-export declare const DEFAULT_CHAIN_APIS: string[];
+import ChainApi from "../interfaces/ChainApi";
+import WsStatus from "../interfaces/WsStatus";
 
-export declare interface STATUS {
-    OPEN: string,
-    ERROR: string,
-    CLOSE: string,
-}
+export const CONNECTION_TIMEOUT: number;
+export const MAX_RETRIES: number;
+export const PING_TIMEOUT: number;
+export const PING_DELAY: number;
+export const DEBUG: number;
 
-export interface WsConstants {
-    CONNECTION_TIMEOUT: number,
-    MAX_RETRIES: number,
-    PING_TIMEOUT: number,
-    PING_INTERVAL: number,
-    DEBUG: boolean,
-    CHAIN_APIS: string[],
-    DEFAULT_CHAIN_APIS: string[],
-    STATUS: STATUS,
-}
+export = ChainApi;
+
+export const CHAIN_APIS: ChainApi[];
+export const DEFAULT_CHAIN_APIS: ChainApi[];
+
+export const STATUS: typeof WsStatus;
