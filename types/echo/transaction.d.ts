@@ -1,6 +1,6 @@
-import { OPERATIONS_IDS } from "../constants/operations-ids";
 import PrivateKey from "../crypto/private-key";
 import PublicKey from "../crypto/public-key";
+import OperationId from "../interfaces/OperationId";
 
 type int64 = string | number;
 type uint64 = string | number;
@@ -11,7 +11,7 @@ interface Asset {
 }
 
 type KNOWN_OPERATIONS_PROPS = {
-	[OPERATIONS_IDS.TRANSFER]: {
+	[OperationId.TRANSFER]: {
 		fee?: Asset,
 		from: string,
 		to: string,
@@ -19,7 +19,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		// memo?: void,
 		// extensions?: void,
 	},
-	[OPERATIONS_IDS.CREATE_CONTRACT]: {
+	[OperationId.CREATE_CONTRACT]: {
 		fee?: Asset,
 		registrar: string,
 		value: Asset,
@@ -27,7 +27,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		eth_accuracy: boolean,
 		supported_asset_id?: string,
 	},
-	[OPERATIONS_IDS.CALL_CONTRACT]: {
+	[OperationId.CALL_CONTRACT]: {
 		fee: Asset,
 		registrar: string,
 		value: Asset,
@@ -36,10 +36,10 @@ type KNOWN_OPERATIONS_PROPS = {
 	},
 };
 
-type OPERATION_PROPS<T extends OPERATIONS_IDS> = T extends keyof KNOWN_OPERATIONS_PROPS ?
+type OPERATION_PROPS<T extends OperationId> = T extends keyof KNOWN_OPERATIONS_PROPS ?
 	KNOWN_OPERATIONS_PROPS[T] : unknown;
 
-type OPERATION<T extends OPERATIONS_IDS> = [T, OPERATION_PROPS<T>];
+type OPERATION<T extends OperationId> = [T, OPERATION_PROPS<T>];
 
 declare enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 }
 
@@ -58,7 +58,7 @@ interface BroadcastingResult {
 		ref_block_num: number,
 		ref_block_prefix: number,
 		expiration: string,
-		operations: Array<OPERATION<OPERATIONS_IDS>>,
+		operations: Array<OPERATION<OperationId>>,
 		extensions: Array<void>,
 		signatures: Array<string>,
 		operation_results: Array<OPERATION_RESULT<OPERATION_RESULT_VARIANT>>,
@@ -66,7 +66,7 @@ interface BroadcastingResult {
 }
 
 export default class Transaction {
-	addOperation<T extends OPERATIONS_IDS>(operationId: T, props?: OPERATION_PROPS<T>): Transaction;
+	addOperation<T extends OperationId>(operationId: T, props?: OPERATION_PROPS<T>): Transaction;
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
 	getPotentialSignatures(): Promise<{publicKeys:Array<string>}>;
 	sign(privateKey?: PrivateKey): Promise<void>;
