@@ -455,8 +455,8 @@ export const createContract = operation(CREATE_CONTRACT, {
 	registrar: protocolId(ACCOUNT),
 	value: asset,
 	code: string,
-	eth_accuracy: bool,
 	supported_asset_id: optional(protocolId(ASSET)),
+	eth_accuracy: bool,
 	extensions: optional(empty),
 }); // 40
 
