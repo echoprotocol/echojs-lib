@@ -1,18 +1,5 @@
 stages:
-  - test
   - deploy
-
-test:
-  stage: test
-  script:
-    - npm install
-    - npm run lint
-  cache:
-    key: $CI_COMMIT_REF_NAME
-    paths:
-      - node_modules
-  tags:
-    - pp-shell
 
 publish:
   stage: deploy
