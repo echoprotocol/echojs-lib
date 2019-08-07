@@ -16,6 +16,7 @@ import Config from '../interfaces/Config';
 import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
 import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
+import ContractResult from '../interfaces/ContractResult';
 
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
@@ -48,19 +49,19 @@ export default class Api {
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
 	getContractLogs(ontractId: string, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
-	getContractResult(resultContractId: string, force: boolean): Promise<Array<any>>;
+	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
 	getFullContract(contractId: string, force?: boolean): Promise<Object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
-	getKeyReferences(keys: Array<string|PublicKey>, force?: boolean): Promise<Array<any>>;
+	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
 	getLimitOrders(baseAssetId: string, quoteAssetId: string, limit: number): Promise<any>;
 	getMarginPositions(accountId: string): Promise<any>;
 	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
 	getObject(objectId: string, force?: boolean): Promise<Object>;
-	getObjects(objectIds: string, force?: boolean): Promis<Array<Object>>;
+	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
 	getOrderBook(baseAssetName: string, quoteAssetName: string, depth: number): Promise<any>;
 	getPotentialSignatures(tr: Object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;

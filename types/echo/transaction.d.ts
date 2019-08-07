@@ -58,10 +58,10 @@ interface BroadcastingResult {
 		ref_block_num: number,
 		ref_block_prefix: number,
 		expiration: string,
-		operations: Array<OPERATION<OperationId>>,
-		extensions: Array<void>,
-		signatures: Array<string>,
-		operation_results: Array<OPERATION_RESULT<OPERATION_RESULT_VARIANT>>,
+		operations: OPERATION<OperationId>[],
+		extensions: unknown[],
+		signatures: string[],
+		operation_results: OPERATION_RESULT<OPERATION_RESULT_VARIANT>[],
 	},
 }
 
