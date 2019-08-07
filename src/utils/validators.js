@@ -30,7 +30,7 @@ const urlRegex = new RegExp(
 	'(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
-export const idRegex = /^(0|([1-9]\d*\.)){2}(0|([1-9]\d*))$/;
+export const idRegex = /^([1-9]\d*)(\.(0|([1-9]\d*))){2}$/;
 
 const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
