@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
-import { STATUS } from '../constants/ws-constants';
+import { STATUS, CONNECTION_CLOSED_ERROR_MESSAGE } from '../constants/ws-constants';
 
 import {
 	isFunction,
@@ -34,6 +34,18 @@ import {
 } from '../constants';
 
 import * as CacheMaps from '../constants/cache-maps';
+
+/**
+ * @param {Error} error
+ * @param {() => any} [handler]
+ */
+function handleConnectionClosedError(error, handler) {
+	if (error.message === CONNECTION_CLOSED_ERROR_MESSAGE) {
+		if (handler) handler();
+		return;
+	}
+	throw error;
+}
 
 class Subscriber extends EventEmitter {
 
@@ -293,7 +305,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					this._api.getFullAccounts([object.owner], true, true);
+					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
 				}
 			} catch (err) {
 				//
@@ -490,10 +502,7 @@ class Subscriber extends EventEmitter {
 
 		if (isContractHistoryId(object.id)) {
 			this._notifyContractSubscribers(obj);
-			this._api.getFullContract(object.contract, true).catch((err) => {
-				if (err.message === 'connection closed') return;
-				throw err;
-			});
+			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}
 
 		return null;
