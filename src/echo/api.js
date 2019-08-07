@@ -2358,9 +2358,11 @@ class API {
 			}
 		}
 
-		const contract = await this.getContract(contractId, force);
-		const balances = await this.getContractBalances(contractId);
-		const history = await this.getContractHistory(contractId);
+		const [contract, balances, history] = await Promise.all([
+			this.getContract(contractId, force),
+			this.getContractBalances(contractId),
+			this.getContractHistory(contractId),
+		]);
 
 		this.cache.setInMap(
 			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
