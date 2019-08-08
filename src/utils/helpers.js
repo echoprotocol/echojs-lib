@@ -6,9 +6,6 @@ import { CONNECTION_CLOSED_ERROR_MESSAGE } from '../constants/ws-constants';
  * @param {() => any} [handler]
  */
 export function handleConnectionClosedError(error, handler) {
-	if (error.message === CONNECTION_CLOSED_ERROR_MESSAGE) {
-		if (handler) handler();
-		return;
-	}
+	if (error.message === CONNECTION_CLOSED_ERROR_MESSAGE) return handler && handler();
 	throw error;
 }
