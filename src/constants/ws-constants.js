@@ -3,6 +3,7 @@ export const MAX_RETRIES = 1000;
 export const PING_TIMEOUT = 10 * 1000;
 export const PING_DELAY = 10 * 1000;
 export const DEBUG = false;
+export const CONNECTION_CLOSED_ERROR_MESSAGE = 'connection closed';
 
 export const DATABASE_API = 'database';
 export const NETWORK_BROADCAST_API = 'network_broadcast';
