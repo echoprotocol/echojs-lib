@@ -12,6 +12,8 @@ class Echo {
 	constructor() {
 		this._ws = new WS();
 		this._isInitModules = false;
+
+		this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
@@ -31,6 +33,7 @@ class Echo {
 			}
 
 			await this._initModules();
+			this._ws.emit(STATUS.OPEN);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -51,13 +54,10 @@ class Echo {
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
-
-		await this.subscriber.init();
 
 		this.onOpen = async () => {
 			try {
-				await this.subscriber.init();
+				await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
 			} catch (err) {
 				console.log('ONOPEN init error', err);
 			}
@@ -82,6 +82,7 @@ class Echo {
 		this.cache.reset();
 		await this._ws.close();
 		this._ws.removeListener(STATUS.OPEN, this.onOpen);
+		this._ws.emit(STATUS.CLOSE);
 		this.onOpen = null;
 		this._isInitModules = false;
 	}

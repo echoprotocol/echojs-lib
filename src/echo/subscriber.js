@@ -40,19 +40,9 @@ class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
-	 *
-	 *  @param {Cache} cache
-	 *  @param {WSAPI} wsApi
-	 *  @param {API} api
-	 *  @param {WS} ws
 	 */
-	constructor(cache, wsApi, api, ws) {
+	constructor() {
 		super();
-
-		this.cache = cache;
-		this._wsApi = wsApi;
-		this._api = api;
-		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -61,28 +51,34 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
-		this.subscribers = {
-			global: [], // "global" means all updates from setSubscribeCallback
-			account: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {}, // [base_quote]: []
-			logs: {},	// [contractId]: []
-			contract: [],
-			connect: [],
-			disconnect: [],
-		};
+		this.cancelAllSubscribers();
 
 	}
 
 	/**
 	 *  @method init
+	 *  @param {Cache} cache
+	 *  @param {WSAPI} wsApi
+	 *  @param {API} api
+	 *  @param {WS} ws
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init() {
+	async init(cache, wsApi, api, ws) {
+
+		this.cache = cache;
+		this._wsApi = wsApi;
+		this._api = api;
+		this._ws = ws;
+
+		if (this.subscribers.connect.length) {
+			this.subscribers.connect.forEach((cb) => cb());
+		}
+
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
+		}
+
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
@@ -135,19 +131,7 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {},
-			logs: {},
-			connect: [],
-			disconnect: [],
-		};
-
+		this.cancelAllSubscribers();
 
 	}
 
@@ -158,14 +142,15 @@ class Subscriber extends EventEmitter {
 	 */
 	cancelAllSubscribers() {
 		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
+			global: [], // "global" means all updates from setSubscribeCallback
+			account: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
 			transaction: [],
-			market: {},
-			logs: {},
+			market: {}, // [base_quote]: []
+			logs: {},	// [contractId]: []
+			contract: [],
 			connect: [],
 			disconnect: [],
 		};
@@ -872,10 +857,8 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.on(STATUS.OPEN, callback);
 			this.subscribers.connect.push(callback);
 		} else {
-			this._ws.on(STATUS.CLOSE, callback);
 			this.subscribers.disconnect.push(callback);
 		}
 
