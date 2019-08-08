@@ -212,13 +212,13 @@ class Subscriber extends EventEmitter {
 
 		if (isOperationHistoryId(object.id)) {
 			const contractId = object.op[1].callee;
-			let history = this.cache.contractHistoryByContractId.get(contractId);
+			const history = this.cache.contractHistoryByContractId.get(contractId) || [];
 
-			if (!history || history.find((h) => h.get('id') === object.id)) {
+			if (history.find((h) => h.get('id') === object.id)) {
 				return null;
 			}
 
-			history = history.unshift(fromJS(object));
+			history.unshift(fromJS(object));
 
 			this.cache.setInMap(CacheMaps.CONTRACT_HISTORY_BY_CONTRACT_ID, contractId, history);
 			return null;
