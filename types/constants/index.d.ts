@@ -26,7 +26,7 @@ declare let _default: {
     CLOSE_CALL_ORDER: string,
     BITASSET_UPDATE: string,
     ECHORAND_TYPES: ECHORAND_TYPES,
-    CACHE_MAPS: import('./cache-maps').CacheMaps,
+    CACHE_MAPS: typeof import('./cache-maps'),
     API_CONFIG: import('./api-config').ApiConfig,
     OBJECT_TYPES: import('./object-types').ObjectTypes,
     CHAIN_TYPES: import('./chain-types').ChainTypes,

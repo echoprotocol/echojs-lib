@@ -7,17 +7,25 @@ import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
 
+/** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
+
 class Echo {
 
 	constructor() {
 		this._ws = new WS();
 		this._isInitModules = false;
+
+		this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
 		return this._ws._connected;
 	}
 
+	/**
+	 * @param {string} address
+	 * @param {Options} options
+	 */
 	async connect(address, options = {}) {
 		if (this._ws._connected) {
 			throw new Error('Connected');
@@ -30,7 +38,8 @@ class Echo {
 				return;
 			}
 
-			await this._initModules();
+			await this._initModules(options);
+			this._ws.emit(STATUS.OPEN);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -44,20 +53,18 @@ class Echo {
 
 	}
 
-	async _initModules() {
+	/** @param {Options} options */
+	async _initModules(options) {
 		this._isInitModules = true;
 
 		this._wsApi = new WSAPI(this._ws);
 
-		this.cache = new Cache();
+		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
-		this.subscriber = new Subscriber(this.cache, this._wsApi, this.api, this._ws);
-
-		await this.subscriber.init();
 
 		this.onOpen = async () => {
 			try {
-				await this.subscriber.init();
+				await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
 			} catch (err) {
 				console.log('ONOPEN init error', err);
 			}
@@ -82,6 +89,7 @@ class Echo {
 		this.cache.reset();
 		await this._ws.close();
 		this._ws.removeListener(STATUS.OPEN, this.onOpen);
+		this._ws.emit(STATUS.CLOSE);
 		this.onOpen = null;
 		this._isInitModules = false;
 	}
