@@ -654,17 +654,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getRecentTransactionById
-	 *
-	 * 	@param  {String} receiver
-	 *
-	 * 	@return {Promise}
-	 */
-	getSidechainTransfers(receiver) {
-		return this.db.exec('get_sidechain_transfers', [receiver]);
-	}
-
-	/**
 	 *  @method getBalanceObjects
 	 *
 	 *  @param  {Array<String>} keys [public keys]
