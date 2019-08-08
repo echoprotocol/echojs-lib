@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
-import { STATUS, CONNECTION_CLOSED_ERROR_MESSAGE } from '../constants/ws-constants';
+import { STATUS } from '../constants/ws-constants';
 
 import {
 	isFunction,
@@ -34,18 +34,7 @@ import {
 } from '../constants';
 
 import * as CacheMaps from '../constants/cache-maps';
-
-/**
- * @param {Error} error
- * @param {() => any} [handler]
- */
-function handleConnectionClosedError(error, handler) {
-	if (error.message === CONNECTION_CLOSED_ERROR_MESSAGE) {
-		if (handler) handler();
-		return;
-	}
-	throw error;
-}
+import { handleConnectionClosedError } from '../utils/helpers';
 
 class Subscriber extends EventEmitter {
 
