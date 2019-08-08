@@ -30,7 +30,13 @@ class EchoApi {
 	 * @returns {Promise}
 	 */
 	exec(method, params) {
-		if (!this.api_id) return Promise.reject(new Error(`Access to ${this.api_name} API does't exist`));
+		if (!this.api_id) {
+			const errMessage = [
+				`${this.api_name} API is not available`,
+				'try to specify this in connection option called "apis"',
+			].join(', ');
+			return Promise.reject(new Error(errMessage));
+		}
 		return this.ws_rpc.call([this.api_id, method, params]);
 	}
 

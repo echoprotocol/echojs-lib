@@ -31,4 +31,6 @@ export {
 	PublicKeyECDSA,
 };
 
+export { handleConnectionClosedError } from './utils/helpers';
+
 export default new Echo();
