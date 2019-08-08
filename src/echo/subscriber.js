@@ -34,6 +34,7 @@ import {
 } from '../constants';
 
 import * as CacheMaps from '../constants/cache-maps';
+import { handleConnectionClosedError } from '../utils/helpers';
 
 class Subscriber extends EventEmitter {
 
@@ -293,7 +294,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					this._api.getFullAccounts([object.owner], true, true);
+					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
 				}
 			} catch (err) {
 				//
@@ -490,7 +491,7 @@ class Subscriber extends EventEmitter {
 
 		if (isContractHistoryId(object.id)) {
 			this._notifyContractSubscribers(obj);
-			this._api.getFullContract(object.contract, true);
+			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}
 
 		return null;
