@@ -2,12 +2,12 @@ import Type from '../type';
 
 /**
  * @param {undefined|Array<*>|Set<*>} value
- * @returns {Set<*>}
+ * @returns {Array<*>}
  */
-function toSet(value) {
-	if (value === undefined) return new Set();
-	if (Array.isArray(value)) return new Set(value);
-	if (value instanceof Set) return value;
+function toArray(value) {
+	if (value === undefined) return [];
+	if (Array.isArray(value)) return value;
+	if (value instanceof Set) return Array.from(value);
 	throw new Error('value is not a Set');
 }
 
@@ -31,11 +31,18 @@ class SetType extends Type {
 
 	/**
 	 * @param {undefined|Array<*>|Set<*>} value
-	 * @returns {Set<*>}
+	 * @returns {Array<*>}
 	 */
 	validate(value) {
-		value = toSet(value);
-		for (const element of value) this.type.validate(element);
+		value = toArray(value);
+		for (let i = 0; i < value.length; i += 1) {
+			try {
+				const element = value[i];
+				this.type.validate(element);
+			} catch (error) {
+				throw new Error(`set element with index ${i}: ${error.message}`);
+			}
+		}
 		return value;
 	}
 
@@ -45,7 +52,7 @@ class SetType extends Type {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		value = this.validate(value);
-		bytebuffer.writeVarint32(value.size);
+		bytebuffer.writeVarint32(value.length);
 		for (const element of value) this.type.appendToByteBuffer(element, bytebuffer);
 	}
 
@@ -53,7 +60,7 @@ class SetType extends Type {
 	 * @param {undefined|Array<*>|Set<*>} value
 	 * @returns {Array<*>}
 	 */
-	toObject(value) { return [...this.validate(value)].map((element) => this.type.toObject(element)); }
+	toObject(value) { return this.validate(value).map((element) => this.type.toObject(element)); }
 
 }
 

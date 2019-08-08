@@ -2,8 +2,8 @@ import ByteBuffer from 'bytebuffer';
 
 /** @typedef {import('bytebuffer')} ByteBuffer */
 
-function notImplemented() {
-	throw new Error('not implemented');
+function notImplementedSerialization() {
+	throw new Error('serialization is not implemented');
 }
 
 /** @abstract */
@@ -16,7 +16,7 @@ class Type {
 	 * @param {*} value
 	 */
 	// eslint-disable-next-line no-unused-vars
-	validate(value, feeIsRequired = true) { notImplemented(); }
+	validate(value, feeIsRequired = true) { notImplementedSerialization(); }
 
 	/**
 	 * @abstract
@@ -24,7 +24,7 @@ class Type {
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	// eslint-disable-next-line no-unused-vars
-	appendToByteBuffer(value, bytebuffer) { notImplemented(); }
+	appendToByteBuffer(value, bytebuffer) { notImplementedSerialization(); }
 
 	/**
 	 * @abstract
@@ -32,7 +32,7 @@ class Type {
 	 * @returns {*}
 	 */
 	// eslint-disable-next-line no-unused-vars
-	toObject(value) { notImplemented(); }
+	toObject(value) { notImplementedSerialization(); }
 
 }
 
