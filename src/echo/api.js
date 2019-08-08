@@ -26,7 +26,6 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
-	isEthereumAddress,
 } from '../utils/validators';
 
 import { operationById } from './operations';
@@ -2357,9 +2356,11 @@ class API {
 			}
 		}
 
-		const contract = await this.getContract(contractId, force);
-		const balances = await this.getContractBalances(contractId);
-		const history = await this.getContractHistory(contractId);
+		const [contract, balances, history] = await Promise.all([
+			this.getContract(contractId, force),
+			this.getContractBalances(contractId),
+			this.getContractHistory(contractId),
+		]);
 
 		this.cache.setInMap(
 			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
@@ -2476,23 +2477,6 @@ class API {
 	*/
 	getAllAssetHolders() {
 		return this.wsApi.asset.getAllAssetHolders();
-	}
-
-	/**
-	 *  @method getRecentTransactionById
-	 *
-	 * 	@param  {String} receiver
-	 *
-	 * 	@return {
-	 * 		Promise.<Array.<{
-	 * 			transfer_id: Number, receiver: String, amount: Number, signatures: String, withdraw_code: String
-	 * 		}>>
-	 * 	}
-	 */
-	getSidechainTransfers(receiver) {
-		if (!isEthereumAddress(receiver)) return Promise.reject(new Error('Invalid receiver address'));
-
-		return this.wsApi.database.getSidechainTransfers(receiver);
 	}
 
 	/**

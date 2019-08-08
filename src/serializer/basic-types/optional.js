@@ -21,7 +21,11 @@ class OptionalType extends Type {
 
 	validate(value) {
 		if (value === undefined) return;
-		this.type.validate(value);
+		try {
+			this.type.validate(value);
+		} catch (error) {
+			throw new Error(`optional type: ${error.message}`);
+		}
 	}
 
 	/**

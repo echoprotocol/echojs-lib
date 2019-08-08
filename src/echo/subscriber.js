@@ -34,23 +34,15 @@ import {
 	BITASSET_UPDATE,
 } from '../constants';
 
+import { handleConnectionClosedError } from '../utils/helpers';
+
 class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
-	 *
-	 *  @param {Cache} cache
-	 *  @param {WSAPI} wsApi
-	 *  @param {API} api
-	 *  @param {WS} ws
 	 */
-	constructor(cache, wsApi, api, ws) {
+	constructor() {
 		super();
-
-		this.cache = cache;
-		this._wsApi = wsApi;
-		this._api = api;
-		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -59,28 +51,34 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
-		this.subscribers = {
-			global: [], // "global" means all updates from setSubscribeCallback
-			account: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {}, // [base_quote]: []
-			logs: {},	// [contractId]: []
-			contract: [],
-			connect: [],
-			disconnect: [],
-		};
+		this.cancelAllSubscribers();
 
 	}
 
 	/**
 	 *  @method init
+	 *  @param {Cache} cache
+	 *  @param {WSAPI} wsApi
+	 *  @param {API} api
+	 *  @param {WS} ws
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init() {
+	async init(cache, wsApi, api, ws) {
+
+		this.cache = cache;
+		this._wsApi = wsApi;
+		this._api = api;
+		this._ws = ws;
+
+		if (this.subscribers.connect.length) {
+			this.subscribers.connect.forEach((cb) => cb());
+		}
+
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
+		}
+
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
@@ -133,19 +131,7 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
-			echorand: [],
-			block: [],
-			transaction: [],
-			market: {},
-			logs: {},
-			connect: [],
-			disconnect: [],
-		};
-
+		this.cancelAllSubscribers();
 
 	}
 
@@ -156,14 +142,15 @@ class Subscriber extends EventEmitter {
 	 */
 	cancelAllSubscribers() {
 		this.subscribers = {
-			global: [],
-			account: [],
-			committeeMember: [],
+			global: [], // "global" means all updates from setSubscribeCallback
+			account: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
 			echorand: [],
 			block: [],
 			transaction: [],
-			market: {},
-			logs: {},
+			market: {}, // [base_quote]: []
+			logs: {},	// [contractId]: []
+			contract: [],
 			connect: [],
 			disconnect: [],
 		};
@@ -225,13 +212,13 @@ class Subscriber extends EventEmitter {
 
 		if (isOperationHistoryId(object.id)) {
 			const contractId = object.op[1].callee;
-			let history = this.cache.contractHistoryByContractId.get(contractId);
+			const history = this.cache.contractHistoryByContractId.get(contractId) || [];
 
-			if (!history || history.find((h) => h.get('id') === object.id)) {
+			if (history.find((h) => h.get('id') === object.id)) {
 				return null;
 			}
 
-			history = history.unshift(fromJS(object));
+			history.unshift(fromJS(object));
 
 			this.cache.setInMap(CACHE_MAPS.CONTRACT_HISTORY_BY_CONTRACT_ID, contractId, history);
 			return null;
@@ -292,7 +279,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					this._api.getFullAccounts([object.owner], true, true);
+					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
 				}
 			} catch (err) {
 				//
@@ -489,7 +476,7 @@ class Subscriber extends EventEmitter {
 
 		if (isContractHistoryId(object.id)) {
 			this._notifyContractSubscribers(obj);
-			this._api.getFullContract(object.contract, true);
+			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}
 
 		return null;
@@ -870,10 +857,8 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.on(STATUS.OPEN, callback);
 			this.subscribers.connect.push(callback);
 		} else {
-			this._ws.on(STATUS.CLOSE, callback);
 			this.subscribers.disconnect.push(callback);
 		}
 

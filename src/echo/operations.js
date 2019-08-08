@@ -7,6 +7,7 @@ import {
 	assetOptions,
 	authority,
 	bitassetOptions,
+	extensions,
 	price,
 	priceFeed,
 	chainParameters,
@@ -19,7 +20,6 @@ import {
 	array,
 	bytes,
 	bool,
-	empty,
 	int64,
 	objectId,
 	optional,
@@ -115,7 +115,7 @@ export const transfer = operation(TRANSFER, {
 	from: protocolId(ACCOUNT),
 	to: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 0
 
 export const limitOrderCreate = operation(LIMIT_ORDER_CREATE, {
@@ -125,14 +125,14 @@ export const limitOrderCreate = operation(LIMIT_ORDER_CREATE, {
 	min_to_receive: asset,
 	expiration: timePointSec,
 	fill_or_kill: bool,
-	extensions: optional(empty),
+	extensions,
 }); // 1
 
 export const limitOrderCancel = operation(LIMIT_ORDER_CANCEL, {
 	fee: asset,
 	fee_paying_account: protocolId(ACCOUNT),
 	order: protocolId(LIMIT_ORDER),
-	extensions: optional(empty),
+	extensions,
 }); // 2
 
 export const callOrderUpdate = operation(CALL_ORDER_UPDATE, {
@@ -140,7 +140,7 @@ export const callOrderUpdate = operation(CALL_ORDER_UPDATE, {
 	funding_account: protocolId(ACCOUNT),
 	delta_collateral: asset,
 	delta_debt: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 3
 
 export const fillOrder = operation(FILL_ORDER, {
@@ -149,7 +149,7 @@ export const fillOrder = operation(FILL_ORDER, {
 	account_id: protocolId(ACCOUNT),
 	pays: asset,
 	receives: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 4
 
 export const accountCreate = operation(ACCOUNT_CREATE, {
@@ -161,7 +161,7 @@ export const accountCreate = operation(ACCOUNT_CREATE, {
 	active: authority,
 	echorand_key: publicKey,
 	options: accountOptions,
-	extensions: optional(empty),
+	extensions,
 }); // 5
 
 export const accountUpdate = operation(ACCOUNT_UPDATE, {
@@ -171,7 +171,7 @@ export const accountUpdate = operation(ACCOUNT_UPDATE, {
 	// ed_key: optional(bytes(32)),
 	echorand_key: optional(publicKey),
 	new_options: optional(accountOptions),
-	extensions: optional(empty),
+	extensions,
 }); // 6
 
 export const accountWhitelist = operation(ACCOUNT_WHITELIST, {
@@ -179,21 +179,21 @@ export const accountWhitelist = operation(ACCOUNT_WHITELIST, {
 	authorizing_account: protocolId(ACCOUNT),
 	account_to_list: protocolId(ACCOUNT),
 	new_listing: uint8,
-	extensions: optional(empty),
+	extensions,
 }); // 7
 
 export const accountUpgrade = operation(ACCOUNT_UPGRADE, {
 	fee: asset,
 	account_to_upgrade: protocolId(ACCOUNT),
 	upgrade_to_lifetime_member: bool,
-	extensions: optional(empty),
+	extensions,
 }); // 8
 
 export const accountTransfer = operation(ACCOUNT_TRANSFER, {
 	fee: asset,
 	account_id: protocolId(ACCOUNT),
 	new_owner: protocolId(ACCOUNT),
-	extensions: optional(empty),
+	extensions,
 }); // 9
 
 export const assetCreate = operation(ASSET_CREATE, {
@@ -204,7 +204,7 @@ export const assetCreate = operation(ASSET_CREATE, {
 	common_options: assetOptions,
 	bitasset_opts: optional(bitassetOptions),
 	is_prediction_market: bool,
-	extensions: optional(empty),
+	extensions,
 }); // 10
 
 export const assetUpdate = operation(ASSET_UPDATE, {
@@ -213,7 +213,7 @@ export const assetUpdate = operation(ASSET_UPDATE, {
 	asset_to_update: protocolId(ASSET),
 	new_issuer: optional(protocolId(ACCOUNT)),
 	new_options: assetOptions,
-	extensions: optional(empty),
+	extensions,
 }); // 11
 
 export const assetUpdateBitasset = operation(ASSET_UPDATE_BITASSET, {
@@ -221,7 +221,7 @@ export const assetUpdateBitasset = operation(ASSET_UPDATE_BITASSET, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_update: protocolId(ASSET),
 	new_options: bitassetOptions,
-	extensions: optional(empty),
+	extensions,
 }); // 12
 
 export const assetUpdateFeedProducers = operation(ASSET_UPDATE_FEED_PRODUCERS, {
@@ -229,7 +229,7 @@ export const assetUpdateFeedProducers = operation(ASSET_UPDATE_FEED_PRODUCERS, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_update: protocolId(ASSET),
 	new_feed_producers: set(protocolId(ACCOUNT)),
-	extensions: optional(empty),
+	extensions,
 }); // 13
 
 export const assetIssue = operation(ASSET_ISSUE, {
@@ -237,14 +237,14 @@ export const assetIssue = operation(ASSET_ISSUE, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_issue: asset,
 	issue_to_account: protocolId(ACCOUNT),
-	extensions: optional(empty),
+	extensions,
 }); // 14
 
 export const assetReserve = operation(ASSET_RESERVE, {
 	fee: asset,
 	payer: protocolId(ACCOUNT),
 	amount_to_reserve: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 15
 
 export const assetFundFeePool = operation(ASSET_FUND_FEE_POOL, {
@@ -252,14 +252,14 @@ export const assetFundFeePool = operation(ASSET_FUND_FEE_POOL, {
 	from_account: protocolId(ACCOUNT),
 	asset_id: protocolId(ASSET),
 	amount: int64,
-	extensions: optional(empty),
+	extensions,
 }); // 16
 
 export const assetSettle = operation(ASSET_SETTLE, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 17
 
 export const assetGlobalSettle = operation(ASSET_GLOBAL_SETTLE, {
@@ -267,7 +267,7 @@ export const assetGlobalSettle = operation(ASSET_GLOBAL_SETTLE, {
 	issuer: protocolId(ACCOUNT),
 	asset_to_settle: protocolId(ASSET),
 	settle_price: price,
-	extensions: optional(empty),
+	extensions,
 }); // 18
 
 export const assetPublishFeed = operation(ASSET_PUBLISH_FEED, {
@@ -275,7 +275,7 @@ export const assetPublishFeed = operation(ASSET_PUBLISH_FEED, {
 	publisher: protocolId(ACCOUNT),
 	asset_id: protocolId(ASSET),
 	feed: priceFeed,
-	extensions: optional(empty),
+	extensions,
 }); // 19
 
 export const proposalCreate = operation(PROPOSAL_CREATE, {
@@ -284,7 +284,7 @@ export const proposalCreate = operation(PROPOSAL_CREATE, {
 	expiration_time: timePointSec,
 	proposed_ops: array(operationWrapper),
 	review_period_seconds: optional(uint32),
-	extensions: optional(empty),
+	extensions,
 }); // 20
 
 export const proposalUpdate = operation(PROPOSAL_UPDATE, {
@@ -297,7 +297,7 @@ export const proposalUpdate = operation(PROPOSAL_UPDATE, {
 	owner_approvals_to_remove: set(protocolId(ACCOUNT)),
 	key_approvals_to_add: set(publicKey),
 	key_approvals_to_remove: set(publicKey),
-	extensions: optional(empty),
+	extensions,
 }); // 21
 
 export const proposalDelete = operation(PROPOSAL_DELETE, {
@@ -305,7 +305,7 @@ export const proposalDelete = operation(PROPOSAL_DELETE, {
 	fee_paying_account: protocolId(ACCOUNT),
 	using_owner_authority: bool,
 	proposal: protocolId(PROPOSAL),
-	extensions: optional(empty),
+	extensions,
 }); // 22
 
 export const withdrawPermissionCreate = operation(WITHDRAW_PERMISSION_CREATE, {
@@ -335,7 +335,7 @@ export const withdrawPermissionClaim = operation(WITHDRAW_PERMISSION_CLAIM, {
 	withdraw_from_account: protocolId(ACCOUNT),
 	withdraw_to_account: protocolId(ACCOUNT),
 	amount_to_withdraw: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 25
 
 export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
@@ -343,14 +343,14 @@ export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
 	withdraw_from_account: protocolId(ACCOUNT),
 	authorized_account: protocolId(ACCOUNT),
 	withdrawal_permission: protocolId(WITHDRAW_PERMISSION),
-	extensions: optional(empty),
+	extensions,
 }); // 26
 
 export const committeeMemberCreate = operation(COMMITTEE_MEMBER_CREATE, {
 	fee: asset,
 	committee_member_account: protocolId(ACCOUNT),
 	url: string,
-	extensions: optional(empty),
+	extensions,
 }); // 27
 
 export const committeeMemberUpdate = operation(COMMITTEE_MEMBER_UPDATE, {
@@ -358,13 +358,13 @@ export const committeeMemberUpdate = operation(COMMITTEE_MEMBER_UPDATE, {
 	committee_member: protocolId(COMMITTEE_MEMBER),
 	committee_member_account: protocolId(ACCOUNT),
 	new_url: optional(string),
-	extensions: optional(empty),
+	extensions,
 }); // 28
 
 export const committeeMemberUpdateGlobalParameters = operation(COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS, {
 	fee: asset,
 	new_parameters: chainParameters,
-	extensions: optional(empty),
+	extensions,
 }); // 29
 
 export const vestingBalanceCreate = operation(VESTING_BALANCE_CREATE, {
@@ -373,7 +373,7 @@ export const vestingBalanceCreate = operation(VESTING_BALANCE_CREATE, {
 	owner: protocolId(ACCOUNT),
 	amount: asset,
 	policy: vestingPolicyInitializer,
-	extensions: optional(empty),
+	extensions,
 }); // 30
 
 export const vestingBalanceWithdraw = operation(VESTING_BALANCE_WITHDRAW, {
@@ -381,7 +381,7 @@ export const vestingBalanceWithdraw = operation(VESTING_BALANCE_WITHDRAW, {
 	vesting_balance: protocolId(VESTING_BALANCE),
 	owner: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 31
 
 export const custom = operation(CUSTOM, {
@@ -390,7 +390,7 @@ export const custom = operation(CUSTOM, {
 	required_auths: set(protocolId(ACCOUNT)),
 	id: uint16,
 	data: bytes(),
-	extensions: optional(empty),
+	extensions,
 }); // 32
 
 export const assert = operation(ASSERT, {
@@ -398,7 +398,7 @@ export const assert = operation(ASSERT, {
 	fee_paying_account: protocolId(ACCOUNT),
 	predicates: array(predicate),
 	required_auths: set(protocolId(ACCOUNT)),
-	extensions: optional(empty),
+	extensions,
 }); // 33
 
 export const balanceClaim = operation(BALANCE_CLAIM, {
@@ -407,7 +407,7 @@ export const balanceClaim = operation(BALANCE_CLAIM, {
 	balance_to_claim: protocolId(BALANCE),
 	balance_owner_key: publicKey,
 	total_claimed: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 34
 
 export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
@@ -416,7 +416,7 @@ export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
 	from: protocolId(ACCOUNT),
 	to: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 35
 
 export const assetSettleCancel = operation(ASSET_SETTLE_CANCEL, {
@@ -424,14 +424,14 @@ export const assetSettleCancel = operation(ASSET_SETTLE_CANCEL, {
 	settlement: protocolId(FORCE_SETTLEMENT),
 	account: protocolId(ACCOUNT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 36
 
 export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
 	fee: asset,
 	issuer: protocolId(ACCOUNT),
 	amount_to_claim: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 37
 
 export const bidCollateral = operation(BID_COLLATERAL, {
@@ -439,7 +439,7 @@ export const bidCollateral = operation(BID_COLLATERAL, {
 	bidder: protocolId(ACCOUNT),
 	additional_collateral: asset,
 	debt_covered: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 38
 
 export const executeBid = operation(EXECUTE_BID, {
@@ -447,7 +447,7 @@ export const executeBid = operation(EXECUTE_BID, {
 	bidder: protocolId(ACCOUNT),
 	debt: asset,
 	collateral: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 39
 
 export const createContract = operation(CREATE_CONTRACT, {
@@ -457,7 +457,7 @@ export const createContract = operation(CREATE_CONTRACT, {
 	code: string,
 	supported_asset_id: optional(protocolId(ASSET)),
 	eth_accuracy: bool,
-	extensions: optional(empty),
+	extensions,
 }); // 40
 
 export const callContract = operation(CALL_CONTRACT, {
@@ -466,7 +466,7 @@ export const callContract = operation(CALL_CONTRACT, {
 	value: asset,
 	code: string,
 	callee: protocolId(CONTRACT),
-	extensions: optional(empty),
+	extensions,
 }); // 41
 
 export const contractTransfer = operation(CONTRACT_TRANSFER, {
@@ -474,21 +474,21 @@ export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	from: protocolId(CONTRACT),
 	to: protocolId([ACCOUNT, CONTRACT]),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 42
 
 export const changeSidechainConfig = operation(CHANGE_SIDECHAIN_CONFIG, {
 	fee: asset,
 	from: protocolId(CONTRACT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 43
 
 export const accountAddressCreate = operation(ACCOUNT_ADDRESS_CREATE, {
 	fee: asset,
 	owner: protocolId(ACCOUNT),
 	label: string,
-	extensions: optional(empty),
+	extensions,
 }); // 44
 
 export const transferToAddress = operation(TRANSFER_TO_ADDRESS, {
@@ -496,20 +496,20 @@ export const transferToAddress = operation(TRANSFER_TO_ADDRESS, {
 	from: protocolId(ACCOUNT),
 	to: string,
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 45
 
 export const generateEthAddress = operation(GENERATE_ETH_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
-	extensions: optional(empty),
+	extensions,
 }); // 46
 
 export const createEthAddress = operation(CREATE_ETH_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
-	extensions: optional(empty),
+	extensions,
 }); // 47
 
 export const depositEth = operation(DEPOSIT_ETH, {
@@ -524,13 +524,13 @@ export const withdrawEth = operation(WITHDRAW_ETH, {
 	account: protocolId(ACCOUNT),
 	eth_addr: string,
 	value: uint64,
-	extensions: optional(empty),
+	extensions,
 }); // 49
 
 export const approveWithdrawEth = operation(APPROVE_WITHDRAW_ETH, {
 	fee: asset,
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
-	extensions: optional(empty),
+	extensions,
 }); // 50
 
 export const contractFundPool = operation(CONTRACT_FUND_POOL, {
@@ -538,14 +538,14 @@ export const contractFundPool = operation(CONTRACT_FUND_POOL, {
 	sender: protocolId(ACCOUNT),
 	contract: protocolId(CONTRACT),
 	amount: asset,
-	extensions: optional(empty),
+	extensions,
 }); // 51
 
 export const contractWhitelist = operation(CONTRACT_WHITELIST, {
 	fee: asset,
 	sender: protocolId(ACCOUNT),
 	contract: protocolId(CONTRACT),
-	extensions: optional(empty),
+	extensions,
 }); // 52
 
 export const sidechainIssue = operation(SIDECHAIN_ISSUE, {
@@ -553,7 +553,7 @@ export const sidechainIssue = operation(SIDECHAIN_ISSUE, {
 	amount: asset,
 	account: protocolId(ACCOUNT),
 	deposit_id: protocolId(DEPOSIT_ETH),
-	extensions: optional(empty),
+	extensions,
 }); // 53
 
 export const sidechainBurn = operation(SIDECHAIN_BURN, {
@@ -561,14 +561,14 @@ export const sidechainBurn = operation(SIDECHAIN_BURN, {
 	amount: asset,
 	account: protocolId(ACCOUNT),
 	withdraw_id: protocolId(DEPOSIT_ETH),
-	extensions: optional(empty),
+	extensions,
 }); // 54
 
 export const registerErc20Token = operation(REGISTER_ERC20_TOKEN, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	eth_addr: protocolId(ETH_ADDRESS),
-	extensions: optional(empty),
+	extensions,
 }); // 55
 
 export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
@@ -576,7 +576,7 @@ export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
 	committee_member_id: protocolId(ACCOUNT),
 	erc20_token_addr: protocolId(ETH_ADDRESS),
 	transaction_hash: uint32,
-	extensions: optional(empty),
+	extensions,
 }); // 56
 
 export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
@@ -584,7 +584,7 @@ export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
 	account: protocolId(ACCOUNT),
 	to: protocolId(ETH_ADDRESS),
 	erc20_token: protocolId(ERC20_TOKEN),
-	extensions: optional(empty),
+	extensions,
 }); // 57
 
 export const approveErc20TokenWithdraw = operation(APPROVE_ERC20_TOKEN_WITHDRAW, {
@@ -592,14 +592,14 @@ export const approveErc20TokenWithdraw = operation(APPROVE_ERC20_TOKEN_WITHDRAW,
 	committee_member_id: protocolId(ACCOUNT),
 	to: protocolId(ETH_ADDRESS),
 	transaction_hash: uint32,
-	extensions: optional(empty),
+	extensions,
 }); // 58
 
 export const contractUpdate = operation(CONTRACT_UPDATE, {
 	fee: asset,
 	sender: protocolId(ACCOUNT),
 	contract: protocolId(CONTRACT),
-	extensions: optional(empty),
+	extensions,
 }); // 59
 
 /** @type {{[operationName:string]:Operation}} */

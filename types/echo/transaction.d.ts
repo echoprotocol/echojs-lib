@@ -17,7 +17,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		to: string,
 		amount: Asset,
 		// memo?: void,
-		// extensions?: void,
+		extensions?: never[],
 	},
 	[OperationId.CREATE_CONTRACT]: {
 		fee?: Asset,
@@ -26,6 +26,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		code: string,
 		eth_accuracy: boolean,
 		supported_asset_id?: string,
+		extensions?: never[];
 	},
 	[OperationId.CALL_CONTRACT]: {
 		fee: Asset,

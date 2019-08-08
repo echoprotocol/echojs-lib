@@ -7,6 +7,7 @@ import {
 	PING_TIMEOUT,
 	PING_DELAY,
 	DEBUG,
+	CONNECTION_CLOSED_ERROR_MESSAGE,
 } from '../../constants/ws-constants';
 
 import { isVoid } from '../../utils/validators';
@@ -353,7 +354,7 @@ class ReconnectionWebSocket {
 	 * @private
 	 */
 	_clearWaitingCallPromises() {
-		const err = new Error('connection closed');
+		const err = new Error(CONNECTION_CLOSED_ERROR_MESSAGE);
 
 		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
 			if (this._cbs[cbId]) this._cbs[cbId].reject(err);

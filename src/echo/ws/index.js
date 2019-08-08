@@ -41,8 +41,8 @@ class WS extends EventEmitter {
 		});
 
 		try {
-			await this._ws_rpc.login('', '');
 			await Promise.all(initPromises);
+			await this._ws_rpc.login('', '');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 			await this.close();

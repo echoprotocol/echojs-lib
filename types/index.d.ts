@@ -10,6 +10,9 @@ export { default as ED25519 } from './crypto/ed25519';
 export { default as AES } from './crypto/aes';
 export { default as hash } from './crypto/hash';
 export { default as echoReducer } from './redux/reducer';
+export { handleConnectionClosedError } from './utils/helpers';
+export { validators };
+export { converters };
 
 declare const echo: Echo;
 export default echo;
