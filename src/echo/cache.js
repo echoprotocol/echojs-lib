@@ -2,21 +2,29 @@
 import { Map } from 'immutable';
 
 import { isFunction, isObject, isVoid } from '../utils/validators';
+import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME } from '../constants';
+
+/** @typedef {{ isUsed?: boolean, expirationTime?: number | null, minCleaningTime?: number } | null} Options */
 
 class Cache {
 
 	/**
 	 * @constructor
 	 *
+	 * @param {Options} [opts]
 	 * Init cache and redux
 	 */
-	constructor() {
-		this.isUsed = true;
-
-		this.redux = {
-			store: null,
-		};
-
+	constructor(opts) {
+		if (opts === null) opts = { isUsed: false };
+		else if (opts === undefined) opts = {};
+		const { isUsed, expirationTime, minCleaningTime } = opts;
+		this.isUsed = isUsed === undefined ? USE_CACHE_BY_DEFAULT : isUsed;
+		this.expirationTime = expirationTime === undefined ? DEFAULT_CACHE_EXPIRATION_TIME : expirationTime;
+		this.minCleaningTime = minCleaningTime === undefined ? DEFAULT_MIN_CACHE_CLEANING_TIME : minCleaningTime;
+		this.redux = { store: null };
+		/** @type {{ time: number, map: string, key: string }[]} */
+		this.expirations = [];
+		this.timeout = null;
 		this.reset();
 	}
 
@@ -75,6 +83,9 @@ class Cache {
 		this.chainId = null;
 		this.dynamicGlobalProperties = new Map();
 
+		this._clearTimeout();
+		this.expirations = [];
+
 		this._resetRedux();
 	}
 
@@ -87,6 +98,28 @@ class Cache {
 			const value = this[field];
 			this.redux.store.dispatch({ type: 'ECHO_SET_CACHE', payload: { field, value } });
 		}
+	}
+
+	_removeExpired() {
+		const date = Date.now();
+		let expiredCount = 0;
+		for (let i = 0; i < this.expirations.length; i += 1) {
+			const { map, key, time } = this.expirations[i];
+			if (time > date) break;
+			this.set(map, this[map].delete(key));
+			expiredCount += 1;
+		}
+		this.expirations = this.expirations.slice(expiredCount);
+		this._clearTimeout();
+		if (this.expirations.length) {
+			const [{ time }] = this.expirations;
+			this.timeout = setTimeout(this._removeExpired.bind(this), Math.max(time - date, this.minCleaningTime));
+		}
+	}
+
+	_clearTimeout() {
+		clearTimeout(this.timeout);
+		this.timeout = null;
 	}
 
 	/**
@@ -102,6 +135,10 @@ class Cache {
 	setInMap(map, key, value) {
 		if (this.isUsed) {
 			this.set(map, this[map].set(key, value));
+			if (this.expirationTime !== null) {
+				this.expirations.push({ time: Date.now() + this.expirationTime, map, key });
+				if (!this.timeout) this.timeout = setTimeout(this._removeExpired.bind(this), this.expirationTime);
+			}
 		}
 		return this;
 	}

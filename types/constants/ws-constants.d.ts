@@ -18,7 +18,7 @@ export interface WsConstants {
     PING_TIMEOUT: number,
     PING_INTERVAL: number,
     DEBUG: boolean,
-    CHAIN_APIS: string[],
+    CHAIN_APIS: import("./cache-maps")[],
     DEFAULT_CHAIN_APIS: string[],
     STATUS: STATUS,
 }
