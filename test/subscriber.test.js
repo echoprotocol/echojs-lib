@@ -2,29 +2,67 @@ import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
 import echo, { Echo, constants } from '../src';
+import { STATUS } from '../src/constants/ws-constants';
 
 import { url } from './_test-data';
+import { rejects } from 'assert';
 
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
-	before(async () => {
-		await echo.connect(
-			url,
-			{
-				apis: [
-					'database',
-					'network_broadcast',
-					'history',
-					'registration',
-					'asset',
-					'login',
-					'network_node',
-				],
-			},
-		);
+	describe('subscriptions', () => {
+		describe('setStatusSubscribe', async () => {
+
+			let onConnected;
+			const promise = new Promise((resolve) => { onConnected = resolve; });
+
+			describe('when invalid status provided', () => {
+				it('should rejects', async () => {
+					await rejects(async () => {
+						await echo.subscriber.setStatusSubscribe('conn', () => onConnected());
+					}, new Error('Invalid status'));
+				});
+			});
+
+
+			describe('when valid status provided', () => {
+				it('should not rejects', async () => {
+					const check = await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
+					console.log('check', check);
+					await promise;
+					console.log('promise', promise);
+				});
+			});
+
+			describe('success, subscription should emits on connect', () => {
+				it('should emits on connect', async () => {
+					const connect = await echo.connect(url, { debug: true });
+					console.log('connect', connect);
+					await promise;
+					// const test = new Promise((resolve) => setTimeout(() => console.log('hello!'), 5000));
+					// await test;
+				});
+			});
+
+			// TODO: reconnect
+
+			describe('success, subscription should emits on reconnect', () => {
+				it('should emits on reconnect', async () => {
+						await echo.reconnect();
+						// await promise;
+				});
+			});
+
+			describe('success, subscription should emits on disconnect', () => {
+				it('should emits on disconnect', async () => {
+						await echo.disconnect();
+						// await promise;
+				});
+			});
+
+		});
 	});
 
 	describe('echorand', () => {

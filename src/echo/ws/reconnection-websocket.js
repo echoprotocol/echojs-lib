@@ -74,6 +74,7 @@ class ReconnectionWebSocket {
 		this._subs = [];
 		this._unsub = {};
 
+
 		return this._connect();
 	}
 
@@ -355,6 +356,8 @@ class ReconnectionWebSocket {
 	 */
 	_clearWaitingCallPromises() {
 		const err = new Error(CONNECTION_CLOSED_ERROR_MESSAGE);
+
+		console.log(this._cbs);
 
 		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
 			if (this._cbs[cbId]) this._cbs[cbId].reject(err);
