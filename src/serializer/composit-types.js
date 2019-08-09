@@ -8,7 +8,6 @@ import {
 	empty,
 	int64,
 	map,
-	optional,
 	protocolId,
 	publicKey,
 	set,
