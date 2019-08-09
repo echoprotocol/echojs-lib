@@ -5,12 +5,12 @@ import { isString, isBuffer } from '../utils/validators';
 class ED25519 {
 
 	/**
-     *  @method keyPairFromPrivateKey
-     *
-     *  @param {String|Buffer} privateKey - 32 byte hex string.
-     *
-     *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
-     */
+	 *  @method keyPairFromPrivateKey
+	 *
+	 *  @param {String|Buffer} privateKey - 32 byte hex string.
+	 *
+	 *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
+	 */
 	static keyPairFromPrivateKey(privateKey) {
 		if (!(isString(privateKey) || isBuffer(privateKey))) {
 			throw new Error('private key must be string of buffer');
@@ -27,17 +27,17 @@ class ED25519 {
 	}
 
 	/**
-     *  @method createKeyPair
-     *
-     *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
-     */
+	 *  @method createKeyPair
+	 *
+	 *  @return {{privateKey:Buffer,publicKey:Buffer}} ed25519 privateKey and public key
+	 */
 	static createKeyPair() {
 		return ed25519.createKeyPair();
 	}
 
 	/**
 	 *  @method signMessage
-     *  @param {Buffer} message
+	 *  @param {Buffer} message
 	 *  @param {Buffer} publicKey
  	 *  @param {Buffer} privateKey
 	 *  @return {{signature:Buffer}}

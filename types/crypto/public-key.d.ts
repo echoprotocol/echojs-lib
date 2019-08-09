@@ -8,7 +8,8 @@ export default class PublicKey {
 	toBuffer(): Buffer;
 	toBlockchainAddress(): String;
 	toPublicKeyString(addressPrefix?: String): String;
-	fromPublicKeyString(publicKey: String, addressPrefix?: String): PublicKey|null;
+	fromPublicKeyString(publicKey: String, addressPrefix?: String): PublicKey | null;
+	fromStringOrThrow(publicKey: String, addressPrefix?: String): PublicKey;
 	toByteBuffer(): ByteBuffer;
 	static fromHex(hex: String): PublicKey;
 	toHex(): String;

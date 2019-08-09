@@ -5,7 +5,7 @@ import { encode, decode } from 'bs58';
 import assert from 'assert';
 import deepEqual from 'deep-equal';
 
-import CHAIN_CONFIG from '../../constants/chain-config';
+import { ADDRESS_PREFIX } from '../../constants/chain-config';
 import { sha256, sha512, ripemd160 } from '../hash';
 
 const secp256k1 = getCurveByName('secp256k1');
@@ -103,7 +103,7 @@ class PublicKey {
 	 *
 	 *  @return {String}
 	 */
-	toString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	toString(addressPrefix = ADDRESS_PREFIX) {
 		return this.toPublicKeyString(addressPrefix);
 	}
 
@@ -115,7 +115,7 @@ class PublicKey {
 	 *
 	 *  @return {String}
 	 */
-	toPublicKeyString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	toPublicKeyString(addressPrefix = ADDRESS_PREFIX) {
 		const pubBuf = this.toBuffer();
 		const checksum = ripemd160(pubBuf);
 		const addy = Buffer.concat([pubBuf, checksum.slice(0, 4)]);
@@ -130,7 +130,7 @@ class PublicKey {
 	 *
 	 *  @return {PublicKey|null} (if the publicKey string is invalid)
 	 */
-	static fromPublicKeyString(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	static fromPublicKeyString(publicKey, addressPrefix = ADDRESS_PREFIX) {
 		try {
 			return PublicKey.fromStringOrThrow(publicKey, addressPrefix);
 		} catch (e) {
@@ -148,7 +148,7 @@ class PublicKey {
 	 *
 	 *  @return {PublicKey}
 	 */
-	static fromStringOrThrow(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	static fromStringOrThrow(publicKey, addressPrefix = ADDRESS_PREFIX) {
 		const prefix = publicKey.slice(0, addressPrefix.length);
 		assert.equal(
 			addressPrefix,
@@ -176,7 +176,7 @@ class PublicKey {
 	 *
 	 *  @return {String}
 	 */
-	toAddressString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	toAddressString(addressPrefix = ADDRESS_PREFIX) {
 		const pubBuf = this.toBuffer();
 		const pubSha = sha512(pubBuf);
 		let addy = ripemd160(pubSha);

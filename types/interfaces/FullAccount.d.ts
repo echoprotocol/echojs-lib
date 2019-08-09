@@ -1,0 +1,30 @@
+import AccountHistory from './AccountHistory';
+
+export default interface FullAccount {
+	id: string,
+	membership_expiration_date: string,
+	registrar: string,
+	referrer: string,
+	lifetime_referrer: string,
+	network_fee_percentage: number,
+	lifetime_referrer_fee_percentage: number,
+	referrer_rewards_percentage: number,
+	name: string,
+	owner: Object,
+	active: Object,
+	ed_key: string,
+	options: Object,
+	statistics: string,
+	whitelisting_accounts: Array<any>,
+	blacklisting_accounts: Array<any>,
+	whitelisted_accounts: Array<any>,
+	blacklisted_accounts: Array<any>,
+	owner_special_authority: Array<any>,
+	active_special_authority: Array<any>,
+	top_n_control_flags: number,
+	history: Array<AccountHistory>,
+	balances: Object,
+	limit_orders: Object,
+	call_orders: Object,
+	proposals: Object
+}

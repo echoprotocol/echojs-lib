@@ -30,8 +30,8 @@ class WS extends EventEmitter {
 
 	/**
 	 *
-     * @private
-       */
+	 * @private
+	 */
 	async _initEchoApi() {
 		const initPromises = [];
 
@@ -50,8 +50,8 @@ class WS extends EventEmitter {
 	}
 
 	/**
-     * On open callback
-     */
+	 * On open callback
+	 */
 	async _onOpen() {
 		if (!this._ws_rpc) return;
 
@@ -69,8 +69,8 @@ class WS extends EventEmitter {
 	}
 
 	/**
-     * On close callback
-     */
+	 * On close callback
+	 */
 	_onClose() {
 		if (this._isFirstTime) this._isFirstTime = false;
 		this._connected = false;
@@ -89,19 +89,19 @@ class WS extends EventEmitter {
 	}
 
 	/**
-     * init params and connect to chain
-     * @param {String} url - remote node address,
+	 * init params and connect to chain
+	 * @param {String} url - remote node address,
 	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-     * @param {Object} options - connection params.
-     * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
-     * 		default call delay before reject it.
-     * @param {Number} options.maxRetries - max count retries before close socket.
-     * @param {Number} options.pingTimeout - delay time in ms between ping request
-     * 		and socket disconnect.
-     * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
-     * @param {Boolean} options.debug - debug mode status.
-     * @returns {Promise}
-     */
+	 * @param {Object} options - connection params.
+	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
+	 * 		default call delay before reject it.
+	 * @param {Number} options.maxRetries - max count retries before close socket.
+	 * @param {Number} options.pingTimeout - delay time in ms between ping request
+	 * 		and socket disconnect.
+	 * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
+	 * @param {Boolean} options.debug - debug mode status.
+	 * @returns {Promise}
+	 */
 	async connect(url, options = {}) {
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
@@ -232,9 +232,9 @@ class WS extends EventEmitter {
 	}
 
 	/**
-     * network node API
-     * @returns {EchoApi}
-     */
+	 * network node API
+	 * @returns {EchoApi}
+	 */
 	networkNodeApi() {
 		return this._network_node;
 	}

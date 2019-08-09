@@ -2,7 +2,7 @@ import ByteBuffer from 'bytebuffer';
 import { encode, decode } from 'bs58';
 import assert from 'assert';
 
-import CHAIN_CONFIG from '../constants/chain-config';
+import { ADDRESS_PREFIX } from '../constants/chain-config';
 import { sha512, ripemd160 } from './hash';
 
 class PublicKey {
@@ -75,7 +75,7 @@ class PublicKey {
 	 *
 	 *  @return {String}
 	 */
-	toString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	toString(addressPrefix = ADDRESS_PREFIX) {
 		return this.toPublicKeyString(addressPrefix);
 	}
 
@@ -87,7 +87,7 @@ class PublicKey {
 	 *
 	 *  @return {String}
 	 */
-	toPublicKeyString(addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	toPublicKeyString(addressPrefix = ADDRESS_PREFIX) {
 		const pubBuf = this.toBuffer();
 		return addressPrefix + encode(pubBuf);
 	}
@@ -100,7 +100,7 @@ class PublicKey {
 	 *
 	 *  @return {PublicKey|null} (if the publicKey string is invalid)
 	 */
-	static fromPublicKeyString(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	static fromPublicKeyString(publicKey, addressPrefix = ADDRESS_PREFIX) {
 		try {
 			return PublicKey.fromStringOrThrow(publicKey, addressPrefix);
 		} catch (e) {
@@ -119,7 +119,7 @@ class PublicKey {
 	 *
 	 *  @return {PublicKey}
 	 */
-	static fromStringOrThrow(publicKey, addressPrefix = CHAIN_CONFIG.ADDRESS_PREFIX) {
+	static fromStringOrThrow(publicKey, addressPrefix = ADDRESS_PREFIX) {
 		const prefix = publicKey.slice(0, addressPrefix.length);
 		assert.equal(
 			addressPrefix,

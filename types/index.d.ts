@@ -1,10 +1,9 @@
+import * as constants from './constants';
 import Echo from './echo';
 import * as validators from './utils/validators'
 import * as converters from './utils/converters'
 
-
 export { default as Transaction } from './echo/transaction';
-export { default as constants } from './constants';
 export { default as PublicKey } from './crypto/public-key';
 export { default as PrivateKey } from './crypto/private-key';
 export { default as ED25519 } from './crypto/ed25519';
@@ -18,4 +17,4 @@ export { converters };
 declare const echo: Echo;
 export default echo;
 
-export { Echo };
+export { Echo, constants, validators, converters };
