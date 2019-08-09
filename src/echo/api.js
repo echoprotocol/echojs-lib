@@ -33,7 +33,7 @@ import { operationById } from './operations';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
-import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS, CHAIN_CONFIG } from '../constants';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { PublicKey } from '../crypto';
 
@@ -676,7 +676,7 @@ class API {
 			if (bitasset) {
 				requestedObject = requestedObject.set('bitasset', fromJS(bitasset));
 				if (!this.cache.bitAssetIdToAssetId.get(bitAssetId)) {
-					this.cache.setInMap(CHAIN_CONFIG.BIT_ASSET_ID_TO_ASSET_ID, bitAssetId, requestedObject.get('id'));
+					this.cache.setInMap(CACHE_MAPS.BIT_ASSET_ID_TO_ASSET_ID, bitAssetId, requestedObject.get('id'));
 				}
 			}
 		}
