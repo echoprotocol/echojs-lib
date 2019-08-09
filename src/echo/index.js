@@ -27,6 +27,7 @@ class Echo {
 
 		try {
 			await this._ws.connect(address, options);
+			console.log('AFTER CONNECT!!!!');
 
 			if (this._isInitModules) {
 				return;
@@ -34,6 +35,7 @@ class Echo {
 
 			await this._initModules();
 			this._ws.emit(STATUS.OPEN);
+			console.log('AFTER _initModules!!!!');
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -50,20 +52,17 @@ class Echo {
 	async _initModules() {
 		this._isInitModules = true;
 
-		this._wsApi = new WSAPI(this._ws);
+		this._wsApi = await new WSAPI(this._ws);
 
 		this.cache = new Cache();
 		this.api = new API(this.cache, this._wsApi);
 
-		this.onOpen = async () => {
-			try {
-				await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
-			} catch (err) {
-				console.log('ONOPEN init error', err);
-			}
-		};
-
-		this._ws.on(STATUS.OPEN, this.onOpen);
+		try {
+			await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
+		} catch (err) {
+			console.log('ONOPEN init error', err);
+		}
+		console.log('AFTER _initModules this.onOpen!!!!');
 	}
 
 	syncCacheWithStore(store) {
@@ -81,7 +80,6 @@ class Echo {
 		this.subscriber.reset();
 		this.cache.reset();
 		await this._ws.close();
-		this._ws.removeListener(STATUS.OPEN, this.onOpen);
 		this._ws.emit(STATUS.CLOSE);
 		this.onOpen = null;
 		this._isInitModules = false;

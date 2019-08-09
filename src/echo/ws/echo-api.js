@@ -16,8 +16,9 @@ class EchoApi {
 	 */
 	async init() {
 		try {
+			console.log('ECHOAPI init');
 			this.api_id = await this.ws_rpc.call([1, this.api_name, []]);
-			return this;
+			return await this;
 		} catch (e) {
 			throw e;
 		}

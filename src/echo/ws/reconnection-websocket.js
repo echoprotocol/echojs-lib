@@ -74,18 +74,18 @@ class ReconnectionWebSocket {
 		this._subs = [];
 		this._unsub = {};
 
-
-		return this._connect();
+		return await this._connect();
 	}
 
 	/**
 	 * inner connection method
 	 * @returns {Promise}
 	 */
-	_connect() {
+	async _connect() {
 
 		this._debugLog('[ReconnectionWebSocket] >---- retry _connect');
 
+		console.log('_connect');
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
 			let ws = null;
@@ -99,7 +99,8 @@ class ReconnectionWebSocket {
 				}
 			}
 
-			ws.onopen = () => {
+			ws.onopen = async () => {
+				console.log('_connect ws.onopen');
 
 				this._currentRetry = 0;
 
@@ -108,7 +109,10 @@ class ReconnectionWebSocket {
 					resolve();
 				}
 
-				if (this.onOpen) this.onOpen();
+				if (this.onOpen) {
+					console.log('_connect ws.onopen this.onOpen()');
+					await this.onOpen();
+				};
 
 				this._setPingDelay();
 
@@ -116,7 +120,8 @@ class ReconnectionWebSocket {
 				return true;
 			};
 
-			ws.onmessage = (message) => {
+			ws.onmessage = async (message) => {
+				console.log('_connect ws.onmessage');
 
 				if (ws !== this.ws) {
 					return false;
@@ -126,12 +131,13 @@ class ReconnectionWebSocket {
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 
-				this._setPingDelay();
+				await this._setPingDelay();
 
 				return true;
 			};
 
 			ws.onclose = () => {
+				console.log('_connect ws.onclose');
 
 				if (ws !== this.ws) {
 					return false;
@@ -242,7 +248,7 @@ class ReconnectionWebSocket {
 		};
 		request.id = this._cbId;
 
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 
 			const timeoutId = setTimeout(() => {
 				reject(new Error(`RPC call time is over Id: ${request.id}`));
@@ -257,7 +263,7 @@ class ReconnectionWebSocket {
 				timeoutId,
 			};
 
-			this.ws.send(JSON.stringify(request));
+			await this.ws.send(JSON.stringify(request));
 		});
 
 	}
@@ -266,8 +272,8 @@ class ReconnectionWebSocket {
 	 * message handler
 	 * @param response
 	 */
-	_responseHandler(response) {
-		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
+	async _responseHandler(response) {
+		await this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
 		let sub = false;
 		let callback = null;
@@ -315,7 +321,7 @@ class ReconnectionWebSocket {
 	 * @param {Number} timeout - timeout before reject
 	 * @returns {Promise}
 	 */
-	login(user, password, timeout = this._options.pingTimeout) {
+	async login(user, password, timeout = this._options.pingTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
@@ -323,9 +329,9 @@ class ReconnectionWebSocket {
 	 * 	update ping delay timeout
 	 *  @private
 	 */
-	_setPingDelay() {
-		this._clearPingDelay();
-		this._pingDelayId = setTimeout(() => this._ping(), this._options.pingDelay);
+	async _setPingDelay() {
+		await this._clearPingDelay();
+		this._pingDelayId = await setTimeout(() => this._ping(), this._options.pingDelay);
 	}
 
 	/**

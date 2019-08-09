@@ -33,16 +33,21 @@ class WS extends EventEmitter {
      * @private
        */
 	async _initEchoApi() {
+		console.log('_initEchoApi!@@@@@@@@@@@@@@@@');
+		console.log('this.apis', this.apis);
 		const initPromises = [];
 
-		this.apis.forEach((api) => {
+		this.apis.forEach(async (api) => {
 			if (api === 'login') initPromises.push((this._login.api_id = 1));
-			else initPromises.push(this[`_${api}`].init());
+			else initPromises.push(await this[`_${api}`].init());
 		});
 
 		try {
 			await Promise.all(initPromises);
+			console.log('_initEchoApi!-------------', initPromises.length);
 			await this._ws_rpc.login('', '');
+			console.log('initPromises.length', initPromises.length);
+			console.log('_initEchoApi!??????????? ENDDDD');
 		} catch (e) {
 			console.error('[WS] >---- error ----->  ONOPEN', e);
 			await this.close();
@@ -60,11 +65,12 @@ class WS extends EventEmitter {
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
 		} else {
+			console.log('WS/INDEX _onOpen');
 			await this._initEchoApi();
 		}
 
-		if (this.onOpenCb) this.onOpenCb('open');
-		this.emit(STATUS.OPEN);
+		if (await this.onOpenCb) await this.onOpenCb('open');
+		await this.emit(STATUS.OPEN);
 
 	}
 
@@ -103,6 +109,7 @@ class WS extends EventEmitter {
      * @returns {Promise}
      */
 	async connect(url, options = {}) {
+		console.log('WS/INDEX CONNECT');
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
 
 		if (
@@ -138,11 +145,13 @@ class WS extends EventEmitter {
 
 		if (!this._ws_rpc) this._ws_rpc = new ReconnectionWebSocket();
 
+		console.log('WS/INDEX connect before');
 		this._ws_rpc.onOpen = () => this._onOpen();
 		this._ws_rpc.onClose = () => this._onClose();
 		this._ws_rpc.onError = () => this._onError();
 
-		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
+		console.log('WS/INDEX CONNECT CHAIN_APIS', CHAIN_APIS.length);
+		CHAIN_APIS.forEach(async (api) => { this[`_${api}`] = await new EchoApi(this._ws_rpc, api); });
 
 		try {
 			await this._ws_rpc.connect(url, this.options);
@@ -156,9 +165,9 @@ class WS extends EventEmitter {
 	 * Reconnect to chain, can't be used after close
 	 * @returns {Promise}
 	 */
-	reconnect() {
+	async reconnect() {
 		if (!this._ws_rpc) throw new Error('Socket close.');
-		return this._ws_rpc.reconnect();
+		return await this._ws_rpc.reconnect();
 	}
 
 	/**

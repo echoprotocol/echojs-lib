@@ -5,7 +5,7 @@ import echo, { Echo, constants } from '../src';
 import { STATUS } from '../src/constants/ws-constants';
 
 import { url } from './_test-data';
-import { rejects } from 'assert';
+import { rejects, ok } from 'assert';
 
 chai.use(spies);
 
@@ -13,55 +13,55 @@ describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	describe('subscriptions', () => {
-		describe('setStatusSubscribe', async () => {
 
-			let onConnected;
-			const promise = new Promise((resolve) => { onConnected = resolve; });
+		let isResolved = false;
+		const onConnected = () => { isResolved = true; };
 
-			describe('when invalid status provided', () => {
-				it('should rejects', async () => {
-					await rejects(async () => {
-						await echo.subscriber.setStatusSubscribe('conn', () => onConnected());
-					}, new Error('Invalid status'));
-				});
+		describe('when invalid status provided', () => {
+			it('should rejects', async () => {
+				await rejects(async () => {
+					await echo.subscriber.setStatusSubscribe('conn', () => onConnected());
+				}, new Error('Invalid status'));
+				ok(isResolved === false);
 			});
+		});
 
 
-			describe('when valid status provided', () => {
-				it('should not rejects', async () => {
-					const check = await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
-					console.log('check', check);
-					await promise;
-					console.log('promise', promise);
-				});
+		describe('when valid status provided', () => {
+			it('should not rejects', async () => {
+				console.log('isResolved', isResolved);
+				const check = await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
+				console.log('isResolved', isResolved);
+				ok(isResolved === false);
 			});
+		});
 
-			describe('success, subscription should emits on connect', () => {
-				it('should emits on connect', async () => {
-					const connect = await echo.connect(url, { debug: true });
-					console.log('connect', connect);
-					await promise;
-					// const test = new Promise((resolve) => setTimeout(() => console.log('hello!'), 5000));
-					// await test;
-				});
+		describe('success, subscription should emits on connect', () => {
+			it('should emits on connect', async () => {
+				console.log('isResolved', isResolved);
+				ok(isResolved === false);
+				await echo.connect(url, { debug: true });
+				ok(isResolved === true);
+				console.log('isResolved', isResolved);
 			});
+		});
 
-			// TODO: reconnect
+		// TODO: reconnect
 
-			describe('success, subscription should emits on reconnect', () => {
-				it('should emits on reconnect', async () => {
-						await echo.reconnect();
-						// await promise;
-				});
+		describe('success, subscription should emits on reconnect', () => {
+			it('should emits on reconnect', async () => {
+				await echo.reconnect();
+				console.log('RECONNECT!!!');
+				// await promise;
 			});
+		});
 
-			describe('success, subscription should emits on disconnect', () => {
-				it('should emits on disconnect', async () => {
-						await echo.disconnect();
-						// await promise;
-				});
+		describe('success, subscription should emits on disconnect', () => {
+			it('should emits on disconnect', async () => {
+				await echo.disconnect();
+				console.log('DISCONNECT!!!');
+				// await promise;
 			});
-
 		});
 	});
 

@@ -65,21 +65,24 @@ class Subscriber extends EventEmitter {
 	 *  @return {Promise.<undefined>}
 	 */
 	async init(cache, wsApi, api, ws) {
+		console.log('SUB-R INIT BIGINING');
 
 		this.cache = cache;
-		this._wsApi = wsApi;
+		this._wsApi = await wsApi;
 		this._api = api;
 		this._ws = ws;
 
 		if (this.subscribers.connect.length) {
-			this.subscribers.connect.forEach((cb) => cb());
+			this.subscribers.connect.forEach(async (cb) => await cb());
 		}
 
 		if (this.subscribers.disconnect.length) {
 			this.subscribers.disconnect.forEach((cb) => cb());
 		}
 
+		console.log('BEFORE this._wsApi.database.setSubscribeCallback');
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
+		console.log('AFTER this._wsApi.database.setSubscribeCallback');
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
@@ -106,6 +109,7 @@ class Subscriber extends EventEmitter {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
 			this._setContractSubscribe(contracts);
 		}
+		console.log('SUB-R INIT END');
 
 		await this._subscribeCache();
 	}
@@ -540,11 +544,12 @@ class Subscriber extends EventEmitter {
 	_onRespond([messages]) {
 		const orders = [];
 
-		const updates = messages.filter((msg) => {
+		console.log('MESSAGES', messages.length);
+		const updates = messages.filter(async (msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
 				// _updateOrder -> return order type - push to orders = { type, order }
-				const type = this._updateOrder(msg);
+				const type = await this._updateOrder(msg);
 
 				if (type) {
 					orders.push({ type, id: msg });
@@ -553,7 +558,7 @@ class Subscriber extends EventEmitter {
 				return false;
 			}
 
-			this._updateObject(msg);
+			await this._updateObject(msg);
 			return true;
 		});
 
@@ -562,8 +567,9 @@ class Subscriber extends EventEmitter {
 		this.emit(CLOSE_CALL_ORDER, orders.filter(({ type }) => type === CLOSE_CALL_ORDER));
 
 		// inform external subscribers
-		this.subscribers.global.forEach((callback) => {
-			callback(updates);
+		console.log('this.subscribers.global.', this.subscribers.global.length);
+		this.subscribers.global.forEach(async (callback) => {
+			await callback(updates);
 		});
 	}
 
