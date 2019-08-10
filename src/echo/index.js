@@ -27,15 +27,13 @@ class Echo {
 
 		try {
 			await this._ws.connect(address, options);
-			console.log('AFTER CONNECT!!!!');
 
 			if (this._isInitModules) {
 				return;
 			}
 
 			await this._initModules();
-			this._ws.emit(STATUS.OPEN);
-			console.log('AFTER _initModules!!!!');
+			this._ws.emit(STATUS.OPEN)
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -62,7 +60,6 @@ class Echo {
 		} catch (err) {
 			console.log('ONOPEN init error', err);
 		}
-		console.log('AFTER _initModules this.onOpen!!!!');
 	}
 
 	syncCacheWithStore(store) {

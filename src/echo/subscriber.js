@@ -65,24 +65,17 @@ class Subscriber extends EventEmitter {
 	 *  @return {Promise.<undefined>}
 	 */
 	async init(cache, wsApi, api, ws) {
-		console.log('SUB-R INIT BIGINING');
 
 		this.cache = cache;
-		this._wsApi = await wsApi;
+		this._wsApi = wsApi;
 		this._api = api;
 		this._ws = ws;
 
 		if (this.subscribers.connect.length) {
-			this.subscribers.connect.forEach(async (cb) => await cb());
+			this.subscribers.connect.forEach((cb) => cb());
 		}
 
-		if (this.subscribers.disconnect.length) {
-			this.subscribers.disconnect.forEach((cb) => cb());
-		}
-
-		console.log('BEFORE this._wsApi.database.setSubscribeCallback');
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
-		console.log('AFTER this._wsApi.database.setSubscribeCallback');
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
@@ -109,7 +102,6 @@ class Subscriber extends EventEmitter {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
 			this._setContractSubscribe(contracts);
 		}
-		console.log('SUB-R INIT END');
 
 		await this._subscribeCache();
 	}
@@ -134,6 +126,10 @@ class Subscriber extends EventEmitter {
 		this.subscribers.disconnect.forEach((cb) => {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
+
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
+		}
 
 		this.cancelAllSubscribers();
 
@@ -544,7 +540,6 @@ class Subscriber extends EventEmitter {
 	_onRespond([messages]) {
 		const orders = [];
 
-		console.log('MESSAGES', messages.length);
 		const updates = messages.filter(async (msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
@@ -567,7 +562,6 @@ class Subscriber extends EventEmitter {
 		this.emit(CLOSE_CALL_ORDER, orders.filter(({ type }) => type === CLOSE_CALL_ORDER));
 
 		// inform external subscribers
-		console.log('this.subscribers.global.', this.subscribers.global.length);
 		this.subscribers.global.forEach(async (callback) => {
 			await callback(updates);
 		});

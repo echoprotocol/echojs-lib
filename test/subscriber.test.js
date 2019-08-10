@@ -16,6 +16,8 @@ describe('SUBSCRIBER', () => {
 
 		let isResolved = false;
 		const onConnected = () => { isResolved = true; };
+		let checkOnDisconnected = false;
+		const onDisconnected = () => { checkOnDisconnected = true; };
 
 		describe('when invalid status provided', () => {
 			it('should rejects', async () => {
@@ -26,41 +28,53 @@ describe('SUBSCRIBER', () => {
 			});
 		});
 
-
 		describe('when valid status provided', () => {
 			it('should not rejects', async () => {
-				console.log('isResolved', isResolved);
-				const check = await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
-				console.log('isResolved', isResolved);
+				await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
+				await echo.subscriber.setStatusSubscribe('disconnect', () => onDisconnected());
 				ok(isResolved === false);
+				ok(checkOnDisconnected === false);
 			});
 		});
 
 		describe('success, subscription should emits on connect', () => {
 			it('should emits on connect', async () => {
-				console.log('isResolved', isResolved);
 				ok(isResolved === false);
-				await echo.connect(url, { debug: true });
+				ok(checkOnDisconnected === false);
+				await echo.connect(url);
 				ok(isResolved === true);
-				console.log('isResolved', isResolved);
+				ok(checkOnDisconnected === false);
 			});
 		});
 
-		// TODO: reconnect
-
 		describe('success, subscription should emits on reconnect', () => {
 			it('should emits on reconnect', async () => {
+				let checkConnectCb = false;
+				const onReconnected = () => { checkConnectCb = true; };
+				await echo.subscriber.setStatusSubscribe('connect', () => onReconnected());
+				ok(checkConnectCb === false);
 				await echo.reconnect();
-				console.log('RECONNECT!!!');
-				// await promise;
+				ok(checkConnectCb === false);
+				ok(checkOnDisconnected === false);
 			});
 		});
 
 		describe('success, subscription should emits on disconnect', () => {
 			it('should emits on disconnect', async () => {
+				ok(checkOnDisconnected === false);
 				await echo.disconnect();
-				console.log('DISCONNECT!!!');
-				// await promise;
+				ok(checkOnDisconnected === true);
+			});
+		});
+
+		describe('success, subscription should emits on connect after disconnect', () => {
+			it('should emits on connect after disconnect', async () => {
+				isResolved = false;
+				await echo.subscriber.setStatusSubscribe('connect', () => onConnected());
+				ok(isResolved === false);
+				await echo.connect(url);
+				ok(isResolved === true);
+				await echo.disconnect();
 			});
 		});
 	});
@@ -69,6 +83,20 @@ describe('SUBSCRIBER', () => {
         describe('setEchorandSubscribe', () => {
             it('is not a function', async () => {
                 try {
+					await echo.connect(
+						url,
+						{
+							apis: [
+								'database',
+								'network_broadcast',
+								'history',
+								'registration',
+								'asset',
+								'login',
+								'network_node',
+							],
+						},
+					);
                     await echo.subscriber.setEchorandSubscribe(1);
                 } catch (err) {
                     expect(err.message).to.equal('Callback is not a function');

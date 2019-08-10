@@ -74,18 +74,17 @@ class ReconnectionWebSocket {
 		this._subs = [];
 		this._unsub = {};
 
-		return await this._connect();
+		return this._connect();
 	}
 
 	/**
 	 * inner connection method
 	 * @returns {Promise}
 	 */
-	async _connect() {
+	_connect() {
 
 		this._debugLog('[ReconnectionWebSocket] >---- retry _connect');
 
-		console.log('_connect');
 		this._currentRetry += 1;
 		return new Promise((resolve, reject) => {
 			let ws = null;
@@ -99,8 +98,7 @@ class ReconnectionWebSocket {
 				}
 			}
 
-			ws.onopen = async () => {
-				console.log('_connect ws.onopen');
+			ws.onopen = () => {
 
 				this._currentRetry = 0;
 
@@ -109,10 +107,7 @@ class ReconnectionWebSocket {
 					resolve();
 				}
 
-				if (this.onOpen) {
-					console.log('_connect ws.onopen this.onOpen()');
-					await this.onOpen();
-				};
+				if (this.onOpen) this.onOpen();
 
 				this._setPingDelay();
 
@@ -120,8 +115,7 @@ class ReconnectionWebSocket {
 				return true;
 			};
 
-			ws.onmessage = async (message) => {
-				console.log('_connect ws.onmessage');
+			ws.onmessage = (message) => {
 
 				if (ws !== this.ws) {
 					return false;
@@ -131,13 +125,12 @@ class ReconnectionWebSocket {
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONMESSAGE');
 
-				await this._setPingDelay();
+				this._setPingDelay();
 
 				return true;
 			};
 
 			ws.onclose = () => {
-				console.log('_connect ws.onclose');
 
 				if (ws !== this.ws) {
 					return false;
@@ -362,8 +355,6 @@ class ReconnectionWebSocket {
 	 */
 	_clearWaitingCallPromises() {
 		const err = new Error(CONNECTION_CLOSED_ERROR_MESSAGE);
-
-		console.log(this._cbs);
 
 		for (let cbId = this._responseCbId + 1; cbId <= this._cbId; cbId += 1) {
 			if (this._cbs[cbId]) this._cbs[cbId].reject(err);
