@@ -91,30 +91,6 @@ await tx.broadcast();
 
 ```
 
-#### Account upgrade
-```javascript
-import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
-
-await echo.connect('ws://127.0.0.1:9000');
-
-const tx = echo.createTransaction();
-
-const privateKey = PrivateKey
-	.fromWif('P5JtT3rnTcNfw4RhzDBCC99kDyr8k3YnDZ4m7LCCcRf6r');
-
-const options = {
-    account_to_upgrade: "1.2.20",
-    upgrade_to_lifetime_member: true
-};
-
-tx.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPGRADE, options);
-
-tx.addSigner(privateKey);
-
-await tx.broadcast();
-
-```
-
 #### Create contract operation
 ```javascript
 import echo, { constants, PrivateKey } from 'echolib-js';
