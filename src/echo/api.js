@@ -101,9 +101,7 @@ import { PublicKey } from '../crypto';
 *  		id:String,
 *  		chain_id:String,
 *  		immutable_parameters:{
-*  			min_committee_member_count:Number,
-*  			num_special_accounts:Number,
-*  			num_special_assets:Number
+*  			min_committee_member_count:Number
 *  		}
 *  	}
 * 	} ChainProperties */
