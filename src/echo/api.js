@@ -1630,68 +1630,6 @@ class API {
 	}
 
 	/**
-	 *  @method getOrderBook
-	 *  @param  {String} baseAssetName
-	 *  @param  {String} quoteAssetName
-	 *  @param  {Number} depth
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getOrderBook(baseAssetName, quoteAssetName, depth = API_CONFIG.ORDER_BOOK_DEFAULT_DEPTH) {
-		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
-		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
-		if (!isUInt64(depth) || depth > API_CONFIG.ORDER_BOOK_MAX_DEPTH) {
-			throw new Error(`Depth should be a integer and must not exceed ${API_CONFIG.ORDER_BOOK_MAX_DEPTH}`);
-		}
-
-		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
-	}
-
-	/**
-	 *  @method getLimitOrders
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getLimitOrders(baseAssetId, quoteAssetId, limit) {
-		if (!isAssetId(baseAssetId)) throw new Error('Base asset id is invalid');
-		if (!isAssetId(quoteAssetId)) throw new Error('Quote asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
-	}
-
-	/**
-	 *  @method getCallOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getCallOrders(assetId, limit) {
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getCallOrders(assetId, limit);
-	}
-
-	/**
-	 *  @method getSettleOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getSettleOrders(assetId, limit) {
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getSettleOrders(assetId, limit);
-	}
-
-	/**
 	 *  @method getMarginPositions
 	 *  @param  {String} accountId
 	 *

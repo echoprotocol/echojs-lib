@@ -38,7 +38,6 @@ export default class Api {
 	getBlock(blockNum: number): Promise<Block>;
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
 	getBlockVirtualOperations(blockNum: number): any;
-	getCallOrders(assetId: string, limit: number): Promise<any>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
@@ -57,7 +56,6 @@ export default class Api {
 	getFullContract(contractId: string, force?: boolean): Promise<Object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
 	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
-	getLimitOrders(baseAssetId: string, quoteAssetId: string, limit: number): Promise<any>;
 	getMarginPositions(accountId: string): Promise<any>;
 	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
 	getObject(objectId: string, force?: boolean): Promise<Object>;
