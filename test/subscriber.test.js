@@ -413,6 +413,17 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
+    describe('_updateObject', () => {
+        describe('isOperationHistoryId', () => {
+            it('save contractId and history in cache', async () => {
+
+                // await echo.subscriber._updateObject('1.14.0', () => {
+                // });
+                // expect(echo.subscriber.subscribers.logs['1.14.0'].length).to.equal(1);
+            });
+        });
+    });
+
 	after(async () => {
 		await echo.disconnect();
 	});
