@@ -307,9 +307,9 @@ class Subscriber extends EventEmitter {
 
 				const mutableObj = obj.withMutations((map) => {
 					const fieldsToDelete = [
-						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name',
-						'votes', 'balances', 'vesting_balances', 'limit_orders', 'call_orders',
-						'settle_orders', 'proposals', 'assets', 'withdraws',
+						'statistics', 'registrar_name', 'referrer_name',
+						'votes', 'balances', 'vesting_balances',
+						'proposals', 'assets',
 					];
 
 					fieldsToDelete.forEach((field) => {
