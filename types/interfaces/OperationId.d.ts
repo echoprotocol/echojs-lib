@@ -1,4 +1,5 @@
-enum OperationId {
+export default OperationId;
+declare enum OperationId {
 	TRANSFER = 0,
 	LIMIT_ORDER_CREATE = 1,
 	LIMIT_ORDER_CANCEL = 2,
@@ -60,5 +61,3 @@ enum OperationId {
 	APPROVE_ERC20_TOKEN_WITHDRAW = 58,
 	CONTRACT_UPDATE = 59,
 }
-
-export default OperationId;

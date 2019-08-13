@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import PublicKey from "../crypto/public-key";
 
 import BlockHeader from '../interfaces/BlockHeader';
-import Transaction from '../interfaces/Transaction';
+import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
 import Committee from '../interfaces/Committee';
 import Vote from '../interfaces/Vote';
@@ -72,7 +72,7 @@ export default class Api {
 	getSettleOrders(assetId: string, limit: number): Promise<any>;
 	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
-	getTransaction(blockNum: number, transactionIndex: number): Promise<Transaction>;
+	getTransaction(blockNum: number, transactionIndex: number): Promise<TransactionObject>;
 	getTransactionHex(tr: Object): Promise<any>;
 	getVestedBalances(balanceIds: Array<string>): Promise<any>;
 	getVestingBalances(balanceIds: Array<string>): Promise<any>;
