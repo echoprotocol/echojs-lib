@@ -434,21 +434,13 @@ export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
 	extensions,
 }); // 37
 
-export const bidCollateral = operation(BID_COLLATERAL, {
-	fee: asset,
-	bidder: protocolId(ACCOUNT),
-	additional_collateral: asset,
-	debt_covered: asset,
-	extensions,
-}); // 38
-
 export const executeBid = operation(EXECUTE_BID, {
 	fee: asset,
 	bidder: protocolId(ACCOUNT),
 	debt: asset,
 	collateral: asset,
 	extensions,
-}); // 39
+}); // 38
 
 export const createContract = operation(CREATE_CONTRACT, {
 	fee: asset,
@@ -458,7 +450,7 @@ export const createContract = operation(CREATE_CONTRACT, {
 	supported_asset_id: optional(protocolId(ASSET)),
 	eth_accuracy: bool,
 	extensions,
-}); // 40
+}); // 39
 
 export const callContract = operation(CALL_CONTRACT, {
 	fee: asset,
@@ -467,7 +459,7 @@ export const callContract = operation(CALL_CONTRACT, {
 	code: string,
 	callee: protocolId(CONTRACT),
 	extensions,
-}); // 41
+}); // 40
 
 export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	fee: asset,
@@ -475,21 +467,21 @@ export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	to: protocolId([ACCOUNT, CONTRACT]),
 	amount: asset,
 	extensions,
-}); // 42
+}); // 41
 
 export const changeSidechainConfig = operation(CHANGE_SIDECHAIN_CONFIG, {
 	fee: asset,
 	from: protocolId(CONTRACT),
 	amount: asset,
 	extensions,
-}); // 43
+}); // 42
 
 export const accountAddressCreate = operation(ACCOUNT_ADDRESS_CREATE, {
 	fee: asset,
 	owner: protocolId(ACCOUNT),
 	label: string,
 	extensions,
-}); // 44
+}); // 43
 
 export const transferToAddress = operation(TRANSFER_TO_ADDRESS, {
 	fee: asset,
@@ -497,27 +489,27 @@ export const transferToAddress = operation(TRANSFER_TO_ADDRESS, {
 	to: string,
 	amount: asset,
 	extensions,
-}); // 45
+}); // 44
 
 export const generateEthAddress = operation(GENERATE_ETH_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	extensions,
-}); // 46
+}); // 45
 
 export const createEthAddress = operation(CREATE_ETH_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	extensions,
-}); // 47
+}); // 46
 
 export const depositEth = operation(DEPOSIT_ETH, {
 	fee: asset,
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	from: protocolId(ACCOUNT),
 	amount: asset,
-}); // 48
+}); // 47
 
 export const withdrawEth = operation(WITHDRAW_ETH, {
 	fee: asset,
@@ -525,13 +517,13 @@ export const withdrawEth = operation(WITHDRAW_ETH, {
 	eth_addr: string,
 	value: uint64,
 	extensions,
-}); // 49
+}); // 48
 
 export const approveWithdrawEth = operation(APPROVE_WITHDRAW_ETH, {
 	fee: asset,
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	extensions,
-}); // 50
+}); // 49
 
 export const contractFundPool = operation(CONTRACT_FUND_POOL, {
 	fee: asset,
@@ -539,14 +531,14 @@ export const contractFundPool = operation(CONTRACT_FUND_POOL, {
 	contract: protocolId(CONTRACT),
 	amount: asset,
 	extensions,
-}); // 51
+}); // 50
 
 export const contractWhitelist = operation(CONTRACT_WHITELIST, {
 	fee: asset,
 	sender: protocolId(ACCOUNT),
 	contract: protocolId(CONTRACT),
 	extensions,
-}); // 52
+}); // 51
 
 export const sidechainIssue = operation(SIDECHAIN_ISSUE, {
 	fee: asset,
@@ -554,7 +546,7 @@ export const sidechainIssue = operation(SIDECHAIN_ISSUE, {
 	account: protocolId(ACCOUNT),
 	deposit_id: protocolId(DEPOSIT_ETH),
 	extensions,
-}); // 53
+}); // 52
 
 export const sidechainBurn = operation(SIDECHAIN_BURN, {
 	fee: asset,
@@ -562,14 +554,14 @@ export const sidechainBurn = operation(SIDECHAIN_BURN, {
 	account: protocolId(ACCOUNT),
 	withdraw_id: protocolId(DEPOSIT_ETH),
 	extensions,
-}); // 54
+}); // 53
 
 export const registerErc20Token = operation(REGISTER_ERC20_TOKEN, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	eth_addr: protocolId(ETH_ADDRESS),
 	extensions,
-}); // 55
+}); // 54
 
 export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
 	fee: asset,
@@ -577,7 +569,7 @@ export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
 	erc20_token_addr: protocolId(ETH_ADDRESS),
 	transaction_hash: uint32,
 	extensions,
-}); // 56
+}); // 55
 
 export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
 	fee: asset,
@@ -585,7 +577,7 @@ export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
 	to: protocolId(ETH_ADDRESS),
 	erc20_token: protocolId(ERC20_TOKEN),
 	extensions,
-}); // 57
+}); // 56
 
 export const approveErc20TokenWithdraw = operation(APPROVE_ERC20_TOKEN_WITHDRAW, {
 	fee: asset,
@@ -593,14 +585,14 @@ export const approveErc20TokenWithdraw = operation(APPROVE_ERC20_TOKEN_WITHDRAW,
 	to: protocolId(ETH_ADDRESS),
 	transaction_hash: uint32,
 	extensions,
-}); // 58
+}); // 57
 
 export const contractUpdate = operation(CONTRACT_UPDATE, {
 	fee: asset,
 	sender: protocolId(ACCOUNT),
 	contract: protocolId(CONTRACT),
 	extensions,
-}); // 59
+}); // 58
 
 /** @type {{[operationName:string]:Operation}} */
 export const operationByName = {
@@ -642,28 +634,27 @@ export const operationByName = {
 	overrideTransfer, // 35
 	assetSettleCancel, // 36
 	assetClaimFees, // 37
-	bidCollateral, // 38
-	executeBid, // 39
-	createContract, // 40
-	callContract, // 41
-	contractTransfer, // 42
-	changeSidechainConfig, // 43
-	accountAddressCreate, // 44
-	transferToAddress, // 45
-	generateEthAddress, // 46
-	createEthAddress, // 47
-	depositEth, // 48
-	withdrawEth, // 49
-	approveWithdrawEth, // 50
-	contractFundPool, // 51,
-	contractWhitelist, // 52,
-	sidechainIssue, // 53,
-	sidechainBurn, // 54,
-	registerErc20Token, // 55,
-	depositErc20Token, // 56,
-	withdrawErc20Token, // 57,
-	approveErc20TokenWithdraw, // 58,
-	contractUpdate, // 59,
+	executeBid, // 38
+	createContract, // 39
+	callContract, // 40
+	contractTransfer, // 41
+	changeSidechainConfig, // 42
+	accountAddressCreate, // 43
+	transferToAddress, // 44
+	generateEthAddress, // 45
+	createEthAddress, // 46
+	depositEth, // 47
+	withdrawEth, // 48
+	approveWithdrawEth, // 49
+	contractFundPool, // 50,
+	contractWhitelist, // 50,
+	sidechainIssue, // 52,
+	sidechainBurn, // 53,
+	registerErc20Token, // 54,
+	depositErc20Token, // 55,
+	withdrawErc20Token, // 56,
+	approveErc20TokenWithdraw, // 57,
+	contractUpdate, // 58,
 };
 
 /** @type {Array<Operation>} */

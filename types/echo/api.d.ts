@@ -60,14 +60,12 @@ export default class Api {
 	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
 	getObject(objectId: string, force?: boolean): Promise<Object>;
 	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
-	getOrderBook(baseAssetName: string, quoteAssetName: string, depth: number): Promise<any>;
 	getPotentialSignatures(tr: Object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;
 	getRecentTransactionById(transactionId: string): Promise<any>;
 	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<Array<AccountHistory>>;
 	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
 	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;
-	getSettleOrders(assetId: string, limit: number): Promise<any>;
 	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
 	getTransaction(blockNum: number, transactionIndex: number): Promise<Transaction>;
