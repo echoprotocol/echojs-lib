@@ -7,4 +7,5 @@ describe('operations', () => {
 	require('./operations/account-update.operations.test');
 	require('./operations/create-proposal.operation.test');
 	require('./operations/update-asset-feed-producers.test');
+	require('./operations/update-committee-member-global-parameters.operation.test');
 });

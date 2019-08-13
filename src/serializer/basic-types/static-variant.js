@@ -44,14 +44,15 @@ class StaticVariantType extends Type {
 	validate(value) {
 		if (!Array.isArray(value)) throw new Error('value is not an array');
 		const [key] = value;
+		let [, variant] = value;
 		const type = this.types[key];
 		if (!type) throw new Error(`type with key ${key} not found`);
 		try {
-			type.validate(value);
+			variant = type.validate(variant);
 		} catch (error) {
 			throw new Error(`static variant: ${error.message}`);
 		}
-		return { key, type };
+		return { key, type, variant };
 	}
 
 	/**
@@ -59,9 +60,9 @@ class StaticVariantType extends Type {
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
-		const { key, type } = this.validate(value);
+		const { key, type, variant } = this.validate(value);
 		bytebuffer.writeVarint32(key);
-		type.appendToByteBuffer(value, bytebuffer);
+		type.appendToByteBuffer(variant, bytebuffer);
 	}
 
 	/**
@@ -69,8 +70,8 @@ class StaticVariantType extends Type {
 	 * @returns {[number,*]}
 	 */
 	toObject(value) {
-		const { key, type } = this.validate(value);
-		return [key, type.toObject(value)];
+		const { key, type, variant } = this.validate(value);
+		return [key, type.toObject(variant)];
 	}
 
 }

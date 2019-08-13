@@ -37,6 +37,7 @@ class Serializable extends Type {
 				throw new Error(`key "${key}": ${error.message}`);
 			}
 		}
+		return value;
 	}
 
 	/**
