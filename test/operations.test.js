@@ -6,4 +6,5 @@ describe('operations', () => {
 	require('./operations/call-contract.operation.test');
 	require('./operations/account-update.operations.test');
 	require('./operations/create-proposal.operation.test');
+	require('./operations/update-asset-feed-producers.test');
 });
