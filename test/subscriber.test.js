@@ -1,13 +1,15 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import { strictEqual } from 'assert';
 
 import echo, { Echo, constants } from '../src';
 
-import { url } from './_test-data';
+import { url, privateKey, accountId, contractId } from './_test-data';
+
 
 chai.use(spies);
 
-describe('SUBSCRIBER', () => {
+describe.only('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
@@ -26,6 +28,59 @@ describe('SUBSCRIBER', () => {
 			},
 		);
 	});
+
+	describe.only('_updateObject', () => {
+		describe('isOperationHistoryId', () => {
+			const options = {
+				fee: {
+					asset_id: '1.3.0'
+				},
+				registrar: accountId,
+				value: {
+					asset_id: '1.3.0',
+					amount: 0
+				},
+				code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
+				callee: contractId
+			};
+
+			it('save contractId and history in cache', async () => {
+				const checkHistory =  await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
+				expect(checkHistory).to.equal(undefined);
+
+				const tx = await echo.createTransaction();
+				await tx.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options);
+				await tx.addSigner(privateKey);
+				const check2 = await tx.broadcast();
+				console.log('check!!!', check2);
+
+				await new Promise((resolve) => setTimeout(() => resolve(), 100));
+				const history = await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
+				console.log('check', history.map((a) => a.toJS()));
+
+				expect(history[0].extensions).to.be.an('array').that.is.empty;
+				expect(history[0].block_num).to.equal(check2[0].block_num);
+
+				// echo.subscriber.setPendingTransactionSubscribe((result) => {
+					// expect(result).to.be.an('array').that.is.not.empty;
+					// expect(result[0]).to.be.an('object').that.is.not.empty;
+					// expect(result[0].type).to.be.a('number');
+					// expect(result[0].round).to.be.a('number');
+					//
+					// if (!isCalled) {
+					// 	done();
+					// 	isCalled = true;
+					// }
+				// }).then(() => {
+				// 	expect(echo.subscriber.subscriptions.transaction).to.be.true;
+				// 	expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.not.empty;
+				// 	done();
+				// });
+			}).timeout(10000);
+		});
+	});
+
+
 
 	describe('echorand', () => {
         describe('setEchorandSubscribe', () => {
@@ -412,17 +467,6 @@ describe('SUBSCRIBER', () => {
 			expect(echo.subscriber.subscribers.logs['1.14.0'].length).to.equal(length - 1);
 		});
 	});
-
-    describe('_updateObject', () => {
-        describe('isOperationHistoryId', () => {
-            it('save contractId and history in cache', async () => {
-
-                // await echo.subscriber._updateObject('1.14.0', () => {
-                // });
-                // expect(echo.subscriber.subscribers.logs['1.14.0'].length).to.equal(1);
-            });
-        });
-    });
 
 	after(async () => {
 		await echo.disconnect();

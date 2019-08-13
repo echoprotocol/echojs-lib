@@ -45,9 +45,11 @@ const prepare = async () => {
 	await contractTx.broadcast(() => console.log('create contract tx was broadcasted'));
 };
 
+
 prepare()
 	.then(() => echo.disconnect())
 	.catch((e) => {
 		console.log(e);
 		throw e;
 	});
+
