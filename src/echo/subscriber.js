@@ -538,11 +538,11 @@ class Subscriber extends EventEmitter {
 	_onRespond([messages]) {
 		const orders = [];
 
-		const updates = messages.filter(async (msg) => {
+		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
 				// _updateOrder -> return order type - push to orders = { type, order }
-				const type = await this._updateOrder(msg);
+				const type = this._updateOrder(msg);
 
 				if (type) {
 					orders.push({ type, id: msg });
@@ -551,7 +551,7 @@ class Subscriber extends EventEmitter {
 				return false;
 			}
 
-			await this._updateObject(msg);
+			this._updateObject(msg);
 			return true;
 		});
 
@@ -560,8 +560,8 @@ class Subscriber extends EventEmitter {
 		this.emit(CLOSE_CALL_ORDER, orders.filter(({ type }) => type === CLOSE_CALL_ORDER));
 
 		// inform external subscribers
-		this.subscribers.global.forEach(async (callback) => {
-			await callback(updates);
+		this.subscribers.global.forEach((callback) => {
+			callback(updates);
 		});
 	}
 

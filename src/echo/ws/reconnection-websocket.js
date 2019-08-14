@@ -241,7 +241,7 @@ class ReconnectionWebSocket {
 		};
 		request.id = this._cbId;
 
-		return new Promise(async (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
 			const timeoutId = setTimeout(() => {
 				reject(new Error(`RPC call time is over Id: ${request.id}`));
@@ -256,7 +256,7 @@ class ReconnectionWebSocket {
 				timeoutId,
 			};
 
-			await this.ws.send(JSON.stringify(request));
+			this.ws.send(JSON.stringify(request));
 		});
 
 	}
@@ -265,8 +265,8 @@ class ReconnectionWebSocket {
 	 * message handler
 	 * @param response
 	 */
-	async _responseHandler(response) {
-		await this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
+	_responseHandler(response) {
+		this._debugLog('[ReconnectionWebSocket] <---- reply ----<', JSON.stringify(response));
 
 		let sub = false;
 		let callback = null;
@@ -322,9 +322,9 @@ class ReconnectionWebSocket {
 	 * 	update ping delay timeout
 	 *  @private
 	 */
-	async _setPingDelay() {
-		await this._clearPingDelay();
-		this._pingDelayId = await setTimeout(() => this._ping(), this._options.pingDelay);
+	_setPingDelay() {
+		this._clearPingDelay();
+		this._pingDelayId = setTimeout(() => this._ping(), this._options.pingDelay);
 	}
 
 	/**
