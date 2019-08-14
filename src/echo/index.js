@@ -61,12 +61,11 @@ class Echo {
 
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
-
-    try {
-      await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
-    } catch (err) {
-      console.log('ONOPEN init error', err);
-    }
+		try {
+			await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
+		} catch (err) {
+			console.log('ONOPEN init error', err);
+		}
 
 		try {
 			await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);

@@ -34,7 +34,6 @@ import {
 	BITASSET_UPDATE,
 } from '../constants';
 
-import * as CacheMaps from '../constants/cache-maps';
 import { handleConnectionClosedError } from '../utils/helpers';
 
 class Subscriber extends EventEmitter {
@@ -75,7 +74,6 @@ class Subscriber extends EventEmitter {
 		if (this.subscribers.connect.length) {
 			this.subscribers.connect.forEach((cb) => cb());
 		}
-    
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
@@ -131,7 +129,6 @@ class Subscriber extends EventEmitter {
 		if (this.subscribers.disconnect.length) {
 			this.subscribers.disconnect.forEach((cb) => cb());
 		}
-    
 		this.cancelAllSubscribers();
 
 	}
