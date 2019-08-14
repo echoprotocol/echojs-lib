@@ -3,14 +3,49 @@ import spies from 'chai-spies';
 
 import echo, { Echo, constants } from '../src';
 import { STATUS } from '../src/constants/ws-constants';
+import { url, privateKey, accountId, contractId } from './_test-data';
 
-import { url } from './_test-data';
 import { rejects, ok } from 'assert';
 
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
 	let echo = new Echo();
+
+	describe.only('subscriptions', async () => {
+		it('Error', async () => {
+			await echo.connect(url);
+			const options = {
+				fee: {
+					asset_id: '1.3.0'
+				},
+				registrar: accountId,
+				value: {
+					asset_id: '1.3.0',
+					amount: 0
+				},
+				code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
+				callee: contractId
+			};
+
+			const tx = await echo.createTransaction();
+			await tx.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options);
+			await tx.addSigner(privateKey);
+			const txToCheck = await tx.broadcast();
+			console.log('txToCheck', txToCheck);
+			console.log('after broadcast!@!!');
+
+			await new Promise((resolve) => setTimeout(() => resolve(), 3e3));
+			const check = await echo.subscriber.cache.fullContractsByContractId.get(contractId);
+			console.log('check', check);
+			console.log('after echo.subscriber.cache.contractHistoryByContractId');
+
+			console.log('before disconnect!@!!');
+			await echo.disconnect();
+			console.log('after disconnect!@!!');
+			await new Promise((resolve) => setTimeout(() => resolve(), 3e3));
+		}).timeout(10000);
+	});
 
 	describe('subscriptions', () => {
 
