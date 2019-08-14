@@ -225,7 +225,6 @@ class Transaction {
 	 * @param {PrivateKey=} _privateKey
 	 */
 	async sign(_privateKey) {
-		console.log('TRANSACTION!!!!!!!!!!!!!!!!!!!');
 		this.checkNotFinalized();
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
 		if (!this.hasAllFees) await this.setRequiredFees();
@@ -262,7 +261,6 @@ class Transaction {
 			const chainBuffer = Buffer.from(chainId, 'hex');
 			return Signature.signBuffer(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
 		});
-		console.log('FINISHHHHHHHHH!!!!!!!!!!!!!!!!!!!');
 
 	}
 
@@ -302,11 +300,8 @@ class Transaction {
 	 * @returns {Promise<*>}
 	 */
 	async broadcast(wasBroadcastedCallback) {
-		console.log('BROADCAST@!!!!!!!!!!!!!!!!!!!!!!');
 		if (!this.finalized) await this.sign();
-		/*return*/const check = await this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
-		console.log('wasBroadcastedCallback broadcast');
-		return check;
+		return this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
 	}
 
 }

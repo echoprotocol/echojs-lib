@@ -13,18 +13,17 @@ const options = {
 	startValue: '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
 };
 
-describe.only('create contract', () => {
+describe('create contract', () => {
 	/** @type {import("../../types/index").Echo} */
 	const echo = new Echo();
 
-	before(() => echo.connect(url, { debug: true }));
+	before(() => echo.connect(url));
 
 	after(() => echo.disconnect());
 
 	it('successful', async () => {
 		/** @type {import("../../types/index").Transaction} */
 		const tx = echo.createTransaction();
-		console.log('------------------------------');
 		tx.addOperation(OPERATIONS_IDS.CREATE_CONTRACT, {
 			code: bytecode + options.startValue,
 			eth_accuracy: false,
@@ -34,31 +33,10 @@ describe.only('create contract', () => {
 				amount: 0
 			},
 		});
-		console.log('===================================');
 		await tx.sign(privateKey);
 		/** @type {string} */
-		console.log('____________________________________');
-		// const tx4 = echo.createTransaction();
-		// console.log('______-------______-------_______');
-		// tx4.addOperation(OPERATIONS_IDS.CREATE_CONTRACT, {
-		// 	code: bytecode + options.startValue,
-		// 	eth_accuracy: false,
-		// 	registrar: accountId,
-		// 	value: {
-		// 		asset_id: '1.3.0',
-		// 		amount: 0
-		// 	},
-		// });
-		// console.log('______-------______-------_______');
-		// await tx4.sign(privateKey);
-		console.log('______-------______-------_______');
 		const operationResultId = await tx.broadcast()
 			.then((res) => res[0].trx.operation_results[0][1]);
-		console.log('______-------______-------_______');
-		// const operationResultId2 = await tx4.broadcast()
-			// .then((res) => res[0].trx.operation_results[0][1]);
-
-		console.log(11111);
 		// TODO Should be fixed
 		// const newAddress = await echo.api.getContractResult(operationResultId, true)
 			// .then((res) => res[1].exec_res.new_address)

@@ -207,9 +207,7 @@ class Subscriber extends EventEmitter {
 		) {
 			return null;
 		}
-		console.log('object', object);
 		if (isOperationHistoryId(object.id)) {
-			console.log('PASSED isOperationHistoryId');
 			const contractId = object.op[1].callee;
 			const history = this.cache.contractHistoryByContractId.get(contractId) || [];
 
@@ -278,6 +276,7 @@ class Subscriber extends EventEmitter {
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
+					console.log('---------isAccountStatisticsId---------');
 					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
 				}
 			} catch (err) {
@@ -473,9 +472,8 @@ class Subscriber extends EventEmitter {
 			});
 		}
 
-		console.log('object', object.id);
 		if (isContractHistoryId(object.id)) {
-			console.log('object!!!!!');
+			console.log('---------isContractHistoryId---------');
 			this._notifyContractSubscribers(obj);
 			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}

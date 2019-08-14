@@ -2174,22 +2174,18 @@ class API {
 	 * @returns {Promise<*>}
 	 */
 	async broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
-		console.log('broadcastTransactionWithCallback!!!!!!!!!');
-		/*return*/const check = await new Promise(async (resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.network.broadcastTransactionWithCallback(
 					(res) => resolve(res),
 					signedTransactionObject,
 				);
-				console.log('NEXXXT broadcastTransactionWithCallback!!!!!!!!!');
 			} catch (error) {
 				reject(error);
 				return;
 			}
 			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
 		});
-		console.log('NEXXXT AFTER PROMISE broadcastTransactionWithCallback!!!!!!!!!');
-		return check;
 	}
 
 	/**

@@ -85,11 +85,8 @@ class NetworkAPI {
 	 *
 	 *  @return {Promise}
 	 */
-	async broadcastTransactionWithCallback(callback, signedTransaction) {
-		console.log('NETWORK-API broadcastTransactionWithCallback BEFORE');
-		/*return*/const check = await this.db.exec('broadcast_transaction_with_callback', [callback, signedTransaction]);
-		console.log('NETWORK-API broadcastTransactionWithCallback AFTER');
-		return check;
+	broadcastTransactionWithCallback(callback, signedTransaction) {
+		return this.db.exec('broadcast_transaction_with_callback', [callback, signedTransaction]);
 	}
 
 }
