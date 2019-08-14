@@ -5,13 +5,13 @@ import ReconnectionWebSocket from './reconnection-websocket';
 import EchoApi from './echo-api';
 import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
+import Subscriber from "../subscriber";
 
 class WS extends EventEmitter {
 
-	constructor() {
+	constructor(subscriber) {
 		super();
-
-		this._ws_rpc = new ReconnectionWebSocket();
+		this._ws_rpc = new ReconnectionWebSocket(subscriber);
 
 		this._connected = false;
 		this._isFirstTime = true;

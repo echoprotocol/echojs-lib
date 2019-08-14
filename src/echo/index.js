@@ -12,10 +12,11 @@ import { STATUS } from '../constants/ws-constants';
 class Echo {
 
 	constructor() {
-		this._ws = new WS();
+        this.subscriber = new Subscriber();
+		this._ws = new WS(this.subscriber);
 		this._isInitModules = false;
 
-		this.subscriber = new Subscriber();
+		// this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
