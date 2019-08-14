@@ -9,7 +9,7 @@ import { Echo } from '../src';
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
-	describe('setStatusSubscribe', () => {
+	describe.only('setStatusSubscribe', () => {
 		describe('when invalid status provided', () => {
 			const echo = new Echo();
 			shouldReject(async () => await echo.subscriber.setStatusSubscribe('conn', () => {}), 'Invalid status');
@@ -69,10 +69,12 @@ describe('SUBSCRIBER', () => {
 			it('should not emits "disconnect" event before connect', () => ok(!events.includes(STATUS.DISCONNECTED)));
 			it('should not rejects on connect', async () => await echo.connect(url));
 			it('should emits single event "connect"', () => deepStrictEqual(events, [STATUS.CONNECTED]));
-			it('should not rejects on reconnect', async () => await echo.reconnect());
+			it('should not rejects on reconnect', async () => {await echo.reconnect();console.log('events before', events); });
+
 			it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
 			it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
-			it('should not emits more events', function () {
+
+			it('should not emits more events', function () { console.log('events after', events);
 				if (events.length < 3) this.skip();
 				strictEqual(events.length, 3);
 			});

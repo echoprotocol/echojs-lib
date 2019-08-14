@@ -76,7 +76,11 @@ class Echo {
 	}
 
 	async reconnect() {
+		console.log('exho index disconnect reconnect', this.subscriber.subscribers.disconnect);
+		// this.subscriber.cbDisconnect();
 		await this._ws.reconnect();
+		// this.subscriber.cbConnect();
+		console.log('exho index connect reconnect', this.subscriber.subscribers.connect);
 	}
 
 	async disconnect() {

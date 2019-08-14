@@ -157,6 +157,8 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) throw new Error('Socket close.');
 
 		await this._initEchoApi();
+		console.log('ws index disconnect reconnect');
+		console.log('ws index connect reconnect');
 		return this._ws_rpc.reconnect();
 	}
 

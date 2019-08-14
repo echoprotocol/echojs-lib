@@ -1,4 +1,4 @@
-import { strictEqual, ok } from "assert";
+import { strictEqual, ok, fail } from "assert";
 
 /**
  * @param {() => Promise<any>} f

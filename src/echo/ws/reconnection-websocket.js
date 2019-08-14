@@ -112,6 +112,7 @@ class ReconnectionWebSocket {
 				this._setPingDelay();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
+
 				return true;
 			};
 
@@ -177,7 +178,9 @@ class ReconnectionWebSocket {
 		}
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
+		console.log('disconnect reconnect');
 		await this.connect(this.url, this._options);
+		console.log('connect reconnect');
 	}
 
 	/**

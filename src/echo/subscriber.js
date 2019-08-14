@@ -133,6 +133,18 @@ class Subscriber extends EventEmitter {
 
 	}
 
+	cbDisconnect() {
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
+		}
+	}
+
+	cbConnect() {
+		if (this.subscribers.connect.length) {
+			this.subscribers.connect.forEach((cb) => cb());
+		}
+	}
+
 	/**
 	 *  @method cancelAllSubscribers
 	 *
