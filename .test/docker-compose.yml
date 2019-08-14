@@ -3,15 +3,20 @@ version: "2"
 services:
   echo:
     image: echoprotocol/echo:v0.9.0-rc.1
-    command:  --testnet --start-echorand
+    command:
+      --start-echorand
       --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.7\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.8\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.9\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.10\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
-      --rpc-endpoint=0.0.0.0:6311 --plugins=registration --api-access=/echo/access.json
+      --rpc-endpoint=0.0.0.0:6311
+      --plugins=registration
+      --api-access=/echo/access.json
+      --genesis-json=genesis.json
+      -d datadir
     ports:
       - 6311:6311
     volumes:
-      - ./genesis.json:/echo/genesis_testnet.json
+      - ./genesis.json:/echo/genesis.json
       - ./access.json:/echo/access.json
