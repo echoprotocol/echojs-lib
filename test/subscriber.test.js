@@ -1,9 +1,9 @@
+import { deepStrictEqual, strictEqual } from 'assert';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { deepStrictEqual } from 'assert';
 
-import echo, { Echo, constants } from '../src';
 import { url, privateKey, accountId, contractId } from './_test-data';
+import { Echo, constants } from '../src';
 
 chai.use(spies);
 
@@ -29,40 +29,22 @@ describe('SUBSCRIBER', () => {
 
 	describe('_updateObject', () => {
 		describe('isOperationHistoryId', () => {
-			const options = {
-				fee: {
-					asset_id: '1.3.0'
-				},
-				registrar: accountId,
-				value: {
-					asset_id: '1.3.0',
-					amount: 0
-				},
-				code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
-				callee: contractId
-			};
-
 			it('save contractId and history in cache', async () => {
-				const checkHistory =  await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
-				expect(checkHistory).to.equal(undefined);
-
-				const tx = await echo.createTransaction();
-				await tx.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options);
-				await tx.addSigner(privateKey);
-				const txToCheck = await tx.broadcast();
-
+				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
+				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
+					registrar: accountId,
+					value: { asset_id: '1.3.0', amount: 0 },
+					code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
+					callee: contractId,
+				}).addSigner(privateKey).broadcast();
 				await new Promise((resolve) => setTimeout(() => resolve(), 100));
-				const history = await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
-				let objHistory;
-				history.map((a) => {
-					objHistory = a.toJS()
-				});
-
-				expect(objHistory.block_num).to.equal(txToCheck[0].block_num);
-				expect(deepStrictEqual(objHistory.result, txToCheck[0].trx.operation_results[0]));
-				expect(deepStrictEqual(objHistory.op, txToCheck[0].trx.operations[0]));
-				expect(deepStrictEqual(objHistory.extensions, txToCheck[0].trx.extensions));
-				expect(objHistory.trx_in_block).to.equal(txToCheck[0].trx_num);
+				const history = echo.subscriber.cache.contractHistoryByContractId.get(contractId);
+				const lastAddedHistory = history[history.length - 1].toJS();
+				strictEqual(lastAddedHistory.block_num, opRes.block_num);
+				deepStrictEqual(lastAddedHistory.result, opRes.trx.operation_results[0]);
+				deepStrictEqual(lastAddedHistory.op, opRes.trx.operations[0]);
+				deepStrictEqual(lastAddedHistory.extensions, opRes.trx.extensions);
+				strictEqual(lastAddedHistory.trx_in_block, opRes.trx_num);
 			}).timeout(10000);
 		});
 	});
