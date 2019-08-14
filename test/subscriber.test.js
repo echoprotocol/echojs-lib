@@ -1,15 +1,13 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
-import { strictEqual } from 'assert';
+import { deepStrictEqual } from 'assert';
 
 import echo, { Echo, constants } from '../src';
-
 import { url, privateKey, accountId, contractId } from './_test-data';
-
 
 chai.use(spies);
 
-describe.only('SUBSCRIBER', () => {
+describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
@@ -29,7 +27,7 @@ describe.only('SUBSCRIBER', () => {
 		);
 	});
 
-	describe.only('_updateObject', () => {
+	describe('_updateObject', () => {
 		describe('isOperationHistoryId', () => {
 			const options = {
 				fee: {
@@ -51,36 +49,23 @@ describe.only('SUBSCRIBER', () => {
 				const tx = await echo.createTransaction();
 				await tx.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options);
 				await tx.addSigner(privateKey);
-				const check2 = await tx.broadcast();
-				console.log('check!!!', check2);
+				const txToCheck = await tx.broadcast();
 
 				await new Promise((resolve) => setTimeout(() => resolve(), 100));
 				const history = await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
-				console.log('check', history.map((a) => a.toJS()));
+				let objHistory;
+				history.map((a) => {
+					objHistory = a.toJS()
+				});
 
-				expect(history[0].extensions).to.be.an('array').that.is.empty;
-				expect(history[0].block_num).to.equal(check2[0].block_num);
-
-				// echo.subscriber.setPendingTransactionSubscribe((result) => {
-					// expect(result).to.be.an('array').that.is.not.empty;
-					// expect(result[0]).to.be.an('object').that.is.not.empty;
-					// expect(result[0].type).to.be.a('number');
-					// expect(result[0].round).to.be.a('number');
-					//
-					// if (!isCalled) {
-					// 	done();
-					// 	isCalled = true;
-					// }
-				// }).then(() => {
-				// 	expect(echo.subscriber.subscriptions.transaction).to.be.true;
-				// 	expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.not.empty;
-				// 	done();
-				// });
+				expect(objHistory.block_num).to.equal(txToCheck[0].block_num);
+				expect(deepStrictEqual(objHistory.result, txToCheck[0].trx.operation_results[0]));
+				expect(deepStrictEqual(objHistory.op, txToCheck[0].trx.operations[0]));
+				expect(deepStrictEqual(objHistory.extensions, txToCheck[0].trx.extensions));
+				expect(objHistory.trx_in_block).to.equal(txToCheck[0].trx_num);
 			}).timeout(10000);
 		});
 	});
-
-
 
 	describe('echorand', () => {
         describe('setEchorandSubscribe', () => {
