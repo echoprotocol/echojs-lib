@@ -38,7 +38,7 @@ class Echo {
 				return;
 			}
 
-			await this._initModules();
+			await this._initModules(options);
 			this._ws.emit(STATUS.OPEN);
 
 			if (!options.store && this.store) {
