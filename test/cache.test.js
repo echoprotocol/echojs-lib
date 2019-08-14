@@ -78,7 +78,7 @@ describe('cache', () => {
     describe('cleaning', () => {
         const ws = new WS();
 
-        const blocksRounds = [250, 300, 350, 400, 450];
+        const blocksRounds = [1, 2, 3, 4, 5];
 
         const options = {
             apis: [
