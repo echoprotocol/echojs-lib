@@ -22,7 +22,14 @@ class ArrayType extends Type {
 	/** @param {Array<*>} value */
 	validate(value) {
 		if (!Array.isArray(value)) throw new Error('value is not an array');
-		for (const element of value) this.type.validate(element);
+		for (let i = 0; i < value.length; i += 1) {
+			try {
+				const element = value[i];
+				this.type.validate(element);
+			} catch (error) {
+				throw new Error(`array element with index ${i}: ${error.message}`);
+			}
+		}
 	}
 
 	/**

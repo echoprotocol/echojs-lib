@@ -4,9 +4,11 @@ import serializable from './serializable';
 import { ACCOUNT, ASSET, CONTRACT } from '../constants/object-types';
 
 import {
+	array,
 	empty,
 	int64,
 	map,
+	optional,
 	protocolId,
 	publicKey,
 	set,
@@ -22,6 +24,7 @@ import {
 export { default as predicate } from './predicate';
 export { default as vestingPolicyInitializer } from './vesting-policy';
 
+export const extensions = optional(array(empty));
 export const operationWrapper = staticVariant({});
 export const asset = serializable({ amount: int64, asset_id: protocolId(ASSET) });
 export const price = serializable({ base: asset, quote: asset });
@@ -37,7 +40,7 @@ export const accountOptions = serializable({
 	delegating_account: protocolId(ACCOUNT),
 	num_committee: uint16,
 	votes: set(voteId),
-	extensions: set(empty),
+	extensions,
 });
 
 export const assetOptions = serializable({
@@ -52,7 +55,7 @@ export const assetOptions = serializable({
 	whitelist_markets: set(protocolId(ASSET)),
 	blacklist_markets: set(protocolId(ASSET)),
 	description: string,
-	extensions: set(empty),
+	extensions,
 });
 
 export const bitassetOptions = serializable({
@@ -62,7 +65,7 @@ export const bitassetOptions = serializable({
 	force_settlement_offset_percent: uint16,
 	maximum_force_settlement_volume: uint16,
 	short_backing_asset: protocolId(ASSET),
-	extensions: set(empty),
+	extensions,
 });
 
 export const priceFeed = serializable({
@@ -132,5 +135,5 @@ export const chainParameters = serializable({
 	echorand_config: echorandConfig,
 	sidechain_config: sidechainConfig,
 	gas_price: gasPrice,
-	extensions: set(empty),
+	extensions,
 });

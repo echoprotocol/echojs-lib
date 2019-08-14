@@ -1,4 +1,2 @@
-export default {
-	ADDRESS_PREFIX: 'ECHO',
-	LENGTH_DECODE_PUBLIC_KEY: 32,
-};
+export const ADDRESS_PREFIX = 'ECHO';
+export const LENGTH_DECODE_PUBLIC_KEY = 32;

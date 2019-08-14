@@ -33,9 +33,7 @@ import { operationById } from './operations';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
-import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
-import * as ApiConfig from '../constants/api-config';
-import * as CacheMaps from '../constants/cache-maps';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
 import transaction, { signedTransaction } from '../serializer/transaction-type';
 import { PublicKey } from '../crypto';
 
@@ -480,10 +478,10 @@ import { PublicKey } from '../crypto';
 class API {
 
 	/**
-     *
-     * @param {Cache} cache
-     * @param {WSAPI} wsApi
-     */
+	 *
+	 * @param {Cache} cache
+	 * @param {WSAPI} wsApi
+	 */
 	constructor(cache, wsApi) {
 		this.cache = cache;
 		this.wsApi = wsApi;
@@ -491,13 +489,13 @@ class API {
 
 	/**
 	 *
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getConfigurations(cacheName, methodName, force = false) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName];
@@ -521,16 +519,16 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Array} array
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @return {Promise.<Array.<Object>>}
-     * @private
-     */
+	 *
+	 * @param {Array} array
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {Array} cacheParams
+	 *
+	 * @return {Promise.<Array.<Object>>}
+	 * @private
+	 */
 	async _getArrayDataWithMultiSave(array, cacheName, methodName, force = false, cacheParams = []) {
 		const { length } = array;
 
@@ -590,15 +588,15 @@ class API {
 
 	/**
 	 *
-     * @param {*} key
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {Array} cacheParams
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 * @param {*} key
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {Array} cacheParams
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getSingleDataWithMultiSave(key, cacheName, methodName, force = false, cacheParams = []) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
@@ -627,16 +625,16 @@ class API {
 	}
 
 	/**
-     *
-     * @param {String} key
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @param {...Array} params
-     *
-     * @return {Promise.<Object>}
-     * @private
-     */
+	 *
+	 * @param {String} key
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @param {...Array} params
+	 *
+	 * @return {Promise.<Object>}
+	 * @private
+	 */
 	async _getSingleDataByCompositeParams(key, cacheName, methodName, force = false, ...params) {
 		if (!force) {
 			const cacheValue = this.cache[cacheName].get(key);
@@ -664,11 +662,11 @@ class API {
 
 	/**
 	 *
-     * @param {Map} requestedObject
-     * @param {Boolean} force
-     * @return {Promise.<Asset>}
-     * @private
-     */
+	 * @param {Map} requestedObject
+	 * @param {Boolean} force
+	 * @return {Promise.<Asset>}
+	 * @private
+	 */
 	async _addAssetExtraFields(requestedObject, force = false) {
 		const bitAssetId = requestedObject.get('bitasset_data_id');
 		const dynamicAssetDataId = requestedObject.get('dynamic_asset_data_id');
@@ -678,7 +676,7 @@ class API {
 			if (bitasset) {
 				requestedObject = requestedObject.set('bitasset', fromJS(bitasset));
 				if (!this.cache.bitAssetIdToAssetId.get(bitAssetId)) {
-					this.cache.setInMap(CacheMaps.BIT_ASSET_ID_TO_ASSET_ID, bitAssetId, requestedObject.get('id'));
+					this.cache.setInMap(CACHE_MAPS.BIT_ASSET_ID_TO_ASSET_ID, bitAssetId, requestedObject.get('id'));
 				}
 			}
 		}
@@ -689,7 +687,7 @@ class API {
 				requestedObject = requestedObject.set('dynamic', fromJS(dynamicAssetData));
 				if (!this.cache.dynamicIdToAssetId.get(dynamicAssetDataId)) {
 					this.cache
-						.setInMap(CacheMaps.DYNAMIC_ID_TO_ASSET_ID, dynamicAssetDataId, requestedObject.get('id'));
+						.setInMap(CACHE_MAPS.DYNAMIC_ID_TO_ASSET_ID, dynamicAssetDataId, requestedObject.get('id'));
 				}
 
 			}
@@ -698,14 +696,14 @@ class API {
 	}
 
 	/**
-     *
-     * @param {Map} account
-     * @param {Number} limit
-     * @return {Promise.<FullAccount>}
-     * @private
-     */
-	async _addHistory(account, limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
-		const start = ApiConfig.START_OPERATION_HISTORY_ID;
+	 *
+	 * @param {Map} account
+	 * @param {Number} limit
+	 * @return {Promise.<FullAccount>}
+	 * @private
+	 */
+	async _addHistory(account, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
+		const start = API_CONFIG.START_OPERATION_HISTORY_ID;
 		let stop = start;
 
 		let history = account.get('history');
@@ -731,13 +729,13 @@ class API {
 
 	/**
 	 *
-     * @param {Array} array
-     * @param {String} cacheName
-     * @param {String} methodName
-     * @param {Boolean} force
-     * @return {Promise.<Array.<*>>}
-     * @private
-     */
+	 * @param {Array} array
+	 * @param {String} cacheName
+	 * @param {String} methodName
+	 * @param {Boolean} force
+	 * @return {Promise.<Array.<*>>}
+	 * @private
+	 */
 	async _getObjectsById(array, cacheName, methodName, force = false) {
 		const { length } = array;
 
@@ -788,36 +786,36 @@ class API {
 				if (isAccountId(key)) {
 					const nameKey = requestedObject.get('name');
 
-					this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, key, requestedObject)
-						.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, key);
+					this.cache.setInMap(CACHE_MAPS.ACCOUNTS_BY_ID, key, requestedObject)
+						.setInMap(CACHE_MAPS.ACCOUNTS_BY_NAME, nameKey, key);
 
 				} else if (isAssetId(key)) {
 					const nameKey = requestedObject.get('symbol');
 
 					requestedObject = await this._addAssetExtraFields(requestedObject, force);
 
-					this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, key, requestedObject)
-						.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+					this.cache.setInMap(CACHE_MAPS.ASSET_BY_ASSET_ID, key, requestedObject)
+						.setInMap(CACHE_MAPS.ASSET_BY_SYMBOL, nameKey, requestedObject);
 
 				} else if (isDynamicGlobalObjectId(key)) {
-					this.cache.set(CacheMaps.DYNAMIC_GLOBAL_PROPERTIES, requestedObject);
+					this.cache.set(CACHE_MAPS.DYNAMIC_GLOBAL_PROPERTIES, requestedObject);
 				} else if (isCommitteeMemberId(key)) {
 
 					const accountId = requestedObject.get('committee_member_account');
 					const voteId = requestedObject.get('vote_id');
 
-					this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, voteId, requestedObject)
-						.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
-						.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
+					this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_VOTE_ID, voteId, requestedObject)
+						.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
+						.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, key, requestedObject);
 
 				} else if (isBitAssetId(key)) {
 
-					this.cache.setInMap(CacheMaps.BIT_ASSETS_BY_BIT_ASSET_ID, key, requestedObject);
+					this.cache.setInMap(CACHE_MAPS.BIT_ASSETS_BY_BIT_ASSET_ID, key, requestedObject);
 
 				} else if (isDynamicAssetDataId(key)) {
 
 					this.cache
-						.setInMap(CacheMaps.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
+						.setInMap(CACHE_MAPS.DYNAMIC_ASSET_DATA_BY_DYNAMIC_ASSET_DATA_ID, key, requestedObject);
 
 				}
 
@@ -832,12 +830,12 @@ class API {
 	}
 
 	/**
-     *  @method getObjects
-     *  @param  {Array<String>} objectIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Object>>}
-     */
+	 *  @method getObjects
+	 *  @param  {Array<String>} objectIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Object>>}
+	 */
 	getObjects(objectIds, force = false) {
 		if (!isArray(objectIds)) return Promise.reject(new Error('ObjectIds should be a array'));
 		if (!objectIds.every((id) => isObjectId(id))) {
@@ -845,16 +843,16 @@ class API {
 		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getObjectsById(objectIds, CacheMaps.OBJECTS_BY_ID, 'getObjects', force);
+		return this._getObjectsById(objectIds, CACHE_MAPS.OBJECTS_BY_ID, 'getObjects', force);
 	}
 
 	/**
-     *  @method getObject
-     *  @param  {String} objectId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getObject
+	 *  @param  {String} objectId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	async getObject(objectId, force = false) {
 		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -864,11 +862,11 @@ class API {
 
 	/**
 	 *
-     * 	@param {String} bitAssetId
-     *  @param {Boolean} force
-     * 	@return  {Promise.<Object>}
-     * 	@private
-     */
+	 * 	@param {String} bitAssetId
+	 *  @param {Boolean} force
+	 * 	@return  {Promise.<Object>}
+	 * 	@private
+	 */
 	getBitAssetData(bitAssetId, force = false) {
 		if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
@@ -878,12 +876,12 @@ class API {
 
 
 	/**
-     *
-     * 	@param {String} dynamicAssetDataId
-     *  @param {Boolean} force
-     * 	@return  {Promise.<Object>}
-     * 	@private
-     */
+	 *
+	 * 	@param {String} dynamicAssetDataId
+	 *  @param {Boolean} force
+	 * 	@return  {Promise.<Object>}
+	 * 	@private
+	 */
 	getDynamicAssetData(dynamicAssetDataId, force = false) {
 		if (!isDynamicAssetDataId(dynamicAssetDataId)) {
 			return Promise.reject(new Error('Bit dynamic asset data id is invalid'));
@@ -894,42 +892,42 @@ class API {
 	}
 
 	/**
-     *  @method getBlockHeader
-     *  @param  {Number} blockNum
-     *
-     *  @return {
-     *  	Promise.<BlockHeader>
-     *  }
-     */
+	 *  @method getBlockHeader
+	 *  @param  {Number} blockNum
+	 *
+	 *  @return {
+	 *  	Promise.<BlockHeader>
+	 *  }
+	 */
 	getBlockHeader(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
-		return this._getSingleDataWithMultiSave(blockNum, CacheMaps.BLOCK_HEADERS_BY_BLOCK_NUMBER, 'getBlockHeader');
+		return this._getSingleDataWithMultiSave(blockNum, CACHE_MAPS.BLOCK_HEADERS_BY_BLOCK_NUMBER, 'getBlockHeader');
 	}
 
 	/**
-     *  @method getBlock
-     *  @param  {Number} blockNum
-     *
-     *  @return {
-     *  	Promise.<Block>
-     *  }
-     */
+	 *  @method getBlock
+	 *  @param  {Number} blockNum
+	 *
+	 *  @return {
+	 *  	Promise.<Block>
+	 *  }
+	 */
 	getBlock(blockNum) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
-		return this._getSingleDataWithMultiSave(blockNum, CacheMaps.BLOCKS, 'getBlock');
+		return this._getSingleDataWithMultiSave(blockNum, CACHE_MAPS.BLOCKS, 'getBlock');
 	}
 
 	/**
-     *  @method getTransaction
-     *  @param  {Number} blockNum
-     *  @param  {Number} transactionIndex
-     *
-     *  @return {
-     *  	Promise.<Transaction>
-     *  }
-     */
+	 *  @method getTransaction
+	 *  @param  {Number} blockNum
+	 *  @param  {Number} transactionIndex
+	 *
+	 *  @return {
+	 *  	Promise.<Transaction>
+	 *  }
+	 */
 	getTransaction(blockNum, transactionIndex) {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 		if (!isUInt64(transactionIndex)) {
@@ -940,7 +938,7 @@ class API {
 
 		return this._getSingleDataByCompositeParams(
 			key,
-			CacheMaps.TRANSACTIONS_BY_BLOCK_AND_INDEX,
+			CACHE_MAPS.TRANSACTIONS_BY_BLOCK_AND_INDEX,
 			'getTransaction',
 			false,
 			blockNum,
@@ -949,57 +947,57 @@ class API {
 	}
 
 	/**
-     *  @method getChainProperties
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<ChainProperties>
-     * 	}
-     */
+	 *  @method getChainProperties
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<ChainProperties>
+	 * 	}
+	 */
 	getChainProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getConfigurations(CacheMaps.CHAIN_PROPERTIES, 'getChainProperties', force);
+		return this._getConfigurations(CACHE_MAPS.CHAIN_PROPERTIES, 'getChainProperties', force);
 	}
 
 	/**
-     *  @method getGlobalProperties
-     *
-     *  @return {
-     *  	Promise.<GlobalProperties>
-     *  }
-     */
+	 *  @method getGlobalProperties
+	 *
+	 *  @return {
+	 *  	Promise.<GlobalProperties>
+	 *  }
+	 */
 	getGlobalProperties(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getConfigurations(CacheMaps.GLOBAL_PROPERTIES, 'getGlobalProperties', force);
+		return this._getConfigurations(CACHE_MAPS.GLOBAL_PROPERTIES, 'getGlobalProperties', force);
 	}
 
 	/**
-     *  @method getConfig
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Config>
-     *  }
-     */
+	 *  @method getConfig
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Config>
+	 *  }
+	 */
 	async getConfig(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getConfigurations(CacheMaps.CONFIG, 'getConfig', force);
+		return this._getConfigurations(CACHE_MAPS.CONFIG, 'getConfig', force);
 	}
 
 	/**
-     *  @method getChainId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<String>}
-     */
+	 *  @method getChainId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<String>}
+	 */
 	async getChainId(force = false) {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		if (!force) {
-			const cacheValue = this.cache[CacheMaps.CHAIN_ID];
+			const cacheValue = this.cache[CACHE_MAPS.CHAIN_ID];
 
 			if (cacheValue) {
 				return cacheValue;
@@ -1009,7 +1007,7 @@ class API {
 		try {
 			const requestedObject = await this.wsApi.database.getChainId();
 
-			this.cache.set(CacheMaps.CHAIN_ID, requestedObject);
+			this.cache.set(CACHE_MAPS.CHAIN_ID, requestedObject);
 
 			return requestedObject;
 		} catch (error) {
@@ -1018,12 +1016,12 @@ class API {
 	}
 
 	/**
-     *  @method getDynamicGlobalProperties
-     *
-     *  @return {
-     *  	Promise.<DynamicGlobalProperties>
-     *  }
-     */
+	 *  @method getDynamicGlobalProperties
+	 *
+	 *  @return {
+	 *  	Promise.<DynamicGlobalProperties>
+	 *  }
+	 */
 	async getDynamicGlobalProperties(force = false) {
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
 
@@ -1031,12 +1029,12 @@ class API {
 	}
 
 	/**
-     *  @method getKeyReferences
-     *  @param  {Array<String|PublicKey>} keys [public keys]
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<*>>}
-     */
+	 *  @method getKeyReferences
+	 *  @param  {Array<String|PublicKey>} keys [public keys]
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<*>>}
+	 */
 	getKeyReferences(keys, force = false) {
 		if (!isArray(keys)) return Promise.reject(new Error('Keys should be a array'));
 		keys = keys.map((value) => ((value instanceof PublicKey) ? value.toString() : value));
@@ -1045,16 +1043,16 @@ class API {
 		}
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
-		return this._getArrayDataWithMultiSave(keys, CacheMaps.ACCOUNTS_ID_BY_KEY, 'getKeyReferences', force);
+		return this._getArrayDataWithMultiSave(keys, CACHE_MAPS.ACCOUNTS_ID_BY_KEY, 'getKeyReferences', force);
 	}
 
 	/**
-     *  @method getAccounts
-     *  @param  {Array<String>} accountIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Account>>}
-     */
+	 *  @method getAccounts
+	 *  @param  {Array<String>} accountIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Account>>}
+	 */
 	async getAccounts(accountIds, force = false) {
 		if (!isArray(accountIds)) throw new Error('Account ids should be an array');
 		if (!accountIds.every((id) => isAccountId(id))) throw new Error('Accounts should contain valid account ids');
@@ -1108,9 +1106,9 @@ class API {
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('name');
 
-				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+				this.cache.setInMap(CACHE_MAPS.ACCOUNTS_BY_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
 			return resultArray;
@@ -1120,13 +1118,13 @@ class API {
 	}
 
 	/**
-     *  @method getFullAccounts
-     *  @param  {Array<String>} accountNamesOrIds
-     *  @param  {Boolean} subscribe
-     *  @param 	{Boolean} force
-     *
-     *  @return {Promise.<Array.<FullAccount>>}
-     */
+	 *  @method getFullAccounts
+	 *  @param  {Array<String>} accountNamesOrIds
+	 *  @param  {Boolean} subscribe
+	 *  @param 	{Boolean} force
+	 *
+	 *  @return {Promise.<Array.<FullAccount>>}
+	 */
 	async getFullAccounts(accountNamesOrIds, subscribe = true, force = false) {
 		if (!isArray(accountNamesOrIds)) {
 			throw new Error('Account names or ids should be an array');
@@ -1220,10 +1218,10 @@ class API {
 				const nameKey = requestedObject.get('name');
 				const idKey = requestedObject.get('id');
 
-				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, immutableAccount)
-					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, immutableAccount)
-					.setInMap(CacheMaps.FULL_ACCOUNTS, idKey, requestedObject)
-					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+				this.cache.setInMap(CACHE_MAPS.ACCOUNTS_BY_ID, idKey, immutableAccount)
+					.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, immutableAccount)
+					.setInMap(CACHE_MAPS.FULL_ACCOUNTS, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
 			return resultArray;
@@ -1233,12 +1231,12 @@ class API {
 	}
 
 	/**
-     *  @method getAccountByName
-     *  @param  {String} accountName
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Account>}
-     */
+	 *  @method getAccountByName
+	 *  @param  {String} accountName
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Account>}
+	 */
 	async getAccountByName(accountName, force = false) {
 		if (!isAccountName(accountName)) throw new Error('Account name is invalid');
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
@@ -1263,9 +1261,9 @@ class API {
 			const idKey = requestedObject.id;
 			const nameKey = requestedObject.name;
 
-			this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, fromJS(requestedObject))
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, fromJS(requestedObject))
-				.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+			this.cache.setInMap(CACHE_MAPS.ACCOUNTS_BY_ID, idKey, fromJS(requestedObject))
+				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, fromJS(requestedObject))
+				.setInMap(CACHE_MAPS.ACCOUNTS_BY_NAME, nameKey, idKey);
 
 			return requestedObject;
 		} catch (error) {
@@ -1274,31 +1272,31 @@ class API {
 	}
 
 	/**
-     *  @method getAccountReferences
-     *  @param  {String} accountId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getAccountReferences
+	 *  @param  {String} accountId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getAccountReferences(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this._getSingleDataWithMultiSave(
 			accountId,
-			CacheMaps.ACCOUNT_REFERENCES_BY_ACCOUNT_ID,
+			CACHE_MAPS.ACCOUNT_REFERENCES_BY_ACCOUNT_ID,
 			'getAccountReferences',
 			force,
 		);
 	}
 
 	/**
-     *  @method lookupAccountNames
-     *  @param  {Array<String>} accountNames
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Account>>}
-     */
+	 *  @method lookupAccountNames
+	 *  @param  {Array<String>} accountNames
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Account>>}
+	 */
 	async lookupAccountNames(accountNames, force = false) {
 		if (!isArray(accountNames)) throw new Error('Account names should be an array');
 		if (!accountNames.every((id) => isAccountName(id))) {
@@ -1351,9 +1349,9 @@ class API {
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('name');
 
-				this.cache.setInMap(CacheMaps.ACCOUNTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.ACCOUNTS_BY_NAME, nameKey, idKey);
+				this.cache.setInMap(CACHE_MAPS.ACCOUNTS_BY_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.ACCOUNTS_BY_NAME, nameKey, idKey);
 			}
 
 			return resultArray;
@@ -1366,38 +1364,38 @@ class API {
 	/** @typedef {String} AccountId */
 
 	/**
-     *  @method lookupAccounts
-     *  @param  {String} lowerBoundName
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<Array<AccountName, AccountId>>}
-     */
-	async lookupAccounts(lowerBoundName, limit = ApiConfig.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
+	 *  @method lookupAccounts
+	 *  @param  {String} lowerBoundName
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<Array<AccountName, AccountId>>}
+	 */
+	async lookupAccounts(lowerBoundName, limit = API_CONFIG.LOOKUP_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('Lower bound name should be a string');
-		if (!isUInt64(limit) || limit > ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.LOOKUP_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
 		}
 
 		return this.wsApi.database.lookupAccounts(lowerBoundName, limit);
 	}
 
 	/**
-     *  @method getAccountCount
-     *
-     *  @return {Promise<Number>}
-     */
+	 *  @method getAccountCount
+	 *
+	 *  @return {Promise<Number>}
+	 */
 	getAccountCount() {
 		return this.wsApi.database.getAccountCount();
 	}
 
 	/**
-     *  @method getAccountBalances
-     *  @param  {String} accountId
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getAccountBalances
+	 *  @param  {String} accountId
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getAccountBalances(accountId, assetIds, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -1408,7 +1406,7 @@ class API {
 
 		return this._getSingleDataByCompositeParams(
 			accountId,
-			CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_ID,
+			CACHE_MAPS.ACCOUNTS_BALANCE_BY_ACCOUNT_ID,
 			'getAccountBalances',
 			force,
 			accountId,
@@ -1417,13 +1415,13 @@ class API {
 	}
 
 	/**
-     *  @method getNamedAccountBalances
-     *  @param  {String} accountName
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getNamedAccountBalances
+	 *  @param  {String} accountName
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	getNamedAccountBalances(accountName, assetIds, force = false) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name is invalid'));
 		if (!isArray(assetIds)) return Promise.reject(new Error('Asset ids should be an array'));
@@ -1434,7 +1432,7 @@ class API {
 
 		return this._getSingleDataByCompositeParams(
 			accountName,
-			CacheMaps.ACCOUNTS_BALANCE_BY_ACCOUNT_NAME,
+			CACHE_MAPS.ACCOUNTS_BALANCE_BY_ACCOUNT_NAME,
 			'getNamedAccountBalances',
 			force,
 			accountName,
@@ -1443,11 +1441,11 @@ class API {
 	}
 
 	/**
-     *  @method getVestedBalances
-     *  @param  {Array<String>} balanceIds
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getVestedBalances
+	 *  @param  {Array<String>} balanceIds
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getVestedBalances(balanceIds) {
 		if (!isArray(balanceIds)) throw new Error('Balance ids should be an array');
 		if (!balanceIds.every((id) => isBalanceId(id))) throw new Error('Balance ids should contain valid balance ids');
@@ -1456,11 +1454,11 @@ class API {
 	}
 
 	/**
-     *  @method getVestingBalances
-     *  @param  {String} accountId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getVestingBalances
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getVestingBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
@@ -1468,12 +1466,12 @@ class API {
 	}
 
 	/**
-     *  @method getAssets
-     *  @param  {Array<String>} assetIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
+	 *  @method getAssets
+	 *  @param  {Array<String>} assetIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
 	async getAssets(assetIds, force = false) {
 		if (!isArray(assetIds)) throw new Error('Asset ids should be an array');
 		if (!assetIds.every((id) => isAssetId(id))) throw new Error('Assets ids should contain valid asset ids');
@@ -1528,9 +1526,9 @@ class API {
 				const idKey = requestedObject.get('id');
 				const nameKey = requestedObject.get('symbol');
 
-				this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-					.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+				this.cache.setInMap(CACHE_MAPS.ASSET_BY_ASSET_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, requestedObject)
+					.setInMap(CACHE_MAPS.ASSET_BY_SYMBOL, nameKey, requestedObject);
 			}
 
 			return resultArray;
@@ -1541,28 +1539,28 @@ class API {
 	}
 
 	/**
-     *  @method listAssets
-     *  @param  {String} lowerBoundSymbol
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
-	async listAssets(lowerBoundSymbol, limit = ApiConfig.LIST_ASSETS_DEFAULT_LIMIT) {
+	 *  @method listAssets
+	 *  @param  {String} lowerBoundSymbol
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
+	async listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.LIST_ASSETS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${ApiConfig.LIST_ASSETS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
+			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
 		}
 
 		return this.wsApi.database.listAssets(lowerBoundSymbol, limit);
 	}
 
 	/**
-     *  @method lookupAssetSymbols
-     *  @param  {Array<String>} symbolsOrIds
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array.<Asset>>}
-     */
+	 *  @method lookupAssetSymbols
+	 *  @param  {Array<String>} symbolsOrIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Array.<Asset>>}
+	 */
 	async lookupAssetSymbols(symbolsOrIds, force = false) {
 		if (!isArray(symbolsOrIds)) return Promise.reject(new Error('Symbols or ids should be an array'));
 		if (!symbolsOrIds.every((key) => isAssetId(key) || isAssetName(key))) {
@@ -1623,40 +1621,40 @@ class API {
 			const idKey = requestedObject.get('id');
 			const nameKey = requestedObject.get('symbol');
 
-			this.cache.setInMap(CacheMaps.ASSET_BY_ASSET_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, idKey, requestedObject)
-				.setInMap(CacheMaps.ASSET_BY_SYMBOL, nameKey, requestedObject);
+			this.cache.setInMap(CACHE_MAPS.ASSET_BY_ASSET_ID, idKey, requestedObject)
+				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, idKey, requestedObject)
+				.setInMap(CACHE_MAPS.ASSET_BY_SYMBOL, nameKey, requestedObject);
 		}
 
 		return resultArray;
 	}
 
 	/**
-     *  @method getOrderBook
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *  @param  {Number} depth
-     *
-     *  @return {Promise.<*>}
-     */
-	async getOrderBook(baseAssetName, quoteAssetName, depth = ApiConfig.ORDER_BOOK_DEFAULT_DEPTH) {
+	 *  @method getOrderBook
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *  @param  {Number} depth
+	 *
+	 *  @return {Promise.<*>}
+	 */
+	async getOrderBook(baseAssetName, quoteAssetName, depth = API_CONFIG.ORDER_BOOK_DEFAULT_DEPTH) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
-		if (!isUInt64(depth) || depth > ApiConfig.ORDER_BOOK_MAX_DEPTH) {
-			throw new Error(`Depth should be a integer and must not exceed ${ApiConfig.ORDER_BOOK_MAX_DEPTH}`);
+		if (!isUInt64(depth) || depth > API_CONFIG.ORDER_BOOK_MAX_DEPTH) {
+			throw new Error(`Depth should be a integer and must not exceed ${API_CONFIG.ORDER_BOOK_MAX_DEPTH}`);
 		}
 
 		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
 	}
 
 	/**
-     *  @method getLimitOrders
-     *  @param  {String} baseAssetId
-     *  @param  {String} quoteAssetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getLimitOrders
+	 *  @param  {String} baseAssetId
+	 *  @param  {String} quoteAssetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getLimitOrders(baseAssetId, quoteAssetId, limit) {
 		if (!isAssetId(baseAssetId)) throw new Error('Base asset id is invalid');
 		if (!isAssetId(quoteAssetId)) throw new Error('Quote asset id is invalid');
@@ -1666,12 +1664,12 @@ class API {
 	}
 
 	/**
-     *  @method getCallOrders
-     *  @param  {String} assetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getCallOrders
+	 *  @param  {String} assetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getCallOrders(assetId, limit) {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
@@ -1680,12 +1678,12 @@ class API {
 	}
 
 	/**
-     *  @method getSettleOrders
-     *  @param  {String} assetId
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getSettleOrders
+	 *  @param  {String} assetId
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getSettleOrders(assetId, limit) {
 		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
 		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
@@ -1694,11 +1692,11 @@ class API {
 	}
 
 	/**
-     *  @method getMarginPositions
-     *  @param  {String} accountId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getMarginPositions
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getMarginPositions(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 
@@ -1706,13 +1704,13 @@ class API {
 	}
 
 	/**
-     *  @method getTicker
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTicker
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTicker(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
@@ -1721,13 +1719,13 @@ class API {
 	}
 
 	/**
-     *  @method get24Volume
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method get24Volume
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async get24Volume(baseAssetName, quoteAssetName) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
@@ -1736,44 +1734,44 @@ class API {
 	}
 
 	/**
-     *  @method getTradeHistory
-     *
-     *  @param  {String} baseAssetName
-     *  @param  {String} quoteAssetName
-     *  @param  {Number} start
-     *  @param  {Number} stop
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTradeHistory
+	 *
+	 *  @param  {String} baseAssetName
+	 *  @param  {String} quoteAssetName
+	 *  @param  {Number} start
+	 *  @param  {Number} stop
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTradeHistory(
 		baseAssetName,
 		quoteAssetName,
 		start,
 		stop,
-		limit = ApiConfig.GET_TRADE_HISTORY_DEFAULT_LIMIT,
+		limit = API_CONFIG.GET_TRADE_HISTORY_DEFAULT_LIMIT,
 	) {
 		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
 		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
 		if (!isUInt64(start)) throw new Error('Start should be UNIX timestamp');
 		if (!isUInt64(stop)) throw new Error('Stop should be UNIX timestamp');
-		if (!isUInt64(limit) || limit > ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.GET_TRADE_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.GET_TRADE_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.GET_TRADE_HISTORY_MAX_LIMIT}`);
 		}
 
 		return this.wsApi.database.getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit);
 	}
 
 	/**
-     *  @method getCommitteeMembers
-     *
-     *  @param  {Array<String>} committeeMemberIds
-     *  @param {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Array.<Committee>>
-     *  }
-     */
+	 *  @method getCommitteeMembers
+	 *
+	 *  @param  {Array<String>} committeeMemberIds
+	 *  @param {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<Committee>>
+	 *  }
+	 */
 	getCommitteeMembers(committeeMemberIds, force = false) {
 		if (!isArray(committeeMemberIds)) return Promise.reject(new Error('CommitteeMemberIds ids should be an array'));
 		if (!committeeMemberIds.every((id) => isCommitteeMemberId(id))) {
@@ -1782,14 +1780,14 @@ class API {
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		const cacheParams = [
-			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
-			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
-			{ param: 'committee_member_account', cache: CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID },
+			{ param: 'id', cache: CACHE_MAPS.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CACHE_MAPS.OBJECTS_BY_VOTE_ID },
+			{ param: 'committee_member_account', cache: CACHE_MAPS.COMMITTEE_MEMBERS_BY_ACCOUNT_ID },
 		];
 
 		return this._getArrayDataWithMultiSave(
 			committeeMemberIds,
-			CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID,
+			CACHE_MAPS.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID,
 			'getCommitteeMembers',
 			force,
 			cacheParams,
@@ -1797,26 +1795,26 @@ class API {
 	}
 
 	/**
-     *  @method getCommitteeMemberByAccount
-     *
-     *  @param  {String} accountId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Committee>}
-     */
+	 *  @method getCommitteeMemberByAccount
+	 *
+	 *  @param  {String} accountId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Committee>}
+	 */
 	getCommitteeMemberByAccount(accountId, force = false) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		const cacheParams = [
-			{ param: 'id', cache: CacheMaps.OBJECTS_BY_ID },
-			{ param: 'vote_id', cache: CacheMaps.OBJECTS_BY_VOTE_ID },
-			{ param: 'id', cache: CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID },
+			{ param: 'id', cache: CACHE_MAPS.OBJECTS_BY_ID },
+			{ param: 'vote_id', cache: CACHE_MAPS.OBJECTS_BY_VOTE_ID },
+			{ param: 'id', cache: CACHE_MAPS.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID },
 		];
 
 		return this._getSingleDataWithMultiSave(
 			accountId,
-			CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID,
+			CACHE_MAPS.COMMITTEE_MEMBERS_BY_ACCOUNT_ID,
 			'getCommitteeMemberByAccount',
 			force,
 			cacheParams,
@@ -1824,35 +1822,35 @@ class API {
 	}
 
 	/**
-     *  @method lookupCommitteeMemberAccounts
-     *
-     *  @param  {String} lowerBoundName
-     *  @param  {Number} limit
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method lookupCommitteeMemberAccounts
+	 *
+	 *  @param  {String} lowerBoundName
+	 *  @param  {Number} limit
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async lookupCommitteeMemberAccounts(
 		lowerBoundName,
-		limit = ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
+		limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
 	) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
 		}
 
 		return this.wsApi.database.lookupCommitteeMemberAccounts(lowerBoundName, limit);
 	}
 
 	/**
-     *  @method lookupVoteIds
-     *
-     *  @param  {Array<String>} votes
-     *  @param  {Boolean} force
-     *
-     *  @return {
-     *  	Promise.<Array.<Vote>>
-     *  }
-     */
+	 *  @method lookupVoteIds
+	 *
+	 *  @param  {Array<String>} votes
+	 *  @param  {Boolean} force
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<Vote>>
+	 *  }
+	 */
 	async lookupVoteIds(votes, force = false) {
 		if (!isArray(votes)) throw new Error('Votes should be an array');
 		if (!votes.every((id) => isVoteId(id))) throw new Error('Votes should contain valid vote_id_type ids');
@@ -1868,7 +1866,7 @@ class API {
 			for (let i = 0; i < length; i += 1) {
 				const key = votes[i];
 
-				const cacheValue = this.cache[CacheMaps.OBJECTS_BY_VOTE_ID].get(key);
+				const cacheValue = this.cache[CACHE_MAPS.OBJECTS_BY_VOTE_ID].get(key);
 
 				if (cacheValue) {
 					resultArray[i] = cacheValue.toJS();
@@ -1901,15 +1899,15 @@ class API {
 			requestedObject = new Map(requestedObject);
 			const id = requestedObject.get('id');
 
-			this.cache.setInMap(CacheMaps.OBJECTS_BY_VOTE_ID, key, requestedObject)
-				.setInMap(CacheMaps.OBJECTS_BY_ID, id, requestedObject);
+			this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_VOTE_ID, key, requestedObject)
+				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, requestedObject);
 
 			if (requestedObject.has('committee_member_account')) {
 
 				const accountId = requestedObject.get('committee_member_account');
 
-				this.cache.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
-					.setInMap(CacheMaps.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, id, requestedObject);
+				this.cache.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
+					.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, id, requestedObject);
 
 			}
 
@@ -1920,12 +1918,12 @@ class API {
 	}
 
 	/**
-     *  @method getTransactionHex
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getTransactionHex
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getTransactionHex(tr) {
 		transaction.validate(tr);
 		// transaction is signed
@@ -1933,13 +1931,13 @@ class API {
 	}
 
 	/**
-     *  @method getRequiredSignatures
-     *
-     *  @param  {Object} tr
-     *  @param  {Array<String>} availableKeys [public keys]
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getRequiredSignatures
+	 *
+	 *  @param  {Object} tr
+	 *  @param  {Array<String>} availableKeys [public keys]
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getRequiredSignatures(tr, availableKeys) {
 		transaction.validate(tr);
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
@@ -1951,37 +1949,37 @@ class API {
 	}
 
 	/**
-     *  @method getPotentialSignatures
-     *
-     *  @param  {Object} transaction
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getPotentialSignatures
+	 *
+	 *  @param  {Object} transaction
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getPotentialSignatures(tr) {
 		transaction.validate(tr);
 		return this.wsApi.database.getPotentialSignatures(tr);
 	}
 
 	/**
-     *  @method verifyAuthority
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method verifyAuthority
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async verifyAuthority(tr) {
 		transaction.validate(tr);
 		return this.wsApi.database.verifyAuthority(tr);
 	}
 
 	/**
-     *  @method verifyAccountAuthority
-     *
-     *  @param  {Object} accountNameOrId
-     *  @param  {Array<String>} signers [public keys]
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method verifyAccountAuthority
+	 *
+	 *  @param  {Object} accountNameOrId
+	 *  @param  {Array<String>} signers [public keys]
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async verifyAccountAuthority(accountNameOrId, signers) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
 			throw new Error('Account name or id is invalid');
@@ -1993,12 +1991,12 @@ class API {
 	}
 
 	/**
-     *  @method validateTransaction
-     *
-     *  @param  {Object} tr
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method validateTransaction
+	 *
+	 *  @param  {Object} tr
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async validateTransaction(tr) {
 		signedTransaction.validate(tr);
 		// signed transaction
@@ -2006,18 +2004,18 @@ class API {
 	}
 
 	/**
-     *  @method getRequiredFees
-     *
-     *  @param  {Array<Object>} operations
-     *  @param  {String} assetId
-     *
-     *  @return {
-     *  	Promise.<Array<{
-     *  		asset_id:String,
-     *  		amount:Number
-     *  	}>>
-     *  }
-     */
+	 *  @method getRequiredFees
+	 *
+	 *  @param  {Array<Object>} operations
+	 *  @param  {String} assetId
+	 *
+	 *  @return {
+	 *  	Promise.<Array<{
+	 *  		asset_id:String,
+	 *  		amount:Number
+	 *  	}>>
+	 *  }
+	 */
 	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
 		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
@@ -2025,12 +2023,12 @@ class API {
 	}
 
 	/**
-     *  @method getProposedTransactions
-     *
-     *  @param  {String} accountNameOrId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getProposedTransactions
+	 *
+	 *  @param  {String} accountNameOrId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getProposedTransactions(accountNameOrId) {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
 			throw new Error('AccountNameOrId is invalid');
@@ -2040,16 +2038,16 @@ class API {
 	}
 
 	/**
-     *  @method getContractLogs
-     *
-     *  @param  {String} contractId
-     *  @param  {Number} fromBlock
-     *  @param  {Number} toBlock
-     *
-     *  @return {
-     *  	Promise.<Array.<ContractLogs>>
-     *  }
-     */
+	 *  @method getContractLogs
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {Number} fromBlock
+	 *  @param  {Number} toBlock
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<ContractLogs>>
+	 *  }
+	 */
 	async getContractLogs(contractId, fromBlock, toBlock) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
@@ -2060,32 +2058,32 @@ class API {
 	}
 
 	/**
-     *  @method getContractResult
-     *
-     *  @param  {String} resultContractId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<ContractResult>}
-     */
+	 *  @method getContractResult
+	 *
+	 *  @param  {String} resultContractId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<ContractResult>}
+	 */
 	getContractResult(resultContractId, force = false) {
 		if (!isContractResultId(resultContractId)) return Promise.reject(new Error('Result contract id is invalid'));
 		if (!isBoolean(force)) return Promise.reject(new Error('Force should be a boolean'));
 
 		return this._getSingleDataWithMultiSave(
 			resultContractId,
-			CacheMaps.CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID,
+			CACHE_MAPS.CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID,
 			'getContractResult',
 			force,
 		);
 	}
 
 	/**
-     *  @method getContract
-     *
-     *  @param  {String} contractId
-     *
-     *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
-     */
+	 *  @method getContract
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
+	 */
 	getContract(contractId) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 
@@ -2093,15 +2091,15 @@ class API {
 	}
 
 	/**
-     *  @method callContractNoChangingState
-     *
-     *  @param  {String} contractId
-     *  @param  {String} accountId
-     *  @param  {String} assetId
-     *  @param  {String} bytecode
-     *
-     *  @return {Promise<String>}
-     */
+	 *  @method callContractNoChangingState
+	 *
+	 *  @param  {String} contractId
+	 *  @param  {String} accountId
+	 *  @param  {String} assetId
+	 *  @param  {String} bytecode
+	 *
+	 *  @return {Promise<String>}
+	 */
 	async callContractNoChangingState(contractId, accountId, assetId, bytecode) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isAccountId(accountId)) throw new Error('AccountId is invalid');
@@ -2113,30 +2111,30 @@ class API {
 	}
 
 	/**
-     *  @method getContracts
-     *
-     *  @param  {Array<String>} contractIds
+	 *  @method getContracts
+	 *
+	 *  @param  {Array<String>} contractIds
 	 *  @param {Boolean} force
-     *
-     *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
-     */
+	 *
+	 *  @return {Promise.<Array<{id:String,statistics:String,suicided:Boolean}>>}
+	 */
 	getContracts(contractIds, force = false) {
 		if (!isArray(contractIds)) return Promise.reject(new Error('ContractIds ids should be an array'));
 		if (!contractIds.every((id) => isContractId(id))) {
 			return Promise.reject(new Error('ContractIds should contain valid contract ids'));
 		}
 
-		return this._getArrayDataWithMultiSave(contractIds, CacheMaps.CONTRACTS_BY_CONTRACT_ID, 'getContracts', force);
+		return this._getArrayDataWithMultiSave(contractIds, CACHE_MAPS.CONTRACTS_BY_CONTRACT_ID, 'getContracts', force);
 	}
 
 	/**
-     *  @method getContractBalances
-     *
-     *  @param  {String} contractId
-     *  @param {Boolean} force
-     *
-     *  @return {Promise.<Object>}
-     */
+	 *  @method getContractBalances
+	 *
+	 *  @param  {String} contractId
+	 *  @param {Boolean} force
+	 *
+	 *  @return {Promise.<Object>}
+	 */
 	async getContractBalances(contractId, force = false) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 		if (!isBoolean(force)) throw new Error('Force should be a boolean');
@@ -2145,12 +2143,12 @@ class API {
 	}
 
 	/**
-     *  @method getRecentTransactionById
-     *
-     *  @param  {String} transactionId
-     *
-     *  @return {Promise.<*>}
-     */
+	 *  @method getRecentTransactionById
+	 *
+	 *  @param  {String} transactionId
+	 *
+	 *  @return {Promise.<*>}
+	 */
 	async getRecentTransactionById(transactionId) {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
@@ -2191,15 +2189,15 @@ class API {
 	}
 
 	/**
-     *  @method registerAccount
-     *
-     *  @param  {String} name
-     * 	@param  {String} activeKey
-     * 	@param  {String} echoRandKey
+	 *  @method registerAccount
+	 *
+	 *  @param  {String} name
+	 * 	@param  {String} activeKey
+	 * 	@param  {String} echoRandKey
 	 *  @param  {Function} wasBroadcastedCallback
-     *
-     *  @return {Promise.<null>}
-     */
+	 *
+	 *  @return {Promise.<null>}
+	 */
 	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
@@ -2217,28 +2215,28 @@ class API {
 	}
 
 	/**
-     *  @method getAccountHistory
-     *  Get operations relevant to the specified account.
-     *
-     *  @param {String} accountId
-     *  @param {String} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {String} start [Id of the most recent operation to retrieve]
-     *
-     *  @return {
-     *  	Promise.<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getAccountHistory
+	 *  Get operations relevant to the specified account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {String} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {String} start [Id of the most recent operation to retrieve]
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getAccountHistory(
 		accountId,
-		stop = ApiConfig.START_OPERATION_HISTORY_ID,
-		limit = ApiConfig.ACCOUNT_HISTORY_DEFAULT_LIMIT,
-		start = ApiConfig.STOP_OPERATION_HISTORY_ID,
+		stop = API_CONFIG.START_OPERATION_HISTORY_ID,
+		limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT,
+		start = API_CONFIG.STOP_OPERATION_HISTORY_ID,
 	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
@@ -2246,29 +2244,29 @@ class API {
 	}
 
 	/**
-     *  @method getRelativeAccountHistory
-     *  Get operations relevant to the specified account referenced
-     *  by an event numbering specific to the account.
-     *
-     *  @param {String} accountId
-     *  @param {Number} stop [Sequence number of earliest operation]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {Number} start [Sequence number of the most recent operation to retrieve]
-     *
-     *  @return {
-     *  	Promise.<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getRelativeAccountHistory
+	 *  Get operations relevant to the specified account referenced
+	 *  by an event numbering specific to the account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {Number} stop [Sequence number of earliest operation]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {Number} start [Sequence number of the most recent operation to retrieve]
+	 *
+	 *  @return {
+	 *  	Promise.<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getRelativeAccountHistory(
 		accountId,
-		stop = ApiConfig.RELATIVE_ACCOUNT_HISTORY_STOP,
-		limit = ApiConfig.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
-		start = ApiConfig.RELATIVE_ACCOUNT_HISTORY_START,
+		stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP,
+		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
+		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
-		if (!isUInt64(limit) || limit > ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
 		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
@@ -2276,58 +2274,58 @@ class API {
 	}
 
 	/**
-     *  @method getAccountHistoryOperations
-     *  Get only asked operations relevant to the specified account.
-     *
-     *  @param {String} accountId
-     *  @param {String} operationId
-     *  @param {Number} start [Id of the most recent operation to retrieve]
-     *  @param {Number} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *
-     *  @return {
-     *  	Promise<Array.<AccountHistory>>
-     *  }
-     */
+	 *  @method getAccountHistoryOperations
+	 *  Get only asked operations relevant to the specified account.
+	 *
+	 *  @param {String} accountId
+	 *  @param {String} operationId
+	 *  @param {Number} start [Id of the most recent operation to retrieve]
+	 *  @param {Number} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *
+	 *  @return {
+	 *  	Promise<Array.<AccountHistory>>
+	 *  }
+	 */
 	async getAccountHistoryOperations(
 		accountId,
 		operationId,
-		start = ApiConfig.START_OPERATION_HISTORY_ID,
-		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
-		limit = ApiConfig.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT,
+		start = API_CONFIG.START_OPERATION_HISTORY_ID,
+		stop = API_CONFIG.STOP_OPERATION_HISTORY_ID,
+		limit = API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT,
 	) {
 		if (!isAccountId(accountId)) throw new Error('Account is invalid');
 		if (!isOperationId(operationId)) throw new Error('Operation id invalid');
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
 		}
 		return this.wsApi.history
 			.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
 	}
 
 	/**
-     *  @method getContractHistory
-     *  Get operations relevant to the specified account.
-     *
-     *  @param {String} contractId
-     *  @param {String} stop [Id of the earliest operation to retrieve]
-     *  @param {Number} limit     [count operations (max 100)]
-     *  @param {String} start [Id of the most recent operation to retrieve]
-     *
-     *  @return {Promise.<Array.<ContractHistory>>}
-     */
+	 *  @method getContractHistory
+	 *  Get operations relevant to the specified account.
+	 *
+	 *  @param {String} contractId
+	 *  @param {String} stop [Id of the earliest operation to retrieve]
+	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {String} start [Id of the most recent operation to retrieve]
+	 *
+	 *  @return {Promise.<Array.<ContractHistory>>}
+	 */
 	async getContractHistory(
 		contractId,
-		stop = ApiConfig.STOP_OPERATION_HISTORY_ID,
-		limit = ApiConfig.CONTRACT_HISTORY_DEFAULT_LIMIT,
-		start = ApiConfig.START_OPERATION_HISTORY_ID,
+		stop = API_CONFIG.STOP_OPERATION_HISTORY_ID,
+		limit = API_CONFIG.CONTRACT_HISTORY_DEFAULT_LIMIT,
+		start = API_CONFIG.START_OPERATION_HISTORY_ID,
 	) {
 		if (!isContractId(contractId)) throw new Error('Contract is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
-		if (!isUInt64(limit) || limit > ApiConfig.CONTRACT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${ApiConfig.CONTRACT_HISTORY_MAX_LIMIT}`);
+		if (!isUInt64(limit) || limit > API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT}`);
 		}
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 
@@ -2351,7 +2349,7 @@ class API {
 	async getFullContract(contractId, force = false) {
 
 		if (!force) {
-			const cacheValue = this.cache[CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID].get(contractId);
+			const cacheValue = this.cache[CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID].get(contractId);
 
 			if (cacheValue) {
 				return cacheValue.toJS();
@@ -2365,7 +2363,7 @@ class API {
 		]);
 
 		this.cache.setInMap(
-			CacheMaps.FULL_CONTRACTS_BY_CONTRACT_ID,
+			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
 			contractId,
 			fromJS({ contract, history, balances }),
 		);

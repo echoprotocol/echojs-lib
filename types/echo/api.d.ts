@@ -1,22 +1,90 @@
+import BigNumber from 'bignumber.js';
+
 import PublicKey from "../crypto/public-key";
 
+import BlockHeader from '../interfaces/BlockHeader';
+import Transaction from '../interfaces/Transaction';
+import Block from '../interfaces/Block';
+import Committee from '../interfaces/Committee';
+import Vote from '../interfaces/Vote';
+import ContractLogs from '../interfaces/ContractLogs';
+import AccountHistory from '../interfaces/AccountHistory';
+import FullAccount from '../interfaces/FullAccount';
+import ChainProperties from '../interfaces/ChainProperties';
+import GlobalProperties from '../interfaces/GlobalProperties';
+import Config from '../interfaces/Config';
+import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
+import Asset from '../interfaces/Asset';
+import ContractHistory from '../interfaces/ContractHistory';
+import ContractResult from '../interfaces/ContractResult';
+
 export default class Api {
-	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<any>;
-	getKeyReferences(keys: Array<string|PublicKey>, force?: boolean): Promise<Array<any>>;
-	getObject(objectId: string, force?: boolean): Promise<object>;
-	getContractResult(resultContractId: string, force: boolean): Promise<Object>;
-
-	callContractNoChangingState(
-		contractId: string,
-		accountId: string,
-		assetId: string,
-		bytecode: string,
-	): Promise<string>;
-
-	registerAccount(
-		name: string,
-		activeKey: string,
-		echoRandKey: string,
-		wasBroadcastedCallback?: () => any,
-	): Promise<unknown>;
+	broadcastTransaction(tr: Object): Promise<any>;
+	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
+	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
+	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
+	getAccountBalances(accountId: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
+	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
+	getAccountCount(): Promise<number>;
+	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
+	getAccountHistoryOperations(accountId: string, operationId: string, start: number, stop: number, limit: number): Promise<Array<AccountHistory>>;
+	getAccountReferences(accountId: string, force?: boolean): Promise<Account>;
+	getAllAssetHolders(): Promise<Array<{asset_id: string, count: number}>>;
+	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{name: string, account_id: string, amount: string}>>;
+	getAssetHoldersCount(assetId: string): Promise<number>;
+	getAssets(assetIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
+	getBalanceObjects(keys: Object): any;
+	getBitAssetData(bitAssetId: string, force?: boolean): Promise<Object>;
+	getBlock(blockNum: number): Promise<Block>;
+	getBlockHeader(blockNum: number): Promise<BlockHeader>;
+	getBlockVirtualOperations(blockNum: number): any;
+	getCallOrders(assetId: string, limit: number): Promise<any>;
+	getChainId(force?: boolean): Promise<string>
+	getChainProperties(force?: boolean): Promise<ChainProperties>;
+	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
+	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
+	getConfig(force?: boolean): Promise<Config>;
+	getContract(contractId: string): Promise<Array<any>>;
+	getContractBalances(contractId: string, force?)
+	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
+	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
+	getContractLogs(ontractId: string, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
+	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
+	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
+	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
+	getFeePool(assetId: string): Promise<BigNumber>;
+	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
+	getFullContract(contractId: string, force?: boolean): Promise<Object>;
+	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
+	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
+	getLimitOrders(baseAssetId: string, quoteAssetId: string, limit: number): Promise<any>;
+	getMarginPositions(accountId: string): Promise<any>;
+	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
+	getObject(objectId: string, force?: boolean): Promise<Object>;
+	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
+	getOrderBook(baseAssetName: string, quoteAssetName: string, depth: number): Promise<any>;
+	getPotentialSignatures(tr: Object): Promise<any>;
+	getProposedTransactions(accountNameOrId: string): Promise<any>;
+	getRecentTransactionById(transactionId: string): Promise<any>;
+	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<Array<AccountHistory>>;
+	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
+	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;
+	getSettleOrders(assetId: string, limit: number): Promise<any>;
+	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
+	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
+	getTransaction(blockNum: number, transactionIndex: number): Promise<Transaction>;
+	getTransactionHex(tr: Object): Promise<any>;
+	getVestedBalances(balanceIds: Array<string>): Promise<any>;
+	getVestingBalances(balanceIds: Array<string>): Promise<any>;
+	callContractNoChangingState(contractId: string, accountId: string, assetId: string, bytecode: string): Promise<string>;
+	listAssets(lowerBoundSymbol: string, limit: number): Promise<Array<Asset>>;
+	lookupAccounts(lowerBoundName: string, limit: number): Promise<Array<string>>;
+	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
+	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
+	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
+	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
+	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
+	validateTransaction(tr: Object): Promise<any>;
+	verifyAuthority(tr: Object): Promise<any>;
+	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
 }

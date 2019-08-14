@@ -392,9 +392,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * remove pending request from map
-     * @private
-     */
+	 * remove pending request from map
+	 * @private
+	 */
 	_removePendingRequest(id) {
 		delete this._cbs[id];
 		delete this._subs[id];
@@ -402,9 +402,9 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-     * remove successful request from map
-     * @private
-     */
+	 * remove successful request from map
+	 * @private
+	 */
 	_removeSuccessfulRequest(id) {
 		delete this._cbs[id];
 

@@ -62,7 +62,11 @@ class Operation extends Type {
 		if (value.length !== 2) throw new Error('invalid count of operation elements');
 		const [operationId, operationProps] = value;
 		if (operationId !== this.id) throw new Error('invalid operation id');
-		this.serializable.validate(feeIsRequired ? operationProps : this._withUnrequiredFees(operationProps));
+		try {
+			this.serializable.validate(feeIsRequired ? operationProps : this._withUnrequiredFees(operationProps));
+		} catch (error) {
+			throw new Error(`operation with id ${this.id}: ${error.message}`);
+		}
 	}
 
 	/**

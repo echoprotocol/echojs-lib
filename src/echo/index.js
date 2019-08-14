@@ -7,6 +7,8 @@ import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
 
+/** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
+
 class Echo {
 
 	constructor() {
@@ -20,6 +22,10 @@ class Echo {
 		return this._ws._connected;
 	}
 
+	/**
+	 * @param {string} address
+	 * @param {Options} options
+	 */
 	async connect(address, options = {}) {
 		if (this._ws._connected) {
 			throw new Error('Connected');
@@ -47,13 +53,20 @@ class Echo {
 
 	}
 
-	async _initModules() {
+	/** @param {Options} options */
+	async _initModules(options) {
 		this._isInitModules = true;
 
 		this._wsApi = await new WSAPI(this._ws);
 
-		this.cache = new Cache();
+		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
+
+    try {
+      await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
+    } catch (err) {
+      console.log('ONOPEN init error', err);
+    }
 
 		try {
 			await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);

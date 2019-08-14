@@ -31,7 +31,3 @@ export const IMPLEMENTATION_OBJECT_TYPE = {
 export const VOTE_TYPE = {
 	COMMITTEE: 0,
 };
-
-export default {
-	RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE, VOTE_TYPE,
-};

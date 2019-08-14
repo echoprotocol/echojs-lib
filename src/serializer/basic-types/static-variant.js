@@ -46,7 +46,11 @@ class StaticVariantType extends Type {
 		const [key] = value;
 		const type = this.types[key];
 		if (!type) throw new Error(`type with key ${key} not found`);
-		type.validate(value);
+		try {
+			type.validate(value);
+		} catch (error) {
+			throw new Error(`static variant: ${error.message}`);
+		}
 		return { key, type };
 	}
 

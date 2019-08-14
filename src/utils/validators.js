@@ -2,7 +2,7 @@
 import BN from 'bignumber.js';
 import bs58 from 'bs58';
 
-import ChainConfig from '../config/chain-config';
+import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 
 export function validateSafeInteger(value, fieldName) {
@@ -167,12 +167,12 @@ export const isEthereumAddress = (v) => isBytes(v, 20);
 
 export const isAssetName = (v) =>
 	!isEmpty(v) &&
-    (v.split('.').length <= 2) &&
-    (v.length >= 3) &&
-    (v.length <= 16) &&
-    (/^[A-Z]/.test(v)) &&
-    (/[A-Z]$/.test(v)) &&
-    (!/^[A-Z0-9.]$/.test(v));
+	(v.split('.').length <= 2) &&
+	(v.length >= 3) &&
+	(v.length <= 16) &&
+	(/^[A-Z]/.test(v)) &&
+	(/[A-Z]$/.test(v)) &&
+	(!/^[A-Z0-9.]$/.test(v));
 
 export const isBitAssetId = (v) => isString(v) && bitAssetIdRegex.test(v);
 
@@ -188,17 +188,19 @@ export const isAccountTransactionHistoryId = (v) => (
 export const isContractHistoryId = (v) => isString(v) && contractHistoryIdRegex.test(v);
 export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObjectIdRegex.test(v);
 
-export const isPublicKey = (v, addressPrefix = ChainConfig.ADDRESS_PREFIX) => {
+export const isPublicKey = (v, addressPrefix = ADDRESS_PREFIX) => {
 	if (!isString(v)) return false;
 
 	const prefix = v.slice(0, addressPrefix.length);
 
-	if (addressPrefix !== prefix || bs58.decode(v.slice(addressPrefix.length)).length !== ChainConfig.LENGTH_DECODE_PUBLIC_KEY) return false;
+	if (addressPrefix !== prefix || bs58.decode(v.slice(addressPrefix.length)).length !== LENGTH_DECODE_PUBLIC_KEY) {
+		return false;
+	}
 
 	return true;
 };
 
-export const isEchoRandKey = (v, echorandPrefix = ChainConfig.ADDRESS_PREFIX) => isPublicKey(v, echorandPrefix);
+export const isEchoRandKey = (v, echorandPrefix = ADDRESS_PREFIX) => isPublicKey(v, echorandPrefix);
 
 export const isAccountName = (v) => {
 	if (!isString(v)) {
