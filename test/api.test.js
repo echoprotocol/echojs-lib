@@ -55,7 +55,7 @@ describe('API', () => {
 			const expectedErrorMessage = 'Parameter apis is invalid';
 			shouldReject(async () => {
 				await echo.connect(url, { apis: ['nonexistent'] });
-			}, expectedErrorMessage, 'with expected message');
+			}, expectedErrorMessage);
 		})
 
 		describe('when reconnected', () => {
