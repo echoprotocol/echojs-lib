@@ -11,6 +11,7 @@ export interface EchoOptions {
 
 export default class Echo {
 	public readonly subscriber: Subscriber;
+	public readonly apis: ReadonlySet<string>;
 	api: Api;
 	connect(address: string, options?: EchoOptions): Promise<void>;
 	createTransaction(): Transaction;
