@@ -5,34 +5,32 @@ import Cache from '../src/echo/cache';
 import API from '../src/echo/api';
 
 import echo, { constants } from '../src';
-import { DEFAULT_CHAIN_APIS, ASSET_API } from '../src/constants/ws-constants';
+import { DEFAULT_CHAIN_APIS, ASSET_API, DATABASE_API } from '../src/constants/ws-constants';
 
-import { url, accountId, privateKey } from './_test-data';
+import { url, accountId } from './_test-data';
+import { deepStrictEqual } from 'assert';
+import { shouldReject } from './_test-utils';
 
 
 describe('API', () => {
-	describe('API CONNECTION', () => {
-		describe('using non-connected api', () => {
-			before(async () => {
-				await echo.connect(url, {
-					apis: []
-				});
+	describe.only('API CONNECTION', () => {
+		describe('when apis are provided', () => {
+			const apis = [DATABASE_API, ASSET_API];
+			before(async () => await echo.connect(url, { apis }));
+			after(async () => await echo.disconnect());
+			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
+			describe('when provided api used', () => {
+				it('should be succeed', async () => await echo.api.getBlock(1));
 			});
-
-			it('should throw error', async () => {
-				try {
-					await echo.api.getBlock(1);
-					done('failed');
-				} catch (error) {
-					expect(error).to.be.an('error');
-					expect(error.toString().includes('API is not available')).to.be.true;
-					expect(error.toString().includes('try to specify this in connection option called "apis"')).to.be.true;
-				}
+			describe('when not provided api used', () => {
+				const expectedErrorMessage = [
+					'history API is not available',
+					'try to specify this in connection option called "apis"',
+				].join(', ');
+				shouldReject(async () => {
+					await echo.api.getAccountHistory('1.2.1');
+				}, expectedErrorMessage, 'with expected message');
 			});
-
-			after(async () => {
-				await echo.disconnect();
-			})
 		});
 
 		describe('default apis connections', () => {
