@@ -9,7 +9,7 @@ import echo, { constants } from '../src';
 import { url } from './_test-data';
 
 
-describe('API', () => {
+describe.skip('API', () => {
 	describe('ASSET API', () => {
 		before(async () => {
 			await echo.connect(url, {
