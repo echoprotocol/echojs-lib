@@ -225,6 +225,7 @@ class Transaction {
 	 * @param {PrivateKey=} _privateKey
 	 */
 	async sign(_privateKey) {
+		console.log('TRANSACTION!!!!!!!!!!!!!!!!!!!');
 		this.checkNotFinalized();
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
 		if (!this.hasAllFees) await this.setRequiredFees();

@@ -24,6 +24,7 @@ describe.only('create contract', () => {
 	it('successful', async () => {
 		/** @type {import("../../types/index").Transaction} */
 		const tx = echo.createTransaction();
+		console.log('------------------------------');
 		tx.addOperation(OPERATIONS_IDS.CREATE_CONTRACT, {
 			code: bytecode + options.startValue,
 			eth_accuracy: false,
@@ -33,8 +34,10 @@ describe.only('create contract', () => {
 				amount: 0
 			},
 		});
+		console.log('===================================');
 		await tx.sign(privateKey);
 		/** @type {string} */
+		console.log('____________________________________');
 		const operationResultId = await tx.broadcast()
 			.then((res) => res[0].trx.operation_results[0][1]);
 

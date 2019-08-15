@@ -668,7 +668,7 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe.only('#getFullContract()', () => {
+		describe('#getFullContract()', () => {
 			it('should get contract', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
