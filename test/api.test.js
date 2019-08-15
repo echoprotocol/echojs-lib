@@ -33,81 +33,54 @@ describe('API', () => {
 			});
 		});
 
-		describe('default apis connections', () => {
-			before(async () => {
-				await echo.connect(url, {});
+		describe('when apis options is not provided', () => {
+			before(async () => await echo.connect(url, {}));
+			after(async () => await echo.disconnect());
+			it('only default apis should be connected', () => deepStrictEqual(echo.apis, new Set(DEFAULT_CHAIN_APIS)));
+			describe('when deafult api used', () => {
+				it('should succed', async () => await echo.api.getBlock(1));
 			});
-
-			it('default apis should work', async () => {
-				try {
-					const block = await echo.api.getBlock(1);
-					expect(block).to.be.an('object');
-
-					const accountHistory = await echo.api.getAccountHistory(accountId);
-					expect(accountHistory).to.be.an('array');
-				} catch (e) {
-					throw(e)
-				}
-			});
-
-			after(async () => {
-				await echo.disconnect();
-			})
-		});
-
-		describe('using nonexistent api', () => {
-			it('should throw error', async () => {
-				try {
-					await echo.connect(url, {
-						apis: [
-							'artsiomka'
-						]
-					});
-					done('failed');
-				} catch (error) {
-					expect(error).to.be.an('error');
-					expect(error.toString().includes('Parameter apis is invalid')).to.be.true;
-				}
+			describe('when not default api used', () => {
+				const expectedErrorMessage = [
+					'asset API is not available',
+					'try to specify this in connection option called "apis"',
+				].join(', ');
+				shouldReject(async () => {
+					await echo.api.getAllAssetHolders();
+				}, expectedErrorMessage, 'with expected message');
 			});
 		});
 
-		describe('reconnect valid apis', () => {
+		describe('when used nonexistent api', () => {
+			const expectedErrorMessage = 'Parameter apis is invalid';
+			shouldReject(async () => {
+				await echo.connect(url, { apis: ['nonexistent'] });
+			}, expectedErrorMessage, 'with expected message');
+		})
+
+		describe('when reconnected', () => {
+			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ASSET_API];
 			before(async () => {
-				await echo.connect(url, {
-					apis: [
-						...DEFAULT_CHAIN_APIS.slice(1),
-						ASSET_API
-					]
-				});
+				await echo.connect(url, { apis });
+				await echo.reconnect();
 			});
-
-			it('should reconnect right apis', async () => {
-				try {
-					await echo.reconnect();
-
+			after(async () => await echo.disconnect());
+			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
+			describe('when provided api used', () => {
+				it('should succeed', async () => await echo.api.getAllAssetHolders());
+			});
+			describe('when provided api used', () => {
+				it('should succeed', async () => await echo.api.getAccountHistory(accountId));
+			});
+			describe('when not nonprovided api used', () => {
+				const expectedErrorMessage = [
+					'database API is not available',
+					'try to specify this in connection option called "apis"',
+				].join(', ');
+				shouldReject(async () => {
 					await echo.api.getBlock(1)
-					.then(() => {
-						done('failed');
-					})
-					.catch((error) => {
-						expect(error).to.be.an('error');
-						expect(error.toString().includes('API is not available')).to.be.true;
-						expect(error.toString().includes('try to specify this in connection option called "apis"')).to.be.true;
-					});
-
-					const assetHolders = await echo.api.getAllAssetHolders();
-					expect(assetHolders).to.be.an('array').that.is.not.empty;
-
-					const accountHistory = await echo.api.getAccountHistory(accountId);
-					expect(accountHistory).to.be.an('array');
-				} catch (e) {
-					throw e;
-				}
-			}).timeout(5000);
-
-			after(async () => {
-				await echo.disconnect();
-			})
+				}, expectedErrorMessage, 'with expected message');
+			});
 		});
 	});
 
