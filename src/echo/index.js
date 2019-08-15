@@ -80,7 +80,6 @@ class Echo {
 		this.subscriber.reset();
 		this.cache.reset();
 		await this._ws.close();
-		this._ws.emit('STATUS.CLOSE');
 		this.onOpen = null;
 		this._isInitModules = false;
 	}
