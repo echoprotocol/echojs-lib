@@ -1,9 +1,9 @@
+import { deepStrictEqual, strictEqual } from 'assert';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import echo, { Echo, constants } from '../src';
-
-import { url } from './_test-data';
+import { url, privateKey, accountId, contractId } from './_test-data';
+import { Echo, constants } from '../src';
 
 chai.use(spies);
 
@@ -25,6 +25,28 @@ describe('SUBSCRIBER', () => {
 				],
 			},
 		);
+	});
+
+	describe('_updateObject', () => {
+		describe('isOperationHistoryId', () => {
+			it('save contractId and history in cache', async () => {
+				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
+				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
+					registrar: accountId,
+					value: { asset_id: '1.3.0', amount: 0 },
+					code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
+					callee: contractId,
+				}).addSigner(privateKey).broadcast();
+				await new Promise((resolve) => setTimeout(() => resolve(), 100));
+				const history = echo.subscriber.cache.contractHistoryByContractId.get(contractId);
+				const lastAddedHistory = history[history.length - 1].toJS();
+				strictEqual(lastAddedHistory.block_num, opRes.block_num);
+				deepStrictEqual(lastAddedHistory.result, opRes.trx.operation_results[0]);
+				deepStrictEqual(lastAddedHistory.op, opRes.trx.operations[0]);
+				deepStrictEqual(lastAddedHistory.extensions, opRes.trx.extensions);
+				strictEqual(lastAddedHistory.trx_in_block, opRes.trx_num);
+			}).timeout(10000);
+		});
 	});
 
 	describe('echorand', () => {
