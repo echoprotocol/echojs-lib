@@ -1,5 +1,5 @@
 
-describe('operations', () => {
+describe.skip('operations', () => {
 	require('./operations/create-asset.operation.test');
 	require('./operations/transfer.operation.test');
 	require('./operations/create-contract.operation.test');

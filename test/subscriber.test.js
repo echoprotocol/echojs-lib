@@ -7,7 +7,7 @@ import { Echo, constants } from '../src';
 
 chai.use(spies);
 
-describe('SUBSCRIBER', () => {
+describe.skip('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
