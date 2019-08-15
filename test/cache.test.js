@@ -2,10 +2,6 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import WS from '../src/echo/ws'
-import WSAPI from '../src/echo/ws-api'
-import Cache from '../src/echo/cache'
-import API from '../src/echo/api'
 import echo, { constants } from '../src/index';
 import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME, CACHE_MAPS } from '../src/constants';
 
