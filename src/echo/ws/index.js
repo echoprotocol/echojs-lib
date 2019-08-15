@@ -8,9 +8,9 @@ import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-const
 
 class WS extends EventEmitter {
 
-	constructor(subscriber) {
+	constructor() {
 		super();
-		this._ws_rpc = new ReconnectionWebSocket(subscriber);
+		this._ws_rpc = new ReconnectionWebSocket();
 
 		this._connected = false;
 		this._isFirstTime = true;

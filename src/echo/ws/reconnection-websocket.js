@@ -14,8 +14,7 @@ import { isVoid } from '../../utils/validators';
 
 class ReconnectionWebSocket {
 
-	constructor(subscriber) {
-		this.subscriber = subscriber;
+	constructor() {
 		this.onOpen = null;
 		this.onClose = null;
 		this.onError = null;
@@ -114,7 +113,6 @@ class ReconnectionWebSocket {
 				this._setPingDelay();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
-				this.subscriber.cbConnect();
 
 				return true;
 			};
@@ -181,9 +179,7 @@ class ReconnectionWebSocket {
 		}
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  FORCE RECONNECTING');
-		console.log('disconnect reconnect', this.subscriber);
 		await this.connect(this.url, this._options);
-		console.log('connect reconnect');
 	}
 
 	/**
@@ -441,7 +437,6 @@ class ReconnectionWebSocket {
 		this._resetId();
 
 		if (this.onClose) this.onClose();
-		this.subscriber.cbDisconnect();
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 

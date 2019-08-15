@@ -41,8 +41,9 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @constructor
 	 */
-	constructor() {
+	constructor(ws) {
 		super();
+		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -52,6 +53,8 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.cancelAllSubscribers();
+		this._ws.on(STATUS.OPEN, () => this.callCbOnConnect());
+		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 
 	}
 
@@ -60,20 +63,15 @@ class Subscriber extends EventEmitter {
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
 	 *  @param {API} api
-	 *  @param {WS} ws
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init(cache, wsApi, api, ws) {
+	async init(cache, wsApi, api) {
 
 		this.cache = cache;
 		this._wsApi = wsApi;
 		this._api = api;
-		this._ws = ws;
 
-		// if (this.subscribers.connect.length) {
-		// 	this.subscribers.connect.forEach((cb) => cb());
-		// }
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
@@ -126,22 +124,29 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		if (this.subscribers.disconnect.length) {
-			this.subscribers.disconnect.forEach((cb) => cb());
-		}
+		this.callCbOnDisconnect();
 		this.cancelAllSubscribers();
-
 	}
 
-	cbDisconnect() {
-		if (this.subscribers.disconnect.length) {
-			this.subscribers.disconnect.forEach((cb) => cb());
-		}
-	}
-
-	cbConnect() {
+	/**
+	 *  @method callCbOnConnect
+	 *
+	 *  @return {undefined}
+	 */
+	callCbOnConnect() {
 		if (this.subscribers.connect.length) {
 			this.subscribers.connect.forEach((cb) => cb());
+		}
+	}
+
+	/**
+	 *  @method callCbOnDisconnect
+	 *
+	 *  @return {undefined}
+	 */
+	callCbOnDisconnect() {
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
 		}
 	}
 
