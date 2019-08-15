@@ -207,7 +207,7 @@ class Subscriber extends EventEmitter {
 		) {
 			return null;
 		}
-		console.log('object', object);
+
 		if (isOperationHistoryId(object.id)) {
 			console.log('PASSED isOperationHistoryId');
 			const contractId = object.op[1].callee;

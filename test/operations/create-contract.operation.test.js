@@ -13,11 +13,11 @@ const options = {
 	startValue: '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
 };
 
-describe('create contract', () => {
+describe.only('create contract', () => {
 	/** @type {import("../../types/index").Echo} */
 	const echo = new Echo();
 
-	before(() => echo.connect(url));
+	before(() => echo.connect(url, { debug: true }));
 
 	after(() => echo.disconnect());
 

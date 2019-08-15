@@ -12,7 +12,7 @@ chai.use(spies);
 describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
-	describe.only('subscriptions', async () => {
+	describe('subscriptions', async () => {
 		it('Error', async () => {
 			await echo.connect(url);
 			const options = {
@@ -32,19 +32,17 @@ describe('SUBSCRIBER', () => {
 			await tx.addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options);
 			await tx.addSigner(privateKey);
 			const txToCheck = await tx.broadcast();
-			console.log('txToCheck', txToCheck);
-			console.log('after broadcast!@!!');
+			// console.log('txToCheck', txToCheck);
 
 			await new Promise((resolve) => setTimeout(() => resolve(), 0));
 			const check = await echo.subscriber.cache.contractHistoryByContractId.get(contractId);
 			console.log('check', check);
-			console.log('after echo.subscriber.cache.contractHistoryByContractId');
 
 			console.log('before disconnect!@!!');
 			await echo.disconnect();
 			console.log('after disconnect!@!!');
-			await new Promise((resolve) => setTimeout(() => resolve(), 0/*3e3*/));
-		}).timeout(20000);
+			// await new Promise((resolve) => setTimeout(() => resolve(), 0/*3e3*/));
+		}).timeout(10000);
 	});
 
 	describe('subscriptions', () => {
