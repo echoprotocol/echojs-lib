@@ -97,14 +97,11 @@ import {
 
 import {
 	ACCOUNT,
-	LIMIT_ORDER,
 	ASSET,
 	PROPOSAL,
-	WITHDRAW_PERMISSION,
 	COMMITTEE_MEMBER,
 	VESTING_BALANCE,
 	BALANCE,
-	FORCE_SETTLEMENT,
 	CONTRACT, ERC20_TOKEN, ETH_ADDRESS,
 } from '../constants/object-types';
 
@@ -127,11 +124,11 @@ export const limitOrderCreate = operation(LIMIT_ORDER_CREATE, {
 	fill_or_kill: bool,
 	extensions,
 }); // 1
-
+//	TODO ES-102
 export const limitOrderCancel = operation(LIMIT_ORDER_CANCEL, {
 	fee: asset,
 	fee_paying_account: protocolId(ACCOUNT),
-	order: protocolId(LIMIT_ORDER),
+	// order: protocolId(LIMIT_ORDER),
 	extensions,
 }); // 2
 
@@ -317,32 +314,32 @@ export const withdrawPermissionCreate = operation(WITHDRAW_PERMISSION_CREATE, {
 	periods_until_expiration: uint32,
 	period_start_time: timePointSec,
 }); // 23
-
+//	TODO ES-102
 export const withdrawPermissionUpdate = operation(WITHDRAW_PERMISSION_UPDATE, {
 	fee: asset,
 	withdraw_from_account: protocolId(ACCOUNT),
 	authorized_account: protocolId(ACCOUNT),
-	permission_to_update: protocolId(WITHDRAW_PERMISSION),
+	// permission_to_update: protocolId(WITHDRAW_PERMISSION),
 	withdrawal_limit: asset,
 	withdrawal_period_sec: uint32,
 	period_start_time: timePointSec,
 	periods_until_expiration: uint32,
 }); // 24
-
+//	TODO ES-102
 export const withdrawPermissionClaim = operation(WITHDRAW_PERMISSION_CLAIM, {
 	fee: asset,
-	withdraw_permission: protocolId(WITHDRAW_PERMISSION),
+	// withdraw_permission: protocolId(WITHDRAW_PERMISSION),
 	withdraw_from_account: protocolId(ACCOUNT),
 	withdraw_to_account: protocolId(ACCOUNT),
 	amount_to_withdraw: asset,
 	extensions,
 }); // 25
-
+//	TODO ES-102
 export const withdrawPermissionDelete = operation(WITHDRAW_PERMISSION_DELETE, {
 	fee: asset,
 	withdraw_from_account: protocolId(ACCOUNT),
 	authorized_account: protocolId(ACCOUNT),
-	withdrawal_permission: protocolId(WITHDRAW_PERMISSION),
+	// withdrawal_permission: protocolId(WITHDRAW_PERMISSION),
 	extensions,
 }); // 26
 
@@ -418,10 +415,10 @@ export const overrideTransfer = operation(OVERRIDE_TRANSFER, {
 	amount: asset,
 	extensions,
 }); // 35
-
+//	TODO ES-102
 export const assetSettleCancel = operation(ASSET_SETTLE_CANCEL, {
 	fee: asset,
-	settlement: protocolId(FORCE_SETTLEMENT),
+	// settlement: protocolId(FORCE_SETTLEMENT),
 	account: protocolId(ACCOUNT),
 	amount: asset,
 	extensions,
