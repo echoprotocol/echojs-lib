@@ -20,7 +20,7 @@ describe('API', () => {
 			after(async () => await echo.disconnect());
 			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
 			describe('when provided api used', () => {
-				it('should be succeed', async () => await echo.api.getBlock(1));
+				it('should succeed', async () => await echo.api.getBlock(1));
 			});
 			describe('when not provided api used', () => {
 				const expectedErrorMessage = [
