@@ -3,6 +3,7 @@ import 'mocha';
 import { expect } from 'chai';
 
 import echo, { constants } from '../src/index';
+import Cache from '../src/echo/cache.js';
 import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME, CACHE_MAPS } from '../src/constants';
 
 import { url } from './_test-data';
