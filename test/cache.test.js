@@ -3,91 +3,57 @@ import 'mocha';
 import { expect } from 'chai';
 
 import echo, { constants } from '../src/index';
-import Cache from '../src/echo/cache.js';
 import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME, CACHE_MAPS } from '../src/constants';
 
 import { url } from './_test-data';
 
 describe('cache', () => {
     describe('options', () => {
-        it('should use default options if cache option has not been specified', () => {
-            try {
-                const cache = new Cache(undefined);
-
-                const { isUsed, expirationTime, minCleaningTime } = cache;
+        describe('when cache option has not been specified', () => {
+            before(async () => await echo.connect(url, {}));
+            after(async () => await echo.disconnect());
+            it('should use default options', () => {
+                const { isUsed, expirationTime, minCleaningTime } = echo.cache;
 
                 expect(isUsed).to.be.equal(USE_CACHE_BY_DEFAULT);
                 expect(expirationTime).to.be.equal(DEFAULT_CACHE_EXPIRATION_TIME);
                 expect(minCleaningTime).to.be.equal(DEFAULT_MIN_CACHE_CLEANING_TIME);
-            } catch (e) {
-                throw e;
-            };
+            });
         });
 
-        it('should use default options if empty object was specified', () => {
-            try {
-                const cache = new Cache({});
-
-                const { isUsed, expirationTime, minCleaningTime } = cache;
+        describe('when empty object was specified as cache options', () => {
+            before(async () => await echo.connect(url, { cache: {} }));
+            after(async () => await echo.disconnect());
+            it('should use default options', () => {
+                const { isUsed, expirationTime, minCleaningTime } = echo.cache;
 
                 expect(isUsed).to.be.equal(USE_CACHE_BY_DEFAULT);
                 expect(expirationTime).to.be.equal(DEFAULT_CACHE_EXPIRATION_TIME);
-                expect(minCleaningTime).to.be.equal(DEFAULT_MIN_CACHE_CLEANING_TIME);     
-            } catch (e) {
-                throw e;
-            }
+                expect(minCleaningTime).to.be.equal(DEFAULT_MIN_CACHE_CLEANING_TIME);
+            });
         });
 
-        it('should not use the cache if null was specified in the relevant option', () => {
-            try {
-                const cache = new Cache(null);
-
-                const { isUsed } = cache;
+        describe('when null was specified as cache option', () => {
+            before(async () => await echo.connect(url, { cache: null }));
+            after(async () => await echo.disconnect());
+            it('cache should not be used', () => {
+                const { isUsed } = echo.cache;
 
                 expect(isUsed).to.be.false;
-            } catch (e) {
-                throw e;
-            }
+            })
         });
 
-        it('should use default options if its were not defined', () => {
-            try {
-                const options = {
-                    isUsed: undefined,
-                    expirationTime: undefined,
-                    minCleaningTime: undefined
-                }
+        describe('when used specified options', () => {
+            const cache = { isUsed: false, expirationTime: 322, minCleaningTime: 777 }
+            before(async () => await echo.connect(url, { cache }));
+            after(async () => await echo.disconnect());
+            it('should use specified options', () => {
+                const { isUsed, expirationTime, minCleaningTime } = echo.cache;
 
-                const cache = new Cache(options);
-
-                const { isUsed, expirationTime, minCleaningTime } = cache;
-
-                expect(isUsed).to.be.equal(USE_CACHE_BY_DEFAULT);
-                expect(expirationTime).to.be.equal(DEFAULT_CACHE_EXPIRATION_TIME);
-                expect(minCleaningTime).to.be.equal(DEFAULT_MIN_CACHE_CLEANING_TIME);   
-            } catch (e) {
-                throw e;
-            }
-        });
-
-        it('should use specified options', () => {
-            try {
-                const options = {
-                    isUsed: false,
-                    expirationTime: 322,
-                    minCleaningTime: 777
-                }
-
-                const cache = new Cache(options);
-
-                const { isUsed, expirationTime, minCleaningTime } = cache;
-
-                expect(isUsed).to.be.equal(options.isUsed);
-                expect(expirationTime).to.be.equal(options.expirationTime);
-                expect(minCleaningTime).to.be.equal(options.minCleaningTime);   
-            } catch (e) {
-                throw e;
-            }
+                expect(isUsed).to.be.equal(cache.isUsed);
+                expect(expirationTime).to.be.equal(cache.expirationTime);
+                expect(minCleaningTime).to.be.equal(cache.minCleaningTime);   
+            });
         });
     });
 
@@ -333,7 +299,7 @@ describe('cache', () => {
 
                     await Promise.all(promises);
     
-                    expect(echo.cache.blocks.size).to.not.equal(0);
+                    expect(echo.cache.blocks.size).to.be.equal(blocksRounds.length);
                     expect(echo.cache.timeout).to.be.null;
                 } catch (e) {
                     throw e;
