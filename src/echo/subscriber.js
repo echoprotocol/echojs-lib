@@ -71,9 +71,9 @@ class Subscriber extends EventEmitter {
 		this._api = api;
 		this._ws = ws;
 
-		if (this.subscribers.connect.length) {
-			this.subscribers.connect.forEach((cb) => cb());
-		}
+		// if (this.subscribers.connect.length) {
+		// 	this.subscribers.connect.forEach((cb) => cb());
+		// }
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {

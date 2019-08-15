@@ -12,7 +12,7 @@ import { STATUS } from '../constants/ws-constants';
 class Echo {
 
 	constructor() {
-        this.subscriber = new Subscriber();
+		this.subscriber = new Subscriber();
 		this._ws = new WS(this.subscriber);
 		this._isInitModules = false;
 
@@ -77,11 +77,9 @@ class Echo {
 	}
 
 	async reconnect() {
-		console.log('exho index disconnect reconnect', this.subscriber.subscribers.disconnect);
 		// this.subscriber.cbDisconnect();
 		await this._ws.reconnect();
 		// this.subscriber.cbConnect();
-		console.log('exho index connect reconnect', this.subscriber.subscribers.connect);
 	}
 
 	async disconnect() {

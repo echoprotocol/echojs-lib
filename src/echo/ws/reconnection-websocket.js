@@ -15,7 +15,7 @@ import { isVoid } from '../../utils/validators';
 class ReconnectionWebSocket {
 
 	constructor(subscriber) {
-        this.subscriber = subscriber;
+		this.subscriber = subscriber;
 		this.onOpen = null;
 		this.onClose = null;
 		this.onError = null;
@@ -114,6 +114,7 @@ class ReconnectionWebSocket {
 				this._setPingDelay();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
+				this.subscriber.cbConnect();
 
 				return true;
 			};
@@ -319,7 +320,7 @@ class ReconnectionWebSocket {
 	 * @param {Number} timeout - timeout before reject
 	 * @returns {Promise}
 	 */
-	async login(user, password, timeout = this._options.pingTimeout) {
+	login(user, password, timeout = this._options.pingTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 
@@ -440,6 +441,7 @@ class ReconnectionWebSocket {
 		this._resetId();
 
 		if (this.onClose) this.onClose();
+		this.subscriber.cbDisconnect();
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 

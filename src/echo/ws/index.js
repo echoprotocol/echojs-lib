@@ -5,7 +5,6 @@ import ReconnectionWebSocket from './reconnection-websocket';
 import EchoApi from './echo-api';
 import { validateUrl, validateOptionsError } from '../../utils/validators';
 import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
-import Subscriber from "../subscriber";
 
 class WS extends EventEmitter {
 
@@ -44,13 +43,14 @@ class WS extends EventEmitter {
 			await Promise.all(initPromises);
 			await this._ws_rpc.login('', '');
 		} catch (e) {
+			console.error('[WS] >---- error ----->  ONOPEN', e);
 			await this.close();
 		}
 	}
 
 	/**
-     * On open callback
-     */
+	 * On open callback
+	*/
 	_onOpen() {
 		if (!this._ws_rpc) return;
 
@@ -157,9 +157,8 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) throw new Error('Socket close.');
 
 		await this._initEchoApi();
-		console.log('ws index disconnect reconnect');
-		console.log('ws index connect reconnect');
-		return this._ws_rpc.reconnect();
+		const reconnectResult = await this._ws_rpc.reconnect();
+		return reconnectResult;
 	}
 
 	/**
