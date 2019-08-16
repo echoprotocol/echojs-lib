@@ -77,7 +77,7 @@ describe('update committee member global parameters', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 29',
+			'operation with id 18',
 			'key "new_parameters"',
 			'key "current_fees"',
 			'key "parameters"',

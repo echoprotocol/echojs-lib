@@ -28,7 +28,7 @@ describe('create proposal', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 20',
+			'operation with id 13',
 			'key "proposed_ops"',
 			'array element with index 0',
 			'value is not an array',
@@ -64,7 +64,7 @@ describe('create proposal', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessagePrefix = [
-			'operation with id 20',
+			'operation with id 13',
 			'key "proposed_ops"',
 			'array element with index 0',
 			'static variant',

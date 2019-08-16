@@ -12,7 +12,7 @@ import { ACCOUNT } from '../src/constants/object-types';
 
 const defaultReducer = (state = {}, { type, payload }) => type === 'SET' ? { ...state, ...payload } : state;
 
-describe.skip('redux', () => {
+describe('redux', () => {
     describe(('create reducer'), () => {
         it('pass not array and throw caches is invalid', (done) => {
             try {

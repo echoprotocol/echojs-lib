@@ -86,7 +86,7 @@ describe('transfer', () => {
 
 	testExtensionsField(echo, OPERATIONS_IDS.TRANSFER, (extensions) => ({
 		from: accountId,
-		to: '1.2.10',
+		to: '1.2.9',
 		amount: { asset_id: '1.3.0', amount: 1 },
 		extensions,
 	}));

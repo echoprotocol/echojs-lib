@@ -136,7 +136,6 @@ export const assetCreate = operation(ASSET_CREATE, {
 	precision: uint8,
 	common_options: assetOptions,
 	bitasset_opts: optional(bitassetOptions),
-	is_prediction_market: bool,
 	extensions,
 }); // 5
 
