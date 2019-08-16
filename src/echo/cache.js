@@ -2,7 +2,7 @@
 import { Map } from 'immutable';
 
 import { isFunction, isObject, isVoid } from '../utils/validators';
-import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME } from '../constants';
+import { USE_CACHE_BY_DEFAULT, DEFAULT_BLOCKS_EXPIRATION_NUMBER, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME, CACHE_MAPS } from '../constants';
 
 /** @typedef {{ isUsed?: boolean, expirationTime?: number | null, minCleaningTime?: number } | null} Options */
 
@@ -17,13 +17,20 @@ class Cache {
 	constructor(opts) {
 		if (opts === null) opts = { isUsed: false };
 		else if (opts === undefined) opts = {};
-		const { isUsed, expirationTime, minCleaningTime } = opts;
+		const {
+			isUsed, blocksLimit, expirationTime, minCleaningTime,
+		} = opts;
 		this.isUsed = isUsed === undefined ? USE_CACHE_BY_DEFAULT : isUsed;
 		this.expirationTime = expirationTime === undefined ? DEFAULT_CACHE_EXPIRATION_TIME : expirationTime;
+		if (![null, Number.POSITIVE_INFINITY, undefined].includes(blocksLimit) && (!Number.isInteger(blocksLimit) || blocksLimit < 0)) {
+			throw new Error('Invalid "blockLimit" cache parameter');
+		}
+		this.blocksLimit = blocksLimit === undefined ? DEFAULT_BLOCKS_EXPIRATION_NUMBER : blocksLimit;
 		this.minCleaningTime = minCleaningTime === undefined ? DEFAULT_MIN_CACHE_CLEANING_TIME : minCleaningTime;
 		this.redux = { store: null };
 		/** @type {{ time: number, map: string, key: string }[]} */
 		this.expirations = [];
+		this.blocksExpirations = [];
 		this.timeout = null;
 		this.reset();
 	}
@@ -117,6 +124,11 @@ class Cache {
 		}
 	}
 
+	_clearLastBlock() {
+		const key = this.blocksExpirations.shift();
+		this.set('blocks', this.blocks.delete(key));
+	}
+
 	_clearTimeout() {
 		clearTimeout(this.timeout);
 		this.timeout = null;
@@ -134,10 +146,22 @@ class Cache {
 	 */
 	setInMap(map, key, value) {
 		if (this.isUsed) {
-			this.set(map, this[map].set(key, value));
-			if (this.expirationTime !== null) {
-				this.expirations.push({ time: Date.now() + this.expirationTime, map, key });
-				if (!this.timeout) this.timeout = setTimeout(this._removeExpired.bind(this), this.expirationTime);
+			if (map === CACHE_MAPS.BLOCKS && this.blocksLimit !== null) {
+				if (this.blocksLimit !== 0) {
+					this.set(map, this.blocks.set(key, value));
+					this.blocksExpirations.push(key);
+
+					if (this.blocksExpirations.length > this.blocksLimit) {
+						this._clearLastBlock();
+					}
+				}
+			} else {
+				this.set(map, this[map].set(key, value));
+
+				if (this.expirationTime !== null) {
+					this.expirations.push({ time: Date.now() + this.expirationTime, map, key });
+					if (!this.timeout) this.timeout = setTimeout(this._removeExpired.bind(this), this.expirationTime);
+				}
 			}
 		}
 		return this;
