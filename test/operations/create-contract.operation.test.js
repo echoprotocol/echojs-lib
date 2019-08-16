@@ -24,7 +24,7 @@ describe('create contract', () => {
 	it('successful', async () => {
 		/** @type {import("../../types/index").Transaction} */
 		const tx = echo.createTransaction();
-		tx.addOperation(OPERATIONS_IDS.CREATE_CONTRACT, {
+		tx.addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 			code: bytecode + options.startValue,
 			eth_accuracy: false,
 			registrar: accountId,

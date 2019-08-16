@@ -115,7 +115,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CREATE, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -149,7 +149,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -244,7 +244,7 @@ await echo
     .createTransaction()
     .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
     .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, options)
     .addSigner(privateKey)
     .addSigner(privateKey)
     .addSigner(privateKey)

@@ -33,7 +33,7 @@ const prepare = async () => {
 	await tx.broadcast(() => console.log('claim tx was broadcasted'));
 
 	const contractTx = echo.createTransaction();
-	contractTx.addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, {
+	contractTx.addOperation(constants.OPERATIONS_IDS.CONTRACT_CREATE, {
 		code: bytecode + '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
 		eth_accuracy: false,
 		registrar: accountId,

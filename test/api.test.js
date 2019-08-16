@@ -12,8 +12,8 @@ import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
 
-describe.skip('API', () => {
-	describe.only('API CONNECTION', () => {
+describe('API', () => {
+	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
 			const apis = [DATABASE_API, ASSET_API];
 			before(async () => await echo.connect(url, { apis }));
