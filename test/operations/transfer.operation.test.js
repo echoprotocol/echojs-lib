@@ -11,6 +11,9 @@ import Transaction from '../../src/echo/transaction';
 import ED25519 from '../../src/crypto/ed25519';
 import { privateKey, accountId, url } from '../_test-data';
 import PrivateKey from '../../src/crypto/private-key';
+import testExtensionsField from './_testExtensionsField';
+
+import { ACCOUNT, ASSET} from '../../src/constants/object-types';
 
 const { OPERATIONS_IDS } = constants;
 // import bs58 from 'bs58'
@@ -28,9 +31,9 @@ describe('transfer', () => {
 
 			transaction.addOperation(constants.OPERATIONS_IDS.TRANSFER, {
 				from: accountId,
-				to: '1.2.10',
+				to: `1.${ACCOUNT}.9`,
 				amount: {
-					asset_id: '1.3.0',
+					asset_id: `1.${ASSET}.0`,
 					amount: 1
 				},
 			});
@@ -46,13 +49,13 @@ describe('transfer', () => {
 		it('full object', () => {
 			transfer.validate([OPERATIONS_IDS.TRANSFER, {
 				fee: {
-					asset_id: '1.3.1',
+					asset_id: `1.${ASSET}.1`,
 					amount: 20
 				},
-				from: '1.2.123',
-				to: '1.2.456',
+				from: `1.${ACCOUNT}.123`,
+				to: `1.${ACCOUNT}.456`,
 				amount: {
-					asset_id: '1.3.2',
+					asset_id: `1.${ASSET}.2`,
 					amount: 30
 				},
 			}]);
@@ -65,13 +68,13 @@ describe('transfer', () => {
 			transaction.addOperation('transfer', {
 				// FIXME: remove optional fee
 				fee: {
-					asset_id: '1.3.1',
+					asset_id: `1.${ASSET}.1`,
 					amount: 20
 				},
-				from: '1.2.123',
-				to: '1.2.456',
+				from: `1.${ACCOUNT}.123`,
+				to: `1.${ACCOUNT}.456`,
 				amount: {
-					asset_id: '1.3.2',
+					asset_id: `1.${ASSET}.2`,
 					amount: 30
 				},
 			});
@@ -80,4 +83,11 @@ describe('transfer', () => {
 			strictEqual(result.toHex(), '1400000000000000017bc8031e000000000000000200');
 		});
 	});
+
+	testExtensionsField(echo, OPERATIONS_IDS.TRANSFER, (extensions) => ({
+		from: accountId,
+		to: '1.2.10',
+		amount: { asset_id: '1.3.0', amount: 1 },
+		extensions,
+	}));
 });

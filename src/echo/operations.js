@@ -54,25 +54,25 @@ import {
 	BALANCE_CLAIM,
 	OVERRIDE_TRANSFER,
 	ASSET_CLAIM_FEES,
-	CREATE_CONTRACT,
-	CALL_CONTRACT,
+	CONTRACT_CREATE,
+	CONTRACT_CALL,
 	CONTRACT_TRANSFER,
-	CHANGE_SIDECHAIN_CONFIG,
+	SIDECHAIN_CHANGE_CONFIG,
 	ACCOUNT_ADDRESS_CREATE,
 	TRANSFER_TO_ADDRESS,
-	GENERATE_ETH_ADDRESS,
-	CREATE_ETH_ADDRESS,
-	DEPOSIT_ETH,
-	WITHDRAW_ETH,
-	APPROVE_WITHDRAW_ETH,
+	SIDECHAIN_ETH_CREATE_ADDRESS,
+	SIDECHAIN_ETH_APPROVE_ADDRESS,
+	SIDECHAIN_ETH_DEPOSIT,
+	SIDECHAIN_ETH_WITHDRAW,
+	SIDECHAIN_ETH_APPROVE_WITHDRAW,
 	CONTRACT_FUND_POOL,
 	CONTRACT_WHITELIST,
-	SIDECHAIN_ISSUE,
-	SIDECHAIN_BURN,
-	REGISTER_ERC20_TOKEN,
-	WITHDRAW_ERC20_TOKEN,
-	DEPOSIT_ERC20_TOKEN,
-	APPROVE_ERC20_TOKEN_WITHDRAW, CONTRACT_UPDATE,
+	SIDECHAIN_ETH_ISSUE,
+	SIDECHAIN_ETH_BURN,
+	SIDECHAIN_ERC20_REGISTER_TOKEN,
+	SIDECHAIN_ERC20_WITHDRAW_TOKEN,
+	SIDECHAIN_ERC20_DEPOSIT_TOKEN,
+	SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW, CONTRACT_UPDATE,
 } from '../constants/operations-ids';
 
 import {
@@ -292,7 +292,7 @@ export const assetClaimFees = operation(ASSET_CLAIM_FEES, {
 	extensions,
 }); // 23
 
-export const createContract = operation(CREATE_CONTRACT, {
+export const createContract = operation(CONTRACT_CREATE, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
 	value: asset,
@@ -302,7 +302,7 @@ export const createContract = operation(CREATE_CONTRACT, {
 	extensions,
 }); // 24
 
-export const callContract = operation(CALL_CONTRACT, {
+export const callContract = operation(CONTRACT_CALL, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
 	value: asset,
@@ -319,7 +319,7 @@ export const contractTransfer = operation(CONTRACT_TRANSFER, {
 	extensions,
 }); // 26
 
-export const changeSidechainConfig = operation(CHANGE_SIDECHAIN_CONFIG, {
+export const changeSidechainConfig = operation(SIDECHAIN_CHANGE_CONFIG, {
 	fee: asset,
 	from: protocolId(CONTRACT),
 	amount: asset,
@@ -341,27 +341,27 @@ export const transferToAddress = operation(TRANSFER_TO_ADDRESS, {
 	extensions,
 }); // 29
 
-export const generateEthAddress = operation(GENERATE_ETH_ADDRESS, {
+export const generateEthAddress = operation(SIDECHAIN_ETH_CREATE_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	extensions,
 }); // 30
 
-export const createEthAddress = operation(CREATE_ETH_ADDRESS, {
+export const createEthAddress = operation(SIDECHAIN_ETH_APPROVE_ADDRESS, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	extensions,
 }); // 31
 
-export const depositEth = operation(DEPOSIT_ETH, {
+export const depositEth = operation(SIDECHAIN_ETH_DEPOSIT, {
 	fee: asset,
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	from: protocolId(ACCOUNT),
 	amount: asset,
 }); // 32
 
-export const withdrawEth = operation(WITHDRAW_ETH, {
+export const withdrawEth = operation(SIDECHAIN_ETH_WITHDRAW, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	eth_addr: string,
@@ -369,7 +369,7 @@ export const withdrawEth = operation(WITHDRAW_ETH, {
 	extensions,
 }); // 33
 
-export const approveWithdrawEth = operation(APPROVE_WITHDRAW_ETH, {
+export const approveWithdrawEth = operation(SIDECHAIN_ETH_APPROVE_WITHDRAW, {
 	fee: asset,
 	committee_member_id: protocolId(COMMITTEE_MEMBER),
 	extensions,
@@ -390,30 +390,30 @@ export const contractWhitelist = operation(CONTRACT_WHITELIST, {
 	extensions,
 }); // 36
 
-export const sidechainIssue = operation(SIDECHAIN_ISSUE, {
+export const sidechainIssue = operation(SIDECHAIN_ETH_ISSUE, {
 	fee: asset,
 	amount: asset,
 	account: protocolId(ACCOUNT),
-	deposit_id: protocolId(DEPOSIT_ETH),
+	deposit_id: protocolId(SIDECHAIN_ETH_DEPOSIT),
 	extensions,
 }); // 37
 
-export const sidechainBurn = operation(SIDECHAIN_BURN, {
+export const sidechainBurn = operation(SIDECHAIN_ETH_BURN, {
 	fee: asset,
 	amount: asset,
 	account: protocolId(ACCOUNT),
-	withdraw_id: protocolId(DEPOSIT_ETH),
+	withdraw_id: protocolId(SIDECHAIN_ETH_DEPOSIT),
 	extensions,
 }); // 38
 
-export const registerErc20Token = operation(REGISTER_ERC20_TOKEN, {
+export const registerErc20Token = operation(SIDECHAIN_ERC20_REGISTER_TOKEN, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	eth_addr: protocolId(ETH_ADDRESS),
 	extensions,
 }); // 39
 
-export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
+export const depositErc20Token = operation(SIDECHAIN_ERC20_DEPOSIT_TOKEN, {
 	fee: asset,
 	committee_member_id: protocolId(ACCOUNT),
 	erc20_token_addr: protocolId(ETH_ADDRESS),
@@ -421,7 +421,7 @@ export const depositErc20Token = operation(DEPOSIT_ERC20_TOKEN, {
 	extensions,
 }); // 40
 
-export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
+export const withdrawErc20Token = operation(SIDECHAIN_ERC20_WITHDRAW_TOKEN, {
 	fee: asset,
 	account: protocolId(ACCOUNT),
 	to: protocolId(ETH_ADDRESS),
@@ -429,7 +429,7 @@ export const withdrawErc20Token = operation(WITHDRAW_ERC20_TOKEN, {
 	extensions,
 }); // 41
 
-export const approveErc20TokenWithdraw = operation(APPROVE_ERC20_TOKEN_WITHDRAW, {
+export const approveErc20TokenWithdraw = operation(SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW, {
 	fee: asset,
 	committee_member_id: protocolId(ACCOUNT),
 	to: protocolId(ETH_ADDRESS),
@@ -501,4 +501,9 @@ export const operationById = allOperations.reduce((acc, op) => {
 	return acc;
 }, {});
 
-operationWrapper.types = operationById;
+export const operationSerializerById = allOperations.reduce((acc, op) => {
+	acc[op.id] = op.serializable;
+	return acc;
+}, {});
+
+operationWrapper.types = operationSerializerById;

@@ -25,8 +25,8 @@ import {
 	BALANCE_CLAIM,
 	OVERRIDE_TRANSFER,
 	ASSET_CLAIM_FEES,
-	CREATE_CONTRACT,
-	CALL_CONTRACT,
+	CONTRACT_CREATE,
+	CONTRACT_CALL,
 	CONTRACT_TRANSFER,
 } from '../constants/operations-ids';
 
@@ -72,7 +72,7 @@ export default {
 	[BALANCE_CLAIM]: noFee,
 	[OVERRIDE_TRANSFER]: defaultFee,
 	[ASSET_CLAIM_FEES]: defaultFee,
-	[CREATE_CONTRACT]: defaultFee,
-	[CALL_CONTRACT]: defaultFee,
+	[CONTRACT_CREATE]: defaultFee,
+	[CONTRACT_CALL]: defaultFee,
 	[CONTRACT_TRANSFER]: defaultFee,
 };

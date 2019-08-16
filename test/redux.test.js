@@ -8,6 +8,8 @@ import cacheReducer from '../src/redux/reducer'
 
 import { url } from './_test-data';
 
+import { ACCOUNT } from '../src/constants/object-types';
+
 const defaultReducer = (state = {}, { type, payload }) => type === 'SET' ? { ...state, ...payload } : state;
 
 describe.skip('redux', () => {
@@ -104,7 +106,7 @@ describe.skip('redux', () => {
                 })
             );
 
-            const id = '1.2.0';
+            const id = `1.${ACCOUNT}.0`;
 
             await echo.api.getObjects([id])
 
@@ -140,7 +142,7 @@ describe.skip('redux', () => {
 
             echo.syncCacheWithStore(store);
 
-            const id = '1.2.0';
+            const id = `1.${ACCOUNT}.0`;
 
             const account = await echo.api.getObject(id);
 
@@ -159,7 +161,7 @@ describe.skip('redux', () => {
                 })
             );
 
-            const id = '1.2.0';
+            const id = `1.${ACCOUNT}.0`;
 
             const account = await echo.api.getObject(id);
 

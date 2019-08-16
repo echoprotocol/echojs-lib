@@ -62,7 +62,6 @@ const options = {
             "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
             1,
         ]],
-        address_auths: [],
     },
     active: { // by default has key_auths
         weight_threshold: 1,
@@ -71,7 +70,6 @@ const options = {
             "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
             1,
         ]],
-        address_auths: [],
     },
     options: {
         memo_key: "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
@@ -115,7 +113,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CREATE_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CREATE, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -149,7 +147,7 @@ const options = {
 
 await echo
     .createTransaction()
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, options)
     .addSigner(privateKey)
     .broadcast();
 ```
@@ -226,7 +224,6 @@ const options = {
             'ECHO4tmRW8HFwLSJR1wxPp5at3qeJ2XcfSwpKpAM6AQE8dZugqBtU7',
             1
           ]],
-        address_auths: []
     }
 };
 
@@ -244,7 +241,7 @@ await echo
     .createTransaction()
     .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
     .addOperation(constants.OPERATIONS_IDS.TRANSFER, options)
-    .addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, options)
+    .addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, options)
     .addSigner(privateKey)
     .addSigner(privateKey)
     .addSigner(privateKey)

@@ -4,6 +4,7 @@ import { ok } from "assert";
 import { Echo, constants, PrivateKey, PublicKey } from "../../src/index";
 
 import { privateKey, accountId, url } from "../_test-data";
+import { ACCOUNT } from '../../src/constants/object-types';
 
 const { OPERATIONS_IDS } = constants;
 import bs58 from 'bs58'
@@ -40,8 +41,8 @@ describe('account create operation', () => {
 				},
 				options: {
 					memo_key: 'ECHO1111111111111111111111111111111114T1Anm',
-					voting_account: "1.2.3",
-					delegating_account: "1.2.3",
+					voting_account: `1.${ACCOUNT}.3`,
+					delegating_account: `1.${ACCOUNT}.3`,
 					num_committee: 0,
 					votes: [],
 					extensions: [],
