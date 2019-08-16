@@ -37,20 +37,15 @@ function generateProtocolObjectIdRegExp(protocolObjectId) {
 	return new RegExp(`^1\\.${protocolObjectId}\\.(0|[1-9]\\d*)$`);
 }
 
-const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
-const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
-const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
-const committeeMemberIdRegex = /^1\.5\.(0|[1-9]\d*)$/;
-const limitOrderIdRegex = /^1\.6\.[1-9]\d*$/;
-const callOrderIdRegex = /^1\.7\.[1-9]\d*$/;
-const customIdRegex = /^1\.8\.[1-9]\d*$/;
-const proposalIdRegex = /^1\.9\.[1-9]\d*$/;
+const accountIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ACCOUNT);
+const assetIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ASSET);
+const committeeMemberIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.COMMITTEE_MEMBER);
+const proposalIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.PROPOSAL);
 const operationHistoryIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.OPERATION_HISTORY);
-const withdrawPermissionIdRegex = /^1\.11\.[1-9]\d*$/;
-const vestingBalanceIdRegex = /^1\.12\.[1-9]\d*$/;
-const balanceIdRegex = /^1\.13\.[1-9]\d*$/;
-const contractIdRegex = /^1\.14\.(0|[1-9]\d*)$/;
-const contractResultIdRegex = /^1\.15\.(0|[1-9]\d*)$/;
+const vestingBalanceIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.VESTING_BALANCE);
+const balanceIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.BALANCE);
+const contractIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT);
+const contractResultIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT_RESULT);
 
 const dynamicGlobalObjectIdRegex = /^2.1.0$/;
 const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
