@@ -6,8 +6,6 @@ import { STATUS } from '../constants/ws-constants';
 import {
 	isFunction,
 	isObjectId,
-	isLimitOrderId,
-	isCallOrderId,
 	isAccountBalanceId,
 	isAccountStatisticsId,
 	isTransactionId,
@@ -193,14 +191,15 @@ class Subscriber extends EventEmitter {
 		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.account)) {
 			return null;
 		}
+		// TODO remove isLimitOrderId
+		// if (isLimitOrderId(object.id) && !subscribedAccounts.includes(object.seller)) {
+		// 	return null;
+		// }
 
-		if (isLimitOrderId(object.id) && !subscribedAccounts.includes(object.seller)) {
-			return null;
-		}
-
-		if (isCallOrderId(object.id) && !subscribedAccounts.includes(object.borrower)) {
-			return null;
-		}
+		//TODO remove isCallOrderId
+		// if (isCallOrderId(object.id) && !subscribedAccounts.includes(object.borrower)) {
+		// 	return null;
+		// }
 
 		if (
 			isAccountBalanceId(object.id)
@@ -433,28 +432,28 @@ class Subscriber extends EventEmitter {
 				}
 			}
 		}
+		// TODO remove isLimitOrderId
+		// if (isLimitOrderId(object.id)) {
+		// 	let account = this.cache.fullAccounts.get(object.seller);
 
-		if (isLimitOrderId(object.id)) {
-			let account = this.cache.fullAccounts.get(object.seller);
+		// 	if (account) {
 
-			if (account) {
+		// 		if (!account.has('limit_orders')) {
+		// 			account = account.set('limit_orders', new Set());
+		// 		}
+		// 		const limitOrders = account.get('limit_orders');
 
-				if (!account.has('limit_orders')) {
-					account = account.set('limit_orders', new Set());
-				}
-				const limitOrders = account.get('limit_orders');
+		// 		if (!limitOrders.has(object.id)) {
+		// 			account = account.set('limit_orders', limitOrders.add(object.id));
+		// 			this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
+		// 				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
 
-				if (!limitOrders.has(object.id)) {
-					account = account.set('limit_orders', limitOrders.add(object.id));
-					this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
-						.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
-
-					// Force subscription to the object by calling get_objects
-					this._api.getObjects([object.id]);
-					this._notifyAccountSubscribers(account);
-				}
-			}
-		}
+		// 			// Force subscription to the object by calling get_objects
+		// 			this._api.getObjects([object.id]);
+		// 			this._notifyAccountSubscribers(account);
+		// 		}
+		// 	}
+		// }
 
 		if (isProposalId(object.id) && object.required_active_approvals) {
 			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
@@ -496,32 +495,33 @@ class Subscriber extends EventEmitter {
 		if (!obj) {
 			return type;
 		}
+		// TODO remove isLimitOrderId
+		// if (isLimitOrderId(id)) {
+		// 	// get account from objects by seller param
+		// 	let account = this.cache.fullAccounts.get(obj.get('seller'));
+		// 	// if account get orders, delete this order
+		// 	if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
+		// 		const limitOrders = account.get('limit_orders');
+		// 		account = account.set('limit_orders', limitOrders.delete(obj));
+		// 		this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
+		// 	}
 
-		if (isLimitOrderId(id)) {
-			// get account from objects by seller param
-			let account = this.cache.fullAccounts.get(obj.get('seller'));
-			// if account get orders, delete this order
-			if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
-				const limitOrders = account.get('limit_orders');
-				account = account.set('limit_orders', limitOrders.delete(obj));
-				this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-			}
+		// 	type = CANCEL_LIMIT_ORDER;
+		// }
 
-			type = CANCEL_LIMIT_ORDER;
-		}
+		// TODO remove isCallOrderId
+		// if (isCallOrderId(id)) {
+		// 	// get account from objects by borrower param
+		// 	let account = this.cache.fullAccounts.get(obj.get('borrower'));
+		// 	// if account get call_orders, delete this order
+		// 	if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
+		// 		const callOrders = account.get('call_orders');
+		// 		account = account.set('call_orders', callOrders.delete(obj));
+		// 		this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
+		// 	}
 
-		if (isCallOrderId(id)) {
-			// get account from objects by borrower param
-			let account = this.cache.fullAccounts.get(obj.get('borrower'));
-			// if account get call_orders, delete this order
-			if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
-				const callOrders = account.get('call_orders');
-				account = account.set('call_orders', callOrders.delete(obj));
-				this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-			}
-
-			type = CLOSE_CALL_ORDER;
-		}
+		// 	type = CLOSE_CALL_ORDER;
+		// }
 
 		// delete from objects
 		this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, null);
