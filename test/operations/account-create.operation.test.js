@@ -2,12 +2,13 @@ import "mocha";
 import { ok } from "assert";
 
 import { Echo, constants, PrivateKey, PublicKey } from "../../src/index";
+import { ED25519 } from '../../src/crypto';
 
 import { privateKey, accountId, url } from "../_test-data";
 import { ACCOUNT } from '../../src/constants/object-types';
 
 const { OPERATIONS_IDS } = constants;
-import bs58 from 'bs58'
+
 describe('account create operation', () => {
 
 	/** @type {import("../../types/index").Echo} */
@@ -18,37 +19,34 @@ describe('account create operation', () => {
 	after(() => echo.disconnect());
 
 	it('account create successful', async () => {
+		const edKeyPair = ED25519.createKeyPair();
+		const prKey = PrivateKey.fromBuffer(edKeyPair.privateKey);
+		const publicKey = prKey.toPublicKey().toPublicKeyString();
 
-		const edPrivateWithoutDETDecoded = bs58.decode('privatekey');
-		const prKey = PrivateKey.fromBuffer(edPrivateWithoutDETDecoded);
 		const randomString = `newacc-${Date.now()}`;
-		const publicKey = PrivateKey.fromSeed(randomString).toPublicKey().toString();
 
 		const result = await echo.createTransaction()
 			.addOperation(OPERATIONS_IDS.ACCOUNT_CREATE, {
-				ed_key: publicKey,
 				registrar: accountId,
-				referrer: accountId,
-				referrer_percent: 0,
 				name: randomString,
 				active: { // by default has key_auths
-					weight_threshold: 1,
+					weight_threshold: 0,
 					account_auths: [],
 					key_auths: [[
 						publicKey,
 						1,
 					]]
 				},
+				echorand_key: publicKey,
 				options: {
-					memo_key: 'ECHO1111111111111111111111111111111114T1Anm',
 					voting_account: `1.${ACCOUNT}.3`,
 					delegating_account: `1.${ACCOUNT}.3`,
 					num_committee: 0,
 					votes: [],
-					extensions: [],
 				},
+				extensions: [],
 			})
-			.addSigner(prKey).broadcast();
+			.addSigner(privateKey).broadcast();
 
 		ok(result instanceof Array);
 		ok(!!result[0].id);

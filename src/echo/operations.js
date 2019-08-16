@@ -98,8 +98,6 @@ export const transfer = operation(TRANSFER, {
 export const accountCreate = operation(ACCOUNT_CREATE, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
-	referrer: protocolId(ACCOUNT),
-	referrer_percent: uint16,
 	name: string,
 	active: authority,
 	echorand_key: publicKey,
