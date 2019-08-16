@@ -126,6 +126,10 @@
 		"name": "init4",
 		"active_key": "ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo",
 		"echorand_key": "ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo"
+	}, {
+		"name": "nathan",
+		"active_key": "ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo",
+		"echorand_key": "ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo"
 	}],
 	"initial_assets": [{
 		"symbol": "EETH",

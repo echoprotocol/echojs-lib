@@ -1,4 +1,4 @@
-import echo, { constants,Transaction, PrivateKey } from '../../src';
+import echo, { constants } from '../../src';
 import { url, privateKey, accountId } from './../_test-data';
 import { bytecode } from '../operations/_contract.test';
 
@@ -12,7 +12,7 @@ const prepare = async () => {
 		apis: constants.WS_CONSTANTS.CHAIN_APIS,
 	});
 
-	const balanceObject = await echo.api.getObject('1.13.0');
+	const balanceObject = await echo.api.getObject(`1.${constants.OBJECT_TYPES.BALANCE}.0`);
 
 	if (!balanceObject)
 		return;
@@ -21,7 +21,7 @@ const prepare = async () => {
 
 	const options = {
 		deposit_to_account: accountId,
-		balance_to_claim: '1.13.0',
+		balance_to_claim: `1.${constants.OBJECT_TYPES.BALANCE}.0`,
 		balance_owner_key: privateKey.toPublicKey().toString(),
 		total_claimed: balanceObject.balance,
 	};
