@@ -8,7 +8,6 @@ import {
 	empty,
 	int64,
 	map,
-	optional,
 	protocolId,
 	publicKey,
 	set,
@@ -20,11 +19,12 @@ import {
 	voteId,
 	bool,
 } from './basic-types';
+import withDefaultValue from './basic-types/withDefaultValue';
 
 export { default as predicate } from './predicate';
 export { default as vestingPolicyInitializer } from './vesting-policy';
 
-export const extensions = optional(array(empty));
+export const extensions = withDefaultValue(array(empty), []);
 export const operationWrapper = staticVariant({});
 export const asset = serializable({ amount: int64, asset_id: protocolId(ASSET) });
 export const price = serializable({ base: asset, quote: asset });

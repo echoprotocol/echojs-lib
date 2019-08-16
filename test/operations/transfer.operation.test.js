@@ -11,6 +11,7 @@ import Transaction from '../../src/echo/transaction';
 import ED25519 from '../../src/crypto/ed25519';
 import { privateKey, accountId, url } from '../_test-data';
 import PrivateKey from '../../src/crypto/private-key';
+import testExtensionsField from './_testExtensionsField';
 
 import { ACCOUNT, ASSET} from '../../src/constants/object-types';
 
@@ -82,4 +83,11 @@ describe('transfer', () => {
 			strictEqual(result.toHex(), '1400000000000000017bc8031e000000000000000200');
 		});
 	});
+
+	testExtensionsField(echo, OPERATIONS_IDS.TRANSFER, (extensions) => ({
+		from: accountId,
+		to: '1.2.10',
+		amount: { asset_id: '1.3.0', amount: 1 },
+		extensions,
+	}));
 });

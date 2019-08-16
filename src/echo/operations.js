@@ -501,4 +501,9 @@ export const operationById = allOperations.reduce((acc, op) => {
 	return acc;
 }, {});
 
-operationWrapper.types = operationById;
+export const operationSerializerById = allOperations.reduce((acc, op) => {
+	acc[op.id] = op.serializable;
+	return acc;
+}, {});
+
+operationWrapper.types = operationSerializerById;
