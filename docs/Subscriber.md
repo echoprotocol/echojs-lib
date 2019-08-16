@@ -69,7 +69,6 @@ console.log(result);
 {
     active: {
         account_auths: [],
-        address_auths: [],
         key_auths: [["ECHO76zGaUmBNXk9yD3EmAP1KYPBabkgnVmLiDSs99ZRLap1TV4GC8", 1]],
         weight_threshold: 1
     },
@@ -93,7 +92,6 @@ console.log(result);
     },
     owner: {
         account_auths: [],
-        address_auths: [],
         key_auths: [["ECHO6P3owTYeFpQGc9t4WJmCDvAxGV9TaZvkuPi1DbrtSfYb8WbVHH", 1]],
         weight_threshold: 1,
     },
