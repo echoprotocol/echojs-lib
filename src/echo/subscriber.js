@@ -27,7 +27,6 @@ import {
 import {
 	CACHE_MAPS,
 	CANCEL_LIMIT_ORDER,
-	UPDATE_CALL_ORDER,
 	CLOSE_CALL_ORDER,
 	BITASSET_UPDATE,
 } from '../constants';
@@ -191,15 +190,6 @@ class Subscriber extends EventEmitter {
 		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.account)) {
 			return null;
 		}
-		// TODO remove isLimitOrderId
-		// if (isLimitOrderId(object.id) && !subscribedAccounts.includes(object.seller)) {
-		// 	return null;
-		// }
-
-		//TODO remove isCallOrderId
-		// if (isCallOrderId(object.id) && !subscribedAccounts.includes(object.borrower)) {
-		// 	return null;
-		// }
 
 		if (
 			isAccountBalanceId(object.id)
@@ -411,50 +401,6 @@ class Subscriber extends EventEmitter {
 				.setInMap(CACHE_MAPS.BIT_ASSETS_BY_BIT_ASSET_ID, object.id, obj);
 		}
 
-		if (isCallOrderId(object.id)) {
-			this.emit(UPDATE_CALL_ORDER, object);
-
-			let account = this.cache.fullAccounts.get(object.borrower);
-
-			if (account) {
-				if (!account.has('call_orders')) {
-					account = account.set('call_orders', new Set());
-				}
-				const callOrders = account.get('call_orders');
-				if (!callOrders.has(object.id)) {
-					account = account.set('call_orders', callOrders.add(object.id));
-					this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
-						.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
-
-					// Force subscription to the object by calling get_objects
-					this._api.getObjects([object.id]);
-					this._notifyAccountSubscribers(account);
-				}
-			}
-		}
-		// TODO remove isLimitOrderId
-		// if (isLimitOrderId(object.id)) {
-		// 	let account = this.cache.fullAccounts.get(object.seller);
-
-		// 	if (account) {
-
-		// 		if (!account.has('limit_orders')) {
-		// 			account = account.set('limit_orders', new Set());
-		// 		}
-		// 		const limitOrders = account.get('limit_orders');
-
-		// 		if (!limitOrders.has(object.id)) {
-		// 			account = account.set('limit_orders', limitOrders.add(object.id));
-		// 			this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
-		// 				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
-
-		// 			// Force subscription to the object by calling get_objects
-		// 			this._api.getObjects([object.id]);
-		// 			this._notifyAccountSubscribers(account);
-		// 		}
-		// 	}
-		// }
-
 		if (isProposalId(object.id) && object.required_active_approvals) {
 			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
 				let impactedAccount = this.cache.fullAccounts.get(id);
@@ -482,55 +428,6 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _updateOrder
-	 *
-	 *  @param  {String} id
-	 *
-	 *  @return {String}
-	 */
-	_updateOrder(id) {
-		let type = null;
-		const obj = this.cache.objectsById.get(id);
-
-		if (!obj) {
-			return type;
-		}
-		// TODO remove isLimitOrderId
-		// if (isLimitOrderId(id)) {
-		// 	// get account from objects by seller param
-		// 	let account = this.cache.fullAccounts.get(obj.get('seller'));
-		// 	// if account get orders, delete this order
-		// 	if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
-		// 		const limitOrders = account.get('limit_orders');
-		// 		account = account.set('limit_orders', limitOrders.delete(obj));
-		// 		this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-		// 	}
-
-		// 	type = CANCEL_LIMIT_ORDER;
-		// }
-
-		// TODO remove isCallOrderId
-		// if (isCallOrderId(id)) {
-		// 	// get account from objects by borrower param
-		// 	let account = this.cache.fullAccounts.get(obj.get('borrower'));
-		// 	// if account get call_orders, delete this order
-		// 	if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
-		// 		const callOrders = account.get('call_orders');
-		// 		account = account.set('call_orders', callOrders.delete(obj));
-		// 		this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-		// 	}
-
-		// 	type = CLOSE_CALL_ORDER;
-		// }
-
-		// delete from objects
-		this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, null);
-
-		// return type
-		return type;
-	}
-
-	/**
 	 *  @method _onRespond
 	 *
 	 *  @param  {Object} [messages]
@@ -543,13 +440,6 @@ class Subscriber extends EventEmitter {
 		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
-				// _updateOrder -> return order type - push to orders = { type, order }
-				const type = this._updateOrder(msg);
-
-				if (type) {
-					orders.push({ type, id: msg });
-				}
-
 				return false;
 			}
 
