@@ -25,7 +25,6 @@ import {
 	string,
 	timePointSec,
 	uint8,
-	uint16,
 	uint32, uint64,
 } from '../serializer/basic-types';
 
