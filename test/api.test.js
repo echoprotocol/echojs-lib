@@ -263,8 +263,8 @@ describe.skip('API', () => {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
-					const accountId1 = '1.2.5';
-					const accountId2 = '1.2.6';
+					const accountId1 = `1.${constants.OBJECT_TYPES.ACCOUNT}.5`;
+					const accountId2 = `1.${constants.OBJECT_TYPES.ACCOUNT}.6`;
 					const accounts = await api.getAccounts([accountId1, accountId2]);
 
 					expect(accounts)
@@ -304,8 +304,8 @@ describe.skip('API', () => {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
-					const accountId1 = '1.2.5';
-					const accountId2 = '1.2.6';
+					const accountId1 = `1.${constants.OBJECT_TYPES.ACCOUNT}.5`;
+					const accountId2 = `1.${constants.OBJECT_TYPES.ACCOUNT}.6`;
 
 					const accounts = await api.getFullAccounts([accountId1, accountId2]);
 
@@ -374,7 +374,7 @@ describe.skip('API', () => {
 					const api = new API(cache, wsApi);
 
 					const assetKey = 'ECHO';
-					const assetId = '1.3.0';
+					const assetId = `1.${constants.OBJECT_TYPES.ASSET}.0`;
 					const assets = await api.lookupAssetSymbols([assetKey]);
 
 					expect(assets)
@@ -410,7 +410,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const assetId1 = '1.3.0';
+					const assetId1 = `1.${constants.OBJECT_TYPES.ASSET}.0`;
 
 					const assets = await api.getAssets([assetId1]);
 
@@ -441,8 +441,8 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.2';
-					const assetId = '1.3.0';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.2`;
+					const assetId = `1.${constants.OBJECT_TYPES.ASSET}.0`;
 					const assetSymbol = 'ECHO';
 
 					const objects = await api.getObjects([accountId, assetId]);
@@ -495,8 +495,8 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.2';
-					const assetId = '1.3.0';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.2`;
+					const assetId = `1.${constants.OBJECT_TYPES.ASSET}.0`;
 					const assetSymbol = 'ECHO';
 
 					const objects = await api.getObjects([accountId, assetId]);
@@ -549,7 +549,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const committeeMember = '1.5.1';
+					const committeeMember = `1.${constants.OBJECT_TYPES.COMMITTEE_MEMBER}.1`;
 
 					const objects = await api.getCommitteeMembers([committeeMember]);
 
@@ -668,14 +668,14 @@ describe.skip('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe('#getFullContract()', () => {
+		describe.skip('#getFullContract()', () => {
 			it('should get contract', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const contractId = '1.14.0';
+					const contractId = `1.${constants.OBJECT_TYPES.CONTRACT}.0`;
 					const contract = await api.getFullContract(contractId);
 
 					expect(contract)
@@ -696,7 +696,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const contractId = '1.14.0';
+					const contractId = `1.${constants.OBJECT_TYPES.CONTRACT}.0`;
 					const contracts = await api.getContracts([contractId]);
 
 					expect(contracts.get(0))
@@ -783,7 +783,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const id = '1.5.0';
+					const id = `1.${constants.OBJECT_TYPES.COMMITTEE_MEMBER}.1`;
 
 					const objects = await api.getCommitteeMembers([id]);
 
@@ -828,7 +828,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.6';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.6`;
 
 					const object = await api.getCommitteeMemberByAccount(accountId);
 
@@ -883,7 +883,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.2';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.2`;
 
 					const history = await api.getAccountHistory(accountId);
 					expect(history)
@@ -903,7 +903,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.0';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.0`;
 					const start = 0;
 					const stop = 0;
 					const limit = 10;
@@ -926,10 +926,10 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = '1.2.0';
+					const accountId = `1.${constants.OBJECT_TYPES.ACCOUNT}.0`;
 					const operationId = 0;
-					const start = '1.10.0';
-					const stop = '1.10.0';
+					const start = `1.${constants.OBJECT_TYPES.OPERATION_HISTORY}.0`;
+					const stop = `1.${constants.OBJECT_TYPES.OPERATION_HISTORY}.0`;
 					const limit = 10;
 
 					const history = await api.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
@@ -950,9 +950,9 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const contractId = '1.14.1';
-					const start = '1.10.0';
-					const stop = '1.10.0';
+					const contractId = `1.${constants.OBJECT_TYPES.CONTRACT}.1`;
+					const start = `1.${constants.OBJECT_TYPES.OPERATION_HISTORY}.0`;
+					const stop = `1.${constants.OBJECT_TYPES.OPERATION_HISTORY}.0`;
 					const limit = 10;
 
 					const history = await api.getContractHistory(contractId, stop, limit, start);
