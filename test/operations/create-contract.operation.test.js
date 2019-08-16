@@ -6,7 +6,7 @@ import { Echo, constants } from '../../src/index';
 
 const { OPERATIONS_IDS } = constants;
 import { ECHO_ASSET_ID } from '../../src/constants';
-
+import { OPERATION_HISTORY } from '../../src/constants/object-types';
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
 const options = {
 	contractAddress: null,
@@ -29,7 +29,7 @@ describe('create contract', () => {
 			eth_accuracy: false,
 			registrar: accountId,
 			value: {
-				asset_id: '1.3.0',
+				asset_id: ECHO_ASSET_ID,
 				amount: 0
 			},
 		});
@@ -43,7 +43,7 @@ describe('create contract', () => {
 			// .then((res) => res[1].exec_res.new_address)
 			// .catch((e) => console.log(e));
 		// console.log(newAddress);
-		// const contractId = `1.14.${parseInt(newAddress.slice(2), 16)}`;
+		// const contractId = `1.${OPERATION_HISTORY}.${parseInt(newAddress.slice(2), 16)}`;
 
 		// ok(/^1\.14\.[1-9]\d*$/.test(contractId));
 		// options.contractAddress = contractId;

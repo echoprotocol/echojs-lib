@@ -4,6 +4,8 @@ import { constants, Echo, PublicKey } from '../../src/index';
 
 import { privateKey, accountId, url } from '../_test-data';
 
+import { ASSET } from '../../src/constants/object-types';
+
 describe('account update', () => {
 
 	/** @type {import("../../types/index").Echo} */
@@ -17,7 +19,7 @@ describe('account update', () => {
 		it('successful', async () => {
 			const result = await echo.createTransaction()
 				.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
-					fee: { asset_id: '1.3.0' },
+					fee: { asset_id: `1.${ASSET}.0` },
 					account: accountId,
 					echorand_key: privateKey.toPublicKey().toString(),
 					active: {

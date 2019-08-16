@@ -1,6 +1,7 @@
 import echo, { constants,Transaction, PrivateKey } from '../../src';
 import { url, privateKey, accountId } from './../_test-data';
 import { bytecode } from '../operations/_contract.test';
+import { BALANCE, ASSET } from '../../src/constants/object-types';
 
 const prepare = async () => {
 	await echo.connect(url, {
@@ -12,7 +13,7 @@ const prepare = async () => {
 		apis: constants.WS_CONSTANTS.CHAIN_APIS,
 	});
 
-	const balanceObject = await echo.api.getObject('1.13.0');
+	const balanceObject = await echo.api.getObject(`1.${BALANCE}.0`);
 
 	if (!balanceObject)
 		return;
@@ -21,7 +22,7 @@ const prepare = async () => {
 
 	const options = {
 		deposit_to_account: accountId,
-		balance_to_claim: '1.13.0',
+		balance_to_claim: `1.${BALANCE}.0`,
 		balance_owner_key: privateKey.toPublicKey().toString(),
 		total_claimed: balanceObject.balance,
 	};
@@ -37,7 +38,7 @@ const prepare = async () => {
 		code: bytecode + '0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210',
 		eth_accuracy: false,
 		registrar: accountId,
-		value: { asset_id: '1.3.0', amount: 0 },
+		value: { asset_id: `1.${ASSET}.0`, amount: 0 },
 	});
 
 	contractTx.addSigner(privateKey);
