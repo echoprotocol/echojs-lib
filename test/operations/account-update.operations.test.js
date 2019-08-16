@@ -57,7 +57,7 @@ describe('account update', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 6',
+			'operation with id 2',
 			'key "active"',
 			'optional type',
 			'serializable object is not a object',

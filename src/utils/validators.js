@@ -4,11 +4,7 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-<<<<<<< HEAD
-import { OBJECT_TYPES } from '../constants';
-=======
 import { OBJECT_TYPES, CHAIN_TYPES } from '../constants';
->>>>>>> feature/ECHOJS-99
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
