@@ -25,7 +25,6 @@ import {
 	string,
 	timePointSec,
 	uint8,
-	uint16,
 	uint32, uint64,
 } from '../serializer/basic-types';
 
@@ -98,8 +97,6 @@ export const transfer = operation(TRANSFER, {
 export const accountCreate = operation(ACCOUNT_CREATE, {
 	fee: asset,
 	registrar: protocolId(ACCOUNT),
-	referrer: protocolId(ACCOUNT),
-	referrer_percent: uint16,
 	name: string,
 	active: authority,
 	echorand_key: publicKey,
