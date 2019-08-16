@@ -10,7 +10,7 @@ import { IMPLEMENTATION_OBJECT_TYPE } from '../src/constants/chain-types';
 
 chai.use(spies);
 
-describe('SUBSCRIBER', () => {
+describe.skip('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
