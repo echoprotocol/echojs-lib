@@ -8,20 +8,16 @@ import {
 	authority,
 	bitassetOptions,
 	extensions,
-	price,
 	priceFeed,
 	chainParameters,
 	vestingPolicyInitializer,
-	predicate,
 	operationWrapper,
 } from '../serializer/composit-types';
 
 import {
 	array,
-	bytes,
 	bool,
 	int64,
-	objectId,
 	optional,
 	protocolId,
 	publicKey,
@@ -81,14 +77,11 @@ import {
 
 import {
 	ACCOUNT,
-	LIMIT_ORDER,
 	ASSET,
 	PROPOSAL,
-	WITHDRAW_PERMISSION,
 	COMMITTEE_MEMBER,
 	VESTING_BALANCE,
 	BALANCE,
-	FORCE_SETTLEMENT,
 	CONTRACT, ERC20_TOKEN, ETH_ADDRESS,
 } from '../constants/object-types';
 
