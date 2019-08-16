@@ -30,7 +30,7 @@ describe('transfer', () => {
 
 			transaction.addOperation(constants.OPERATIONS_IDS.TRANSFER, {
 				from: accountId,
-				to: `1.${ACCOUNT}.10`,
+				to: `1.${ACCOUNT}.9`,
 				amount: {
 					asset_id: `1.${ASSET}.0`,
 					amount: 1

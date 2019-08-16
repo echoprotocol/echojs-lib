@@ -32,6 +32,7 @@ import {
 } from '../constants';
 
 import { handleConnectionClosedError } from '../utils/helpers';
+import { IMPLEMENTATION_OBJECT_TYPE } from '../constants/chain-types';
 
 class Subscriber extends EventEmitter {
 
@@ -265,7 +266,8 @@ class Subscriber extends EventEmitter {
 
 		if (isAccountStatisticsId(object.id)) {
 			try {
-				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
+				const accountTransactionHistoryId = `2.${IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_TRANSACTION_HISTORY}.0`;
+				const previousMostRecentOp = previous.get('most_recent_op', accountTransactionHistoryId);
 
 				if (previousMostRecentOp !== object.most_recent_op) {
 					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
@@ -805,7 +807,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {undefined}
 	 */
 	_subscribeToMarket(base, quote) {
-		this._wsApi.database.subscribeToMarket(
+		return this._wsApi.database.subscribeToMarket(
 			this._marketUpdate.bind(this, base, quote),
 			base,
 			quote,

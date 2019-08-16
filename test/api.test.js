@@ -9,7 +9,7 @@ import echo, { constants } from '../src';
 import { url } from './_test-data';
 
 
-describe.skip('API', () => {
+describe('API', () => {
 	describe('ASSET API', () => {
 		before(async () => {
 			await echo.connect(url, {
@@ -668,7 +668,7 @@ describe.skip('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe('#getFullContract()', () => {
+		describe.skip('#getFullContract()', () => {
 			it('should get contract', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
@@ -783,7 +783,7 @@ describe.skip('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const id = '1.${constants.OBJECT_TYPES.COMMITTEE_MEMBER}.1';
+					const id = `1.${constants.OBJECT_TYPES.COMMITTEE_MEMBER}.1`;
 
 					const objects = await api.getCommitteeMembers([id]);
 

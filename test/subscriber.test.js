@@ -6,10 +6,11 @@ import { url, privateKey, accountId, contractId } from './_test-data';
 import { Echo, constants } from '../src';
 
 import { BASE, ACCOUNT, ASSET, CONTRACT } from '../src/constants/object-types';
+import { IMPLEMENTATION_OBJECT_TYPE } from '../src/constants/chain-types';
 
 chai.use(spies);
 
-describe.skip('SUBSCRIBER', () => {
+describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	before(async () => {
@@ -30,7 +31,7 @@ describe.skip('SUBSCRIBER', () => {
 	});
 
 	describe('_updateObject', () => {
-		describe('isOperationHistoryId', () => {
+		describe.skip('isOperationHistoryId', () => {
 			it('save contractId and history in cache', async () => {
 				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
 				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
@@ -225,7 +226,7 @@ describe.skip('SUBSCRIBER', () => {
         describe('removeAccountSubscribe', () => {
             it('test', async () => {
                 const callback = () => {};
-                await echo.subscriber.setAccountSubscribe(callback, ['1.${ACCOUNT}.1']);
+                await echo.subscriber.setAccountSubscribe(callback, [`1.${ACCOUNT}.1`]);
                 echo.subscriber.removeAccountSubscribe(callback);
             });
         });
@@ -236,10 +237,10 @@ describe.skip('SUBSCRIBER', () => {
             it('test', (done) => {
                 let isCalled = false;
 
-                echo.api.getObjects([`2.${BASE}.0`]);
+                echo.api.getObjects([`2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`]);
 
                 echo.subscriber.setGlobalSubscribe((result) => {
-                    if (result[0] && result[0].id === `2.${BASE}.0`) {
+                    if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`) {
                         expect(result).to.be.an('array').that.is.not.empty;
                         expect(result[0]).to.be.an('object').that.is.not.empty;
                         expect(result[0].id).to.be.a('string');
@@ -355,7 +356,7 @@ describe.skip('SUBSCRIBER', () => {
 		});
 	});
 
-	describe('setMarketSubscribe', () => {
+	describe.skip('setMarketSubscribe', () => {
 		it('invalid asset', async () => {
 			try {
 				await echo.subscriber.setMarketSubscribe(1, 2, () => {});
@@ -365,12 +366,12 @@ describe.skip('SUBSCRIBER', () => {
 		});
 
 		it('test', async () => {
-			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0', '1.${ASSET}.1`, () => {});
+			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, () => {});
 			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(1);
 		});
 	});
 
-	describe('removeMarketSubscribe', () => {
+	describe.skip('removeMarketSubscribe', () => {
 
 		it('invalid asset',  async () => {
 			try {

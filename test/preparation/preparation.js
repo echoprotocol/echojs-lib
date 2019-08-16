@@ -1,6 +1,7 @@
-import echo, { constants,Transaction, PrivateKey } from '../../src';
+import echo, { constants } from '../../src';
 import { url, privateKey, accountId } from './../_test-data';
 import { bytecode } from '../operations/_contract.test';
+import { strictEqual } from 'assert';
 
 const prepare = async () => {
 	await echo.connect(url, {
@@ -41,7 +42,9 @@ const prepare = async () => {
 
 	contractTx.addSigner(privateKey);
 
-	await contractTx.broadcast(() => console.log('create contract tx was broadcasted'));
+	const broadcastingResult = await contractTx.broadcast(() => console.log('create contract tx was broadcasted'));
+	const operationResult = await echo.api.getContractResult(broadcastingResult[0].trx.operation_results[0][1]);
+	strictEqual(operationResult[1].exec_res.excepted, 'None', 'contract deployment failed');
 };
 
 prepare()
