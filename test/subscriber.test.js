@@ -34,7 +34,7 @@ describe.skip('SUBSCRIBER', () => {
 		describe.skip('isOperationHistoryId', () => {
 			it('save contractId and history in cache', async () => {
 				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
-				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
+				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, {
 					registrar: accountId,
 					value: { asset_id: `1.${ASSET}.0`, amount: 0 },
 					code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',

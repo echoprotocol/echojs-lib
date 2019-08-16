@@ -19,7 +19,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		// memo?: void,
 		extensions?: never[],
 	},
-	[OperationId.CREATE_CONTRACT]: {
+	[OperationId.CONTRACT_CREATE]: {
 		fee?: Asset,
 		registrar: string,
 		value: Asset,
@@ -28,7 +28,7 @@ type KNOWN_OPERATIONS_PROPS = {
 		supported_asset_id?: string,
 		extensions?: never[];
 	},
-	[OperationId.CALL_CONTRACT]: {
+	[OperationId.CONTRACT_CALL]: {
 		fee: Asset,
 		registrar: string,
 		value: Asset,
