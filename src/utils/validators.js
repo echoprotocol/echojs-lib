@@ -4,7 +4,7 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-import { OBJECT_TYPES } from '../constants';
+import { OBJECT_TYPES, CHAIN_TYPES } from '../constants';
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -37,6 +37,10 @@ function generateProtocolObjectIdRegExp(protocolObjectId) {
 	return new RegExp(`^1\\.${protocolObjectId}\\.(0|[1-9]\\d*)$`);
 }
 
+function generateProtocolImplObjectIdRegExp(ImplObjectId) {
+	return new RegExp(`^2\\.${ImplObjectId}\\.(0|[1-9]\\d*)$`);
+}
+
 const accountIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ACCOUNT);
 const assetIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ASSET);
 const committeeMemberIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.COMMITTEE_MEMBER);
@@ -47,15 +51,15 @@ const balanceIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.BALANCE);
 const contractIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT_RESULT);
 
-const dynamicGlobalObjectIdRegex = /^2.1.0$/;
-const dynamicAssetDataIdRegex = /^2\.3\.(0|[1-9]\d*)$/;
-const bitAssetIdRegex = /^2\.4\.(0|[1-9]\d*)$/;
-const accountBalanceIdRegex = /^2\.5\.[1-9]\d*$/;
-const accountStatisticsIdRegex = /^2\.6\.[1-9]\d*$/;
-const transactionIdRegex = /^2\.7\.[1-9]\d*$/;
-const blockSummaryIdRegex = /^2\.8\.[1-9]\d*$/;
-const accountTransactionHistoryIdRegex = /^2\.9\.[1-9]\d*$/;
-const contractHistoryIdRegex = /^2\.16\.[1-9]\d*$/;
+const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
+const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ASSET_DYNAMIC_DATA);
+const bitAssetIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ASSET_BITASSET_DATA);
+const accountBalanceIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_BALANCE);
+const accountStatisticsIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_STATISTICS);
+const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.TRANSACTION);
+const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.BLOCK_SUMMARY);
+const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_TRANSACTION_HISTORY);
+const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.CONTRACT_HISTORY);
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;

@@ -20,7 +20,7 @@ export const CLOSE_CALL_ORDER = 'close-call-order';
 export const BITASSET_UPDATE = 'bitasset-update';
 
 export const ECHO_ASSET_ID = `1.${OBJECT_TYPES.ASSET}.0`;
-export const DYNAMIC_GLOBAL_OBJECT_ID = '2.1.0';
+export const DYNAMIC_GLOBAL_OBJECT_ID = `2.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`;
 
 export const USE_CACHE_BY_DEFAULT = true;
 export const DEFAULT_CACHE_EXPIRATION_TIME = 60 * 60e3;
