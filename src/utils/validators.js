@@ -127,14 +127,9 @@ export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 
-export const isForceSettlementId = (v) => isString(v) && forceSettlementIdRegex.test(v);
 export const isCommitteeMemberId = (v) => isString(v) && committeeMemberIdRegex.test(v);
-export const isLimitOrderId = (v) => isString(v) && limitOrderIdRegex.test(v);
-export const isCallOrderId = (v) => isString(v) && callOrderIdRegex.test(v);
-export const isCustomId = (v) => isString(v) && customIdRegex.test(v);
 export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
 export const isOperationHistoryId = (v) => isString(v) && operationHistoryIdRegex.test(v);
-export const isWithdrawPermissionId = (v) => isString(v) && withdrawPermissionIdRegex.test(v);
 export const isVestingBalanceId = (v) => isString(v) && vestingBalanceIdRegex.test(v);
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
