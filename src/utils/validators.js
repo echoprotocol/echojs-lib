@@ -4,6 +4,7 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
+import { OBJECT_TYPES } from '../constants';
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -32,6 +33,10 @@ const urlRegex = new RegExp(
 );
 export const idRegex = /^([1-9]\d*)(\.(0|([1-9]\d*))){2}$/;
 
+function generateProtocolObjectIdRegExp(protocolObjectId) {
+	return new RegExp(`^1\\.${protocolObjectId}\\.(0|[1-9]\\d*)$`);
+}
+
 const accountIdRegex = /^1\.2\.(0|[1-9]\d*)$/;
 const assetIdRegex = /^1\.3\.(0|[1-9]\d*)$/;
 const forceSettlementIdRegex = /^1\.4\.[1-9]\d*$/;
@@ -40,7 +45,7 @@ const limitOrderIdRegex = /^1\.6\.[1-9]\d*$/;
 const callOrderIdRegex = /^1\.7\.[1-9]\d*$/;
 const customIdRegex = /^1\.8\.[1-9]\d*$/;
 const proposalIdRegex = /^1\.9\.[1-9]\d*$/;
-const operationHistoryIdRegex = /^1\.10\.(0|[1-9]\d*)$/;
+const operationHistoryIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.OPERATION_HISTORY);
 const withdrawPermissionIdRegex = /^1\.11\.[1-9]\d*$/;
 const vestingBalanceIdRegex = /^1\.12\.[1-9]\d*$/;
 const balanceIdRegex = /^1\.13\.[1-9]\d*$/;
