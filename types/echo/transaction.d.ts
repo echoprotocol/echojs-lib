@@ -4,6 +4,7 @@ import OperationId from "../interfaces/OperationId";
 import { asset } from "../interfaces/serializer/composit-types";
 import { serialization_output, serialization_input } from "../interfaces/serializer/serialization";
 import Operation from "../interfaces/serializer/operation";
+import { OperationProps } from "../interfaces/serializer/operation";
 
 declare enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 }
 
@@ -30,7 +31,7 @@ interface BroadcastingResult {
 
 export default class Transaction {
 	readonly transactionObject: any;
-	addOperation<T extends OperationId>(operationId: T, props?: Operation<T, serialization_input>): Transaction;
+	addOperation<T extends OperationId>(operationId: T, props?: OperationProps<T, serialization_input>): Transaction;
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
 	getPotentialSignatures(): Promise<{publicKeys:Array<string>}>;
 	sign(privateKey?: PrivateKey): Promise<void>;

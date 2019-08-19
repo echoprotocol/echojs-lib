@@ -1,4 +1,4 @@
-import AES from 'crypto-js/aes';
+import { AES } from 'crypto-js';
 import { Buffer } from "buffer";
 import PrivateKey from "./private-key";
 import PublicKey from "./public-key";
@@ -6,9 +6,9 @@ import PublicKey from "./public-key";
 export default class Aes {
 	constructor(iv:Buffer, key:Buffer);
 	clear(): void;
-	static fromSeed(seed: string): AES;
-	static fromSha512(hash: string): AES;
-	static fromBuffer(buf: Buffer): AES;
+	static fromSeed(seed: string): typeof AES;
+	static fromSha512(hash: string): typeof AES;
+	static fromBuffer(buf: Buffer): typeof AES;
 	static decryptWithChecksum(privateKey: PrivateKey, publicKey: PublicKey, nonce: string, message: string|Buffer, legacy: boolean): Buffer;
 	static encryptWithChecksum(privateKey: PrivateKey, publicKey: PublicKey, nonce: string, message: string|Buffer): Buffer;
 	decrypt(ciphertext: string): Buffer;

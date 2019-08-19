@@ -45,7 +45,7 @@ export default class Api {
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
 	getContract(contractId: string): Promise<Array<any>>;
-	getContractBalances(contractId: string, force?)
+	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
 	getContractLogs(ontractId: string, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
