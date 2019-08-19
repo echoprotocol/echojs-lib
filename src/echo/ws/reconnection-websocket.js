@@ -436,7 +436,7 @@ class ReconnectionWebSocket {
 		this._clearReconnectionTimeout();
 		this._resetId();
 
-		if (this.onClose) this.onClose();
+		if (this.onClose && this._currentRetry === 0) this.onClose();
 
 		this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONCLOSE');
 
