@@ -1,14 +1,16 @@
 import OperationId from "../OperationId";
 import * as Operations from "./operations";
 import serialization from "./serialization";
+import { UndefinedOptional } from "../../__helpers";
+
 
 export default Operation;
 type Operation<TOperationId extends OperationId, T extends serialization> =
-	TOperationId extends any ? [TOperationId, OperationProps<TOperationId, T>] : never;
+	UndefinedOptional<TOperationId extends any ? [TOperationId, OperationProps<TOperationId, T>] : never>
 
-export type AnyOperation<T extends serialization> = Operation<OperationId, T>
+export type AnyOperation<T extends serialization> = UndefinedOptional<Operation<OperationId, T>>
 
-type OperationProps<TOperationId extends OperationId, T extends serialization> = {
+export type OperationProps<TOperationId extends OperationId, T extends serialization> = UndefinedOptional<{
 	[OperationId.TRANSFER]: Operations.TransferProps<T>,
 	[OperationId.LIMIT_ORDER_CREATE]: Operations.CreateLimitOrderProps<T>,
 	[OperationId.LIMIT_ORDER_CANCEL]: Operations.CancelLimitOrderProps<T>,
@@ -69,4 +71,4 @@ type OperationProps<TOperationId extends OperationId, T extends serialization> =
 	[OperationId.WITHDRAW_ERC20_TOKEN]: Operations.WithdrawERC20TokenProps<T>,
 	[OperationId.APPROVE_ERC20_TOKEN_WITHDRAW]: Operations.ApproveERC20TokenWithdrawalProps<T>,
 	[OperationId.CONTRACT_UPDATE]: Operations.UpdateContractProps<T>,
-}[TOperationId];
+}[TOperationId]>;

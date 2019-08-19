@@ -1,5 +1,15 @@
 {
 	"compilerOptions": {
-		"strict": true
-	}
+		"allowJs": false,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true
+	},
+	"include": ["types"],
+	"exclude": ["src"]
 }

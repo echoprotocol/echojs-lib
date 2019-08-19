@@ -3,8 +3,8 @@ import * as CACHE_MAPS from './cache-maps';
 import * as CHAIN_CONFIG from './chain-config';
 import * as CHAIN_TYPES from './chain-types';
 import * as OBJECT_TYPES from './object-types';
-import * as OPERATIONS_IDS from './operations-ids';
-import * as WS_CONSTANTS from './ws-constants';
+import OPERATIONS_IDS from './operations-ids';
+import WS_CONSTANTS from './ws-constants';
 
 export const START_OPERATION_ID: string;
 export const CORE_ASSET_ID: string;
