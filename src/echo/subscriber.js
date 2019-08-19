@@ -97,11 +97,6 @@ class Subscriber extends EventEmitter {
 			await this._setPendingTransactionCallback();
 		}
 
-		Object.keys(this.subscribers.market).forEach((key) => {
-			const [base, quote] = key.split('_');
-			this._subscribeToMarket(base, quote);
-		});
-
 		if (this.subscribers.contract.length !== 0) {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
 			this._setContractSubscribe(contracts);
@@ -907,22 +902,6 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _subscribeToMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *
-	 *  @return {undefined}
-	 */
-	_subscribeToMarket(base, quote) {
-		this._wsApi.database.subscribeToMarket(
-			this._marketUpdate.bind(this, base, quote),
-			base,
-			quote,
-		);
-	}
-
-	/**
 	 *  @method _unsubscribeFromMarket
 	 *
 	 *  @param  {String} base - asset id
@@ -932,36 +911,6 @@ class Subscriber extends EventEmitter {
 	 */
 	_unsubscribeFromMarket(base, quote) {
 		this._wsApi.database.unsubscribeFromMarket(base, quote);
-	}
-
-	/**
-	 *  @method setMarketSubscribe
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	async setMarketSubscribe(base, quote, callback) {
-		if (!isAssetId(base) || !isAssetId(quote)) {
-			throw new Error('Invalid asset ID');
-		}
-
-		if (!isFunction(callback)) {
-			throw new Error('Callback is not a function');
-		}
-
-		let callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		if (!callbacks) {
-			callbacks = [];
-			await this._subscribeToMarket(base, quote);
-		}
-
-		callbacks.push(callback);
-
-		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
 	/**
