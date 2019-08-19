@@ -20,15 +20,11 @@ export interface asset<T extends serialization> {
 
 export interface asset_options<T extends serialization> {
 	max_supply: basic_type.int64<T>,
-	market_fee_percent: basic_type.uint16<T>,
-	max_market_fee: basic_type.int64<T>,
 	issuer_permissions: basic_type.uint16<T>,
 	flags: basic_type.uint16<T>,
 	core_exchange_rate: price<T>,
 	whitelist_authorities: basic_type.set<basic_type.account_id>,
 	blacklist_authorities: basic_type.set<basic_type.account_id>,
-	whitelist_markets: basic_type.set<basic_type.asset_id>,
-	blacklist_markets: basic_type.set<basic_type.asset_id>,
 	description: string,
 	extensions: extensions<T>,
 }
@@ -42,9 +38,6 @@ export interface authority<T extends serialization> {
 export interface bitasset_options<T extends serialization> {
 	feed_lifetime_sec: basic_type.uint32<T>,
 	minimum_feeds: basic_type.uint8<T>,
-	force_settlement_delay_sec: basic_type.uint32<T>,
-	force_settlement_offset_percent: basic_type.uint16<T>,
-	maximum_force_settlement_volume: basic_type.uint16<T>,
 	short_backing_asset: basic_type.asset_id,
 	extensions: extensions<T>,
 }

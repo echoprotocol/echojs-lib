@@ -17,45 +17,9 @@ export interface TransferProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface CreateLimitOrderProps<T extends serialization> {
-	fee: fee_type<T>,
-	seller: basic_type.account_id,
-	amount_to_sell: composit_type.asset<T>,
-	min_to_receive: composit_type.asset<T>,
-	expiration: basic_type.time_point_sec<T>,
-	fill_or_kill: basic_type.bool,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface CancelLimitOrderProps<T extends serialization> {
-	fee: fee_type<T>,
-	fee_paying_account: basic_type.account_id,
-	order: basic_type.limit_order_id,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface CallOrderUpdateProps<T extends serialization> {
-	fee: fee_type<T>,
-	funding_account: basic_type.account_id,
-	delta_collateral: composit_type.asset<T>,
-	delta_debt: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface FillOrderProps<T extends serialization> {
-	fee: fee_type<T>,
-	order_id: basic_type.object_id,
-	account_id: basic_type.account_id,
-	pays: composit_type.asset<T>,
-	receives: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
 export interface CreateAccountProps<T extends serialization> {
 	fee: fee_type<T>,
 	registrar: basic_type.account_id,
-	referrer: basic_type.account_id,
-	referrer_percent: basic_type.uint16<T>,
 	name: string,
 	active: composit_type.authority<T>,
 	echorand_key: basic_type.public_key<T>,
@@ -80,13 +44,6 @@ export interface WhitelistAccountProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface UpgradeAccountProps<T extends serialization> {
-	fee: fee_type<T>,
-	account_to_upgrade: basic_type.account_id,
-	upgrade_to_lifetime_member: basic_type.bool,
-	extensions: composit_type.extensions<T>,
-}
-
 export interface TransferAccountProps<T extends serialization> {
 	fee: fee_type<T>,
 	account_id: basic_type.account_id,
@@ -101,7 +58,6 @@ export interface CreateAssetProps<T extends serialization> {
 	precision: basic_type.uint8<T>,
 	common_options: composit_type.asset_options<T>,
 	bitasset_opts: basic_type.optional<composit_type.bitasset_options<T>>,
-	is_prediction_market: basic_type.bool,
 	extensions: composit_type.extensions<T>,
 }
 
@@ -153,21 +109,6 @@ export interface FundAssetFeePoolProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface SettleAssetProps<T extends serialization> {
-	fee: fee_type<T>,
-	account: basic_type.account_id,
-	amount: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface SettleAssetGloballyProps<T extends serialization> {
-	fee: fee_type<T>,
-	issuer: basic_type.account_id,
-	asset_to_settle: basic_type.asset_id,
-	settle_price: composit_type.price<T>,
-	extensions: composit_type.extensions<T>,
-}
-
 export interface PublishAssetFeedProps<T extends serialization> {
 	fee: fee_type<T>,
 	publisher: basic_type.account_id,
@@ -203,44 +144,6 @@ export interface DeleteProposalProps<T extends serialization> {
 	fee_paying_account: basic_type.account_id,
 	using_owner_authority: basic_type.bool,
 	proposal: basic_type.proposal_id,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface CreateWithdrawPermissionProps<T extends serialization> {
-	fee: fee_type<T>,
-	withdraw_from_account: basic_type.account_id,
-	authorized_account: basic_type.account_id,
-	withdrawal_limit: composit_type.asset<T>,
-	withdrawal_period_sec: basic_type.uint32<T>,
-	periods_until_expiration: basic_type.uint32<T>,
-	period_start_time: basic_type.time_point_sec<T>,
-}
-
-export interface UpdateWithdrawPermissionProps<T extends serialization> {
-	fee: fee_type<T>,
-	withdraw_from_account: basic_type.account_id,
-	authorized_account: basic_type.account_id,
-	permission_to_update: basic_type.withdraw_permission_id,
-	withdrawal_limit: composit_type.asset<T>,
-	withdrawal_period_sec: basic_type.uint32<T>,
-	period_start_time: basic_type.time_point_sec<T>,
-	periods_until_expiration: basic_type.uint32<T>,
-}
-
-export interface ClaimWithdrawPermissionProps<T extends serialization> {
-	fee: fee_type<T>,
-	withdraw_permission: basic_type.withdraw_permission_id,
-	withdraw_from_account: basic_type.account_id,
-	withdraw_to_account: basic_type.account_id,
-	amount_to_withdraw: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface DeleteWithdrawPermissionProps<T extends serialization> {
-	fee: fee_type<T>,
-	withdraw_from_account: basic_type.account_id,
-	authorized_account: basic_type.account_id,
-	withdrawal_permission: basic_type.withdraw_permission_id,
 	extensions: composit_type.extensions<T>,
 }
 
@@ -285,23 +188,6 @@ export interface WithdrawVestingBalanceProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface CustomProps<T extends serialization> {
-	fee: fee_type<T>,
-	payer: basic_type.account_id,
-	required_auths: basic_type.set<basic_type.account_id>,
-	id: basic_type.uint16<T>,
-	data: basic_type.bytes<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface AssertProps<T extends serialization> {
-	fee: fee_type<T>,
-	fee_paying_account: basic_type.account_id,
-	predicates: predicate<T>[],
-	required_auths: basic_type.set<basic_type.account_id>,
-	extensions: composit_type.extensions<T>,
-}
-
 export interface ClaimBalanceProps<T extends serialization> {
 	fee: fee_type<T>,
 	deposit_to_account: basic_type.account_id,
@@ -320,34 +206,10 @@ export interface OverrideTransferProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface CancelAssetSettlementProps<T extends serialization> {
-	fee: fee_type<T>,
-	settlement: basic_type.force_settlement_id,
-	account: basic_type.account_id,
-	amount: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
 export interface ClaimAssetFeesProps<T extends serialization> {
 	fee: fee_type<T>,
 	issuer: basic_type.account_id,
 	amount_to_claim: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface BidCollateralProps<T extends serialization> {
-	fee: fee_type<T>,
-	bidder: basic_type.account_id,
-	additional_collateral: composit_type.asset<T>,
-	debt_covered: composit_type.asset<T>,
-	extensions: composit_type.extensions<T>,
-}
-
-export interface ExecuteBidProps<T extends serialization> {
-	fee: fee_type<T>,
-	bidder: basic_type.account_id,
-	debt: composit_type.asset<T>,
-	collateral: composit_type.asset<T>,
 	extensions: composit_type.extensions<T>,
 }
 
@@ -400,27 +262,27 @@ export interface TransferToAddressProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface GenerateEthAddressProps<T extends serialization> {
+export interface CreateSidechainEthAddressProps<T extends serialization> {
 	fee: fee_type<T>,
 	account: basic_type.account_id,
 	extensions: composit_type.extensions<T>,
 }
 
-export interface CreateEthAddressProps<T extends serialization> {
+export interface ApproveSidechainEthAddressProps<T extends serialization> {
 	fee: fee_type<T>,
 	account: basic_type.account_id,
 	committee_member_id: basic_type.committee_member_id,
 	extensions: composit_type.extensions<T>,
 }
 
-export interface DepositEthProps<T extends serialization> {
+export interface DepositSidechainEthProps<T extends serialization> {
 	fee: fee_type<T>,
 	committee_member_id: basic_type.committee_member_id,
 	from: basic_type.account_id,
 	amount: composit_type.asset<T>,
 }
 
-export interface WithdrawEthProps<T extends serialization> {
+export interface WithdrawSidechainEthProps<T extends serialization> {
 	fee: fee_type<T>,
 	account: basic_type.account_id,
 	eth_addr: string,
@@ -428,7 +290,7 @@ export interface WithdrawEthProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface ApproveEthWithdrawalProps<T extends serialization> {
+export interface ApproveSidechainEthWithdrawalProps<T extends serialization> {
 	fee: fee_type<T>,
 	committee_member_id: basic_type.committee_member_id,
 	extensions: composit_type.extensions<T>,
@@ -449,7 +311,7 @@ export interface WhitelistContractProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface IssueSidechainProps<T extends serialization> {
+export interface IssueSidechainEthProps<T extends serialization> {
 	fee: fee_type<T>,
 	amount: composit_type.asset<T>,
 	account: basic_type.account_id,
@@ -457,7 +319,7 @@ export interface IssueSidechainProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface BurnSidechainProps<T extends serialization> {
+export interface BurnSidechainEthProps<T extends serialization> {
 	fee: fee_type<T>,
 	amount: composit_type.asset<T>,
 	account: basic_type.account_id,
@@ -465,14 +327,14 @@ export interface BurnSidechainProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface RegisterERC20TokenProps<T extends serialization> {
+export interface RegisterSidechainERC20TokenProps<T extends serialization> {
 	fee: fee_type<T>,
 	account: basic_type.account_id,
 	eth_addr: basic_type.eth_address_id,
 	extensions: composit_type.extensions<T>,
 }
 
-export interface DepositERC20TokenProps<T extends serialization> {
+export interface DepositSidechainERC20TokenProps<T extends serialization> {
 	fee: fee_type<T>,
 	committee_member_id: basic_type.account_id,
 	erc20_token_addr: basic_type.eth_address_id,
@@ -480,7 +342,7 @@ export interface DepositERC20TokenProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface WithdrawERC20TokenProps<T extends serialization> {
+export interface WithdrawSidechainERC20TokenProps<T extends serialization> {
 	fee: fee_type<T>,
 	account: basic_type.account_id,
 	to: basic_type.eth_address_id,
@@ -488,7 +350,7 @@ export interface WithdrawERC20TokenProps<T extends serialization> {
 	extensions: composit_type.extensions<T>,
 }
 
-export interface ApproveERC20TokenWithdrawalProps<T extends serialization> {
+export interface ApproveSidechainERC20TokenWithdrawalProps<T extends serialization> {
 	fee: fee_type<T>,
 	committee_member_id: basic_type.account_id,
 	to: basic_type.eth_address_id,
