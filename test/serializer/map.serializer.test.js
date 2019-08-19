@@ -5,7 +5,7 @@ import ByteBuffer from "bytebuffer";
 import { shouldReject } from "../_test-utils";
 import { map, string, uint32 } from "../../src/serializer/basic-types";
 
-describe.only('map', () => {
+describe('map', () => {
 	const _map = map(string, uint32);
 	describe('validate', () => {
 		describe('when invalid type provided', () => {
