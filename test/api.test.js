@@ -5,7 +5,7 @@ import Cache from '../src/echo/cache';
 import API from '../src/echo/api';
 
 import echo, { constants } from '../src';
-import { DEFAULT_CHAIN_APIS, ASSET_API, DATABASE_API } from '../src/constants/ws-constants';
+import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
 
 import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
@@ -13,9 +13,9 @@ import { shouldReject } from './_test-utils';
 
 
 describe('API', () => {
-	describe.only('API CONNECTION', () => {
+	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
-			const apis = [DATABASE_API, ASSET_API];
+			const apis = [ChainApi.DATABASE_API, ChainApi.ASSET_API];
 			before(async () => await echo.connect(url, { apis }));
 			after(async () => await echo.disconnect());
 			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
@@ -59,7 +59,7 @@ describe('API', () => {
 		})
 
 		describe('when reconnected', () => {
-			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ASSET_API];
+			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ChainApi.ASSET_API];
 			before(async () => {
 				await echo.connect(url, { apis });
 				await echo.reconnect();
