@@ -1,4 +1,4 @@
-import AES from 'crypto-js/aes';
+import { AES } from 'crypto-js';
 import { Buffer } from "buffer";
 import PrivateKey from "./private-key";
 import PublicKey from "./public-key";

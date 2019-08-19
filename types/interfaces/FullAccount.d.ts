@@ -1,4 +1,6 @@
 import AccountHistory from './AccountHistory';
+import { authority } from './serializer/composit-types';
+import { serialization_output } from './serializer/serialization';
 
 export default interface FullAccount {
 	id: string,
@@ -10,21 +12,21 @@ export default interface FullAccount {
 	lifetime_referrer_fee_percentage: number,
 	referrer_rewards_percentage: number,
 	name: string,
-	owner: Object,
-	active: Object,
+	owner: unknown,
+	active: authority<serialization_output>,
 	ed_key: string,
-	options: Object,
+	options: unknown,
 	statistics: string,
-	whitelisting_accounts: Array<any>,
-	blacklisting_accounts: Array<any>,
-	whitelisted_accounts: Array<any>,
-	blacklisted_accounts: Array<any>,
-	owner_special_authority: Array<any>,
-	active_special_authority: Array<any>,
+	whitelisting_accounts: Array<unknown>,
+	blacklisting_accounts: Array<unknown>,
+	whitelisted_accounts: Array<unknown>,
+	blacklisted_accounts: Array<unknown>,
+	owner_special_authority: Array<unknown>,
+	active_special_authority: Array<unknown>,
 	top_n_control_flags: number,
 	history: Array<AccountHistory>,
-	balances: Object,
-	limit_orders: Object,
-	call_orders: Object,
-	proposals: Object
+	balances: unknown,
+	limit_orders: unknown,
+	call_orders: unknown,
+	proposals: unknown
 }
