@@ -1,4 +1,4 @@
-import Transaction from './Transaction';
+import TransactionObject from './TransactionObject';
 
 export default interface Block {
 	previous: string,
@@ -7,10 +7,10 @@ export default interface Block {
 	transaction_merkle_root: string,
 	state_root_hash: string,
 	result_root_hash:string ,
-	extensions: array,
+	extensions: never[],
 	ed_signature: string,
 	round: number,
 	rand: string,
 	cert: Object,
-	transactions: Array<Transaction>
+	transactions: TransactionObject[],
 }
