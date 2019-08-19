@@ -13,7 +13,7 @@ import { shouldReject } from './_test-utils';
 
 
 describe('API', () => {
-	describe.only('API CONNECTION', () => {
+	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
 			const apis = [DATABASE_API, ASSET_API];
 			before(async () => await echo.connect(url, { apis }));
@@ -56,7 +56,7 @@ describe('API', () => {
 			shouldReject(async () => {
 				await echo.connect(url, { apis: ['nonexistent'] });
 			}, expectedErrorMessage);
-		})
+		});
 
 		describe('when reconnected', () => {
 			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ASSET_API];
