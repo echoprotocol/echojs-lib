@@ -1,4 +1,5 @@
-enum OperationId {
+export default OperationId;
+declare enum OperationId {
 	TRANSFER = 0,
 	ACCOUNT_CREATE = 1,
 	ACCOUNT_UPDATE = 2,
@@ -44,5 +45,3 @@ enum OperationId {
 	SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW = 42,
 	CONTRACT_UPDATE = 43,
 }
-
-export default OperationId;
