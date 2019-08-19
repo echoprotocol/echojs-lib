@@ -1118,13 +1118,11 @@ try {
         weight_threshold:Number,
         account_auths:Array,
         key_auths:Array,
-        address_auths:Array
         },
     active:{
         weight_threshold:Number,
         account_auths:Array,
         key_auths:Array,
-        address_auths:Array
         },
     ed_key:String,
     options:{
@@ -1177,13 +1175,11 @@ try {
         weight_threshold:Number,
         account_auths:Array,
         key_auths:Array,
-        address_auths:Array
         },
     active:{
         weight_threshold:Number,
         account_auths:Array,
         key_auths:Array,
-        address_auths:Array
         },
     ed_key:String,
     options:{

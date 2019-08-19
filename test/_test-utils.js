@@ -1,10 +1,11 @@
-import { strictEqual, ok, fail } from "assert";
+import { strictEqual, ok } from "assert";
 
 /**
- * @param {() => Promise<any>} f
+ * @param {() => Promise<any> | any} f
  * @param {string} expectedErrorMessage
+ * @param {string} [testErrorMessage]
  */
-export function shouldReject(f, expectedErrorMessage) {
+export function shouldReject(f, expectedErrorMessage, testErrorMessage) {
 	/** @type {Error} */
 	let actualError;
 	it('should rejects', async () => {
@@ -20,7 +21,7 @@ export function shouldReject(f, expectedErrorMessage) {
 		if (!actualError) this.skip();
 		ok(actualError instanceof Error);
 	});
-	it(`with message "${expectedErrorMessage}"`, function () {
+	it(testErrorMessage || `with message "${expectedErrorMessage}"`, function () {
 		if (!actualError || !(actualError instanceof Error)) this.skip();
 		strictEqual(actualError.message, expectedErrorMessage);
 	});

@@ -21,6 +21,12 @@ class Echo {
 	}
 
 	/**
+	 * @readonly
+	 * @type {Set<string>}
+	 */
+	get apis() { return new Set(this._ws.apis); }
+
+	/**
 	 * @param {string} address
 	 * @param {Options} options
 	 */
