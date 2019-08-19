@@ -41,6 +41,7 @@ describe.only('create contract', () => {
 		const operationResultId = await tx.broadcast()
 			.then((res) => res[0].trx.operation_results[0][1]);
 
+		console.log(11111);
 		// TODO Should be fixed
 		// const newAddress = await echo.api.getContractResult(operationResultId, true)
 			// .then((res) => res[1].exec_res.new_address)
