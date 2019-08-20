@@ -114,7 +114,6 @@ export const chainParameters = serializable({
 	maximum_authority_membership: uint16,
 	reserve_percent_of_fee: uint16,
 	network_percent_of_fee: uint16,
-	lifetime_referrer_percent_of_fee: uint16,
 	cashback_vesting_period_seconds: uint32,
 	max_predicate_opcode: uint16,
 	accounts_per_fee_scale: uint16,
