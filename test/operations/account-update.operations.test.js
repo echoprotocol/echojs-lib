@@ -1,8 +1,11 @@
 import 'mocha';
 
-import { constants, Echo, PublicKey } from '../../src/index';
+import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../src/index';
 
 import { privateKey, accountId, url } from '../_test-data';
+import { fail, ok, strictEqual } from 'assert';
+
+import { ASSET } from '../../src/constants/object-types';
 
 describe('account update', () => {
 
@@ -17,7 +20,7 @@ describe('account update', () => {
 		it('successful', async () => {
 			const result = await echo.createTransaction()
 				.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
-					fee: { asset_id: '1.3.0' },
+					fee: { asset_id: `1.${ASSET}.0` },
 					account: accountId,
 					echorand_key: privateKey.toPublicKey().toString(),
 					active: {
@@ -32,5 +35,36 @@ describe('account update', () => {
 				.addSigner(privateKey)
 				.broadcast();
 		}).timeout(10000);
+	});
+
+	describe('when field "active" is not an object or undefined', () => {
+		/** @type {Error} */
+		let serializationError;
+		it('serialization should rejects', () => {
+			try {
+				echo.createTransaction().addOperation(OPERATIONS_IDS.ACCOUNT_UPDATE, {
+					account: accountId,
+					active: 'not a object',
+				});
+			} catch (error) {
+				serializationError = error;
+				return;
+			}
+			fail('should rejects');
+		});
+		it('instance of Error', function () {
+			if (!serializationError) this.skip();
+			ok(serializationError instanceof Error);
+		});
+		const expectedErrorMessage = [
+			'operation with id 2',
+			'key "active"',
+			'optional type',
+			'serializable object is not a object',
+		].join(': ');
+		it(`with message "${expectedErrorMessage}"`, function () {
+			if (!serializationError || !(serializationError instanceof Error)) this.skip();
+			strictEqual(serializationError.message, expectedErrorMessage);
+		});
 	});
 });

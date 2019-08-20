@@ -20,14 +20,9 @@ export declare function isEmptyObject(url?: any): boolean;
 
 export declare function isAccountId(url?: any): boolean;
 export declare function isAssetId(url?: any): boolean;
-export declare function isForceSettlementId(url?: any): boolean;
 export declare function isCommitteeMemberId(url?: any): boolean;
-export declare function isLimitOrderId(url?: any): boolean;
-export declare function isCallOrderId(url?: any): boolean;
-export declare function isCustomId(url?: any): boolean;
 export declare function isProposalId(url?: any): boolean;
 export declare function isOperationHistoryId(url?: any): boolean;
-export declare function isWithdrawPermissionId(url?: any): boolean;
 export declare function isVestingBalanceId(url?: any): boolean;
 export declare function isBalanceId(url?: any): boolean;
 export declare function isContractId(url?: any): boolean;

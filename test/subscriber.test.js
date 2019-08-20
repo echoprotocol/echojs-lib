@@ -1,36 +1,107 @@
+import { ok, deepStrictEqual, strictEqual } from 'assert';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import echo, { Echo, constants } from '../src';
-
 import { url } from './_test-data';
+import { shouldReject } from './_test-utils';
+import { Echo } from '../src';
+
+import { BASE, ACCOUNT, ASSET, CONTRACT } from '../src/constants/object-types';
+import { IMPLEMENTATION_OBJECT_TYPE } from '../src/constants/chain-types';
 
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
-	let echo = new Echo();
+	describe('setStatusSubscribe', () => {
+		describe('when invalid status provided', () => {
+			const echo = new Echo();
+			shouldReject(async () => await echo.subscriber.setStatusSubscribe('conn', () => {}), 'Invalid status');
+		});
 
-	before(async () => {
-		await echo.connect(
-			url,
-			{
-				apis: [
-					'database',
-					'network_broadcast',
-					'history',
-					'registration',
-					'asset',
-					'login',
-					'network_node',
-				],
-			},
-		);
+		describe('when subscribed, but not connected', () => {
+			const echo = new Echo();
+			let connected = false;
+			let disconnected = false;
+			it('should not rejects', async () => {
+				await Promise.all([
+					echo.subscriber.setStatusSubscribe('connect', () => connected = true),
+					echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true),
+				]);
+			});
+			it('should not emits "connect" event', () => ok(!connected));
+			it('should not emits "disconnected" event', () => ok(!disconnected));
+		});
+
+		describe('when subscribed on "connect" event', () => {
+			const echo = new Echo();
+			let connected = false;
+			after(async () => await echo.disconnect());
+			it('should not rejects', async () => {
+				await echo.subscriber.setStatusSubscribe('connect', () => connected = true);
+			});
+			it('should not emits before connect', () => ok(!connected));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should emits after connect', () => ok(connected));
+		});
+
+		describe('when subscribed on "disconnect" event', () => {
+			const echo = new Echo();
+			let disconnected = false;
+			it('should not rejects', async () => {
+				await echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true);
+			});
+			it('should not emits before connect', () => ok(!disconnected));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should not emits after connect', () => ok(!disconnected));
+			it('should not rejects on disconnect', async () => await echo.disconnect());
+			it('should emits after disconnect', () => ok(disconnected));
+		});
+
+		describe('when connected on "connect" and "disconnect"', () => {
+			const echo = new Echo();
+			const STATUS = { CONNECTED: 'CONNECTED', DISCONNECTED: 'DISCONNECTED' };
+			const events = [];
+			after(async () => await echo.disconnect());
+			it('should not rejects', async () => {
+				await Promise.all([
+					echo.subscriber.setStatusSubscribe('connect', () => events.push(STATUS.CONNECTED)),
+					echo.subscriber.setStatusSubscribe('disconnect', () => events.push(STATUS.DISCONNECTED)),
+				]);
+			});
+			it('should not emits "connect" event before connect', () => ok(!events.includes(STATUS.CONNECTED)));
+			it('should not emits "disconnect" event before connect', () => ok(!events.includes(STATUS.DISCONNECTED)));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should emits single event "connect"', () => deepStrictEqual(events, [STATUS.CONNECTED]));
+			it('should not rejects on reconnect', async () => await echo.reconnect());
+			it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
+			it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
+			it('should not emits more events', function () {
+				if (events.length < 3) this.skip();
+				strictEqual(events.length, 3);
+			});
+		});
 	});
+
+	let echo = new Echo();
 
 	describe('echorand', () => {
         describe('setEchorandSubscribe', () => {
             it('is not a function', async () => {
                 try {
+					await echo.connect(
+						url,
+						{
+							apis: [
+								'database',
+								'network_broadcast',
+								'history',
+								'registration',
+								'asset',
+								'login',
+								'network_node',
+							],
+						},
+					);
                     await echo.subscriber.setEchorandSubscribe(1);
                 } catch (err) {
                     expect(err.message).to.equal('Callback is not a function');
@@ -177,7 +248,7 @@ describe('SUBSCRIBER', () => {
                         done();
                         isCalled = true;
                     }
-                }, ['1.2.1']).then(() => echo.reconnect()).then(() => {
+                }, [`1.${ACCOUNT}.1`]).then(() => echo.reconnect()).then(() => {
                     isReconnected = true;
                 });
             }).timeout(30 * 1000);
@@ -193,7 +264,7 @@ describe('SUBSCRIBER', () => {
                         done();
                         isCalled = true;
                     }
-                }, ['1.2.16']);
+                }, [`1.${ACCOUNT}.16`]);
             }).timeout(300 * 1000);
 
         });
@@ -201,7 +272,7 @@ describe('SUBSCRIBER', () => {
         describe('removeAccountSubscribe', () => {
             it('test', async () => {
                 const callback = () => {};
-                await echo.subscriber.setAccountSubscribe(callback, ['1.2.1']);
+                await echo.subscriber.setAccountSubscribe(callback, [`1.${ACCOUNT}.1`]);
                 echo.subscriber.removeAccountSubscribe(callback);
             });
         });
@@ -212,10 +283,10 @@ describe('SUBSCRIBER', () => {
             it('test', (done) => {
                 let isCalled = false;
 
-                echo.api.getObjects(['2.1.0']);
+                echo.api.getObjects([`2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`]);
 
                 echo.subscriber.setGlobalSubscribe((result) => {
-                    if (result[0] && result[0].id === '2.1.0') {
+                    if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`) {
                         expect(result).to.be.an('array').that.is.not.empty;
                         expect(result[0]).to.be.an('object').that.is.not.empty;
                         expect(result[0].id).to.be.a('string');
@@ -331,7 +402,7 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-	describe('setMarketSubscribe', () => {
+	describe.skip('setMarketSubscribe', () => {
 		it('invalid asset', async () => {
 			try {
 				await echo.subscriber.setMarketSubscribe(1, 2, () => {});
@@ -341,17 +412,17 @@ describe('SUBSCRIBER', () => {
 		});
 
 		it('test', async () => {
-			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', () => {});
-			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(1);
+			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, () => {});
+			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(1);
 		});
 	});
 
-	describe('removeMarketSubscribe', () => {
+	describe.skip('removeMarketSubscribe', () => {
 
 		it('invalid asset',  async () => {
 			try {
 				const callback = () => {};
-				await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+				await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0', '1.${ASSET}.1`, callback);
 				await echo.subscriber.removeMarketSubscribe(1, 2, callback);
 			} catch (err) {
 				expect(err.message).to.equal('Invalid asset ID');
@@ -360,26 +431,26 @@ describe('SUBSCRIBER', () => {
 
 		it('not such subscription', async () => {
 			const callback = () => {};
-			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0', '1.${ASSET}.1`, callback);
 
-			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
-			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.2', callback);
-			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length);
+			const { length } = echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`];
+			await echo.subscriber.removeMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.2`, callback);
+			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(length);
 		});
 
 		it('test', async () => {
 			const callback = () => {};
-			await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
+			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, callback);
 
-			const { length } = echo.subscriber.subscribers.market['1.3.0_1.3.1'];
-			await echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.1', callback);
-			expect(echo.subscriber.subscribers.market['1.3.0_1.3.1'].length).to.equal(length - 1);
+			const { length } = echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`];
+			await echo.subscriber.removeMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, callback);
+			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(length - 1);
 		});
 	});
 
     describe('setContractSubscribe', () => {
         it('test', async () => {
-            await echo.subscriber.setContractSubscribe(['1.14.23'], () => {});
+            await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], () => {});
             expect(echo.subscriber.subscribers.contract.length).to.equal(1);
         });
     });
@@ -387,7 +458,7 @@ describe('SUBSCRIBER', () => {
     describe('removeContractSubscribe', () => {
         it('test', async () => {
             const callback = () => {};
-            await echo.subscriber.setContractSubscribe(['1.14.23'], callback);
+            await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], callback);
 
             const { length } = echo.subscriber.subscribers.contract;
             await echo.subscriber.removeContractSubscribe(callback);
@@ -397,19 +468,19 @@ describe('SUBSCRIBER', () => {
 
 	describe('setContractLogsSubscribe', () => {
 		it('test', async () => {
-			await echo.subscriber.setContractLogsSubscribe('1.14.0', () => {});
-			expect(echo.subscriber.subscribers.logs['1.14.0'].length).to.equal(1);
+			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, () => {});
+			expect(echo.subscriber.subscribers.logs[`1.${CONTRACT}.0`].length).to.equal(1);
 		});
 	});
 
 	describe('removeContractLogsSubscribe', () => {
 		it('test', async () => {
 			const callback = () => {};
-			await echo.subscriber.setContractLogsSubscribe('1.14.0', callback);
+			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, callback);
 
-			const { length } = echo.subscriber.subscribers.logs['1.14.0'];
-			await echo.subscriber.removeContractLogsSubscribe('1.14.0', callback);
-			expect(echo.subscriber.subscribers.logs['1.14.0'].length).to.equal(length - 1);
+			const { length } = echo.subscriber.subscribers.logs[`1.${CONTRACT}.0`];
+			await echo.subscriber.removeContractLogsSubscribe(`1.${CONTRACT}.0`, callback);
+			expect(echo.subscriber.subscribers.logs[`1.${CONTRACT}.0`].length).to.equal(length - 1);
 		});
 	});
 

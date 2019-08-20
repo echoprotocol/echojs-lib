@@ -5,7 +5,6 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS } from '../constants/ws-constants';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
@@ -13,14 +12,19 @@ class Echo {
 
 	constructor() {
 		this._ws = new WS();
+		this.subscriber = new Subscriber(this._ws);
 		this._isInitModules = false;
-
-		this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
 		return this._ws._connected;
 	}
+
+	/**
+	 * @readonly
+	 * @type {Set<string>}
+	 */
+	get apis() { return new Set(this._ws.apis); }
 
 	/**
 	 * @param {string} address
@@ -39,7 +43,6 @@ class Echo {
 			}
 
 			await this._initModules(options);
-			this._ws.emit(STATUS.OPEN);
 
 			if (!options.store && this.store) {
 				options.store = this.store;
@@ -61,16 +64,11 @@ class Echo {
 
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
-
-		this.onOpen = async () => {
-			try {
-				await this.subscriber.init(this.cache, this._wsApi, this.api, this._ws);
-			} catch (err) {
-				console.log('ONOPEN init error', err);
-			}
-		};
-
-		this._ws.on(STATUS.OPEN, this.onOpen);
+		try {
+			await this.subscriber.init(this.cache, this._wsApi, this.api);
+		} catch (err) {
+			console.log('ONOPEN init error', err);
+		}
 	}
 
 	syncCacheWithStore(store) {
@@ -88,8 +86,6 @@ class Echo {
 		this.subscriber.reset();
 		this.cache.reset();
 		await this._ws.close();
-		this._ws.removeListener(STATUS.OPEN, this.onOpen);
-		this._ws.emit(STATUS.CLOSE);
 		this.onOpen = null;
 		this._isInitModules = false;
 	}

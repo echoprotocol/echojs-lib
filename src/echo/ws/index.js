@@ -59,8 +59,6 @@ class WS extends EventEmitter {
 
 		if (this._isFirstTime) {
 			this._isFirstTime = false;
-		} else {
-			await this._initEchoApi();
 		}
 
 		if (this.onOpenCb) this.onOpenCb('open');
@@ -156,9 +154,12 @@ class WS extends EventEmitter {
 	 * Reconnect to chain, can't be used after close
 	 * @returns {Promise}
 	 */
-	reconnect() {
+	async reconnect() {
 		if (!this._ws_rpc) throw new Error('Socket close.');
-		return this._ws_rpc.reconnect();
+
+		const reconnectResult = await this._ws_rpc.reconnect();
+		await this._initEchoApi();
+		return reconnectResult;
 	}
 
 	/**
