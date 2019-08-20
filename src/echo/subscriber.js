@@ -72,12 +72,13 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 
+		const databaseApiAvailable = this._ws.apis.includes(ChainApi.DATABASE_API);
+		if (databaseApiAvailable) await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 		this.callCbOnConnect();
-		if (!this._ws.apis.includes(ChainApi.DATABASE_API)) {
+		if (!databaseApiAvailable) {
 			console.warn('unable to start subscriber cause database api is not available');
 			return;
 		}
-		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
