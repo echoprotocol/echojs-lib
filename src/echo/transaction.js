@@ -303,7 +303,6 @@ class Transaction {
 	 */
 	async broadcast(wasBroadcastedCallback) {
 		console.log('BROADCAST@!!!!!!!!!!!!!!!!!!!!!!');
-		console.log('this.transactionObject', this.transactionObject);
 		if (!this.finalized) await this.sign();
 		/*return*/const check = await this.api.broadcastTransactionWithCallback(this.transactionObject, wasBroadcastedCallback);
 		console.log('wasBroadcastedCallback broadcast');

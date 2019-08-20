@@ -25,7 +25,7 @@ class DatabaseAPI {
 	 *
 	 *  @return {Promise}
 	 */
-	async setSubscribeCallback(callback, notifyRemoveCreate) {
+	setSubscribeCallback(callback, notifyRemoveCreate) {
 		return this.db.exec('set_subscribe_callback', [callback, notifyRemoveCreate]);
 	}
 

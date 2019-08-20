@@ -162,6 +162,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {null}
 	 */
 	_updateObject(object) {
+		console.log('=====ENTER TO _updateObject=====');
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
@@ -540,6 +541,7 @@ class Subscriber extends EventEmitter {
 	 */
 	_onRespond([messages]) {
 		const orders = [];
+		console.log('!!!!!!!!!!!!_onRespond      ');
 
 		const updates = messages.filter((msg) => {
 			// check is object id
@@ -554,6 +556,7 @@ class Subscriber extends EventEmitter {
 				return false;
 			}
 
+			console.log('!!!!!!!!!!!!!!!!!!_onRespond!!!!!!!!!!!!!!!!');
 			this._updateObject(msg);
 			return true;
 		});
@@ -566,6 +569,7 @@ class Subscriber extends EventEmitter {
 		this.subscribers.global.forEach((callback) => {
 			callback(updates);
 		});
+		console.log('!!!!!!!!!!!!_onRespond      END');
 	}
 
 	/**
