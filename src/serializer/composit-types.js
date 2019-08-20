@@ -17,7 +17,6 @@ import {
 	uint32,
 	uint64,
 	voteId,
-	bool,
 } from './basic-types';
 import withDefaultValue from './basic-types/withDefaultValue';
 
