@@ -5,7 +5,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS, ChainApi } from '../constants/ws-constants';
+import { STATUS } from '../constants/ws-constants';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
