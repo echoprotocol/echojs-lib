@@ -28,7 +28,7 @@ describe('update asset feed producers', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 13',
+			'operation with id 8',
 			'key "new_feed_producers"',
 			'set element with index 0',
 			'invalid id type',

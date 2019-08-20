@@ -20,7 +20,7 @@ describe('call contract', () => {
 
 	it('successful', async () => {
 		// const result = await echo.createTransaction()
-		// 	.addOperation(OPERATIONS_IDS.CALL_CONTRACT, {
+		// 	.addOperation(OPERATIONS_IDS.CONTRACT_CALL, {
 		// 		registrar: accountId,
 		// 		value: {
 		// 			asset_id: '1.3.0',

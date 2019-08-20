@@ -2,11 +2,11 @@ import Api from "./api";
 import Transaction from "./transaction";
 import { CacheOptions } from "./cache";
 import Subscriber from "./subscriber";
-import { CACHE_MAPS } from "../constants";
+import ChainApi from "../interfaces/ChainApi";
 
 export interface EchoOptions {
 	cache?: CacheOptions;
-	apis?: CACHE_MAPS[];
+	apis?: ChainApi[];
 }
 
 export default class Echo {

@@ -35,14 +35,17 @@ import {
 } from '../constants';
 
 import { handleConnectionClosedError } from '../utils/helpers';
+import { IMPLEMENTATION_OBJECT_TYPE } from '../constants/chain-types';
 
 class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
+	 *  @param {ws} ws
 	 */
-	constructor() {
+	constructor(ws) {
 		super();
+		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -52,6 +55,8 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.cancelAllSubscribers();
+		this._ws.on(STATUS.OPEN, () => this.callCbOnConnect());
+		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 
 	}
 
@@ -60,24 +65,14 @@ class Subscriber extends EventEmitter {
 	 *  @param {Cache} cache
 	 *  @param {WSAPI} wsApi
 	 *  @param {API} api
-	 *  @param {WS} ws
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init(cache, wsApi, api, ws) {
+	async init(cache, wsApi, api) {
 
 		this.cache = cache;
 		this._wsApi = wsApi;
 		this._api = api;
-		this._ws = ws;
-
-		if (this.subscribers.connect.length) {
-			this.subscribers.connect.forEach((cb) => cb());
-		}
-
-		if (this.subscribers.disconnect.length) {
-			this.subscribers.disconnect.forEach((cb) => cb());
-		}
 
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
@@ -96,6 +91,11 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.transaction) {
 			await this._setPendingTransactionCallback();
 		}
+
+		Object.keys(this.subscribers.market).forEach((key) => {
+			const [base, quote] = key.split('_');
+			this._subscribeToMarket(base, quote);
+		});
 
 		if (this.subscribers.contract.length !== 0) {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
@@ -126,8 +126,30 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
+		this.callCbOnDisconnect();
 		this.cancelAllSubscribers();
+	}
 
+	/**
+	 *  @method callCbOnConnect
+	 *
+	 *  @return {undefined}
+	 */
+	callCbOnConnect() {
+		if (this.subscribers.connect.length) {
+			this.subscribers.connect.forEach((cb) => cb());
+		}
+	}
+
+	/**
+	 *  @method callCbOnDisconnect
+	 *
+	 *  @return {undefined}
+	 */
+	callCbOnDisconnect() {
+		if (this.subscribers.disconnect.length) {
+			this.subscribers.disconnect.forEach((cb) => cb());
+		}
 	}
 
 	/**
@@ -271,7 +293,8 @@ class Subscriber extends EventEmitter {
 
 		if (isAccountStatisticsId(object.id)) {
 			try {
-				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
+				const accountTransactionHistoryId = `2.${IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_TRANSACTION_HISTORY}.0`;
+				const previousMostRecentOp = previous.get('most_recent_op', accountTransactionHistoryId);
 
 				if (previousMostRecentOp !== object.most_recent_op) {
 					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
@@ -899,6 +922,97 @@ class Subscriber extends EventEmitter {
 		const callbacks = this.subscribers.market[`${base}_${quote}`];
 
 		callbacks.forEach((callback) => callback(result));
+	}
+
+	/**
+	 *  @method _subscribeToMarket
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *
+	 *  @return {undefined}
+	 */
+	_subscribeToMarket(base, quote) {
+		return this._wsApi.database.subscribeToMarket(
+			this._marketUpdate.bind(this, base, quote),
+			base,
+			quote,
+		);
+	}
+
+	/**
+	 *  @method _unsubscribeFromMarket
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *
+	 *  @return {undefined}
+	 */
+	_unsubscribeFromMarket(base, quote) {
+		this._wsApi.database.unsubscribeFromMarket(base, quote);
+	}
+
+	/**
+	 *  @method setMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async setMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) {
+			callbacks = [];
+			await this._subscribeToMarket(base, quote);
+		}
+
+		callbacks.push(callback);
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
+	}
+
+	/**
+	 *  @method removeMarketSubscribe
+	 *
+	 *  @param  {String} base - asset id
+	 *  @param  {String} quote - asset id
+	 *  @param  {Function} callback
+	 *
+	 *  @return {undefined}
+	 */
+	async removeMarketSubscribe(base, quote, callback) {
+		if (!isAssetId(base) || !isAssetId(quote)) {
+			throw new Error('Invalid asset ID');
+		}
+
+		if (!isFunction(callback)) {
+			throw new Error('Callback is not a function');
+		}
+
+		let callbacks = this.subscribers.market[`${base}_${quote}`];
+
+		if (!callbacks) { return; }
+
+		callbacks = callbacks.filter((c) => c !== callback);
+
+		if (!callbacks.length) {
+			await this._unsubscribeFromMarket(base, quote);
+			delete this.subscribers.market[`${base}_${quote}`];
+			return;
+		}
+
+		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
 	/**
