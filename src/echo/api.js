@@ -287,13 +287,11 @@ import { PublicKey } from '../crypto';
 * 					weight_threshold:Number,
 * 					account_auths:Array,
 * 					key_auths:Array,
-* 					address_auths:Array
 * 					},
 * 				active:{
 * 					weight_threshold:Number,
 * 					account_auths:Array,
 * 					key_auths:Array,
-* 					address_auths:Array
 * 					},
 * 				ed_key:String,
 * 				options:{
@@ -342,13 +340,11 @@ import { PublicKey } from '../crypto';
 * 					weight_threshold:Number,
 * 					account_auths:Array,
 * 					key_auths:Array,
-* 					address_auths:Array
 * 					},
 * 				active:{
 * 					weight_threshold:Number,
 * 					account_auths:Array,
 * 					key_auths:Array,
-* 					address_auths:Array
 * 					},
 * 				ed_key:String,
 * 				options:{
@@ -1186,29 +1182,19 @@ class API {
 				const immutableAccount = fromJS(account);
 				delete requestedObject[1].account;
 
-				const requestArray = [
-					...requestedObject[1].call_orders.map(({ id }) => id),
-					...requestedObject[1].limit_orders.map(({ id }) => id),
-					...requestedObject[1].balances.map(({ id }) => id),
-				];
+				const requestArray = requestedObject[1].balances.map(({ id }) => id);
 
 				const balances = new Map().withMutations((map) => {
 					requestedObject[1].balances.map(({ id, asset_type }) => map.set(asset_type, id));
 				});
 
-				const limitOrders = new Set(requestedObject[1].limit_orders.map(({ id }) => id));
-				const callOrders = new Set(requestedObject[1].call_orders.map(({ id }) => id));
 				const proposals = new Set(requestedObject[1].proposals.map(({ id }) => id));
 
 				requestedObject = fromJS({ ...account, ...requestedObject[1] });
 				requestedObject = await this._addHistory(requestedObject);
 
 				requestedObject = requestedObject.withMutations((map) => {
-					map
-						.set('balances', balances)
-						.set('limit_orders', limitOrders)
-						.set('call_orders', callOrders)
-						.set('proposals', proposals);
+					map.set('balances', balances).set('proposals', proposals);
 				});
 
 				resultArray[i] = requestedObject.toJS();

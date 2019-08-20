@@ -1,5 +1,5 @@
 export default WsStatus;
-enum WsStatus {
+declare enum WsStatus {
 	OPEN = 'OPEN',
 	ERROR = 'ERROR',
 	CLOSE = 'CLOSE',
