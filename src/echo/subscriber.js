@@ -54,7 +54,6 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.cancelAllSubscribers();
-		this._ws.on(STATUS.OPEN, () => this.callCbOnConnect());
 		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 
 	}
@@ -73,6 +72,7 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 
+		this.callCbOnConnect();
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {

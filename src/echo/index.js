@@ -77,7 +77,6 @@ class Echo {
 	}
 
 	async initSubscriber() {
-		if (!this._ws.apis.includes(ChainApi.DATABASE_API)) return;
 		await this.subscriber.init(this.cache, this._wsApi, this.api);
 	}
 
