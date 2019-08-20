@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
-import { STATUS } from '../constants/ws-constants';
+import { STATUS, ChainApi } from '../constants/ws-constants';
 
 import {
 	isFunction,
@@ -73,6 +73,10 @@ class Subscriber extends EventEmitter {
 		this._api = api;
 
 		this.callCbOnConnect();
+		if (!this._ws.apis.includes(ChainApi.DATABASE_API)) {
+			console.warn('unable to start subscriber cause database api is not available');
+			return;
+		}
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 
 		if (this.subscriptions.echorand) {
