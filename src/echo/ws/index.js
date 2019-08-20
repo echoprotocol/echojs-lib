@@ -10,6 +10,7 @@ class WS extends EventEmitter {
 
 	constructor() {
 		super();
+
 		this._ws_rpc = new ReconnectionWebSocket();
 
 		this._connected = false;
@@ -50,7 +51,7 @@ class WS extends EventEmitter {
 
 	/**
 	 * On open callback
-	*/
+	 */
 	async _onOpen() {
 		if (!this._ws_rpc) return;
 

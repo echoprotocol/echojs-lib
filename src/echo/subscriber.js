@@ -40,6 +40,7 @@ class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
+	 *  @param {ws} ws
 	 */
 	constructor(ws) {
 		super();

@@ -28,7 +28,6 @@ class ReconnectionWebSocket {
 		this._cbs = {};
 		this._subs = [];
 		this._unsub = {};
-
 	}
 
 	/**
@@ -113,7 +112,6 @@ class ReconnectionWebSocket {
 				this._setPingDelay();
 
 				this._debugLog('[ReconnectionWebSocket] >---- event ----->  ONOPEN');
-
 				return true;
 			};
 
