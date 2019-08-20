@@ -1,58 +1,104 @@
-import { deepStrictEqual, strictEqual } from 'assert';
+import { ok, deepStrictEqual, strictEqual } from 'assert';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { url, privateKey, accountId, contractId } from './_test-data';
-import { Echo, constants } from '../src';
+import { url } from './_test-data';
+import { shouldReject } from './_test-utils';
+import { Echo } from '../src';
 
 chai.use(spies);
 
 describe('SUBSCRIBER', () => {
-	let echo = new Echo();
+	describe('setStatusSubscribe', () => {
+		describe('when invalid status provided', () => {
+			const echo = new Echo();
+			shouldReject(async () => await echo.subscriber.setStatusSubscribe('conn', () => {}), 'Invalid status');
+		});
 
-	before(async () => {
-		await echo.connect(
-			url,
-			{
-				apis: [
-					'database',
-					'network_broadcast',
-					'history',
-					'registration',
-					'asset',
-					'login',
-					'network_node',
-				],
-			},
-		);
-	});
+		describe('when subscribed, but not connected', () => {
+			const echo = new Echo();
+			let connected = false;
+			let disconnected = false;
+			it('should not rejects', async () => {
+				await Promise.all([
+					echo.subscriber.setStatusSubscribe('connect', () => connected = true),
+					echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true),
+				]);
+			});
+			it('should not emits "connect" event', () => ok(!connected));
+			it('should not emits "disconnected" event', () => ok(!disconnected));
+		});
 
-	describe('_updateObject', () => {
-		describe('isOperationHistoryId', () => {
-			it('save contractId and history in cache', async () => {
-				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
-				const [opRes] = await echo.createTransaction().addOperation(constants.OPERATIONS_IDS.CALL_CONTRACT, {
-					registrar: accountId,
-					value: { asset_id: '1.3.0', amount: 0 },
-					code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
-					callee: contractId,
-				}).addSigner(privateKey).broadcast();
-				await new Promise((resolve) => setTimeout(() => resolve(), 100));
-				const history = echo.subscriber.cache.contractHistoryByContractId.get(contractId);
-				const lastAddedHistory = history[history.length - 1].toJS();
-				strictEqual(lastAddedHistory.block_num, opRes.block_num);
-				deepStrictEqual(lastAddedHistory.result, opRes.trx.operation_results[0]);
-				deepStrictEqual(lastAddedHistory.op, opRes.trx.operations[0]);
-				deepStrictEqual(lastAddedHistory.extensions, opRes.trx.extensions);
-				strictEqual(lastAddedHistory.trx_in_block, opRes.trx_num);
-			}).timeout(10000);
+		describe('when subscribed on "connect" event', () => {
+			const echo = new Echo();
+			let connected = false;
+			after(async () => await echo.disconnect());
+			it('should not rejects', async () => {
+				await echo.subscriber.setStatusSubscribe('connect', () => connected = true);
+			});
+			it('should not emits before connect', () => ok(!connected));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should emits after connect', () => ok(connected));
+		});
+
+		describe('when subscribed on "disconnect" event', () => {
+			const echo = new Echo();
+			let disconnected = false;
+			it('should not rejects', async () => {
+				await echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true);
+			});
+			it('should not emits before connect', () => ok(!disconnected));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should not emits after connect', () => ok(!disconnected));
+			it('should not rejects on disconnect', async () => await echo.disconnect());
+			it('should emits after disconnect', () => ok(disconnected));
+		});
+
+		describe('when connected on "connect" and "disconnect"', () => {
+			const echo = new Echo();
+			const STATUS = { CONNECTED: 'CONNECTED', DISCONNECTED: 'DISCONNECTED' };
+			const events = [];
+			after(async () => await echo.disconnect());
+			it('should not rejects', async () => {
+				await Promise.all([
+					echo.subscriber.setStatusSubscribe('connect', () => events.push(STATUS.CONNECTED)),
+					echo.subscriber.setStatusSubscribe('disconnect', () => events.push(STATUS.DISCONNECTED)),
+				]);
+			});
+			it('should not emits "connect" event before connect', () => ok(!events.includes(STATUS.CONNECTED)));
+			it('should not emits "disconnect" event before connect', () => ok(!events.includes(STATUS.DISCONNECTED)));
+			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should emits single event "connect"', () => deepStrictEqual(events, [STATUS.CONNECTED]));
+			it('should not rejects on reconnect', async () => await echo.reconnect());
+			it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
+			it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
+			it('should not emits more events', function () {
+				if (events.length < 3) this.skip();
+				strictEqual(events.length, 3);
+			});
 		});
 	});
+
+	let echo = new Echo();
 
 	describe('echorand', () => {
         describe('setEchorandSubscribe', () => {
             it('is not a function', async () => {
                 try {
+					await echo.connect(
+						url,
+						{
+							apis: [
+								'database',
+								'network_broadcast',
+								'history',
+								'registration',
+								'asset',
+								'login',
+								'network_node',
+							],
+						},
+					);
                     await echo.subscriber.setEchorandSubscribe(1);
                 } catch (err) {
                     expect(err.message).to.equal('Callback is not a function');
