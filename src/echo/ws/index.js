@@ -32,7 +32,7 @@ class WS extends EventEmitter {
 	 *
 	 * @private
 	 */
-	async _initEchoApi() {
+	async initEchoApi() {
 		const initPromises = [];
 
 		this.apis.forEach((api) => {
@@ -144,7 +144,7 @@ class WS extends EventEmitter {
 
 		try {
 			await this._ws_rpc.connect(url, this.options);
-			await this._initEchoApi();
+			await this.initEchoApi();
 		} catch (err) {
 			throw err;
 		}
@@ -158,7 +158,6 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) throw new Error('Socket close.');
 
 		const reconnectResult = await this._ws_rpc.reconnect();
-		await this._initEchoApi();
 		return reconnectResult;
 	}
 
