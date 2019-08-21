@@ -72,7 +72,7 @@ class Subscriber extends EventEmitter {
 		this._api = api;
 
 		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
-		//
+
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
 		}
@@ -88,11 +88,6 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.transaction) {
 			await this._setPendingTransactionCallback();
 		}
-
-		Object.keys(this.subscribers.market).forEach((key) => {
-			const [base, quote] = key.split('_');
-			this._subscribeToMarket(base, quote);
-		});
 
 		if (this.subscribers.contract.length !== 0) {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
@@ -162,7 +157,6 @@ class Subscriber extends EventEmitter {
 			echorand: [],
 			block: [],
 			transaction: [],
-			market: {}, // [base_quote]: []
 			logs: {},	// [contractId]: []
 			contract: [],
 			connect: [],
@@ -480,7 +474,6 @@ class Subscriber extends EventEmitter {
 		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
-				// _updateOrder -> return order type - push to orders = { type, order }
 				const type = this._updateOrder(msg);
 
 				if (type) {
@@ -826,112 +819,6 @@ class Subscriber extends EventEmitter {
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 
-	}
-
-	/**
-	 *  @method _subscribeToMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {*} result
-	 *
-	 *  @return {undefined}
-	 */
-	_marketUpdate(base, quote, result) {
-		const callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		callbacks.forEach((callback) => callback(result));
-	}
-
-	/**
-	 *  @method _subscribeToMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *
-	 *  @return {undefined}
-	 */
-	_subscribeToMarket(base, quote) {
-		return this._wsApi.database.subscribeToMarket(
-			this._marketUpdate.bind(this, base, quote),
-			base,
-			quote,
-		);
-	}
-
-	/**
-	 *  @method _unsubscribeFromMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *
-	 *  @return {undefined}
-	 */
-	_unsubscribeFromMarket(base, quote) {
-		this._wsApi.database.unsubscribeFromMarket(base, quote);
-	}
-
-	/**
-	 *  @method setMarketSubscribe
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	async setMarketSubscribe(base, quote, callback) {
-		if (!isAssetId(base) || !isAssetId(quote)) {
-			throw new Error('Invalid asset ID');
-		}
-
-		if (!isFunction(callback)) {
-			throw new Error('Callback is not a function');
-		}
-
-		let callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		if (!callbacks) {
-			callbacks = [];
-			await this._subscribeToMarket(base, quote);
-		}
-
-		callbacks.push(callback);
-
-		this.subscribers.market[`${base}_${quote}`] = callbacks;
-	}
-
-	/**
-	 *  @method removeMarketSubscribe
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	async removeMarketSubscribe(base, quote, callback) {
-		if (!isAssetId(base) || !isAssetId(quote)) {
-			throw new Error('Invalid asset ID');
-		}
-
-		if (!isFunction(callback)) {
-			throw new Error('Callback is not a function');
-		}
-
-		let callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		if (!callbacks) { return; }
-
-		callbacks = callbacks.filter((c) => c !== callback);
-
-		if (!callbacks.length) {
-			await this._unsubscribeFromMarket(base, quote);
-			delete this.subscribers.market[`${base}_${quote}`];
-			return;
-		}
-
-		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
 	/**

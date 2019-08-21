@@ -221,7 +221,7 @@ class ReconnectionWebSocket {
 			params[2][0] = this._cbId;
 		}
 
-		if (method === 'unsubscribe_from_market' || method === 'unsubscribe_from_accounts') {
+		if (method === 'unsubscribe_from_accounts') {
 			if (typeof params[2][0] !== 'function') {
 				throw new Error('First parameter of unsub must be the original callback');
 			}
