@@ -162,7 +162,6 @@ class Subscriber extends EventEmitter {
 	 *  @return {null}
 	 */
 	_updateObject(object) {
-		console.log('---OBJECT---');
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
@@ -274,11 +273,9 @@ class Subscriber extends EventEmitter {
 
 		if (isAccountStatisticsId(object.id)) {
 			try {
-				console.log('-----HERE!--------');
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {
-					console.log('---------isAccountStatisticsId---------');
 					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
 				}
 			} catch (err) {
@@ -475,7 +472,6 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isContractHistoryId(object.id)) {
-			console.log('---------isContractHistoryId---------');
 			this._notifyContractSubscribers(obj);
 			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}
