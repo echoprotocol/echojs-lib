@@ -1,81 +1,43 @@
-import Type from './type';
+import ByteBuffer from 'bytebuffer';
 
-class Serializable extends Type {
+/** @typedef {import('bytebuffer')} ByteBuffer */
 
-	/**
-	 * @readonly
-	 * @type {Object<string,Type>}
-	 */
-	get types() { return { ...this._types }; }
-
-	/** @param {Object<string,Type>} types */
-	constructor(types) {
-		if (typeof types !== 'object' || types === null) throw new Error('property "types" is not a object');
-		for (const key in types) {
-			if (!Object.prototype.hasOwnProperty.call(types, key)) continue;
-			const type = types[key];
-			if (!(type instanceof Type)) throw new Error(`type of field "${key}" is not a instance of Type class`);
-		}
-		super();
-		/**
-		 * @private
-		 * @type {Object<string,Type>}
-		 */
-		this._types = types;
-	}
-
-	/** @type {[key:string]:*} */
-	validate(value) {
-		if (typeof value !== 'object' || value === null) throw new Error('serializable object is not a object');
-		for (const key in value) {
-			if (!Object.prototype.hasOwnProperty.call(value, key)) continue;
-			const type = this.types[key];
-			if (!type) throw new Error(`unknown property ${key}`);
-			try {
-				type.validate(value[key]);
-			} catch (error) {
-				throw new Error(`key "${key}": ${error.message}`);
-			}
-		}
-		return value;
-	}
-
-	/**
-	 * @param {{[key:string]:*}} value
-	 * @param {ByteBuffer} bytebuffer
-	 */
-	appendToByteBuffer(value, bytebuffer) {
-		this.validate(value);
-		for (const key in this.types) {
-			if (!Object.prototype.hasOwnProperty.call(this.types, key)) continue;
-			const type = this.types[key];
-			type.appendToByteBuffer(value[key], bytebuffer);
-		}
-	}
-
-	/**
-	 * @param {{[key:string]:*}} serializedObject
-	 * @returns {{[key:string]:*}}
-	 */
-	toObject(serializedObject) {
-
-		if (typeof serializedObject !== 'object' || serializedObject === null) {
-			throw new Error('invalid serializedObject type');
-		}
-		const result = {};
-		for (const field in this.types) {
-			if (!Object.prototype.hasOwnProperty.call(this.types, field)) continue;
-			const type = this.types[field];
-			result[field] = type.toObject(serializedObject[field]);
-		}
-		return result;
-	}
-
+function notImplementedSerialization() {
+	throw new Error('serialization is not implemented');
 }
 
 /**
- * @param {Object<string,Type>} types
- * @returns {Serializable}
+ * @abstract
+ * @template TInput
+ * @template TOutput
  */
-export default function serializable(types) { return new Serializable(types); }
-export { Serializable };
+export default class Serializable {
+
+	/**
+	 * @abstract
+	 * @param {TInput} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer() { notImplementedSerialization(); }
+
+	/**
+	 * @abstract
+	 * @param {TInput} value
+	 * @returns {TOutput}
+	 */
+	toRaw() { notImplementedSerialization(); }
+
+	/** @param {TInput} value */
+	validate(value) { this.toRaw(value); }
+
+	/**
+	 * @param {TInput} value
+	 * @returns {Buffer}
+	 */
+	serialize(value) {
+		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+		this.appendToByteBuffer(value, result);
+		return result.copy(0, result.offset).toBuffer();
+	}
+
+}
