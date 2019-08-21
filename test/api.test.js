@@ -56,7 +56,7 @@ describe('API', () => {
 			shouldReject(async () => {
 				await echo.connect(url, { apis: ['nonexistent'] });
 			}, expectedErrorMessage);
-		})
+		});
 
 		describe('when reconnected', () => {
 			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ChainApi.ASSET_API];

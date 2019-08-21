@@ -3,7 +3,6 @@ import * as Operations from "./operations";
 import serialization from "./serialization";
 import { UndefinedOptional } from "../../__helpers";
 
-
 export default Operation;
 type Operation<TOperationId extends OperationId, T extends serialization> =
 	UndefinedOptional<TOperationId extends any ? [TOperationId, OperationProps<TOperationId, T>] : never>
