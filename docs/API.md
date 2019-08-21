@@ -73,14 +73,6 @@ try {
 <dd></dd>
 <dt><a href="#lookupAssetSymbols">lookupAssetSymbols(symbolsOrIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getOrderBook">getOrderBook(baseAssetName, quoteAssetName, depth)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getLimitOrders">getLimitOrders(baseAssetId, quoteAssetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getCallOrders">getCallOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getSettleOrders">getSettleOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getMarginPositions">getMarginPositions(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getTicker">getTicker(baseAssetName, quoteAssetName)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
@@ -452,48 +444,6 @@ try {
 | --- | --- |
 | symbolsOrIds | <code>Array.&lt;String&gt;</code> |
 | force | <code>Boolean</code> |
-
-<a name="getOrderBook"></a>
-
-## getOrderBook(baseAssetName, quoteAssetName, depth) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| baseAssetName | <code>String</code> |
-| quoteAssetName | <code>String</code> |
-| depth | <code>Number</code> |
-
-<a name="getLimitOrders"></a>
-
-## getLimitOrders(baseAssetId, quoteAssetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| baseAssetId | <code>String</code> |
-| quoteAssetId | <code>String</code> |
-| limit | <code>Number</code> |
-
-<a name="getCallOrders"></a>
-
-## getCallOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| assetId | <code>String</code> |
-| limit | <code>Number</code> |
-
-<a name="getSettleOrders"></a>
-
-## getSettleOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| assetId | <code>String</code> |
-| limit | <code>Number</code> |
 
 <a name="getMarginPositions"></a>
 
