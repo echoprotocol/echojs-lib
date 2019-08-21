@@ -141,7 +141,7 @@ describe('SUBSCRIBER', () => {
 
         });
 
-    describe('_updateObject', () => {
+	describe('_updateObject', () => {
 		describe.skip('isOperationHistoryId', () => {
 			it('save contractId and history in cache', async () => {
 				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
