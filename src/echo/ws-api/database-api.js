@@ -307,30 +307,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method subscribeToMarket
-	 *  @param  {Function} callback
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *
-	 *  @return {Promise}
-	 */
-	subscribeToMarket(callback, baseAssetId, quoteAssetId) {
-		return this.db.exec('subscribe_to_market', [callback, baseAssetId, quoteAssetId]);
-	}
-
-	/**
-	 *  @method unsubscribeFromMarket
-	 *
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *
-	 *  @return {Promise}
-	 */
-	unsubscribeFromMarket(baseAssetId, quoteAssetId) {
-		return this.db.exec('unsubscribe_to_market', [baseAssetId, quoteAssetId]);
-	}
-
-	/**
 	 *  @method getTicker
 	 *
 	 *  @param  {String} baseAssetName

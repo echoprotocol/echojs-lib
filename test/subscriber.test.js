@@ -431,52 +431,6 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-	describe.skip('setMarketSubscribe', () => {
-		it('invalid asset', async () => {
-			try {
-				await echo.subscriber.setMarketSubscribe(1, 2, () => {});
-			} catch (err) {
-				expect(err.message).to.equal('Invalid asset ID');
-			}
-		});
-
-		it('test', async () => {
-			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, () => {});
-			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(1);
-		});
-	});
-
-	describe.skip('removeMarketSubscribe', () => {
-
-		it('invalid asset',  async () => {
-			try {
-				const callback = () => {};
-				await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0', '1.${ASSET}.1`, callback);
-				await echo.subscriber.removeMarketSubscribe(1, 2, callback);
-			} catch (err) {
-				expect(err.message).to.equal('Invalid asset ID');
-			}
-		});
-
-		it('not such subscription', async () => {
-			const callback = () => {};
-			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0', '1.${ASSET}.1`, callback);
-
-			const { length } = echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`];
-			await echo.subscriber.removeMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.2`, callback);
-			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(length);
-		});
-
-		it('test', async () => {
-			const callback = () => {};
-			await echo.subscriber.setMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, callback);
-
-			const { length } = echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`];
-			await echo.subscriber.removeMarketSubscribe(`1.${ASSET}.0`, `1.${ASSET}.1`, callback);
-			expect(echo.subscriber.subscribers.market[`1.${ASSET}.0_1.${ASSET}.1`].length).to.equal(length - 1);
-		});
-	});
-
     describe('setContractSubscribe', () => {
         it('test', async () => {
             await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], () => {});
