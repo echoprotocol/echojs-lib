@@ -141,35 +141,6 @@ describe('SUBSCRIBER', () => {
 
         });
 
-	describe('_updateObject', () => {
-		describe.skip('isOperationHistoryId', () => {
-			it('save contractId and history in cache', async () => {
-				strictEqual(echo.subscriber.cache.contractHistoryByContractId.get(contractId), undefined);
-				const [opRes] = await echo.createTransaction()
-					.addOperation(constants.OPERATIONS_IDS.CONTRACT_CALL, {
-						registrar: accountId,
-						value: {
-							asset_id: `1.${ASSET}.0`,
-							amount: 0
-						},
-						code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
-						callee: contractId,
-					})
-					.addSigner(privateKey)
-					.broadcast();
-				await new Promise((resolve) => setTimeout(() => resolve(), 100));
-				const history = echo.subscriber.cache.contractHistoryByContractId.get(contractId);
-				const lastAddedHistory = history[history.length - 1].toJS();
-				strictEqual(lastAddedHistory.block_num, opRes.block_num);
-				deepStrictEqual(lastAddedHistory.result, opRes.trx.operation_results[0]);
-				deepStrictEqual(lastAddedHistory.op, opRes.trx.operations[0]);
-				deepStrictEqual(lastAddedHistory.extensions, opRes.trx.extensions);
-				strictEqual(lastAddedHistory.trx_in_block, opRes.trx_num);
-			})
-				.timeout(10000);
-		});
-	});
-
         describe('removeEchorandSubscribe', () => {
             it('test', async () => {
                 const callback = () => {};
