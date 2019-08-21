@@ -48,7 +48,7 @@ class WS extends EventEmitter {
 	/**
 	 * On open callback
 	 */
-	async _onOpen() {
+	_onOpen() {
 		if (!this._ws_rpc) return;
 
 		this._connected = true;
