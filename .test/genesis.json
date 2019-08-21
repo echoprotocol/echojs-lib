@@ -66,7 +66,6 @@
 		"reserve_percent_of_fee": 2000,
 		"network_percent_of_fee": 2000,
 		"max_predicate_opcode": 1,
-		"fee_liquidation_threshold": 10000000,
 		"accounts_per_fee_scale": 1000,
 		"account_fee_scale_bitshifts": 4,
 		"max_authority_depth": 2,
