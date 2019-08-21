@@ -162,6 +162,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {null}
 	 */
 	_updateObject(object) {
+		console.log('---OBJECT---');
 		// check is id param exists -> if no - check settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
@@ -273,6 +274,7 @@ class Subscriber extends EventEmitter {
 
 		if (isAccountStatisticsId(object.id)) {
 			try {
+				console.log('-----HERE!--------');
 				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
 
 				if (previousMostRecentOp !== object.most_recent_op) {

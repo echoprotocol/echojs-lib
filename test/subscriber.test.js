@@ -70,12 +70,12 @@ describe('SUBSCRIBER', () => {
 			it('should not rejects on connect', async () => await echo.connect(url));
 			it('should emits single event "connect"', () => deepStrictEqual(events, [STATUS.CONNECTED]));
 			it('should not rejects on reconnect', async () => await echo.reconnect());
-			// it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
-			// it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
-			// it('should not emits more events', function () {
-			// 	if (events.length < 3) this.skip();
-			// 	strictEqual(events.length, 3);
-			// });
+			it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
+			it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
+			it('should not emits more events', function () {
+				if (events.length < 3) this.skip();
+				strictEqual(events.length, 3);
+			});
 		});
 	});
 
