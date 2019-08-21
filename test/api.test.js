@@ -1041,4 +1041,6 @@ describe('API', () => {
 				.timeout(5000);
 		});
 	});
+
+	require('./api/index.api.test');
 });
