@@ -440,28 +440,6 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _updateOrder
-	 *
-	 *  @param  {String} id
-	 *
-	 *  @return {String}
-	 */
-	_updateOrder(id) {
-		const type = null;
-		const obj = this.cache.objectsById.get(id);
-
-		if (!obj) {
-			return type;
-		}
-
-		// delete from objects
-		this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, null);
-
-		// return type
-		return type;
-	}
-
-	/**
 	 *  @method _onRespond
 	 *
 	 *  @param  {Object} [messages]
@@ -474,12 +452,6 @@ class Subscriber extends EventEmitter {
 		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
-				const type = this._updateOrder(msg);
-
-				if (type) {
-					orders.push({ type, id: msg });
-				}
-
 				return false;
 			}
 
