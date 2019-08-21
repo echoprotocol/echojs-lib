@@ -5,6 +5,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
+import { STATUS, ChainApi } from '../constants/ws-constants';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
@@ -64,11 +65,20 @@ class Echo {
 
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
-		try {
-			await this.subscriber.init(this.cache, this._wsApi, this.api);
-		} catch (err) {
-			console.log('ONOPEN init error', err);
-		}
+		await this.initSubscriber();
+		this._ws.on(STATUS.OPEN, async () => {
+			try {
+				await this._ws.initEchoApi();
+				await this.initSubscriber();
+			} catch (err) {
+				console.log('ONOPEN init error', err);
+			}
+		});
+	}
+
+	async initSubscriber() {
+		if (!this._ws.apis.includes(ChainApi.DATABASE_API)) return;
+		await this.subscriber.init(this.cache, this._wsApi, this.api);
 	}
 
 	syncCacheWithStore(store) {

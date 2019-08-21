@@ -38,33 +38,51 @@ class MapType extends Type {
 
 	/** @typedef {*} _MapKey */
 	/** @typedef {*} _MapValue */
+	/** @typedef {Array<[_MapKey,_MapValue]> | Map<_MapKey, _MapValue> | { [key: _MapKey]: _MapValue }} _InputType */
 
-	/** @param {Array<[_MapKey,_MapValue]>} value */
+	/**
+	 * @param {_InputType} value
+	 * @returns {[_MapKey, _MapValue][]}
+	 */
 	validate(value) {
-		if (!Array.isArray(value)) throw new Error('value is not an array');
+		if (value instanceof Map) value = [...value.entries()];
+		else if (!Array.isArray(value)) {
+			if (typeof value !== 'object') throw new Error('invalid map value');
+			value = Object.keys(value).map((key) => [key, value[key]]);
+		}
 		/** @type {Set<string>} */
 		const keysSet = new Set();
-		for (const element of value) {
+		for (let i = 0; i < value.length; i += 1) {
+			const element = value[i];
 			if (!Array.isArray(element)) throw new Error('element of a value is not an array');
 			if (element.length !== 2) throw new Error('expected 2 subelements (key and value)');
 			const [key, elementValue] = element;
 
 			const keyByteBuffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
-			this.keyType.appendToByteBuffer(key, keyByteBuffer);
+			try {
+				this.keyType.appendToByteBuffer(key, keyByteBuffer);
+			} catch (error) {
+				throw new Error(`key of map at element with index ${i}: ${error}`);
+			}
 			const keyBytes = keyByteBuffer.copy(0, keyByteBuffer.offset).toString('binary');
 			if (keysSet.has(keyBytes)) throw new Error('keys duplicates');
 			keysSet.add(keyBytes);
 
-			this.valueType.validate(elementValue);
+			try {
+				this.valueType.validate(elementValue);
+			} catch (error) {
+				throw new Error(`value of map at element with index ${i}: ${error}`);
+			}
 		}
+		return value;
 	}
 
 	/**
-	 * @param {Array<[_MapKey,_MapValue]>} value
+	 * @param {_InputType} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
-		this.validate(value);
+		value = this.validate(value);
 		if (!(bytebuffer instanceof ByteBuffer)) throw new Error('invalid bytebuffer type');
 		bytebuffer.writeVarint32(value.length);
 		for (const [key, element] of value) {
@@ -74,11 +92,11 @@ class MapType extends Type {
 	}
 
 	/**
-	 * @param {Array<[_MapKey,_MapValue]>} value
+	 * @param {_InputType} value
 	 * @param {Array<[*,*]>} value
 	 */
 	toObject(value) {
-		this.validate(value);
+		value = this.validate(value);
 		return value.map(([key, element]) => [this.keyType.toObject(key), this.valueType.toObject(element)]);
 	}
 
