@@ -28,11 +28,7 @@ class WS extends EventEmitter {
 		this._login = null;
 	}
 
-	/**
-	 *
-	 * @private
-	 */
-	async _initEchoApi() {
+	async initEchoApi() {
 		const initPromises = [];
 
 		this.apis.forEach((api) => {
@@ -142,12 +138,8 @@ class WS extends EventEmitter {
 
 		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
 
-		try {
-			await this._ws_rpc.connect(url, this.options);
-			await this._initEchoApi();
-		} catch (err) {
-			throw err;
-		}
+		await this._ws_rpc.connect(url, this.options);
+		await this.initEchoApi();
 	}
 
 	/**
@@ -158,7 +150,6 @@ class WS extends EventEmitter {
 		if (!this._ws_rpc) throw new Error('Socket close.');
 
 		const reconnectResult = await this._ws_rpc.reconnect();
-		await this._initEchoApi();
 		return reconnectResult;
 	}
 
