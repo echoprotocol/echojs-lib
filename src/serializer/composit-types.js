@@ -17,7 +17,6 @@ import {
 	uint32,
 	uint64,
 	voteId,
-	bool,
 } from './basic-types';
 import withDefaultValue from './basic-types/withDefaultValue';
 
@@ -115,13 +114,8 @@ export const chainParameters = serializable({
 	maximum_authority_membership: uint16,
 	reserve_percent_of_fee: uint16,
 	network_percent_of_fee: uint16,
-	lifetime_referrer_percent_of_fee: uint16,
 	cashback_vesting_period_seconds: uint32,
-	cashback_vesting_threshold: int64,
-	count_non_member_votes: bool,
-	allow_non_member_whitelists: bool,
 	max_predicate_opcode: uint16,
-	fee_liquidation_threshold: int64,
 	accounts_per_fee_scale: uint16,
 	account_fee_scale_bitshifts: uint8,
 	max_authority_depth: uint8,
