@@ -1,5 +1,5 @@
 export default ChainApi;
-enum ChainApi {
+declare enum ChainApi {
 	DATABASE_API = 'database',
 	NETWORK_BROADCAST_API = 'network_broadcast',
 	HISTORY_API = 'history',

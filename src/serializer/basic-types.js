@@ -23,5 +23,6 @@ export { default as staticVariant } from './basic-types/static-variant';
 export { default as string } from './basic-types/string';
 export { default as timePointSec } from './basic-types/time-point-sec';
 export { default as voteId } from './basic-types/voteId';
+export { default as withDefaultValue } from './basic-types/withDefaultValue';
 
 export const empty = new Type();

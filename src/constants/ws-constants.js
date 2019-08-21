@@ -5,28 +5,30 @@ export const PING_DELAY = 10 * 1000;
 export const DEBUG = false;
 export const CONNECTION_CLOSED_ERROR_MESSAGE = 'connection closed';
 
-export const DATABASE_API = 'database';
-export const NETWORK_BROADCAST_API = 'network_broadcast';
-export const HISTORY_API = 'history';
-export const REGISTRATION_API = 'registration';
-export const ASSET_API = 'asset';
-export const LOGIN_API = 'login';
-export const NETWORK_NODE_API = 'network_node';
+export const ChainApi = {
+	DATABASE_API: 'database',
+	NETWORK_BROADCAST_API: 'network_broadcast',
+	HISTORY_API: 'history',
+	REGISTRATION_API: 'registration',
+	ASSET_API: 'asset',
+	LOGIN_API: 'login',
+	NETWORK_NODE_API: 'network_node',
+};
 
 export const CHAIN_APIS = [
-	DATABASE_API,
-	NETWORK_BROADCAST_API,
-	HISTORY_API,
-	REGISTRATION_API,
-	ASSET_API,
-	LOGIN_API,
-	NETWORK_NODE_API,
+	ChainApi.DATABASE_API,
+	ChainApi.NETWORK_BROADCAST_API,
+	ChainApi.HISTORY_API,
+	ChainApi.REGISTRATION_API,
+	ChainApi.ASSET_API,
+	ChainApi.LOGIN_API,
+	ChainApi.NETWORK_NODE_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
-	DATABASE_API,
-	NETWORK_BROADCAST_API,
-	HISTORY_API,
-	LOGIN_API,
+	ChainApi.DATABASE_API,
+	ChainApi.NETWORK_BROADCAST_API,
+	ChainApi.HISTORY_API,
+	ChainApi.LOGIN_API,
 ];
 
 export const STATUS = {
