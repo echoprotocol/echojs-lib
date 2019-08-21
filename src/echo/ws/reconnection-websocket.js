@@ -314,7 +314,7 @@ class ReconnectionWebSocket {
 	 * @param {Number} timeout - timeout before reject
 	 * @returns {Promise}
 	 */
-	async login(user, password, timeout = this._options.pingTimeout) {
+	login(user, password, timeout = this._options.pingTimeout) {
 		return this.call([1, 'login', [user, password]], timeout);
 	}
 

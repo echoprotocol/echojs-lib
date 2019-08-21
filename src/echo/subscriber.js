@@ -225,6 +225,7 @@ class Subscriber extends EventEmitter {
 		) {
 			return null;
 		}
+
 		if (isOperationHistoryId(object.id)) {
 			const contractId = object.op[1].callee;
 			const history = this.cache.contractHistoryByContractId.get(contractId) || [];

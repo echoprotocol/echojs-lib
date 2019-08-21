@@ -2169,7 +2169,7 @@ class API {
 	 * @param {()=>* =} wasBroadcastedCallback
 	 * @returns {Promise<*>}
 	 */
-	async broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
+	broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.network.broadcastTransactionWithCallback(

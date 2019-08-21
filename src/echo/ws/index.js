@@ -44,13 +44,14 @@ class WS extends EventEmitter {
 			await Promise.all(initPromises);
 			await this._ws_rpc.login('', '');
 		} catch (e) {
+			console.error('[WS] >---- error ----->  ONOPEN', e); 
 			await this.close();
 		}
 	}
 
 	/**
-     * On open callback
-     */
+	 * On open callback
+	 */
 	_onOpen() {
 		if (!this._ws_rpc) return;
 
