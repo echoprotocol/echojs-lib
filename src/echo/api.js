@@ -857,6 +857,15 @@ class API {
 	}
 
 	/**
+	 * @param {string} contractId
+	 * @returns {Promise<boolean>}
+	 */
+	async checkERC20Token(contractId) {
+		if (!isContractId(contractId)) throw new Error('invalid contract id format');
+		return this.wsApi.database.checkERC20Token(contractId);
+	}
+
+	/**
 	 *
 	 * 	@param {String} bitAssetId
 	 *  @param {Boolean} force

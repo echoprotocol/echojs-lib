@@ -21,6 +21,7 @@ import ContractResult from '../interfaces/ContractResult';
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
 	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
+	checkERC20Token(contractId: string): Promise<boolean>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
 	getAccountBalances(accountId: string, assetIds: Array<string>, force?: boolean): Promise<Object>;

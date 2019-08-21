@@ -19,6 +19,14 @@ class DatabaseAPI {
 	}
 
 	/**
+	 * @param {string} contractId
+	 * @returns {Promise<boolean>}
+	 */
+	checkERC20Token(contractId) {
+		return this.db.exec('check_erc20_token', [contractId]);
+	}
+
+	/**
 	 *  @method setSubscribeCallback
 	 *  @param  {Function} callback
 	 *  @param  {Boolean} notifyRemoveCreate
