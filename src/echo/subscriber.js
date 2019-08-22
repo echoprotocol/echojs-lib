@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
-import { STATUS } from '../constants/ws-constants';
+import { STATUS, ChainApi } from '../constants/ws-constants';
 
 import {
 	isFunction,
@@ -54,9 +54,7 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.cancelAllSubscribers();
-		this._ws.on(STATUS.OPEN, () => this.callCbOnConnect());
 		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
-
 	}
 
 	/**
@@ -73,7 +71,13 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 
-		await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
+		const databaseApiAvailable = this._ws.apis.includes(ChainApi.DATABASE_API);
+		if (databaseApiAvailable) await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
+		this.callCbOnConnect();
+		if (!databaseApiAvailable) {
+			console.warn('unable to start subscriber cause database api is not available');
+			return;
+		}
 
 		if (this.subscriptions.echorand) {
 			await this._setConsensusMessageCallback();
