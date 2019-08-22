@@ -7,4 +7,5 @@ declare enum ChainApi {
 	ASSET_API = 'asset',
 	LOGIN_API = 'login',
 	NETWORK_NODE_API = 'network_node',
+	WALLET_API = 'wallet',
 }

@@ -26,6 +26,7 @@ class WS extends EventEmitter {
 		this._registration = null;
 		this._asset = null;
 		this._login = null;
+		this._wallet = null;
 	}
 
 	async initEchoApi() {
@@ -229,6 +230,14 @@ class WS extends EventEmitter {
 	 */
 	networkNodeApi() {
 		return this._network_node;
+	}
+
+	/**
+	 * wallet API
+	 * @returns {EchoApi}
+	 */
+	walletApi() {
+		return this._wallet;
 	}
 
 }
