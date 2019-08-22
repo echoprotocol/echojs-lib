@@ -49,4 +49,49 @@ console.log(CACHE_MAPS)
 */
 ```
 
+#### Set cache options
+
+"isUsed" - a flag that determines whether or not to use the cache;
+if it "false" then the cache will not be used;
+if not specified, then the default is true.
+Values by default: 
+
+| Param | Type |
+| --- | --- |
+| isUsed | <code>true</code> |
+| blocksLimit | <code>20</code> |
+| expirationTime | <code>null</code> |
+| minCleaningTime | <code>500</code> |
+
+```javascript
+import echo from 'echolib-js';
+await echo.connect('ws://127.0.0.1:9000', { cache: { isUsed: false } });
+```
+
+"blocksLimit" - the maximum number of blocks allows you to store in the cache must be integer.
+
+```javascript
+import echo from 'echolib-js';
+await echo.connect('ws://127.0.0.1:9000', { cache: { blocksLimit: 10 } });
+```
+
+"expirationTime" - after this time, the block will be cleared from the cache;
+if "expirationTime" = null, then it will never be cleared.
+
+```javascript
+import echo, { constants } from 'echolib-js';
+await echo.connect('ws://127.0.0.1:9000', {cache: { expirationTime: 1000 } });
+```
+
+"minCleaningTime" - the time after which the block will be cleared from the cache
+after the expiration of "minCleaningTime" of the previous block.
+
+```javascript
+import echo, { constants } from 'echolib-js';
+await echo.connect('ws://127.0.0.1:9000', {cache: { minCleaningTime: 1000 } });
+```
+
 > Cache data stored in Immutable.js objects
+
+
+
