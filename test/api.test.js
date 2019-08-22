@@ -1041,4 +1041,30 @@ describe('API', () => {
 				.timeout(5000);
 		});
 	});
+
+	describe.only('history', () => {
+		const ws = new WS();
+		beforeEach(async () => {
+			await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'wallet'] });
+		});
+		afterEach(async () => {
+			await ws.close();
+		});
+		describe('#getAccountHistory()', async () => {
+			// import echo, { constants } from '../src';
+			// await echo.connect('ws://127.0.0.1:6311', { apis: constants.WS_CONSTANTS.CHAIN_APIS });
+			it('should get account history', async () => {
+				try {
+					const history = await api.wallet.getWalletInfo();
+					// expect(history)
+					// 	.to
+					// 	.be
+					// 	.an('array');
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
+	});
 });

@@ -32,6 +32,7 @@ class WS extends EventEmitter {
 	async initEchoApi() {
 		const initPromises = [];
 
+		console.log('this.apis', this.apis);
 		this.apis.forEach((api) => {
 			if (api === 'login') initPromises.push((this._login.api_id = 1));
 			else initPromises.push(this[`_${api}`].init());

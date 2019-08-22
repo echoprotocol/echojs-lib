@@ -1177,24 +1177,6 @@ class Subscriber extends EventEmitter {
 		}
 	}
 
-	/**
-	 *  @method getWalletInfo
-	 *
-	 *  @return {undefined}
-	 */
-	getWalletInfo() {
-		this._wsApi.wallet.info();
-	}
-
-	/**
-	 *  @method getWalletAbout
-	 *
-	 *  @return {undefined}
-	 */
-	getWalletAbout() {
-		this._wsApi.wallet.about();
-	}
-
 }
 
 export default Subscriber;
