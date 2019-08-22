@@ -38,7 +38,7 @@ jobs:
               --plugins=registration
               --api-access=/echo/access.json
               --genesis-json=/echo/genesis.json
-              -d datadir
+              -d /echo/datadir
       script:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
