@@ -5,7 +5,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS, ChainApi } from '../constants/ws-constants';
+import { STATUS } from '../constants/ws-constants';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
@@ -15,6 +15,7 @@ class Echo {
 		this._ws = new WS();
 		this.subscriber = new Subscriber(this._ws);
 		this._isInitModules = false;
+		this.initEchoApi = this.initEchoApi.bind(this);
 	}
 
 	get isConnected() {
@@ -65,19 +66,12 @@ class Echo {
 
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi);
-		await this.initSubscriber();
-		this._ws.on(STATUS.OPEN, async () => {
-			try {
-				await this._ws.initEchoApi();
-				await this.initSubscriber();
-			} catch (err) {
-				console.log('ONOPEN init error', err);
-			}
-		});
+		await this.subscriber.init(this.cache, this._wsApi, this.api);
+		this._ws.on(STATUS.OPEN, this.initEchoApi);
 	}
 
-	async initSubscriber() {
-		if (!this._ws.apis.includes(ChainApi.DATABASE_API)) return;
+	async initEchoApi() {
+		await this._ws.initEchoApi();
 		await this.subscriber.init(this.cache, this._wsApi, this.api);
 	}
 
@@ -89,7 +83,10 @@ class Echo {
 	}
 
 	async reconnect() {
+		this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
 		await this._ws.reconnect();
+		await this.initEchoApi();
+		this._ws.on(STATUS.OPEN, this.initEchoApi);
 	}
 
 	async disconnect() {
@@ -98,6 +95,7 @@ class Echo {
 		await this._ws.close();
 		this.onOpen = null;
 		this._isInitModules = false;
+		this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
 	}
 
 	/** @returns {Transaction} */

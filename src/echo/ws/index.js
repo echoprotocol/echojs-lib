@@ -28,10 +28,6 @@ class WS extends EventEmitter {
 		this._login = null;
 	}
 
-	/**
-	 *
-	 * @private
-	 */
 	async initEchoApi() {
 		const initPromises = [];
 
@@ -142,12 +138,8 @@ class WS extends EventEmitter {
 
 		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
 
-		try {
-			await this._ws_rpc.connect(url, this.options);
-			await this.initEchoApi();
-		} catch (err) {
-			throw err;
-		}
+		await this._ws_rpc.connect(url, this.options);
+		await this.initEchoApi();
 	}
 
 	/**
