@@ -6,8 +6,6 @@ import { STATUS, ChainApi } from '../constants/ws-constants';
 import {
 	isFunction,
 	isObjectId,
-	isLimitOrderId,
-	isCallOrderId,
 	isAccountBalanceId,
 	isAccountStatisticsId,
 	isTransactionId,
@@ -29,12 +27,12 @@ import {
 import {
 	CACHE_MAPS,
 	CANCEL_LIMIT_ORDER,
-	UPDATE_CALL_ORDER,
 	CLOSE_CALL_ORDER,
 	BITASSET_UPDATE,
 } from '../constants';
 
 import { handleConnectionClosedError } from '../utils/helpers';
+import { IMPLEMENTATION_OBJECT_TYPE } from '../constants/chain-types';
 
 class Subscriber extends EventEmitter {
 
@@ -94,11 +92,6 @@ class Subscriber extends EventEmitter {
 		if (this.subscriptions.transaction) {
 			await this._setPendingTransactionCallback();
 		}
-
-		Object.keys(this.subscribers.market).forEach((key) => {
-			const [base, quote] = key.split('_');
-			this._subscribeToMarket(base, quote);
-		});
 
 		if (this.subscribers.contract.length !== 0) {
 			const contracts = this.subscribers.contract.reduce((arr, c) => [...arr, ...c.contracts], []);
@@ -168,7 +161,6 @@ class Subscriber extends EventEmitter {
 			echorand: [],
 			block: [],
 			transaction: [],
-			market: {}, // [base_quote]: []
 			logs: {},	// [contractId]: []
 			contract: [],
 			connect: [],
@@ -211,14 +203,6 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.account)) {
-			return null;
-		}
-
-		if (isLimitOrderId(object.id) && !subscribedAccounts.includes(object.seller)) {
-			return null;
-		}
-
-		if (isCallOrderId(object.id) && !subscribedAccounts.includes(object.borrower)) {
 			return null;
 		}
 
@@ -296,7 +280,8 @@ class Subscriber extends EventEmitter {
 
 		if (isAccountStatisticsId(object.id)) {
 			try {
-				const previousMostRecentOp = previous.get('most_recent_op', '2.9.0');
+				const accountTransactionHistoryId = `2.${IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_TRANSACTION_HISTORY}.0`;
+				const previousMostRecentOp = previous.get('most_recent_op', accountTransactionHistoryId);
 
 				if (previousMostRecentOp !== object.most_recent_op) {
 					this._api.getFullAccounts([object.owner], true, true).catch(handleConnectionClosedError);
@@ -327,9 +312,9 @@ class Subscriber extends EventEmitter {
 
 				const mutableObj = obj.withMutations((map) => {
 					const fieldsToDelete = [
-						'statistics', 'registrar_name', 'referrer_name', 'lifetime_referrer_name',
-						'votes', 'balances', 'vesting_balances', 'limit_orders', 'call_orders',
-						'settle_orders', 'proposals', 'assets', 'withdraws',
+						'statistics', 'registrar_name', 'referrer_name',
+						'votes', 'balances', 'vesting_balances',
+						'proposals', 'assets',
 					];
 
 					fieldsToDelete.forEach((field) => {
@@ -432,50 +417,6 @@ class Subscriber extends EventEmitter {
 				.setInMap(CACHE_MAPS.BIT_ASSETS_BY_BIT_ASSET_ID, object.id, obj);
 		}
 
-		if (isCallOrderId(object.id)) {
-			this.emit(UPDATE_CALL_ORDER, object);
-
-			let account = this.cache.fullAccounts.get(object.borrower);
-
-			if (account) {
-				if (!account.has('call_orders')) {
-					account = account.set('call_orders', new Set());
-				}
-				const callOrders = account.get('call_orders');
-				if (!callOrders.has(object.id)) {
-					account = account.set('call_orders', callOrders.add(object.id));
-					this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
-						.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
-
-					// Force subscription to the object by calling get_objects
-					this._api.getObjects([object.id]);
-					this._notifyAccountSubscribers(account);
-				}
-			}
-		}
-
-		if (isLimitOrderId(object.id)) {
-			let account = this.cache.fullAccounts.get(object.seller);
-
-			if (account) {
-
-				if (!account.has('limit_orders')) {
-					account = account.set('limit_orders', new Set());
-				}
-				const limitOrders = account.get('limit_orders');
-
-				if (!limitOrders.has(object.id)) {
-					account = account.set('limit_orders', limitOrders.add(object.id));
-					this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account)
-						.setInMap(CACHE_MAPS.OBJECTS_BY_ID, object.id, fromJS(object));
-
-					// Force subscription to the object by calling get_objects
-					this._api.getObjects([object.id]);
-					this._notifyAccountSubscribers(account);
-				}
-			}
-		}
-
 		if (isProposalId(object.id) && object.required_active_approvals) {
 			object.required_active_approvals.concat(object.required_owner_approvals).forEach((id) => {
 				let impactedAccount = this.cache.fullAccounts.get(id);
@@ -503,54 +444,6 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _updateOrder
-	 *
-	 *  @param  {String} id
-	 *
-	 *  @return {String}
-	 */
-	_updateOrder(id) {
-		let type = null;
-		const obj = this.cache.objectsById.get(id);
-
-		if (!obj) {
-			return type;
-		}
-
-		if (isLimitOrderId(id)) {
-			// get account from objects by seller param
-			let account = this.cache.fullAccounts.get(obj.get('seller'));
-			// if account get orders, delete this order
-			if (account && account.has('limit_orders') && account.get('limit_orders').has(obj)) {
-				const limitOrders = account.get('limit_orders');
-				account = account.set('limit_orders', limitOrders.delete(obj));
-				this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-			}
-
-			type = CANCEL_LIMIT_ORDER;
-		}
-
-		if (isCallOrderId(id)) {
-			// get account from objects by borrower param
-			let account = this.cache.fullAccounts.get(obj.get('borrower'));
-			// if account get call_orders, delete this order
-			if (account && account.has('call_orders') && account.get('call_orders').has(obj)) {
-				const callOrders = account.get('call_orders');
-				account = account.set('call_orders', callOrders.delete(obj));
-				this.cache.setInMap(CACHE_MAPS.FULL_ACCOUNTS, account.get('id'), account);
-			}
-
-			type = CLOSE_CALL_ORDER;
-		}
-
-		// delete from objects
-		this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, null);
-
-		// return type
-		return type;
-	}
-
-	/**
 	 *  @method _onRespond
 	 *
 	 *  @param  {Object} [messages]
@@ -563,13 +456,6 @@ class Subscriber extends EventEmitter {
 		const updates = messages.filter((msg) => {
 			// check is object id
 			if (isObjectId(msg)) {
-				// _updateOrder -> return order type - push to orders = { type, order }
-				const type = this._updateOrder(msg);
-
-				if (type) {
-					orders.push({ type, id: msg });
-				}
-
 				return false;
 			}
 
@@ -909,112 +795,6 @@ class Subscriber extends EventEmitter {
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 
-	}
-
-	/**
-	 *  @method _subscribeToMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {*} result
-	 *
-	 *  @return {undefined}
-	 */
-	_marketUpdate(base, quote, result) {
-		const callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		callbacks.forEach((callback) => callback(result));
-	}
-
-	/**
-	 *  @method _subscribeToMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *
-	 *  @return {undefined}
-	 */
-	_subscribeToMarket(base, quote) {
-		this._wsApi.database.subscribeToMarket(
-			this._marketUpdate.bind(this, base, quote),
-			base,
-			quote,
-		);
-	}
-
-	/**
-	 *  @method _unsubscribeFromMarket
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *
-	 *  @return {undefined}
-	 */
-	_unsubscribeFromMarket(base, quote) {
-		this._wsApi.database.unsubscribeFromMarket(base, quote);
-	}
-
-	/**
-	 *  @method setMarketSubscribe
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	async setMarketSubscribe(base, quote, callback) {
-		if (!isAssetId(base) || !isAssetId(quote)) {
-			throw new Error('Invalid asset ID');
-		}
-
-		if (!isFunction(callback)) {
-			throw new Error('Callback is not a function');
-		}
-
-		let callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		if (!callbacks) {
-			callbacks = [];
-			await this._subscribeToMarket(base, quote);
-		}
-
-		callbacks.push(callback);
-
-		this.subscribers.market[`${base}_${quote}`] = callbacks;
-	}
-
-	/**
-	 *  @method removeMarketSubscribe
-	 *
-	 *  @param  {String} base - asset id
-	 *  @param  {String} quote - asset id
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	async removeMarketSubscribe(base, quote, callback) {
-		if (!isAssetId(base) || !isAssetId(quote)) {
-			throw new Error('Invalid asset ID');
-		}
-
-		if (!isFunction(callback)) {
-			throw new Error('Callback is not a function');
-		}
-
-		let callbacks = this.subscribers.market[`${base}_${quote}`];
-
-		if (!callbacks) { return; }
-
-		callbacks = callbacks.filter((c) => c !== callback);
-
-		if (!callbacks.length) {
-			await this._unsubscribeFromMarket(base, quote);
-			delete this.subscribers.market[`${base}_${quote}`];
-			return;
-		}
-
-		this.subscribers.market[`${base}_${quote}`] = callbacks;
 	}
 
 	/**

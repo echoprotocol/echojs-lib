@@ -6,6 +6,7 @@ import Cache from '../src/echo/cache'
 import API from '../src/echo/api'
 
 import { url } from './_test-data';
+import { ACCOUNT, ASSET, } from '../src/constants/object-types';
 
 // describe('API', () => {
 // 	const ws = new WS();
@@ -53,8 +54,8 @@ import { url } from './_test-data';
 // 				const wsApi = new WSAPI(ws);
 // 				const cache = new Cache();
 // 				const api = new API(cache, wsApi);
-// 				const accountId1 = '1.2.5';
-// 				const accountId2 = '1.2.6';
+// 				const accountId1 = `1.${ACCOUNT}.5`;
+// 				const accountId2 = `1.${ACCOUNT}.6`;
 // 				const accounts = await api.getAccounts([accountId1, accountId2]);
 
 // 				expect(accounts).to.be.an('array');
@@ -90,7 +91,7 @@ import { url } from './_test-data';
 // 				const api = new API(cache, wsApi);
 
 // 				const assetKey = 'ECHO';
-// 				const assetId = '1.3.0';
+// 				const assetId = `1.${ASSET}.0`;
 // 				const assets = await api.lookupAssetSymbols([assetKey]);
 
 // 				expect(assets).to.be.an('array');
@@ -109,7 +110,7 @@ import { url } from './_test-data';
 // 				const cache = new Cache();
 // 				const api = new API(cache, wsApi);
 
-// 				const assetId1 = '1.3.0';
+// 				const assetId1 = `1.${ASSET}.0`;
 
 // 				const assets = await api.getAssets([assetId1]);
 
@@ -128,8 +129,8 @@ import { url } from './_test-data';
 // 				const cache = new Cache();
 // 				const api = new API(cache, wsApi);
 
-// 				const assetId = '1.3.0';
-// 				const accountId = '1.2.2';
+// 				const assetId = `1.${ASSET}.0`;
+// 				const accountId = `1.${ACCOUNT}.2`;
 // 				const assetSymbol = 'ECHO';
 
 // 				const objects = await api.getObjects([accountId, assetId]);
