@@ -1,24 +1,25 @@
-import { varint32, VarInt32Serializer } from '../../basic/integers';
+import { varint32 } from '../../basic/integers';
 import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from '../../../constants/chain-types';
-import { toId } from '../../../utils/converters';
 import ISerializer from '../../ISerializer';
 
+/** @typedef {import("bytebuffer")} ByteBuffer */
+
+/**
+ * @template {ISerializer} T
+ * @typedef {import("../../ISerializer").SerializerInput<T>} SerializerInput
+ */
+
+/** @typedef {import("../../basic/integers").VarInt32Serializer} VarInt32Serializer */
+/** @typedef {import("../../../constants").e_OBJECT_TYPES} e_OBJECT_TYPES */
 /** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
+/** @typedef {import("../../../constants/chain-types").e_IMPLEMENTATION_OBJECT_TYPE} e_IMPLEMENTATION_OBJECT_TYPE */
 
 /**
  * @template {e_RESERVED_SPACES} T
- * @typedef {{ [RESERVED_SPACES['RELATIVE_PROTOCOL_IDS']]: never, 1: string, [RESERVED_SPACES['IMPLEMENTATION_IDS']]: number }[T]} ObjectTypeId
+ * @typedef {{ 0: never, 1: e_OBJECT_TYPES, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
  */
 
-/** @type {e_RESERVED_SPACES['']} */
-const a;
-
-type ObjectTypeId<T extends RESERVED_SPACES> = {
-	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: never;
-	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES;
-	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE;
-}[T];
-
+/** @typedef {string | SerializerInput<VarInt32Serializer>} TInput */
 
 const objectIdPureRegexp = /^\d\.\d\.\d$/;
 
@@ -28,34 +29,38 @@ const _objectTypeIds = {
 	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE,
 };
 
+/**
+ * @template {e_RESERVED_SPACES} T
+ * @augments {ISerializer<string, string>}
+ */
 export default class ObjectIdSerializer extends ISerializer {
 
 	/**
 	 * @readonly
-	 * @type {number}
+	 * @type {T}
 	 */
 	get reservedSpaceId() { return this._reservedSpaceId; }
 
 	/**
 	 * @readonly
-	 * @type {number|Array<number>}
+	 * @type {ObjectTypeId<T>[]}
 	 */
-	get objectTypeIds() { return this._objectTypeIds; }
+	get objectsTypesIds() { return this._objectsTypesIds; }
 
 	/**
-	 * @param {number} reservedSpaceId
-	 * @param {number|Array<number>} objectTypeId
+	 * @param {T} reservedSpaceId
+	 * @param {ObjectTypeId<T> | ObjectTypeId<T>[]} objectTypeId
 	 */
-	constructor(reservedSpaceId, objectTypeIds) {
+	constructor(reservedSpaceId, objectsTypesIds) {
 		if (!Object.values(RESERVED_SPACES).includes(reservedSpaceId)) throw new Error('invalid reserved space id');
 		super();
 		/**
 		 * @private
-		 * @type {number}
+		 * @type {T}
 		 */
 		this._reservedSpaceId = reservedSpaceId;
-		if (!Array.isArray(objectTypeIds)) objectTypeIds = [objectTypeIds];
-		for (const objectTypeId of objectTypeIds) {
+		if (!Array.isArray(objectsTypesIds)) objectsTypesIds = [objectsTypesIds];
+		for (const objectTypeId of objectsTypesIds) {
 			const availableObjectTypeIds = _objectTypeIds[this.reservedSpaceId];
 			if (!Object.values(availableObjectTypeIds).includes(objectTypeId)) {
 				throw new Error(`invalid object typeof id ${objectTypeId}`);
@@ -63,13 +68,13 @@ export default class ObjectIdSerializer extends ISerializer {
 		}
 		/**
 		 * @private
-		 * @type {number}
+		 * @type {ObjectTypeId<T>[]}
 		 */
-		this._objectTypeIds = objectTypeIds;
+		this._objectsTypesIds = objectsTypesIds;
 	}
 
 	/**
-	 * @param {string|number} value
+	 * @param {TInput} value
 	 * @returns {string}
 	 */
 	toRaw(value) {
@@ -79,12 +84,12 @@ export default class ObjectIdSerializer extends ISerializer {
 			if (actualReservedSpaceIdString !== this.reservedSpaceId.toString()) {
 				throw new Error('invalid reserved space id');
 			}
-			if (!this.objectTypeIds.some((objectTypeId) => actualObjectTypeIdString === objectTypeId.toString())) {
+			if (!this.objectsTypesIds.some((objectTypeId) => actualObjectTypeIdString === objectTypeId.toString())) {
 				throw new Error('invalid object type id');
 			}
 			value = actualInstanceIdString;
 		}
-		if (this.objectTypeIds.length !== 1) throw new Error('unable to automatically set object type id');
+		if (this.objectsTypesIds.length !== 1) throw new Error('unable to automatically set object type id');
 		/** @type {ReturnType<VarInt32Serializer['toRaw']>} */
 		let rawInstanceId;
 		try {
@@ -92,11 +97,11 @@ export default class ObjectIdSerializer extends ISerializer {
 		} catch (error) {
 			throw new Error(`instance id: ${error.message}`);
 		}
-		return `${this.reservedSpaceId}.${this.objectTypeIds[0]}.${rawInstanceId}`;
+		return `${this.reservedSpaceId}.${this.objectsTypesIds[0]}.${rawInstanceId}`;
 	}
 
 	/**
-	 * @param {string|number} value
+	 * @param {TInput} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
