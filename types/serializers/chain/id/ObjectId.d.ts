@@ -4,7 +4,7 @@ import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from "../../../constants/
 import { OBJECT_TYPES } from "../../../constants";
 import { VarInt32Serializer } from "../../basic/integers";
 
-type ObjectTypeId<T extends RESERVED_SPACES> = {
+export type ObjectTypeId<T extends RESERVED_SPACES> = {
 	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: never;
 	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES;
 	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE;

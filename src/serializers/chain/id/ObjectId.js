@@ -49,7 +49,7 @@ export default class ObjectIdSerializer extends ISerializer {
 
 	/**
 	 * @param {T} reservedSpaceId
-	 * @param {ObjectTypeId<T> | ObjectTypeId<T>[]} objectTypeId
+	 * @param {ObjectTypeId<T> | ObjectTypeId<T>[]} objectsTypesIds
 	 */
 	constructor(reservedSpaceId, objectsTypesIds) {
 		if (!Object.values(RESERVED_SPACES).includes(reservedSpaceId)) throw new Error('invalid reserved space id');
