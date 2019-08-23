@@ -19,6 +19,14 @@ class DatabaseAPI {
 	}
 
 	/**
+	 * @param {string} contractId
+	 * @returns {Promise<boolean>}
+	 */
+	checkERC20Token(contractId) {
+		return this.db.exec('check_erc20_token', [contractId]);
+	}
+
+	/**
 	 *  @method setSubscribeCallback
 	 *  @param  {Function} callback
 	 *  @param  {Boolean} notifyRemoveCreate
@@ -289,52 +297,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getOrderBook
-	 *  @param  {String} baseAssetName
-	 *  @param  {String} quoteAssetName
-	 *  @param  {Number} depth
-	 *
-	 *  @return {Promise}
-	 */
-	getOrderBook(baseAssetName, quoteAssetName, depth = 50) {
-		return this.db.exec('get_order_book', [baseAssetName, quoteAssetName, depth]);
-	}
-
-	/**
-	 *  @method getLimitOrders
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise}
-	 */
-	getLimitOrders(baseAssetId, quoteAssetId, limit) {
-		return this.db.exec('get_limit_orders', [baseAssetId, quoteAssetId, limit]);
-	}
-
-	/**
-	 *  @method getCallOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise}
-	 */
-	getCallOrders(assetId, limit) {
-		return this.db.exec('get_call_orders', [assetId, limit]);
-	}
-
-	/**
-	 *  @method getSettleOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise}
-	 */
-	getSettleOrders(assetId, limit) {
-		return this.db.exec('get_settle_orders', [assetId, limit]);
-	}
-
-	/**
 	 *  @method getMarginPositions
 	 *  @param  {String} accountId
 	 *
@@ -342,30 +304,6 @@ class DatabaseAPI {
 	 */
 	getMarginPositions(accountId) {
 		return this.db.exec('get_margin_positions', [accountId]);
-	}
-
-	/**
-	 *  @method subscribeToMarket
-	 *  @param  {Function} callback
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *
-	 *  @return {Promise}
-	 */
-	subscribeToMarket(callback, baseAssetId, quoteAssetId) {
-		return this.db.exec('subscribe_to_market', [callback, baseAssetId, quoteAssetId]);
-	}
-
-	/**
-	 *  @method unsubscribeFromMarket
-	 *
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *
-	 *  @return {Promise}
-	 */
-	unsubscribeFromMarket(baseAssetId, quoteAssetId) {
-		return this.db.exec('unsubscribe_to_market', [baseAssetId, quoteAssetId]);
 	}
 
 	/**

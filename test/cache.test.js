@@ -2,7 +2,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import echo, { constants } from '../src/index';
+import echo, { constants, Echo } from '../src/index';
 import { USE_CACHE_BY_DEFAULT, DEFAULT_CACHE_EXPIRATION_TIME, DEFAULT_MIN_CACHE_CLEANING_TIME, CACHE_MAPS } from '../src/constants';
 
 import { url } from './_test-data';
@@ -59,6 +59,20 @@ describe('cache', () => {
 
     describe('cleaning', () => {
         const blocksRounds = [1, 2, 3, 4, 5];
+		/** @type {import("../types").Echo} */
+		const echo = new Echo();
+		before(async function () {
+			this.timeout(25e3);
+			await echo.connect(url);
+			const blockToWait = Math.max(...blocksRounds) + 1;
+			while (true) {
+				const { head_block_number } = await echo.api.getDynamicGlobalProperties(true);
+				if (head_block_number >= blockToWait) break;
+				console.log(`waiting for block #${blockToWait}. current head block number - ${head_block_number}`);
+				await new Promise((resolve) => setTimeout(() => resolve(), 3e3));
+			}
+			await echo.disconnect();
+		});
 
         afterEach(async () => {
             await echo.disconnect();

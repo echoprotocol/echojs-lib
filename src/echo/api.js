@@ -101,9 +101,7 @@ import { PublicKey } from '../crypto';
 *  		id:String,
 *  		chain_id:String,
 *  		immutable_parameters:{
-*  			min_committee_member_count:Number,
-*  			num_special_accounts:Number,
-*  			num_special_assets:Number
+*  			min_committee_member_count:Number
 *  		}
 *  	}
 * 	} ChainProperties */
@@ -130,13 +128,8 @@ import { PublicKey } from '../crypto';
 * 	 			maximum_authority_membership:Number,
 * 	 			reserve_percent_of_fee:Number,
 * 	 			network_percent_of_fee:Number,
-* 	 			lifetime_referrer_percent_of_fee:Number,
 * 	 			cashback_vesting_period_seconds:Number,
-* 	 			cashback_vesting_threshold:Number,
-* 	 			count_non_member_votes:Boolean,
-* 	 			allow_non_member_whitelists:Boolean,
 * 	 			max_predicate_opcode:Number,
-* 	 			fee_liquidation_threshold:Number,
 * 	 			accounts_per_fee_scale:Number,
 * 	 			account_fee_scale_bitshifts:Number,
 * 	 			max_authority_depth:Number,
@@ -220,15 +213,12 @@ import { PublicKey } from '../crypto';
 *  		ECHO_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
 *  		ECHO_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
 *  		ECHO_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,
-*  		ECHO_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,
 *  		ECHO_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,
 *  		ECHO_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,
 *  		ECHO_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,
 *  		ECHO_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
-*  		ECHO_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
 *  		ECHO_DEFAULT_BURN_PERCENT_OF_FEE:Number,
 *  		ECHO_DEFAULT_MAX_ASSERT_OPCODE:Number,
-*  		ECHO_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
 *  		ECHO_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
 *  		ECHO_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
 *  		ECHO_MAX_URL_LENGTH:Number,
@@ -857,6 +847,15 @@ class API {
 	}
 
 	/**
+	 * @param {string} contractId
+	 * @returns {Promise<boolean>}
+	 */
+	async checkERC20Token(contractId) {
+		if (!isContractId(contractId)) throw new Error('invalid contract id format');
+		return this.wsApi.database.checkERC20Token(contractId);
+	}
+
+	/**
 	 *
 	 * 	@param {String} bitAssetId
 	 *  @param {Boolean} force
@@ -1182,29 +1181,19 @@ class API {
 				const immutableAccount = fromJS(account);
 				delete requestedObject[1].account;
 
-				const requestArray = [
-					...requestedObject[1].call_orders.map(({ id }) => id),
-					...requestedObject[1].limit_orders.map(({ id }) => id),
-					...requestedObject[1].balances.map(({ id }) => id),
-				];
+				const requestArray = requestedObject[1].balances.map(({ id }) => id);
 
 				const balances = new Map().withMutations((map) => {
 					requestedObject[1].balances.map(({ id, asset_type }) => map.set(asset_type, id));
 				});
 
-				const limitOrders = new Set(requestedObject[1].limit_orders.map(({ id }) => id));
-				const callOrders = new Set(requestedObject[1].call_orders.map(({ id }) => id));
 				const proposals = new Set(requestedObject[1].proposals.map(({ id }) => id));
 
 				requestedObject = fromJS({ ...account, ...requestedObject[1] });
 				requestedObject = await this._addHistory(requestedObject);
 
 				requestedObject = requestedObject.withMutations((map) => {
-					map
-						.set('balances', balances)
-						.set('limit_orders', limitOrders)
-						.set('call_orders', callOrders)
-						.set('proposals', proposals);
+					map.set('balances', balances).set('proposals', proposals);
 				});
 
 				resultArray[i] = requestedObject.toJS();
@@ -1623,68 +1612,6 @@ class API {
 		}
 
 		return resultArray;
-	}
-
-	/**
-	 *  @method getOrderBook
-	 *  @param  {String} baseAssetName
-	 *  @param  {String} quoteAssetName
-	 *  @param  {Number} depth
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getOrderBook(baseAssetName, quoteAssetName, depth = API_CONFIG.ORDER_BOOK_DEFAULT_DEPTH) {
-		if (!isAssetName(baseAssetName)) throw new Error('Base asset name is invalid');
-		if (!isAssetName(quoteAssetName)) throw new Error('Quote asset name is invalid');
-		if (!isUInt64(depth) || depth > API_CONFIG.ORDER_BOOK_MAX_DEPTH) {
-			throw new Error(`Depth should be a integer and must not exceed ${API_CONFIG.ORDER_BOOK_MAX_DEPTH}`);
-		}
-
-		return this.wsApi.database.getOrderBook(baseAssetName, quoteAssetName, depth);
-	}
-
-	/**
-	 *  @method getLimitOrders
-	 *  @param  {String} baseAssetId
-	 *  @param  {String} quoteAssetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getLimitOrders(baseAssetId, quoteAssetId, limit) {
-		if (!isAssetId(baseAssetId)) throw new Error('Base asset id is invalid');
-		if (!isAssetId(quoteAssetId)) throw new Error('Quote asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getLimitOrders(baseAssetId, quoteAssetId, limit);
-	}
-
-	/**
-	 *  @method getCallOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getCallOrders(assetId, limit) {
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getCallOrders(assetId, limit);
-	}
-
-	/**
-	 *  @method getSettleOrders
-	 *  @param  {String} assetId
-	 *  @param  {Number} limit
-	 *
-	 *  @return {Promise.<*>}
-	 */
-	async getSettleOrders(assetId, limit) {
-		if (!isAssetId(assetId)) throw new Error('Asset id is invalid');
-		if (!isUInt64(limit)) throw new Error('Limit should be a integer');
-
-		return this.wsApi.database.getSettleOrders(assetId, limit);
 	}
 
 	/**
