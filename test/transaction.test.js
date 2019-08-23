@@ -7,11 +7,12 @@ import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 
 import { url } from './_test-data';
+import { ACCOUNT, ASSET} from '../src/constants/object-types';
 
 
 const echo = new Echo();
 
-describe('Transaction', () => {
+describe.skip('Transaction', () => {
 
 	before(() => echo.connect(url));
 
@@ -54,9 +55,9 @@ describe('Transaction', () => {
 	// 		it('transfer', () => {
 	// 			const transaction = echo.transaction;
 	// 			const operationProps = {
-	// 				from: '1.2.1',
-	// 				to: '1.2.2',
-	// 				amount: { amount: 123, asset_id: '1.3.1' },
+	// 				from: `1.${ACCOUNT}.1`,
+	// 				to: `1.${ACCOUNT}.2`,
+	// 				amount: { amount: 123, asset_id: `1.${ASSET}.1` },
 	// 				extensions: [],
 	// 			};
 	// 			const transactionWithOperation = transaction.addOperation('transfer', operationProps);
@@ -83,30 +84,30 @@ describe('Transaction', () => {
 	// 	describe('successful', () => {
 	// 		it('default asset', async () => {
 	// 			const operationProps = {
-	// 				from: '1.2.1',
-	// 				to: '1.2.2',
-	// 				amount: { amount: 123, asset_id: '1.3.0' },
+	// 				from: `1.${ACCOUNT}.1`,
+	// 				to: `1.${ACCOUNT}.2`,
+	// 				amount: { amount: 123, asset_id: `1.${ASSET}.0` },
 	// 				extensions: [],
 	// 			};
 	// 			const transaction = echo.transaction.addOperation('transfer', operationProps);
 	// 			await transaction.setRequiredFees();
 	// 			deepStrictEqual(transaction.operations, [[0, {
 	// 				...operationProps,
-	// 				fee: { asset_id: '1.3.0', amount: 20 },
+	// 				fee: { asset_id: `1.${ASSET}.0`, amount: 20 },
 	// 			}]]);
 	// 		});
 	// 		it('custom asset', async () => {
 	// 			const operationProps = {
-	// 				from: '1.2.1',
-	// 				to: '1.2.2',
-	// 				amount: { amount: 123, asset_id: '1.3.0' },
-	// 				fee: { asset_id: '1.3.1' },
+	// 				from: `1.${ACCOUNT}.1`,
+	// 				to: `1.${ACCOUNT}.2`,
+	// 				amount: { amount: 123, asset_id: `1.${ASSET}.0` },
+	// 				fee: { asset_id: `1.${ASSET}.1` },
 	// 				extensions: [],
 	// 			};
 	// 			const transaction = echo.transaction.addOperation('transfer', operationProps);
 	// 			await transaction.setRequiredFees();
 	// 			const { fee } = transaction.operations[0][1];
-	// 			strictEqual(fee.asset_id, '1.3.1');
+	// 			strictEqual(fee.asset_id, `1.${ASSET}.1`);
 	// 			ok(fee.amount > 0);
 	// 		});
 
@@ -118,9 +119,9 @@ describe('Transaction', () => {
 	// 		const pk = 'WIF';
 	// 		const transaction = echo.createTransaction();
 	// 		transaction.addOperation(TRANSFER, {
-	// 			from: '1.2.390',
-	// 			to: '1.2.190',
-	// 			amount: { asset_id: '1.3.0', amount: 1000 },
+	// 			from: `1.${ACCOUNT}.30`,
+	// 			to: `1.${ACCOUNT}.10`,
+	// 			amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
 	// 		});
 	// 		transaction.addSigner(PrivateKey.fromWif(pk));
 	// 		const result = await transaction.broadcast(() => console.log(1));
@@ -133,9 +134,9 @@ describe('Transaction', () => {
 			const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
 			const transaction = echo.createTransaction();
 			transaction.addOperation(TRANSFER, {
-				from: '1.2.6',
-				to: '1.2.7',
-				amount: { asset_id: '1.3.0', amount: 1000 },
+				from: `1.${ACCOUNT}.6`,
+				to: `1.${ACCOUNT}.7`,
+				amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
 			});
 			// await transaction.sign(PrivateKey.fromWif(pk));
 			// console.log(await transaction.broadcast(console.log));

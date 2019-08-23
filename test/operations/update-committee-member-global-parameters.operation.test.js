@@ -31,13 +31,8 @@ describe('update committee member global parameters', () => {
 						maximum_authority_membership: 0,
 						reserve_percent_of_fee: 0,
 						network_percent_of_fee: 0,
-						lifetime_referrer_percent_of_fee: 0,
 						cashback_vesting_period_seconds: 0,
-						cashback_vesting_threshold: 0,
-						count_non_member_votes: false,
-						allow_non_member_whitelists: false,
 						max_predicate_opcode: 0,
-						fee_liquidation_threshold: 0,
 						accounts_per_fee_scale: 0,
 						account_fee_scale_bitshifts: 0,
 						max_authority_depth: 0,
@@ -77,7 +72,7 @@ describe('update committee member global parameters', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 29',
+			'operation with id 18',
 			'key "new_parameters"',
 			'key "current_fees"',
 			'key "parameters"',
