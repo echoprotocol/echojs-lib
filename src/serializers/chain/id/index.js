@@ -1,5 +1,7 @@
 import ObjectIdSerializer from './ObjectId';
-import AssetIdSerializer from './AssetId';
+
+export { default as accountId } from './account_id';
+export { default as assetId } from './asset_id';
 
 /** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
 
@@ -16,6 +18,4 @@ import AssetIdSerializer from './AssetId';
  */
 export const objectId = (reservedSpaceId, objectsTypesIds) => new ObjectIdSerializer(reservedSpaceId, objectsTypesIds);
 
-export const assetId = new AssetIdSerializer();
-
-export { ObjectIdSerializer, AssetIdSerializer };
+export { ObjectIdSerializer };

@@ -1,5 +1,15 @@
+import SetSerializer from './Set';
 import StaticVariantSerializer from './StaticVariant';
 import StructSerializer from './Struct';
+
+/** @typedef {import("../ISerializer").default} ISerializer */
+
+/**
+ * @template {ISerializer} T
+ * @param {T} serializer
+ * @returns {SetSerializer<T>}
+ */
+export const set = (serializer) => new SetSerializer(serializer);
 
 /** @typedef {import("./StaticVariant").Variants} Variants */
 /** @typedef {import("./Struct").SerializersMap} SerializersMap */
@@ -18,4 +28,4 @@ export const staticVariant = (serializers) => new StaticVariantSerializer(serial
  */
 export const struct = (serializers) => new StructSerializer(serializers);
 
-export { StaticVariantSerializer, StructSerializer };
+export { SetSerializer, StaticVariantSerializer, StructSerializer };
