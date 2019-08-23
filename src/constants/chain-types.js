@@ -1,8 +1,20 @@
+/**
+ * @typedef {Object} RESERVED_SPACES
+ * @property {0} RELATIVE_PROTOCOL_IDS
+ * @property {1} PROTOCOL_IDS
+ * @property {2} IMPLEMENTATION_IDS
+ */
+
+/** @typedef {RESERVED_SPACES[keyof e_RESERVED_SPACES]} e_RESERVED_SPACES */
+
+/** @type {RESERVED_SPACES} */
 export const RESERVED_SPACES = {
 	RELATIVE_PROTOCOL_IDS: 0,
 	PROTOCOL_IDS: 1,
 	IMPLEMENTATION_IDS: 2,
 };
+
+/** @typedef {0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20} e_IMPLEMENTATION_OBJECT_TYPE */
 
 export const IMPLEMENTATION_OBJECT_TYPE = {
 	GLOBAL_PROPERTY: 0,
@@ -27,6 +39,8 @@ export const IMPLEMENTATION_OBJECT_TYPE = {
 	CONTRACT_POOL: 19,
 	MALICIOUS_COMMITTEEMEN: 20,
 };
+
+/** @typedef {0} e_VOTE_TYPE */
 
 export const VOTE_TYPE = {
 	COMMITTEE: 0,
