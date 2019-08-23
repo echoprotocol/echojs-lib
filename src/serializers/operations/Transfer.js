@@ -1,1 +1,1 @@
-export default class TransferSerializer extends Stru
+export default class TransferSerializer extends Struct

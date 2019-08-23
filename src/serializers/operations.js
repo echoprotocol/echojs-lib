@@ -1,4 +1,9 @@
+import { struct } from './collections';
 import { OPERATIONS_IDS } from "../constants";
+
+export const transfer = struct({
+	fee: AssetSer
+})
 
 export const transfer = operation(OPERATIONS_IDS.TRANSFER, {
 	fee: asset,
