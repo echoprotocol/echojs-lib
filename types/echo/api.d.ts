@@ -87,4 +87,6 @@ export default class Api {
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
+	getWalletInfo(): Promise<any>;
+	getWalletAbout(): Promise<any>;
 }

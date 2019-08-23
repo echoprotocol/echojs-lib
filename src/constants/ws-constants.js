@@ -13,7 +13,6 @@ export const ChainApi = {
 	ASSET_API: 'asset',
 	LOGIN_API: 'login',
 	NETWORK_NODE_API: 'network_node',
-	WALLET_API: 'wallet',
 };
 
 export const CHAIN_APIS = [
@@ -24,7 +23,6 @@ export const CHAIN_APIS = [
 	ChainApi.ASSET_API,
 	ChainApi.LOGIN_API,
 	ChainApi.NETWORK_NODE_API,
-	ChainApi.WALLET_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
 	ChainApi.DATABASE_API,

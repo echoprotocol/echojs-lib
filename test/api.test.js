@@ -1042,29 +1042,25 @@ describe('API', () => {
 		});
 	});
 
-	describe.only('history', () => {
+	describe.only('WALLET API', () => {
 		const ws = new WS();
 		beforeEach(async () => {
-			await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'wallet'] });
+			// await echo.connect('ws://127.0.0.1:6311', { apis: constants.WS_CONSTANTS.CHAIN_APIS });
+			await echo.connect(null, { wallet: '0.0.0.0:8888', debug: true });
 		});
 		afterEach(async () => {
 			await ws.close();
+			// await echo.disconnect();
 		});
-		describe('#getAccountHistory()', async () => {
-			// import echo, { constants } from '../src';
-			// await echo.connect('ws://127.0.0.1:6311', { apis: constants.WS_CONSTANTS.CHAIN_APIS });
-			it('should get account history', async () => {
+		describe('#getWalletInfo()', () => {
+			it('should get wallet info', async () => {
 				try {
-					const history = await api.wallet.getWalletInfo();
-					// expect(history)
-					// 	.to
-					// 	.be
-					// 	.an('array');
+					const result = await echo.api.getWalletInfo();
+					console.log("result", result);
 				} catch (e) {
 					throw e;
 				}
-			})
-				.timeout(5000);
+			}).timeout(5000);
 		});
 	});
 });
