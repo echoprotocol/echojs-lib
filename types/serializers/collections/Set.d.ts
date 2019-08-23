@@ -1,12 +1,13 @@
 import * as ByteBuffer from "bytebuffer";
 import ISerializer, { SerializerInput, SerializerOutput } from "../ISerializer";
+import VectorSerializer from "./Vector";
 
-type TInput<T extends ISerializer> = SerializerInput<T>[] | Set<SerializerInput<T>>;
-type TOutput<T extends ISerializer> = SerializerOutput<T>[];
+type TInput<T extends ISerializer> = SerializerInput<VectorSerializer<T>>[] | Set<SerializerInput<VectorSerializer<T>>>;
 
-export default class SetSerializer<T extends ISerializer> extends ISerializer<TInput<T>, TOutput<T>> {
-	readonly serializer: T;
+export default class SetSerializer<T extends ISerializer> extends VectorSerializer<T> {
 	constructor(serializer: T);
-	toRaw(value: TInput<T>): TOutput<T>;
+	validate(value: TInput<T>): void;
+	serialize(value: TInput<T>): Buffer;
+	toRaw(value: TInput<T>): SerializerOutput<VectorSerializer<T>>;
 	appendToByteBuffer(value: TInput<T>, bytebuffer: ByteBuffer): void;
 }

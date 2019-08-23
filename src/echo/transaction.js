@@ -1,17 +1,15 @@
 import BigNumber from 'bignumber.js';
-import ByteBuffer from 'bytebuffer';
 import { cloneDeep } from 'lodash';
 
 import Api from './api';
-import { operationById, operationByName } from './operations';
-import { isString, isNumber, isObject, validateUnsignedSafeInteger } from '../utils/validators';
+import { isObject, validateUnsignedSafeInteger } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
-import transaction, { signedTransaction } from '../serializer/transaction-type';
-import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
+import { getIdByPropName, operation as operationSerializer } from '../serializers/operations';
+import { transaction, signedTransaction } from '../serializers';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -115,22 +113,22 @@ class Transaction {
 	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
 
 	/**
-	 * @param {string} name
+	 * @param {keyof typeof operationsMap | keyof typeof operations} identifier
 	 * @param {{[key:string]:any}} [props]
 	 * @returns {Transaction}
 	 */
-	addOperation(name, props = {}) {
+	addOperation(identifier, props = {}) {
 		this.checkNotFinalized();
-		if (name === undefined) throw new Error('name is missing');
-		if (!isString(name) && !isNumber(name)) throw new Error('name is not a string or id');
-		if (typeof name === 'number') validateUnsignedSafeInteger(name, 'operationId');
+		if (identifier === undefined) throw new Error('operation identifier is missing');
+		if (!['string', 'number'].includes(typeof identifier)) {
+			throw new Error('operation identifier is not a string or number');
+		}
+		const operationId = typeof identifier === 'number' ? identifier : getIdByPropName(identifier);
+		validateUnsignedSafeInteger(operationId, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
-		const operationType = typeof name === 'number' ? operationById[name] : operationByName[name];
-		if (!operationType) throw new Error(`unknown operation ${name}`);
-		// TODO: proposal_create
-		const operation = [operationType.id, props];
-		operationType.validate(operation, false);
-		this._operations.push(operation);
+		const raw = operationSerializer.toRaw([operationId, props]);
+		console.log(123234, 'raw', raw);
+		this._operations.push(raw);
 		return this;
 	}
 
@@ -211,16 +209,6 @@ class Transaction {
 		return this;
 	}
 
-	/** @returns {ByteBuffer} */
-	toByteBuffer() {
-		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
-		for (const operationData of this._operations) {
-			const operationType = operationById[operationData[0]];
-			operationType.appendToByteBuffer(operationData, result);
-		}
-		return result.copy(0, result.offset);
-	}
-
 	/**
 	 * @param {PrivateKey=} _privateKey
 	 */
@@ -249,7 +237,7 @@ class Transaction {
 		 * @type {number|undefined}
 		 */
 		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		const transactionBuffer = toBuffer(transaction, {
+		const transactionBuffer = transaction.toBuffer({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
@@ -285,7 +273,7 @@ class Transaction {
 	 */
 	get transactionObject() {
 		this.checkFinalized();
-		return signedTransaction.toObject({
+		return signedTransaction.toRaw({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,

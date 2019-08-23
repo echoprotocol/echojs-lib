@@ -1,6 +1,7 @@
 import { varint32 } from '../../basic/integers';
 import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from '../../../constants/chain-types';
 import ISerializer from '../../ISerializer';
+import { OBJECT_TYPES } from '../../../constants';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
 
@@ -25,7 +26,7 @@ const objectIdPureRegexp = /^\d\.\d\.\d$/;
 
 const _objectTypeIds = {
 	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: {},
-	[RESERVED_SPACES.PROTOCOL_IDS]: RESERVED_SPACES,
+	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES,
 	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE,
 };
 

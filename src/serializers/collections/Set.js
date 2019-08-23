@@ -1,5 +1,4 @@
-import ISerializer from '../ISerializer';
-import { varint32 } from '../basic/integers';
+import VectorSerializer from './Vector';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
 
@@ -20,26 +19,9 @@ import { varint32 } from '../basic/integers';
 
 /**
  * @template {ISerializer} T
- * @augments {ISerializer<TInput<T>, TOutput<T>>}
+ * @augments {VectorSerializer<T>}
  */
-export default class SetSerializer extends ISerializer {
-
-	/**
-	 * @readonly
-	 * @type {T}
-	 */
-	get serializer() { return this.serializer; }
-
-	/** @param {T} serializer */
-	constructor(serializer) {
-		super();
-		if (!(serializer instanceof ISerializer)) throw new Error('set type is not serializer');
-		/**
-		 * @private
-		 * @type {T}
-		 */
-		this.serializer = serializer;
-	}
+export default class SetSerializer extends VectorSerializer {
 
 	/**
 	 * @param {TInput<T>} value
@@ -47,29 +29,24 @@ export default class SetSerializer extends ISerializer {
 	 */
 	toRaw(value) {
 		if (value instanceof Set) value = [...value];
-		if (!Array.isArray(value)) throw new Error('value is not an array or set');
-		const raw = new Array(value.length);
-		for (let i = 0; i < value.length; i += 1) {
-			try {
-				const element = value[i];
-				raw[i] = this.serializer.toRaw(element);
-			} catch (error) {
-				throw new Error(`set element with index ${i}: ${error.message}`);
+		/** @type {ReturnType<VectorSerializer<T>['toRaw']>} */
+		let raw;
+		try {
+			raw = super.toRaw(value);
+		} catch (error) {
+			throw new Error(`set: ${error.message}`);
+		}
+		/** @type {string[]} */
+		const serializedElements = new Array(raw.length);
+		for (let i = 0; i < raw.length; i += 1) {
+			serializedElements[i] = this.serializer.serialize(raw[i]).toString('hex');
+			for (let j = 0; j < i; j += 1) {
+				if (serializedElements[i] === serializedElements[j]) {
+					throw new Error(`set element with index ${i} is equals to the other one with index ${j}`);
+				}
 			}
 		}
 		return raw;
-	}
-
-	/**
-	 * @param {TInput<T>} value
-	 * @param {ByteBuffer} bytebuffer
-	 * @param {boolean} writeLength
-	 */
-	appendToByteBuffer(value, bytebuffer, writeLength = true) {
-		if (typeof writeLength !== 'boolean') throw new Error('property "writeLength" is not a boolean');
-		const raw = this.toRaw(value);
-		if (writeLength) varint32.appendToByteBuffer(raw.length, bytebuffer);
-		for (const element of raw) this.serializer.appendToByteBuffer(element, bytebuffer);
 	}
 
 }

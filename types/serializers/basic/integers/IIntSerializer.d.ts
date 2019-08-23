@@ -6,6 +6,7 @@ type TInput = number | BigNumber | string;
 export default abstract class IIntSerializer<TOutput extends string | number> extends ISerializer<TInput, TOutput> {
 	readonly bitsCount: number;
 	readonly maxAbsValue: BigNumber;
+	protected _maxAbsValue: BigNumber;
 	constructor(bitsCount: number);
 	toRaw(value: TInput): TOutput;
 }
