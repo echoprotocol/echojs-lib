@@ -13,7 +13,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.ASSET_UPDATE]: typeof props.assetUpdate,
 	[OperationId.ASSET_UPDATE_BITASSET]: typeof props.assetUpdateBitasset,
 	[OperationId.ASSET_UPDATE_FEED_PRODUCERS]: typeof props.assetUpdateFeedProducers,
-	[OperationId.ASSET_ISSUE]: ISerializer,
+	[OperationId.ASSET_ISSUE]: typeof props.assetIssue,
 	[OperationId.ASSET_RESERVE]: ISerializer,
 	[OperationId.ASSET_FUND_FEE_POOL]: ISerializer,
 	[OperationId.ASSET_PUBLISH_FEED]: ISerializer,

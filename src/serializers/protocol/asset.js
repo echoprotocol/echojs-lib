@@ -58,3 +58,11 @@ export const assetUpdateFeedProducersOperationPropsSerializer = struct({
 	new_feed_producers: set(accountId),
 	extensions,
 });
+
+export const assetIssueOperationPropsSerializer = struct({
+	fee: asset,
+	issuer: accountId,
+	asset_to_issuer: asset,
+	issuer_to_account: accountId,
+	extensions,
+});

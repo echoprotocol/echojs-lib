@@ -59,3 +59,11 @@ export declare const assetUpdateFeedProducersOperationPropsSerializer: StructSer
 	new_feed_producers: SetSerializer<typeof accountId>,
 	extensions: typeof extensions,
 }>;
+
+export declare const assetIssueOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	issuer: typeof accountId,
+	asset_to_issue: typeof asset,
+	issue_to_account: typeof accountId,
+	extensions: typeof extensions,
+}>;
