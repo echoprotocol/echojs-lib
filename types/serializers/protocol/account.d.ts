@@ -1,7 +1,7 @@
 import authoritySerializer from "./authority";
 import VoteIdSerializer from "./VoteId";
 import { string as stringSerializer } from "../basic";
-import { uint16 } from "../basic/integers";
+import { uint16, uint8 } from "../basic/integers";
 import { asset, publicKey, extensions } from "../chain";
 import { accountId } from "../chain/id/protocol";
 import { StructSerializer, SetSerializer } from "../collections";
@@ -33,5 +33,13 @@ export declare const accountUpdateOperationPropsSerializer: StructSerializer<{
 	echorand_key: OptionalSerializer<typeof publicKey>,
 	new_options: OptionalSerializer<typeof accountOptionsSerializer>,
 	// TODO: extensions serializer
+	extensions: typeof extensions,
+}>;
+
+export declare const accountWhitelistOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	authorizing_account: typeof accountId,
+	account_to_list: typeof accountId,
+	new_listing: typeof uint8,
 	extensions: typeof extensions,
 }>;
