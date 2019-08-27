@@ -10,7 +10,7 @@ import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../../constants';
 
 const operationProps = {
 	[OPERATIONS_IDS.TRANSFER]: props.transfer,
-	[OPERATIONS_IDS.BALANCE_CLAIM]: props.balanceClaim,
+	[OPERATIONS_IDS.ACCOUNT_CREATE]: props.accountCreate,
 };
 
 const operationSerializer = staticVariant(operationProps);

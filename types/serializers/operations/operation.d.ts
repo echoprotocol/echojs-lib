@@ -5,7 +5,7 @@ import OperationId from "../../interfaces/OperationId";
 
 export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER]: typeof props.transfer,
-	[OperationId.ACCOUNT_CREATE]: ISerializer,
+	[OperationId.ACCOUNT_CREATE]: typeof props.accountCreate,
 	[OperationId.ACCOUNT_UPDATE]: ISerializer,
 	[OperationId.ACCOUNT_WHITELIST]: ISerializer,
 	[OperationId.ACCOUNT_TRANSFER]: ISerializer,
@@ -25,7 +25,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: ISerializer,
 	[OperationId.VESTING_BALANCE_CREATE]: ISerializer,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: ISerializer,
-	[OperationId.BALANCE_CLAIM]: typeof props.balanceClaim,
+	[OperationId.BALANCE_CLAIM]: ISerializer,
 	[OperationId.OVERRIDE_TRANSFER]: ISerializer,
 	[OperationId.ASSET_CLAIM_FEES]: ISerializer,
 	[OperationId.CONTRACT_CREATE]: ISerializer,
