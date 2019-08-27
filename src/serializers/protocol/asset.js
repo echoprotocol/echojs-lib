@@ -43,7 +43,7 @@ export const assetUpdateOperationPropsSerializer = struct({
 	extensions,
 });
 
-export const assetUpdateBitassetPropsSerializer = struct({
+export const assetUpdateBitassetOperationPropsSerializer = struct({
 	fee: asset,
 	issuer: accountId,
 	asset_to_update: assetId,

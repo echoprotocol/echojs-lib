@@ -10,7 +10,7 @@ import {
 import {
 	assetCreateOperationPropsSerializer,
 	assetUpdateOperationPropsSerializer,
-	assetUpdateBitassetPropsSerializer,
+	assetUpdateBitassetOperationPropsSerializer,
 	assetUpdateFeedProducersOperationPropsSerializer,
 } from '../protocol/asset';
 
@@ -21,5 +21,5 @@ export const accountWhitelist = accountWhitelistOperationPropsSerializer;
 export const accountTransfer = accountTransferOperationPropsSerializer;
 export const assetCreate = assetCreateOperationPropsSerializer;
 export const assetUpdate = assetUpdateOperationPropsSerializer;
-export const assetUpdateBitasset = assetUpdateBitassetPropsSerializer;
+export const assetUpdateBitasset = assetUpdateBitassetOperationPropsSerializer;
 export const assetUpdateFeedProducers = assetUpdateFeedProducersOperationPropsSerializer;

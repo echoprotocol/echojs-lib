@@ -10,7 +10,7 @@ import {
 import {
 	assetCreateOperationPropsSerializer,
 	assetUpdateOperationPropsSerializer,
-	assetUpdateBitassetPropsSerializer,
+	assetUpdateBitassetOperationPropsSerializer,
 	assetUpdateFeedProducersOperationPropsSerializer,
 } from "../protocol/asset";
 
@@ -21,5 +21,5 @@ export declare const accountWhitelist: typeof accountWhitelistOperationPropsSeri
 export declare const accountTransfer: typeof accountTransferOperationPropsSerializer;
 export declare const assetCreate: typeof assetCreateOperationPropsSerializer;
 export declare const assetUpdate: typeof assetUpdateOperationPropsSerializer;
-export declare const assetUpdateBitasset: typeof assetUpdateBitassetPropsSerializer;
+export declare const assetUpdateBitasset: typeof assetUpdateBitassetOperationPropsSerializer;
 export declare const assetUpdateFeedProducers: typeof assetUpdateFeedProducersOperationPropsSerializer;
