@@ -1,4 +1,5 @@
 import MapSerializer from './Map';
+import OptionalSerializer from './Optional';
 import SetSerializer from './Set';
 import StaticVariantSerializer from './StaticVariant';
 import StructSerializer from './Struct';
@@ -14,6 +15,13 @@ import VectorSerializer from './Vector';
  * @returns {MapSerializer<TKey, TValue>}
  */
 export const map = (keySerializer, valueSerializer) => new MapSerializer(keySerializer, valueSerializer);
+
+/**
+ * @template {ISerializer} T
+ * @param {T} serializer
+ * @returns {OptionalSerializer<T>}
+ */
+export const optional = (serializer) => new OptionalSerializer(serializer);
 
 /**
  * @template {ISerializer} T

@@ -6,7 +6,7 @@ import OperationId from "../../interfaces/OperationId";
 export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER]: typeof props.transfer,
 	[OperationId.ACCOUNT_CREATE]: typeof props.accountCreate,
-	[OperationId.ACCOUNT_UPDATE]: ISerializer,
+	[OperationId.ACCOUNT_UPDATE]: typeof props.accountUpdate,
 	[OperationId.ACCOUNT_WHITELIST]: ISerializer,
 	[OperationId.ACCOUNT_TRANSFER]: ISerializer,
 	[OperationId.ASSET_CREATE]: ISerializer,

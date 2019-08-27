@@ -4,7 +4,7 @@ import { string as stringSerializer } from '../basic';
 import { uint16 } from '../basic/integers';
 import { asset, publicKey, extensions } from '../chain';
 import { accountId } from '../chain/id/protocol';
-import { struct, set } from '../collections';
+import { struct, set, optional } from '../collections';
 
 export const accountOptionsSerializer = struct({
 	voting_account: accountId,
@@ -21,6 +21,16 @@ export const accountCreateOperationPropsSerializer = struct({
 	active: authoritySerializer,
 	echorand_key: publicKey,
 	options: accountOptionsSerializer,
+	// TODO: extensions serializer
+	extensions,
+});
+
+export const accountUpdateOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	active: optional(authoritySerializer),
+	echorand_key: optional(publicKey),
+	new_options: optional(accountOptionsSerializer),
 	// TODO: extensions serializer
 	extensions,
 });

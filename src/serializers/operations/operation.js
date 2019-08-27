@@ -11,6 +11,7 @@ import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../../constants';
 const operationProps = {
 	[OPERATIONS_IDS.TRANSFER]: props.transfer,
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: props.accountCreate,
+	[OPERATIONS_IDS.ACCOUNT_UPDATE]: props.accountUpdate,
 };
 
 const operationSerializer = staticVariant(operationProps);
