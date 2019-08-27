@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { timePointSec, bool } from '../basic';
 import { uint32 } from '../basic/integers';
 import { asset, extensions, publicKey } from '../chain';
