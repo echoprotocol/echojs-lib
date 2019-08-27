@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { timePointSec } from '../basic';
+import { timePointSec, bool } from '../basic';
 import { uint32 } from '../basic/integers';
 import { asset, extensions, publicKey } from '../chain';
 import { accountId, proposalId } from '../chain/id/protocol';
@@ -24,5 +24,13 @@ export const proposalUpdateOperationPropsSerializer = struct({
 	owner_approvals_to_remove: set(accountId),
 	key_approvals_to_add: set(publicKey),
 	key_approvals_to_remove: set(publicKey),
+	extensions,
+});
+
+export const proposalDeleteOperationPropsSerializer = struct({
+	fee_paying_account: accountId,
+	using_owner_authority: bool,
+	fee: asset,
+	proposal: proposalId,
 	extensions,
 });

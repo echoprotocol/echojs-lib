@@ -24,6 +24,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ASSET_PUBLISH_FEED]: props.assetPublishFeed,
 	[OPERATIONS_IDS.PROPOSAL_CREATE]: props.proposalCreate,
 	[OPERATIONS_IDS.PROPOSAL_UPDATE]: props.proposalUpdate,
+	[OPERATIONS_IDS.PROPOSAL_DELETE]: props.proposalDelete,
 };
 
 const operationSerializer = staticVariant(operationProps);

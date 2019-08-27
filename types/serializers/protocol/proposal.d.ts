@@ -1,4 +1,4 @@
-import { timePointSec } from "../basic";
+import { timePointSec, bool } from "../basic";
 import { uint32 } from "../basic/integers";
 import { asset, extensions, publicKey } from "../chain";
 import { accountId, proposalId } from "../chain/id/protocol";
@@ -24,5 +24,13 @@ export declare const proposalUpdateOperationPropsSerializer: StructSerializer<{
 	owner_approvals_to_remove: SetSerializer<typeof accountId>,
 	key_approvals_to_add: SetSerializer<typeof publicKey>,
 	key_approvals_to_remove: SetSerializer<typeof publicKey>,
+	extensions: typeof extensions,
+}>;
+
+export declare const proposalDeleteOperationPropsSerializer: StructSerializer<{
+	fee_paying_account: typeof accountId,
+	using_owner_authority: typeof bool,
+	fee: typeof asset,
+	proposal: typeof proposalId,
 	extensions: typeof extensions,
 }>;
