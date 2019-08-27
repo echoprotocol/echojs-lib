@@ -74,3 +74,11 @@ export declare const assetReserveOperationPropsSerializer: StructSerializer<{
 	amount_to_reserve: typeof asset,
 	extensions: typeof extensions,
 }>;
+
+export declare const assetFundFeePoolOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	from_account: typeof accountId,
+	asset_id: typeof assetId,
+	amount: typeof int64,
+	extensions: typeof extensions,
+}>;

@@ -73,3 +73,11 @@ export const assetReserveOperationPropsSerializer = struct({
 	amount_to_reserve: asset,
 	extensions,
 });
+
+export const assetFundFeePoolOperationPropsSerializer = struct({
+	fee: asset,
+	from_account: accountId,
+	asset_id: assetId,
+	amount: int64,
+	extensions,
+});
