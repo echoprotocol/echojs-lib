@@ -17,7 +17,7 @@ import {
 	assetFundFeePoolOperationPropsSerializer,
 	assetPublishFeedOperationPropsSerializer,
 } from '../protocol/asset';
-import { proposalCreateOperationPropsSerializer } from '../protocol/proposal';
+import { proposalCreateOperationPropsSerializer, proposalUpdateOperationPropsSerializer } from '../protocol/proposal';
 
 export const transfer = transferOperationPropsSerializer;
 export const accountCreate = accountCreateOperationPropsSerializer;
@@ -33,3 +33,4 @@ export const assetReserve = assetReserveOperationPropsSerializer;
 export const assetFundFeePool = assetFundFeePoolOperationPropsSerializer;
 export const assetPublishFeed = assetPublishFeedOperationPropsSerializer;
 export const proposalCreate = proposalCreateOperationPropsSerializer;
+export const proposalUpdate = proposalUpdateOperationPropsSerializer;
