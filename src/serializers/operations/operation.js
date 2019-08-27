@@ -19,6 +19,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ASSET_UPDATE_BITASSET]: props.assetUpdateBitasset,
 	[OPERATIONS_IDS.ASSET_UPDATE_FEED_PRODUCERS]: props.assetUpdateFeedProducers,
 	[OPERATIONS_IDS.ASSET_ISSUE]: props.assetIssue,
+	[OPERATIONS_IDS.ASSET_RESERVE]: props.assetReserve,
 };
 
 const operationSerializer = staticVariant(operationProps);

@@ -13,6 +13,7 @@ import {
 	assetUpdateBitassetOperationPropsSerializer,
 	assetUpdateFeedProducersOperationPropsSerializer,
 	assetIssueOperationPropsSerializer,
+	assetReserveOperationPropsSerializer,
 } from "../protocol/asset";
 
 export declare const transfer: typeof transferOperationPropsSerializer;
@@ -25,3 +26,4 @@ export declare const assetUpdate: typeof assetUpdateOperationPropsSerializer;
 export declare const assetUpdateBitasset: typeof assetUpdateBitassetOperationPropsSerializer;
 export declare const assetUpdateFeedProducers: typeof assetUpdateFeedProducersOperationPropsSerializer;
 export declare const assetIssue: typeof assetIssueOperationPropsSerializer;
+export declare const assetReserve: typeof assetReserveOperationPropsSerializer;
