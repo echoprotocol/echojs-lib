@@ -1,4 +1,4 @@
-import { assetId } from './id';
+import { assetId } from './id/protocol';
 import { struct } from '../collections';
 import { int64 } from '../basic/integers';
 

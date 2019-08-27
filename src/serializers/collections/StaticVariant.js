@@ -93,7 +93,7 @@ export default class StaticVariantSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const [key, variant] = this.toRaw(value);
-		varint32.appendToByteBuffer(key);
+		varint32.appendToByteBuffer(key, bytebuffer);
 		const serializer = this.serializers[key];
 		serializer.appendToByteBuffer(variant, bytebuffer);
 	}

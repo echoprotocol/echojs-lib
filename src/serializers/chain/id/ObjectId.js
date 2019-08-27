@@ -22,7 +22,7 @@ import { OBJECT_TYPES } from '../../../constants';
 
 /** @typedef {string | SerializerInput<VarInt32Serializer>} TInput */
 
-const objectIdPureRegexp = /^\d\.\d\.\d$/;
+const objectIdPureRegexp = /^\d+\.\d+\.\d+$/;
 
 const _objectTypeIds = {
 	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: {},
@@ -79,7 +79,7 @@ export default class ObjectIdSerializer extends ISerializer {
 	 * @returns {string}
 	 */
 	toRaw(value) {
-		if (typeof value === 'string' && objectIdPureRegexp.test(value)) {
+		if (typeof value === 'string') {
 			if (!objectIdPureRegexp.test(value)) throw new Error('invalid object id format');
 			const [actualReservedSpaceIdString, actualObjectTypeIdString, actualInstanceIdString] = value.split('.');
 			if (actualReservedSpaceIdString !== this.reservedSpaceId.toString()) {

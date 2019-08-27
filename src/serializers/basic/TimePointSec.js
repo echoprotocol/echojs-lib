@@ -1,16 +1,16 @@
-import { UInt32Serializer } from './integers';
+import { uint32 } from './integers';
+import ISerializer from '../ISerializer';
 
-/** @typedef {import("../ISerializer").default} ISerializer */
+/** @typedef {import("bytebuffer]")} ByteBuffer */
+/** @typedef {import("./integers").UInt32Serializer} UInt32Serializer */
 
 /**
  * @template {ISerializer} T
  * @typedef {import("../ISerializer").SerializerInput<T>} SerializerInput
  */
 
-/**
- * @template {ISerializer} T
- * @typedef {import("../ISerializer").SerializerOutput<T>} SerializerOutput
- */
+/** @typedef {SerializerInput<UInt32Serializer> | Date} TInput */
+/** @typedef {string} TOutput */
 
 /**
  * @param {Date} date
@@ -18,15 +18,29 @@ import { UInt32Serializer } from './integers';
  */
 function getSeconds(date) { return Math.floor(date.getTime() / 1000); }
 
-export default class TimePointSecSerializer extends UInt32Serializer {
+/** @augments {ISerializer<TInput, TOutput>} */
+export default class TimePointSecSerializer extends ISerializer {
 
 	/**
-	 * @param {SerializerInput<UInt32Serializer> | Date} value
-	 * @returns {SerializerOutput<UInt32Serializer>}
+	 * @param {TInput} value
+	 * @returns {TOutput}
 	 */
 	toRaw(value) {
-		if (value instanceof Date) return super.toRaw(getSeconds(value));
-		return super.toRaw(value);
+		if (typeof value === 'string' && /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d$/.test(value)) {
+			value = new Date(value);
+		}
+		if (!(value instanceof Date)) value = new Date(uint32.toRaw(value));
+		return value.toISOString().split('.')[0];
+	}
+
+	/**
+	 * @param {TInput} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer(value, bytebuffer) {
+		const raw = this.toRaw(value);
+		const totalSeconds = getSeconds(new Date(raw));
+		uint32.appendToByteBuffer(totalSeconds, bytebuffer);
 	}
 
 }

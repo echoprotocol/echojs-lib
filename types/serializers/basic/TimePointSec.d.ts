@@ -1,6 +1,11 @@
+import * as ByteBuffer from "bytebuffer";
 import { UInt32Serializer } from "./integers";
-import { SerializerInput, SerializerOutput } from "../ISerializer";
+import ISerializer, { SerializerInput } from "../ISerializer";
 
-export default class TimePointSecSerializer extends UInt32Serializer {
-	toRaw(value: SerializerInput<UInt32Serializer> | Date): SerializerOutput<UInt32Serializer>;
+type TInput = SerializerInput<UInt32Serializer> | Date;
+type TOutput = string;
+
+export default class TimePointSecSerializer extends ISerializer<TInput, TOutput> {
+	toRaw(value: TInput): TOutput;
+	appendToByteBuffer(value: TInput, bytebuffer: ByteBuffer): void;
 }

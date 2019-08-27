@@ -10,6 +10,7 @@ import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
 import { getIdByPropName, operation as operationSerializer } from '../serializers/operations';
 import { transaction, signedTransaction } from '../serializers';
+import { inspect } from 'util';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -127,7 +128,6 @@ class Transaction {
 		validateUnsignedSafeInteger(operationId, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
 		const raw = operationSerializer.toRaw([operationId, props]);
-		console.log(123234, 'raw', raw);
 		this._operations.push(raw);
 		return this;
 	}
@@ -237,13 +237,21 @@ class Transaction {
 		 * @type {number|undefined}
 		 */
 		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		const transactionBuffer = transaction.toBuffer({
+		console.log(inspect(transaction.toRaw({
+			ref_block_num: this.refBlockNum,
+			ref_block_prefix: this.refBlockPrefix,
+			expiration: this.expiration,
+			operations: this.operations,
+			extensions: [],
+		}), false, null, true));
+		const transactionBuffer = transaction.serialize({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
 			operations: this.operations,
 			extensions: [],
 		});
+		console.log(transactionBuffer.toString('hex'));
 
 		this._signatures = this._signers.map(({ privateKey }) => {
 			const chainBuffer = Buffer.from(chainId, 'hex');

@@ -8,7 +8,7 @@ const transactionSerializer = struct({
 	ref_block_num: uint16,
 	ref_block_prefix: uint32,
 	expiration: timePointSec,
-	operations: operation,
+	operations: vector(operation),
 	extensions,
 });
 export default transactionSerializer;

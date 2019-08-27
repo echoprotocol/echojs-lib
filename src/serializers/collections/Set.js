@@ -14,7 +14,7 @@ import VectorSerializer from './Vector';
 
 /**
  * @template {ISerializer} T
- * @typedef {SerializerInput<T>[] | Set<SerializerInput<T>>} TInput
+ * @typedef {SerializerInput<T>[] | Set<SerializerInput<T>> | undefined} TInput
  */
 
 /**
@@ -28,6 +28,7 @@ export default class SetSerializer extends VectorSerializer {
 	 * @returns {TOutput<T>}
 	 */
 	toRaw(value) {
+		if (value === undefined) value = [];
 		if (value instanceof Set) value = [...value];
 		/** @type {ReturnType<VectorSerializer<T>['toRaw']>} */
 		let raw;
