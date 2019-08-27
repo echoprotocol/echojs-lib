@@ -3,10 +3,20 @@ class WalletAPI {
 	/**
 	 *  @constructor
 	 *
-	 *  @param {EchoApi} wallet [wallet api]
+	 *  @param {ReconnectionWebSocket} wsRpc
 	 */
-	constructor(wallet) {
-		this.wallet = wallet;
+	constructor(wsRpc) {
+		this.wsRpc = wsRpc;
+	}
+
+	/**
+	 *  @method connect
+	 *	@param {String} url - remote node address
+	 *	@param {Object} options - connection params.
+	 *  @return {Promise}
+	 */
+	async connect(url, options) {
+		await this.wsRpc.connect(url, options);
 	}
 
 	/**
@@ -15,7 +25,8 @@ class WalletAPI {
 	 *  @return {Promise}
 	 */
 	info() {
-		return this.wallet.exec('info', []);
+		console.log('----------HERE!!!---------');
+		return this.wsRpc.call(['info', []]);
 	}
 
 	/**
@@ -24,7 +35,7 @@ class WalletAPI {
 	 *  @return {Promise}
 	 */
 	about() {
-		return this.wallet.exec('about', []);
+		return this.wsRpc.call([this.api_id, 'about', []]);
 	}
 
 }

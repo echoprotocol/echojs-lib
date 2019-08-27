@@ -481,7 +481,6 @@ class API {
 	constructor(cache, wsApi) {
 		this.cache = cache;
 		this.wsApi = wsApi;
-		this.wallet = this.wsApi.wallet;
 	}
 
 	/**
@@ -2499,24 +2498,6 @@ class API {
 	}
 
 	setOptions() { }
-
-	/**
-	 *  @method getWalletInfo
-	 *
-	 *  @return {*}
-	 */
-	getWalletInfo() {
-		return this.wallet.info();
-	}
-
-	/**
-	 *  @method getWalletAbout
-	 *
-	 *  @return {Promise{ [key: string]: any }}
-	 */
-	getWalletAbout() {
-		return this.wallet.about();
-	}
 
 }
 

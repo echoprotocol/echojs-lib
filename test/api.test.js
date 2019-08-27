@@ -1046,7 +1046,7 @@ describe('API', () => {
 		const ws = new WS();
 		beforeEach(async () => {
 			// await echo.connect('ws://127.0.0.1:6311', { apis: constants.WS_CONSTANTS.CHAIN_APIS });
-			await echo.connect(null, { wallet: '0.0.0.0:8888', debug: true });
+			await echo.connect(null, { wallet: 'ws://0.0.0.0:8888' });
 		});
 		afterEach(async () => {
 			await ws.close();
@@ -1055,8 +1055,12 @@ describe('API', () => {
 		describe('#getWalletInfo()', () => {
 			it('should get wallet info', async () => {
 				try {
-					const result = await echo.api.getWalletInfo();
-					console.log("result", result);
+					console.log('------------WITHIN-----------');
+
+					// await echo.api.getAccountCount();
+					// await echo.api.getDynamicGlobalProperties();
+					// await echo.api.getChainId();
+					const result = await echo.walletApi.info();
 				} catch (e) {
 					throw e;
 				}

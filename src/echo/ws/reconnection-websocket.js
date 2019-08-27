@@ -54,7 +54,6 @@ class ReconnectionWebSocket {
 			}
 		}
 
-		console.log('options', options);
 		this._options = {
 			connectionTimeout: isVoid(options.connectionTimeout) ? CONNECTION_TIMEOUT : options.connectionTimeout,
 			maxRetries: isVoid(options.maxRetries) ? MAX_RETRIES : options.maxRetries,
@@ -90,8 +89,6 @@ class ReconnectionWebSocket {
 		return new Promise((resolve, reject) => {
 			let ws = null;
 			try {
-				console.log('this.url', this.url);
-				console.log('this._options', this._options);
 				ws = new WebSocket(this.url);
 			} catch (error) {
 				ws = null;

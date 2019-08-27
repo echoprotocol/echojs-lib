@@ -7,6 +7,7 @@ import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
 import ReconnectionWebSocket from './ws/reconnection-websocket';
+import WalletAPI from './ws-api/wallet-api';
 
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
@@ -19,6 +20,7 @@ class Echo {
 		this._isInitModules = false;
 		this.initEchoApi = this.initEchoApi.bind(this);
 		this.wallet = new ReconnectionWebSocket();
+		this.walletApi = new WalletAPI(this.wallet);
 	}
 
 	get isConnected() {
@@ -44,7 +46,6 @@ class Echo {
 			await Promise.all([
 				(async () => {
 					if (address) {
-						console.log('ADDRESS', address);
 						await this._ws.connect(address, options);
 
 						if (this._isInitModules) {
@@ -60,9 +61,10 @@ class Echo {
 						this.cache.setOptions(options);
 						this.subscriber.setOptions(options);
 					}
+				})(),
+				(async () => {
 					if (options.wallet) {
-						console.log('WALLET', address);
-						await this.wallet.connect(null, options.wallet);
+						await this.walletApi.connect(options.wallet, options);
 					}
 				})(),
 			]);
