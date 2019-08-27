@@ -81,3 +81,18 @@ export const assetFundFeePoolOperationPropsSerializer = struct({
 	amount: int64,
 	extensions,
 });
+
+export const priceFeedSerializer = struct({
+	settlement_price: priceSerializer,
+	core_exchange_rate: priceSerializer,
+	maintenance_collateral_ratio: uint16,
+	maximum_short_squeeze_ratio: uint16,
+});
+
+export const assetPublishFeedOperationPropsSerializer = struct({
+	fee: asset,
+	publisher: accountId,
+	asset_id: assetId,
+	feed: priceFeedSerializer,
+	extensions,
+});

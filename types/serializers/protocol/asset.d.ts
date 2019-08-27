@@ -82,3 +82,18 @@ export declare const assetFundFeePoolOperationPropsSerializer: StructSerializer<
 	amount: typeof int64,
 	extensions: typeof extensions,
 }>;
+
+export declare const priceFeedSerializer: StructSerializer<{
+	settlement_price: typeof priceSerializer,
+	core_exchange_rate: typeof priceSerializer,
+	maintenance_collateral_ratio: typeof uint16,
+	maximum_short_squeeze_ratio: typeof uint16,
+}>;
+
+export declare const assetPublishFeedOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	publisher: typeof accountId,
+	asset_id: typeof assetId,
+	feed: typeof priceFeedSerializer,
+	extensions: typeof extensions,
+}>;

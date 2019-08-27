@@ -21,6 +21,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ASSET_ISSUE]: props.assetIssue,
 	[OPERATIONS_IDS.ASSET_RESERVE]: props.assetReserve,
 	[OPERATIONS_IDS.ASSET_FUND_FEE_POOL]: props.assetFundFeePool,
+	[OPERATIONS_IDS.ASSET_PUBLISH_FEED]: props.assetPublishFeed,
 };
 
 const operationSerializer = staticVariant(operationProps);
