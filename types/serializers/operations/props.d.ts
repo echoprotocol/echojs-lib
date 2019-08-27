@@ -6,9 +6,11 @@ import {
 	accountCreateOperationPropsSerializer,
 	accountUpdateOperationPropsSerializer,
 	accountWhitelistOperationPropsSerializer,
+	accountTransferOperationPropsSerializer,
 } from "../protocol/account";
 
 export declare const transfer: typeof transferOperationPropsSerializer;
 export declare const accountCreate: typeof accountCreateOperationPropsSerializer;
 export declare const accountUpdate: typeof accountUpdateOperationPropsSerializer;
 export declare const accountWhitelist: typeof accountWhitelistOperationPropsSerializer;
+export declare const accountTransfer: typeof accountTransferOperationPropsSerializer;

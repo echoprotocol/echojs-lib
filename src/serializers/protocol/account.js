@@ -42,3 +42,10 @@ export const accountWhitelistOperationPropsSerializer = struct({
 	new_listing: uint8,
 	extensions,
 });
+
+export const accountTransferOperationPropsSerializer = struct({
+	fee: asset,
+	account_id: accountId,
+	new_owner: accountId,
+	extensions,
+});

@@ -8,7 +8,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.ACCOUNT_CREATE]: typeof props.accountCreate,
 	[OperationId.ACCOUNT_UPDATE]: typeof props.accountUpdate,
 	[OperationId.ACCOUNT_WHITELIST]: typeof props.accountWhitelist,
-	[OperationId.ACCOUNT_TRANSFER]: ISerializer,
+	[OperationId.ACCOUNT_TRANSFER]: typeof props.accountTransfer,
 	[OperationId.ASSET_CREATE]: ISerializer,
 	[OperationId.ASSET_UPDATE]: ISerializer,
 	[OperationId.ASSET_UPDATE_BITASSET]: ISerializer,

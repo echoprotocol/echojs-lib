@@ -13,6 +13,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: props.accountCreate,
 	[OPERATIONS_IDS.ACCOUNT_UPDATE]: props.accountUpdate,
 	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: props.accountWhitelist,
+	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: props.accountTransfer,
 };
 
 const operationSerializer = staticVariant(operationProps);
