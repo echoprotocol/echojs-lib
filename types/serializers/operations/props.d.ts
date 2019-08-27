@@ -7,7 +7,11 @@ import {
 	accountTransferOperationPropsSerializer,
 } from "../protocol/account";
 
-import { assetCreateOperationPropsSerializer, assetUpdateOperationPropsSerializer } from "../protocol/asset";
+import {
+	assetCreateOperationPropsSerializer,
+	assetUpdateOperationPropsSerializer,
+	assetUpdateBitassetPropsSerializer,
+} from "../protocol/asset";
 
 export declare const transfer: typeof transferOperationPropsSerializer;
 export declare const accountCreate: typeof accountCreateOperationPropsSerializer;
@@ -16,3 +20,4 @@ export declare const accountWhitelist: typeof accountWhitelistOperationPropsSeri
 export declare const accountTransfer: typeof accountTransferOperationPropsSerializer;
 export declare const assetCreate: typeof assetCreateOperationPropsSerializer;
 export declare const assetUpdate: typeof assetUpdateOperationPropsSerializer;
+export declare const assetUpdateBitasset: typeof assetUpdateBitassetPropsSerializer;

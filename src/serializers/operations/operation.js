@@ -16,6 +16,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: props.accountTransfer,
 	[OPERATIONS_IDS.ASSET_CREATE]: props.assetCreate,
 	[OPERATIONS_IDS.ASSET_UPDATE]: props.assetUpdate,
+	[OPERATIONS_IDS.ASSET_UPDATE_BITASSET]: props.assetUpdateBitasset,
 };
 
 const operationSerializer = staticVariant(operationProps);
