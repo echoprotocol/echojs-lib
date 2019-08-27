@@ -1,6 +1,7 @@
 import { asset, extensions, publicKey } from '../chain';
 import { accountId, balanceId } from '../chain/id/protocol';
 import { struct } from '../collections';
+import { string } from '../basic';
 
 export const transfer = struct({
 	fee: asset,
@@ -8,6 +9,13 @@ export const transfer = struct({
 	to: accountId,
 	amount: asset,
 	extensions,
+});
+
+export const accountCreate = struct({
+	fee: asset,
+	registrar: accountId,
+	name: string,
+	active: 
 });
 
 export const balanceClaim = struct({

@@ -27,7 +27,7 @@ export default class TimePointSecSerializer extends ISerializer {
 	 */
 	toRaw(value) {
 		if (typeof value === 'string' && /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d$/.test(value)) {
-			value = new Date(value);
+			value = new Date(`${value}.000Z`);
 		}
 		if (!(value instanceof Date)) value = new Date(uint32.toRaw(value) * 1e3);
 		return value.toISOString().split('.')[0];
@@ -39,7 +39,7 @@ export default class TimePointSecSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		const totalSeconds = getSeconds(new Date(raw));
+		const totalSeconds = getSeconds(new Date(`${raw}.000Z`));
 		uint32.appendToByteBuffer(totalSeconds, bytebuffer);
 	}
 

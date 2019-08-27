@@ -256,6 +256,7 @@ class Transaction {
 			extensions: [],
 		});
 
+console.log(chainId);
 		const chainBuffer = Buffer.from(chainId, 'hex');
 		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
 		console.log(bufferToSign.toString('hex'));

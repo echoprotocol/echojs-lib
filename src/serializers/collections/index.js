@@ -1,9 +1,19 @@
+import MapSerializer from './Map';
 import SetSerializer from './Set';
 import StaticVariantSerializer from './StaticVariant';
 import StructSerializer from './Struct';
 import VectorSerializer from './Vector';
 
 /** @typedef {import("../ISerializer").default} ISerializer */
+
+/**
+ * @template {ISerializer} TKey
+ * @template {ISerializer} TValue
+ * @param {TKey} keySerializer
+ * @param {TValue} valueSerializer
+ * @returns {MapSerializer<TKey, TValue>}
+ */
+export const map = (keySerializer, valueSerializer) => new MapSerializer(keySerializer, valueSerializer);
 
 /**
  * @template {ISerializer} T
@@ -36,4 +46,4 @@ export const struct = (serializers) => new StructSerializer(serializers);
  */
 export const vector = (serializer) => new VectorSerializer(serializer);
 
-export { SetSerializer, StaticVariantSerializer, StructSerializer, VectorSerializer };
+export { MapSerializer, SetSerializer, StaticVariantSerializer, StructSerializer, VectorSerializer };

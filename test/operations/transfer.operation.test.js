@@ -5,7 +5,6 @@ import * as ed25519 from 'ed25519.js';
 import bs58 from 'bs58';
 
 import { Echo, constants } from '../../src';
-import { transfer } from '../../src/echo/operations';
 import PublicKey from '../../src/crypto/public-key';
 import Transaction from '../../src/echo/transaction';
 import ED25519 from '../../src/crypto/ed25519';
@@ -14,6 +13,7 @@ import PrivateKey from '../../src/crypto/private-key';
 import testExtensionsField from './_testExtensionsField';
 
 import { ACCOUNT, ASSET} from '../../src/constants/object-types';
+import { transfer } from '../../src/serializers/operations/props';
 
 const { OPERATIONS_IDS } = constants;
 // import bs58 from 'bs58'
@@ -47,7 +47,7 @@ describe('transfer', () => {
 
 	describe('successful validation', () => {
 		it('full object', () => {
-			transfer.validate([OPERATIONS_IDS.TRANSFER, {
+			transfer.toRaw([OPERATIONS_IDS.TRANSFER, {
 				fee: {
 					asset_id: `1.${ASSET}.1`,
 					amount: 20
