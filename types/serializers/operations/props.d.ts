@@ -7,7 +7,7 @@ import {
 	accountTransferOperationPropsSerializer,
 } from "../protocol/account";
 
-import { assetCreateOperationPropsSerializer } from "../protocol/asset";
+import { assetCreateOperationPropsSerializer, assetUpdateOperationPropsSerializer } from "../protocol/asset";
 
 export declare const transfer: typeof transferOperationPropsSerializer;
 export declare const accountCreate: typeof accountCreateOperationPropsSerializer;
@@ -15,3 +15,4 @@ export declare const accountUpdate: typeof accountUpdateOperationPropsSerializer
 export declare const accountWhitelist: typeof accountWhitelistOperationPropsSerializer;
 export declare const accountTransfer: typeof accountTransferOperationPropsSerializer;
 export declare const assetCreate: typeof assetCreateOperationPropsSerializer;
+export declare const assetUpdate: typeof assetUpdateOperationPropsSerializer;

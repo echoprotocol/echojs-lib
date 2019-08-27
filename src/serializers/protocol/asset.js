@@ -33,3 +33,12 @@ export const assetCreateOperationPropsSerializer = struct({
 	bitasset_options: optional(bitassetOptionsSerializer),
 	extensions,
 });
+
+export const assetUpdateOperationPropsSerializer = struct({
+	fee: asset,
+	issuer: accountId,
+	asset_to_update: assetId,
+	new_issuer: optional(accountId),
+	new_options: assetOptionsSerializer,
+	extensions,
+});
