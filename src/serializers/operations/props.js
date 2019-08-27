@@ -11,6 +11,7 @@ import {
 	assetCreateOperationPropsSerializer,
 	assetUpdateOperationPropsSerializer,
 	assetUpdateBitassetPropsSerializer,
+	assetUpdateFeedProducersOperationPropsSerializer,
 } from '../protocol/asset';
 
 export const transfer = transferOperationPropsSerializer;
@@ -21,3 +22,4 @@ export const accountTransfer = accountTransferOperationPropsSerializer;
 export const assetCreate = assetCreateOperationPropsSerializer;
 export const assetUpdate = assetUpdateOperationPropsSerializer;
 export const assetUpdateBitasset = assetUpdateBitassetPropsSerializer;
+export const assetUpdateFeedProducers = assetUpdateFeedProducersOperationPropsSerializer;

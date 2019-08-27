@@ -51,3 +51,11 @@ export declare const assetUpdateBitassetPropsSerializer: StructSerializer<{
 	new_options: typeof bitassetOptionsSerializer,
 	extensions: typeof extensions,
 }>;
+
+export declare const assetUpdateFeedProducersOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	issuer: typeof accountId,
+	asset_to_update: typeof assetId,
+	new_feed_producers: SetSerializer<typeof accountId>,
+	extensions: typeof extensions,
+}>;

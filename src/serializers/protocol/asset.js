@@ -50,3 +50,11 @@ export const assetUpdateBitassetPropsSerializer = struct({
 	new_options: bitassetOptionsSerializer,
 	extensions,
 });
+
+export const assetUpdateFeedProducersOperationPropsSerializer = struct({
+	fee: asset,
+	issuer: accountId,
+	asset_to_update: assetId,
+	new_feed_producers: set(accountId),
+	extensions,
+});
