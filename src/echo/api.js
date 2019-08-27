@@ -1941,7 +1941,7 @@ class API {
 	 */
 	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		return this.wsApi.database.getRequiredFees(operations.map((op) => operation.toRaw(op)), assetId);
+		return this.wsApi.database.getRequiredFees(operations.map((op) => operation.toRaw(op, true)), assetId);
 	}
 
 	/**

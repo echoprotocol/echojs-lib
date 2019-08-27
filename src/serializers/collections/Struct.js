@@ -67,10 +67,9 @@ export default class StructSerializer extends ISerializer {
 		if (typeof value !== 'object' || value === null) throw new Error('serializable struct is not a object');
 		/** @type {TOutput<T, TKey>} */
 		const result = {};
-		for (const key in value) {
-			if (!Object.prototype.hasOwnProperty.call(value, key)) continue;
+		for (const key in this.serializers) {
+			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
 			const serializer = this.serializers[key];
-			if (!serializer) throw new Error(`unknown property ${key}`);
 			try {
 				result[key] = serializer.toRaw(value[key]);
 			} catch (error) {

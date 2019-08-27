@@ -1,7 +1,7 @@
+import * as ByteBuffer from "bytebuffer";
 import * as props from "./props";
-import { StaticVariantSerializer } from "../collections";
+import ISerializer, { SerializerInput, SerializerOutput } from "../ISerializer";
 import OperationId from "../../interfaces/OperationId";
-import ISerializer from "../ISerializer";
 
 export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER]: typeof props.transfer,
@@ -50,8 +50,25 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.CONTRACT_UPDATE]: ISerializer,
 }[T];
 
-declare const operationSerilizer: StaticVariantSerializer<{
-	[operationId in OperationId]: OperationPropsSerializer<operationId>
-}>;
+type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;
 
-export default operationSerilizer;
+type TInput<T extends OperationId, TWithUnrequiredFee extends boolean> = [
+	T,
+	TWithUnrequiredFee extends false ?
+		OperationInput<T> :
+		Omit<OperationInput<T>, 'fee'> & { fee?: Partial<OperationInput<T>['fee']> },
+];
+
+type TOutput<T extends OperationId> = [T, SerializerOutput<OperationPropsSerializer<T>>];
+
+export default class OperationSerializer extends ISerializer<
+	TInput<OperationId, boolean>,
+	TOutput<OperationId>
+> {
+	toRaw<T extends OperationId, TWithUnrequiredFee extends boolean>(
+		value: TInput<T, TWithUnrequiredFee>,
+		...options: TWithUnrequiredFee extends true ? [true] : [],
+	): TOutput<T>;
+
+	appendToByteBuffer<T extends OperationId>(value: TInput<T, false>, bytebuffer: ByteBuffer): void;
+}

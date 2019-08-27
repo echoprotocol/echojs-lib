@@ -1,3 +1,4 @@
+import OperationSerializer from "./operation";
 import * as props from "./props";
 
 export {
@@ -6,6 +7,6 @@ export {
 	OperationWithName as WithName,
 } from "./getIdByName";
 
-export { default as operation } from "./operation";
+export declare const operation: OperationSerializer;
 
-export { props };
+export { props, OperationSerializer };

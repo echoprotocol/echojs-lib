@@ -127,7 +127,11 @@ class Transaction {
 		const operationId = typeof identifier === 'number' ? identifier : getIdByPropName(identifier);
 		validateUnsignedSafeInteger(operationId, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
-		const raw = operationSerializer.toRaw([operationId, props]);
+		const feeAssetIdIsMissing = !props.fee || props.fee.asset_id === undefined;
+		const feeAmountIsMissing = !props.fee || props.fee.amount === undefined;
+		const raw = operationSerializer.toRaw([operationId, props], true);
+		if (feeAssetIdIsMissing) delete raw[1].fee.asset_id;
+		if (feeAmountIsMissing) delete raw[1].fee.amount;
 		this._operations.push(raw);
 		return this;
 	}
@@ -153,7 +157,7 @@ class Transaction {
 			else arr.push(operation);
 		};
 		for (const op of operationTypes) {
-			if (op[1].fee === undefined) addOperationToAsset(assetId, op);
+			if (op[1].fee === undefined || op[1].fee.asset_id === undefined) addOperationToAsset(assetId, op);
 			else if (op[1].fee.amount === undefined) addOperationToAsset(op[1].fee.asset_id, op);
 		}
 		const notDefaultAssetsIds = [...operationsByNotDefaultFee.keys()];
@@ -251,13 +255,12 @@ class Transaction {
 			operations: this.operations,
 			extensions: [],
 		});
-		console.log(transactionBuffer.toString('hex'));
 
-		this._signatures = this._signers.map(({ privateKey }) => {
-			const chainBuffer = Buffer.from(chainId, 'hex');
-			return Signature.signBuffer(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
-		});
-
+		const chainBuffer = Buffer.from(chainId, 'hex');
+		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
+		console.log(bufferToSign.toString('hex'));
+		this._signatures = this._signers.map(({ privateKey }) => Signature.signBuffer(bufferToSign, privateKey));
+		console.log(this._signatures.map((a) => a.toBuffer().toString('hex')));
 	}
 
 	/**

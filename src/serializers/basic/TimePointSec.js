@@ -29,7 +29,7 @@ export default class TimePointSecSerializer extends ISerializer {
 		if (typeof value === 'string' && /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d$/.test(value)) {
 			value = new Date(value);
 		}
-		if (!(value instanceof Date)) value = new Date(uint32.toRaw(value));
+		if (!(value instanceof Date)) value = new Date(uint32.toRaw(value) * 1e3);
 		return value.toISOString().split('.')[0];
 	}
 
