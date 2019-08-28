@@ -26,6 +26,7 @@ const operationProps = {
 	[OPERATIONS_IDS.PROPOSAL_UPDATE]: props.proposalUpdate,
 	[OPERATIONS_IDS.PROPOSAL_DELETE]: props.proposalDelete,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE]: props.committeeMemberCreate,
+	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE]: props.committeeMemberUpdate,
 };
 
 const operationSerializer = staticVariant(operationProps);

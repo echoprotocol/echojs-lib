@@ -21,7 +21,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.PROPOSAL_UPDATE]: typeof props.proposalUpdate,
 	[OperationId.PROPOSAL_DELETE]: typeof props.proposalDelete,
 	[OperationId.COMMITTEE_MEMBER_CREATE]: typeof props.committeeMemberCreate,
-	[OperationId.COMMITTEE_MEMBER_UPDATE]: ISerializer,
+	[OperationId.COMMITTEE_MEMBER_UPDATE]: typeof props.committeeMemberUpdate,
 	[OperationId.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: ISerializer,
 	[OperationId.VESTING_BALANCE_CREATE]: ISerializer,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: ISerializer,

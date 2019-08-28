@@ -24,7 +24,7 @@ import {
 	proposalDeleteOperationPropsSerializer,
 } from '../protocol/proposal';
 
-import { committeeMemberCreateOperationPropsSerializer } from '../protocol/committee_member';
+import { committeeMemberCreateOperationPropsSerializer, committeeMemberUpdateOperationPropsSerializer } from '../protocol/committee_member';
 
 export const transfer = transferOperationPropsSerializer;
 export const accountCreate = accountCreateOperationPropsSerializer;
@@ -43,3 +43,4 @@ export const proposalCreate = proposalCreateOperationPropsSerializer;
 export const proposalUpdate = proposalUpdateOperationPropsSerializer;
 export const proposalDelete = proposalDeleteOperationPropsSerializer;
 export const committeeMemberCreate = committeeMemberCreateOperationPropsSerializer;
+export const committeeMemberUpdate = committeeMemberUpdateOperationPropsSerializer;
