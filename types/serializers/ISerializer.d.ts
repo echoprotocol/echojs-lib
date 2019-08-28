@@ -9,5 +9,5 @@ export default abstract class ISerializer<TInput = any, TOutput = any> {
 	serialize(value: TInput): Buffer;
 }
 
-export type SerializerInput<T extends ISerializer> = ISerializer['__TInput__'];
-export type SerializerOutput<T extends ISerializer> = ISerializer['__TOutput__'];
+export type SerializerInput<T extends ISerializer> = T['__TInput__'];
+export type SerializerOutput<T extends ISerializer> = T['__TOutput__'];

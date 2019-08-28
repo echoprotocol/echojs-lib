@@ -54,4 +54,11 @@ export const struct = (serializers) => new StructSerializer(serializers);
  */
 export const vector = (serializer) => new VectorSerializer(serializer);
 
-export { MapSerializer, SetSerializer, StaticVariantSerializer, StructSerializer, VectorSerializer };
+export {
+	MapSerializer,
+	OptionalSerializer,
+	SetSerializer,
+	StaticVariantSerializer,
+	StructSerializer,
+	VectorSerializer,
+};

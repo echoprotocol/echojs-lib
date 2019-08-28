@@ -27,6 +27,7 @@ import {
 import {
 	committeeMemberCreateOperationPropsSerializer,
 	committeeMemberUpdateOperationPropsSerializer,
+	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 } from "../protocol/committee_member";
 
 export declare const transfer: typeof transferOperationPropsSerializer;
@@ -47,3 +48,5 @@ export declare const proposalUpdate: typeof proposalUpdateOperationPropsSerializ
 export declare const proposalDelete: typeof proposalDeleteOperationPropsSerializer;
 export declare const committeeMemberCreate: typeof committeeMemberCreateOperationPropsSerializer;
 export declare const committeeMemberUpdate: typeof committeeMemberUpdateOperationPropsSerializer;
+export declare const committeeMemberUpdateGlobalParameters:
+	typeof committeeMemberUpdateGlobalParametersOperationPropsSerializer;

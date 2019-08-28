@@ -22,6 +22,7 @@ import * as props from './props';
  * @property {OPERATIONS_IDS['PROPOSAL_DELETE']} proposalDelete
  * @property {OPERATIONS_IDS['COMMITTEE_MEMBER_CREATE']} committeeMemberCreate
  * @property {OPERATIONS_IDS['COMMITTEE_MEMBER_UPDATE']} committeeMemberUpdate
+ * @property {OPERATIONS_IDS['COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS']} committeeMemberUpdateGlobalParameters
  */
 
 /**

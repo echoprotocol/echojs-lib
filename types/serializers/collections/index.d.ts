@@ -17,4 +17,11 @@ export const staticVariant: <T extends Variants>(serializers: T) => StaticVarian
 export const struct: <T extends SerializersMap>(serializers: T) => StructSerializer<T>;
 export const vector: <T extends ISerializer>(serializer: T) => VectorSerializer<T>;
 
-export { MapSerializer, SetSerializer, StaticVariantSerializer, StructSerializer, VectorSerializer };
+export {
+	MapSerializer,
+	OptionalSerializer,
+	SetSerializer,
+	StaticVariantSerializer,
+	StructSerializer,
+	VectorSerializer,
+};
