@@ -25,7 +25,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: typeof props.committeeMemberUpdateGlobalParameters,
 	[OperationId.VESTING_BALANCE_CREATE]: typeof props.vestingBalanceCreate,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof props.vestingBalanceWithdraw,
-	[OperationId.BALANCE_CLAIM]: ISerializer,
+	[OperationId.BALANCE_CLAIM]: typeof props.balanceClaim,
 	[OperationId.OVERRIDE_TRANSFER]: ISerializer,
 	[OperationId.ASSET_CLAIM_FEES]: ISerializer,
 	[OperationId.CONTRACT_CREATE]: ISerializer,
@@ -67,10 +67,7 @@ export default class OperationSerializer extends ISerializer<
 	TInput<OperationId, boolean>,
 	TOutput<OperationId>
 > {
-	toRaw<T extends OperationId, TWithUnrequiredFee extends boolean>(
-		value: TInput<T, TWithUnrequiredFee>,
-		...options: TWithUnrequiredFee extends true ? [true] : [],
-	): TOutput<T>;
-
+	toRaw<T extends OperationId>(value: TInput<T, false>): TOutput<T>;
+	toRaw<T extends OperationId>(value: TInput<T, true>, withUnrequiredFee: true): TOutput<T>;
 	appendToByteBuffer<T extends OperationId>(value: TInput<T, false>, bytebuffer: ByteBuffer): void;
 }

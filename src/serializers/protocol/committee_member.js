@@ -3,7 +3,7 @@ import { string as stringSerializer } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, committeeMemberId } from '../chain/id/protocol';
 import { struct, optional } from '../collections';
-import { chainParametersSerializer } from './chain_parameters';
+import chainParametersSerializer from './chain_parameters';
 
 export const committeeMemberCreateOperationPropsSerializer = struct({
 	fee: asset,

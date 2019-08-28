@@ -1,0 +1,80 @@
+import { staticVariant } from '../collections';
+import ISerializer from '../ISerializer';
+import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../../constants';
+
+const operationProps = {
+	[OPERATIONS_IDS.TRANSFER]: new ISerializer(),
+	[OPERATIONS_IDS.ACCOUNT_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.ACCOUNT_UPDATE]: new ISerializer(),
+	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: new ISerializer(),
+	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_UPDATE]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_UPDATE_BITASSET]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_UPDATE_FEED_PRODUCERS]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_ISSUE]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_RESERVE]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_FUND_FEE_POOL]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_PUBLISH_FEED]: new ISerializer(),
+	[OPERATIONS_IDS.PROPOSAL_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.PROPOSAL_UPDATE]: new ISerializer(),
+	[OPERATIONS_IDS.PROPOSAL_DELETE]: new ISerializer(),
+	[OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE]: new ISerializer(),
+	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: new ISerializer(),
+	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: new ISerializer(),
+	[OPERATIONS_IDS.BALANCE_CLAIM]: new ISerializer(),
+	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_CALL]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_TRANSFER]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: new ISerializer(),
+	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: new ISerializer(),
+	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_WHITELIST]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_ISSUE]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_UPDATE]: new ISerializer(),
+};
+
+const operationSerializer = staticVariant(operationProps);
+
+/** @augments {ISerializer<any, any>} */
+export default class OperationSerializer extends ISerializer {
+
+	/**
+	 * @param {any} value
+	 * @param {boolean} withUnrequiredFee
+	 */
+	toRaw(value, withUnrequiredFee) {
+		const input = value;
+		if (withUnrequiredFee) {
+			input[1] = {
+				...input[1],
+				fee: { asset_id: ECHO_ASSET_ID, amount: 0, ...input[1].fee },
+			};
+		}
+		return operationSerializer.toRaw(input);
+	}
+
+	/**
+	 * @param {any} value
+	 * @param {ByteBuffer} bytebuffer
+	 */
+	appendToByteBuffer(value, bytebuffer) {
+		return operationSerializer.appendToByteBuffer(value, bytebuffer);
+	}
+
+}
