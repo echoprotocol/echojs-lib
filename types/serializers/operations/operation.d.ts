@@ -54,9 +54,11 @@ type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSeria
 
 type TInput<T extends OperationId, TWithUnrequiredFee extends boolean> = [
 	T,
-	TWithUnrequiredFee extends false ?
-		OperationInput<T> :
-		Omit<OperationInput<T>, 'fee'> & { fee?: Partial<OperationInput<T>['fee']> },
+	TWithUnrequiredFee extends false ? OperationInput<T> : (
+		'fee' extends keyof OperationInput<T> ?
+			Omit<OperationInput<T>, 'fee'> & { fee?: Partial<OperationInput<T>['fee']> } :
+			OperationInput<T>
+	),
 ];
 
 type TOutput<T extends OperationId> = [T, SerializerOutput<OperationPropsSerializer<T>>];

@@ -10,7 +10,6 @@ import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
 import { getIdByPropName, operation as operationSerializer } from '../serializers/operations';
 import { transaction, signedTransaction } from '../serializers';
-import { inspect } from 'util';
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -241,13 +240,6 @@ class Transaction {
 		 * @type {number|undefined}
 		 */
 		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		console.log(inspect(transaction.toRaw({
-			ref_block_num: this.refBlockNum,
-			ref_block_prefix: this.refBlockPrefix,
-			expiration: this.expiration,
-			operations: this.operations,
-			extensions: [],
-		}), false, null, true));
 		const transactionBuffer = transaction.serialize({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
@@ -256,12 +248,9 @@ class Transaction {
 			extensions: [],
 		});
 
-console.log(chainId);
 		const chainBuffer = Buffer.from(chainId, 'hex');
 		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
-		console.log(bufferToSign.toString('hex'));
 		this._signatures = this._signers.map(({ privateKey }) => Signature.signBuffer(bufferToSign, privateKey));
-		console.log(this._signatures.map((a) => a.toBuffer().toString('hex')));
 	}
 
 	/**

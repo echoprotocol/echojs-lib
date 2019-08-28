@@ -1,12 +1,12 @@
 import OperationId from "./OperationId";
-import { serialization_output } from "./serializer/serialization";
-import { AnyOperation } from "./serializer/operation";
+import { SerializerOutput } from "../serializers/ISerializer";
+import { OperationSerializer } from "../serializers/operations";
 
 export default interface TransactionObject {
 	ref_block_num: number,
 	ref_block_prefix: number,
 	expiration: string,
-	operations: AnyOperation<serialization_output>[],
+	operations: SerializerOutput<OperationSerializer>[],
 	extensions: any[],
 	signatures: string[],
 	operation_results: any[][];

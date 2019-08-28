@@ -8,7 +8,7 @@ import { validateUnsignedSafeInteger } from '../../utils/validators';
 /** @typedef {string} TOutput */
 
 /** @augments {ISerializer<TInput, TOutput>} */
-export default class VoteId extends ISerializer {
+export default class VoteIdSerializer extends ISerializer {
 
 	/**
 	 * @param {TInput} value

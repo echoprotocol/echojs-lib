@@ -1,6 +1,6 @@
 import AccountHistory from './AccountHistory';
-import { authority } from './serializer/composit-types';
-import { serialization_output } from './serializer/serialization';
+import { SerializerOutput } from '../serializers/ISerializer';
+import { authority } from '../serializers/protocol';
 
 export default interface FullAccount {
 	id: string,
@@ -13,7 +13,7 @@ export default interface FullAccount {
 	referrer_rewards_percentage: number,
 	name: string,
 	owner: unknown,
-	active: authority<serialization_output>,
+	active: SerializerOutput<typeof authority>,
 	ed_key: string,
 	options: unknown,
 	statistics: string,
