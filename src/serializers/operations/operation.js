@@ -3,11 +3,6 @@ import { staticVariant } from '../collections';
 import ISerializer from '../ISerializer';
 import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../../constants';
 
-/**
- * @template {ISerializer} T
- * @typedef {import("../ISerializer").SerializerInput<T>} SerializerInput
- */
-
 const operationProps = {
 	[OPERATIONS_IDS.TRANSFER]: props.transfer,
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: props.accountCreate,
@@ -28,59 +23,19 @@ const operationProps = {
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE]: props.committeeMemberCreate,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE]: props.committeeMemberUpdate,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: props.committeeMemberUpdateGlobalParameters,
+	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: props.vestingBalanceCreate,
 };
 
 const operationSerializer = staticVariant(operationProps);
 
-/** @typedef {typeof OPERATIONS_IDS[keyof typeof OPERATIONS_IDS]} OperationId */
-
-/**
- * @template {OperationId} T
- * @typedef {T extends keyof typeof operationProps ? typeof operationProps[T] : unknown} OperationPropsSerializer
- */
-
-/**
- * @template {OperationId} T
- * @typedef {SerializerInput<OperationPropsSerializer<T>>} OperationInput
- */
-
-/**
- * @template {OperationId} T
- * @typedef {Omit<OperationInput<T>, 'fee'>} OperationInputWithoutFee
- */
-
-/**
- * @template {OperationId} T
- * @typedef {OperationInputWithoutFee<T> & { fee?: Partial<OperationInput<T>['fee']> }} OperationInputWithUnrequiredFee
- */
-
-/**
- * @template {OperationId} T
- * @template {boolean} TWithUnrequiredFee
- * @typedef {[T, TWithUnrequiredFee extends false ? OperationInput<T> : OperationInputWithUnrequiredFee<T>]} TInput
- */
-
-/**
- * @template {OperationId} T
- * @typedef {[T, SerializerOutput<OperationPropsSerializer<T>>]} TOutput
- */
-
-/**
- * @template {boolean} TWithUnrequiredFee
- * @typedef {TWithUnrequiredFee extends true ? true[] & { length: 1 } : []} ToRawMethodOptions
- */
-
-/** @augments {ISerializer<TInput<OperationId, boolean>, TOutput<OperationId>>} */
+/** @augments {ISerializer<any, any>} */
 export default class OperationSerializer extends ISerializer {
 
 	/**
-	 * @template {OperationId} T
-	 * @template {boolean} TWithUnrequiredFee
-	 * @param {TInput<T, TWithUnrequiredFee>} value
-	 * @param {ToRawMethodOptions<TWithUnrequiredFee>} options
+	 * @param {any} value
+	 * @param {boolean} withUnrequiredFee
 	 */
-	toRaw(value, ...options) {
-		const withUnrequiredFee = !!options[0];
+	toRaw(value, withUnrequiredFee) {
 		const input = value;
 		if (withUnrequiredFee) {
 			input[1] = {
@@ -92,8 +47,7 @@ export default class OperationSerializer extends ISerializer {
 	}
 
 	/**
-	 * @template {OperationId} T
-	 * @param {TInput<T, false>} value
+	 * @param {any} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {

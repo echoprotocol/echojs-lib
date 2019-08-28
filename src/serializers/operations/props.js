@@ -1,4 +1,4 @@
-import { transfer as transferOpProps, account, asset, proposal, committeeMember } from '../protocol';
+import { transfer as transferOpProps, account, asset, proposal, committeeMember, vesting } from '../protocol';
 
 export const transfer = transferOpProps;
 export const accountCreate = account.create;
@@ -19,3 +19,4 @@ export const proposalDelete = proposal.delete;
 export const committeeMemberCreate = committeeMember.create;
 export const committeeMemberUpdate = committeeMember.update;
 export const committeeMemberUpdateGlobalParameters = committeeMember.updateGlobalParameters;
+export const vestingBalanceCreate = vesting.balanceCreate;

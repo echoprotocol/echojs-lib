@@ -21,6 +21,7 @@ export type OperationIdByName<T extends keyof typeof props> = {
 	committeeMemberCreate: OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE;
 	committeeMemberUpdate: OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE;
 	committeeMemberUpdateGlobalParameters: OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS,
+	vestingBalanceCreate: OPERATIONS_IDS.VESTING_BALANCE_CREATE,
 }[T];
 
 export type OperationWithName<T extends keyof typeof props> = OperationIdByName<T>;

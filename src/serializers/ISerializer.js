@@ -4,10 +4,25 @@ function notImplementedSerialization() { throw new Error('serialization is not i
 
 /**
  * @abstract
+ * @class
+ * @name ISerializer
  * @template TInput
  * @template TOutput
  */
 export default class ISerializer {
+
+	constructor() {
+		/**
+		 * @abstract
+		 * @type {TInput}
+		 */
+		this.__TInput__ = undefined;
+		/**
+		 * @abstract
+		 * @type {TOutput}
+		 */
+		this.__TOutput__ = undefined;
+	}
 
 	/**
 	 * @abstract
@@ -41,11 +56,16 @@ export default class ISerializer {
 }
 
 /**
- * @template {ISerializer} T
- * @typedef {Parameters<T['toRaw']>[0]} SerializerInput
+ * @property {string} Qwe
+ * @memberof ISerializer
  */
 
 /**
  * @template {ISerializer} T
- * @typedef {ReturnType<T['toRaw']>} SerializerOutput
+ * @typedef {T['__TInput__']} SerializerInput
+ */
+
+/**
+ * @template {ISerializer} T
+ * @typedef {T['__TOutput__']} SerializerOutput
  */

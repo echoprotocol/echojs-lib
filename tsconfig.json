@@ -2,5 +2,6 @@
 	"compilerOptions": {
 		"noImplicitAny": true,
 		"strict": true
-	}
+	},
+	"include": ["types", "src"]
 }

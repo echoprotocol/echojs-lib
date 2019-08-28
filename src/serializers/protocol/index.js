@@ -33,6 +33,13 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
+import {
+	vestingBalanceCreateOperationPropsSerializer,
+	vestingPolicyInitializer,
+	linearVestingPolicyInitializer,
+	cddVestingPolicyInitializer,
+} from './vesting';
+
 export const account = {
 	options: accountOptionsSerializer,
 	create: accountCreateOperationPropsSerializer,
@@ -76,6 +83,13 @@ export const proposal = {
 };
 
 export { default as transfer } from './transfer';
+
+export const vesting = {
+	balanceCreate: vestingBalanceCreateOperationPropsSerializer,
+	policyInitializer: vestingPolicyInitializer,
+	linearPolicyInitializer: linearVestingPolicyInitializer,
+	cddPolicyInitializer: cddVestingPolicyInitializer,
+};
 
 export const voteId = new VoteIdSerializer();
 
