@@ -20,3 +20,4 @@ export const committeeMemberCreate = committeeMember.create;
 export const committeeMemberUpdate = committeeMember.update;
 export const committeeMemberUpdateGlobalParameters = committeeMember.updateGlobalParameters;
 export const vestingBalanceCreate = vesting.balanceCreate;
+export const vestingBalanceWithdraw = vesting.balanceWithdraw;

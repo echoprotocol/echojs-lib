@@ -6,4 +6,5 @@ export const accountId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OB
 export const assetId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.ASSET);
 export const committeeMemberId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.COMMITTEE_MEMBER);
 export const proposalId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.PROPOSAL);
+export const vestingBalanceId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.VESTING_BALANCE);
 export const balanceId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.BALANCE);

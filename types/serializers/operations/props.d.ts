@@ -20,3 +20,4 @@ export const committeeMemberCreate: typeof committeeMember.create;
 export const committeeMemberUpdate: typeof committeeMember.update;
 export const committeeMemberUpdateGlobalParameters: typeof committeeMember.updateGlobalParameters;
 export const vestingBalanceCreate: typeof vesting.balanceCreate;
+export const vestingBalanceWithdraw: typeof vesting.balanceWithdraw;

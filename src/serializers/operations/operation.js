@@ -24,6 +24,7 @@ const operationProps = {
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE]: props.committeeMemberUpdate,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: props.committeeMemberUpdateGlobalParameters,
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: props.vestingBalanceCreate,
+	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: props.vestingBalanceWithdraw,
 };
 
 const operationSerializer = staticVariant(operationProps);

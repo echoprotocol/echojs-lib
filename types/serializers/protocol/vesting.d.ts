@@ -1,7 +1,7 @@
 import { timePointSec } from '../basic';
 import { uint32 } from '../basic/integers';
 import { asset, extensions } from '../chain';
-import { accountId } from '../chain/id/protocol';
+import { accountId, vestingBalanceId } from '../chain/id/protocol';
 import { struct, staticVariant, StructSerializer, StaticVariantSerializer } from '../collections';
 import { vesting } from '../../constants/protocol';
 
@@ -27,5 +27,13 @@ export declare const vestingBalanceCreateOperationPropsSerializer: StructSeriali
 	owner: typeof accountId,
 	amount: typeof asset,
 	policy: typeof vestingPolicyInitializer,
+	extensions: typeof extensions,
+}>;
+
+export declare const vestingBalanceWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	vesting_balance: typeof vestingBalanceId,
+	owner: typeof accountId,
+	amount: typeof asset,
 	extensions: typeof extensions,
 }>;

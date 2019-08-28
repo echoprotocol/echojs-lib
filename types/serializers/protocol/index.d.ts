@@ -38,6 +38,7 @@ import {
 	vestingPolicyInitializer,
 	linearVestingPolicyInitializer,
 	cddVestingPolicyInitializer,
+	vestingBalanceWithdrawOperationPropsSerializer,
 } from './vesting';
 
 export declare const account: {
@@ -89,6 +90,7 @@ export declare const vesting: {
 	policyInitializer: typeof vestingPolicyInitializer,
 	linearPolicyInitializer: typeof linearVestingPolicyInitializer,
 	cddPolicyInitializer: typeof cddVestingPolicyInitializer,
+	balanceWithdraw: typeof vestingBalanceWithdrawOperationPropsSerializer,
 };
 
 export declare const voteId: VoteIdSerializer;

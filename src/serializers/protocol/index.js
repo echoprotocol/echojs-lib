@@ -38,6 +38,7 @@ import {
 	vestingPolicyInitializer,
 	linearVestingPolicyInitializer,
 	cddVestingPolicyInitializer,
+	vestingBalanceWithdrawOperationPropsSerializer,
 } from './vesting';
 
 export const account = {
@@ -89,6 +90,7 @@ export const vesting = {
 	policyInitializer: vestingPolicyInitializer,
 	linearPolicyInitializer: linearVestingPolicyInitializer,
 	cddPolicyInitializer: cddVestingPolicyInitializer,
+	balanceWithdraw: vestingBalanceWithdrawOperationPropsSerializer,
 };
 
 export const voteId = new VoteIdSerializer();
