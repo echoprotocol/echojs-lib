@@ -2,7 +2,7 @@ import { string as stringSerializer, bool } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, assetId, contractId } from '../chain/id/protocol';
 import { anyObjectId } from '../chain/id';
-import { struct, optional } from '../collections';
+import { struct, optional, set } from '../collections';
 
 export const contractBaseOperationPropsSerializer = struct({
 	fee: asset,
@@ -37,5 +37,16 @@ export const contractFundPoolOperationPropsSerializer = struct({
 	sender: accountId,
 	contract: contractId,
 	value: asset,
+	extensions,
+});
+
+export const contractWhitelistOperationPropsSerializer = struct({
+	fee: asset,
+	sender: accountId,
+	contract: contractId,
+	add_to_whitelist: set(accountId),
+	remove_from_whitelist: set(accountId),
+	add_to_blacklist: set(accountId),
+	remove_from_blacklist: set(accountId),
 	extensions,
 });

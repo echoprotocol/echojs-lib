@@ -35,6 +35,7 @@ import {
 	contractCallOperationPropsSerializer,
 	contractTransferOperationPropsSerializer,
 	contractFundPoolOperationPropsSerializer,
+	contractWhitelistOperationPropsSerializer,
 } from './contract';
 
 import {
@@ -112,6 +113,7 @@ export const contract = {
 	call: contractCallOperationPropsSerializer,
 	transfer: contractTransferOperationPropsSerializer,
 	fundPool: contractFundPoolOperationPropsSerializer,
+	whitelist: contractWhitelistOperationPropsSerializer,
 };
 
 export { default as ethAddress } from './ethAddress';
