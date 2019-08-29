@@ -45,6 +45,12 @@ import {
 import { sidechainChangeConfigOperationPropsSerializer } from './sidechain';
 
 import {
+	overrideTransferOperationPropsSerializer,
+	transferOperationPropsSerializer,
+	transferToAddressOperationPropsSerializer,
+} from './transfer';
+
+import {
 	vestingBalanceCreateOperationPropsSerializer,
 	vestingPolicyInitializer,
 	linearVestingPolicyInitializer,
@@ -114,10 +120,11 @@ export const sidechain = {
 	changeConfig: sidechainChangeConfigOperationPropsSerializer,
 };
 
-export {
-	transferOperationPropsSerializer as transfer,
-	overrideTransferOperationPropsSerializer as overrideTransfer,
-} from './transfer';
+export const transfer = {
+	default: transferOperationPropsSerializer,
+	override: overrideTransferOperationPropsSerializer,
+	toAddress: transferToAddressOperationPropsSerializer,
+};
 
 export const vesting = {
 	balanceCreate: vestingBalanceCreateOperationPropsSerializer,

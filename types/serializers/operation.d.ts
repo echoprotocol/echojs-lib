@@ -4,7 +4,7 @@ import OperationId from '../interfaces/OperationId';
 import * as protocol from './protocol';
 
 export type OperationPropsSerializer<T extends OperationId> = {
-	[OperationId.TRANSFER]: typeof protocol.transfer,
+	[OperationId.TRANSFER]: typeof protocol.transfer.default,
 	[OperationId.ACCOUNT_CREATE]: typeof protocol.account.create,
 	[OperationId.ACCOUNT_UPDATE]: typeof protocol.account.update,
 	[OperationId.ACCOUNT_WHITELIST]: typeof protocol.account.whitelist,
@@ -26,14 +26,14 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_CREATE]: typeof protocol.vesting.balanceCreate,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof protocol.vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof protocol.balance.claim,
-	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.overrideTransfer,
+	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.transfer.override,
 	[OperationId.ASSET_CLAIM_FEES]: typeof protocol.asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
 	[OperationId.CONTRACT_CALL]: typeof protocol.contract.call,
 	[OperationId.CONTRACT_TRANSFER]: typeof protocol.contract.transfer,
 	[OperationId.SIDECHAIN_CHANGE_CONFIG]: typeof protocol.sidechain.changeConfig,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof protocol.account.addressCreate,
-	[OperationId.TRANSFER_TO_ADDRESS]: ISerializer,
+	[OperationId.TRANSFER_TO_ADDRESS]: typeof protocol.transfer.toAddress,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_APPROVE_ADDRESS]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_DEPOSIT]: ISerializer,

@@ -4,7 +4,7 @@ import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../constants';
 import * as protocol from './protocol';
 
 const operationProps = {
-	[OPERATIONS_IDS.TRANSFER]: protocol.transfer,
+	[OPERATIONS_IDS.TRANSFER]: protocol.transfer.default,
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: protocol.account.create,
 	[OPERATIONS_IDS.ACCOUNT_UPDATE]: protocol.account.update,
 	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: protocol.account.whitelist,
@@ -26,14 +26,14 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: protocol.vesting.balanceCreate,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: protocol.vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: protocol.balance.claim,
-	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.overrideTransfer,
+	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.transfer.override,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
 	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: protocol.contract.transfer,
 	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: protocol.sidechain.changeConfig,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: protocol.account.addressCreate,
-	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: protocol.transfer.toAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: new ISerializer(),

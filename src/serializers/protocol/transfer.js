@@ -1,4 +1,4 @@
-import { asset, extensions } from '../chain';
+import { asset, extensions, ripemd160 } from '../chain';
 import { accountId } from '../chain/id/protocol';
 import { struct } from '../collections';
 
@@ -15,6 +15,14 @@ export const overrideTransferOperationPropsSerializer = struct({
 	issuer: accountId,
 	from: accountId,
 	to: accountId,
+	amount: asset,
+	extensions,
+});
+
+export const transferToAddressOperationPropsSerializer = struct({
+	fee: asset,
+	from: accountId,
+	to: ripemd160,
 	amount: asset,
 	extensions,
 });
