@@ -10,3 +10,4 @@ export const vestingBalanceId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_
 export const balanceId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.BALANCE);
 export const contractId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.CONTRACT);
 export const depositEthId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.SIDECHAIN_ETH_DEPOSIT);
+export const withdrawEthId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.SIDECHAIN_ETH_WITHDRAW);

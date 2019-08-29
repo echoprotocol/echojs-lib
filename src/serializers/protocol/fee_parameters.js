@@ -51,7 +51,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_ISSUE]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: new ISerializer(),
