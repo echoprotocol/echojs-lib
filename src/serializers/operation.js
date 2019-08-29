@@ -34,7 +34,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: protocol.sidechain.changeConfig,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: protocol.account.addressCreate,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: protocol.transfer.toAddress,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: protocol.sidechain.ethCreateAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: new ISerializer(),

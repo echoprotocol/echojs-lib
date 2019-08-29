@@ -42,7 +42,10 @@ import {
 	proposalDeleteOperationPropsSerializer,
 } from './proposal';
 
-import { sidechainChangeConfigOperationPropsSerializer } from './sidechain';
+import {
+	sidechainChangeConfigOperationPropsSerializer,
+	sidechainEthCreateAddressOperationPropsSerializer,
+} from './sidechain';
 
 import {
 	transferOperationPropsSerializer,
@@ -118,6 +121,7 @@ export declare const proposal: {
 
 export declare const sidechain: {
 	changeConfig: typeof sidechainChangeConfigOperationPropsSerializer,
+	ethCreateAddress: typeof sidechainEthCreateAddressOperationPropsSerializer,
 };
 
 export declare const transfer: {

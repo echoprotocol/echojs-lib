@@ -42,7 +42,10 @@ import {
 	proposalDeleteOperationPropsSerializer,
 } from './proposal';
 
-import { sidechainChangeConfigOperationPropsSerializer } from './sidechain';
+import {
+	sidechainChangeConfigOperationPropsSerializer,
+	sidechainEthCreateAddressOperationPropsSerializer,
+} from './sidechain';
 
 import {
 	overrideTransferOperationPropsSerializer,
@@ -118,6 +121,7 @@ export const proposal = {
 
 export const sidechain = {
 	changeConfig: sidechainChangeConfigOperationPropsSerializer,
+	ethCreateAddress: sidechainEthCreateAddressOperationPropsSerializer,
 };
 
 export const transfer = {

@@ -43,7 +43,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: feeParametersWithPricePerKByte,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: new ISerializer(),
