@@ -97,3 +97,10 @@ export declare const assetPublishFeedOperationPropsSerializer: StructSerializer<
 	feed: typeof priceFeedSerializer,
 	extensions: typeof extensions,
 }>;
+
+export declare const assetClaimFeesOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	issuer: typeof accountId,
+	amount_to_claim: typeof asset,
+	extensions: typeof extensions,
+}>;

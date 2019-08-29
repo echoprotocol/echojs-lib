@@ -17,6 +17,7 @@ import {
 	assetReserveOperationPropsSerializer,
 	assetFundFeePoolOperationPropsSerializer,
 	assetPublishFeedOperationPropsSerializer,
+	assetClaimFeesOperationPropsSerializer,
 } from './asset';
 
 import { balanceClaimOperationPropsSerializer } from './balance';
@@ -64,6 +65,7 @@ export declare const asset: {
 	reserve: typeof assetReserveOperationPropsSerializer,
 	fundFeePool: typeof assetFundFeePoolOperationPropsSerializer,
 	publishFeed: typeof assetPublishFeedOperationPropsSerializer,
+	claimFees: typeof assetClaimFeesOperationPropsSerializer,
 };
 
 export { default as authority } from './authority';

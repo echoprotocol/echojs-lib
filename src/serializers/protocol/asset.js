@@ -96,3 +96,10 @@ export const assetPublishFeedOperationPropsSerializer = struct({
 	feed: priceFeedSerializer,
 	extensions,
 });
+
+export const assetClaimFeesOperationPropsSerializer = struct({
+	fee: asset,
+	issuer: accountId,
+	amount_to_claim: asset,
+	extensions,
+});

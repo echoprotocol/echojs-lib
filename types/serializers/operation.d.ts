@@ -27,7 +27,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof balance.claim,
 	[OperationId.OVERRIDE_TRANSFER]: typeof overrideTransfer,
-	[OperationId.ASSET_CLAIM_FEES]: ISerializer,
+	[OperationId.ASSET_CLAIM_FEES]: typeof asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: ISerializer,
 	[OperationId.CONTRACT_CALL]: ISerializer,
 	[OperationId.CONTRACT_TRANSFER]: ISerializer,

@@ -27,7 +27,7 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: balance.claim,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: overrideTransfer,
-	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: new ISerializer(),
+	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_CALL]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: new ISerializer(),
