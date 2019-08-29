@@ -52,7 +52,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof feeParametersWithPricePerKByte,
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_ETH_APPROVE_ADDRESS]: ISerializer,
+	[OperationId.SIDECHAIN_ETH_APPROVE_ADDRESS]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_DEPOSIT]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_WITHDRAW]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: ISerializer,

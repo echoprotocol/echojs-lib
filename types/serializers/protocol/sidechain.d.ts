@@ -17,9 +17,11 @@ export declare const sidechainEthCreateAddressOperationPropsSerializer: StructSe
 	extensions: typeof extensions,
 }>;
 
-	// fee: typeof asset,
-	// committee_member_id: typeof accountId,
-	// malicious_committeemen: VectorSerializer<typeof accountId>,
-	// account: typeof accountId,
-	// eth_addr: typeof ethAddress,
-	// extensions: typeof extensions,
+export declare const sidechainEthApproveAddressOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	malicious_committeemen: VectorSerializer<typeof accountId>,
+	account: typeof accountId,
+	eth_addr: typeof ethAddress,
+	extensions: typeof extensions,
+}>;

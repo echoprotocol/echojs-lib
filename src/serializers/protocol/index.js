@@ -122,6 +122,7 @@ export const proposal = {
 export const sidechain = {
 	changeConfig: sidechainChangeConfigOperationPropsSerializer,
 	ethCreateAddress: sidechainEthCreateAddressOperationPropsSerializer,
+	ethApproveAddress: sidechainEthCreateAddressOperationPropsSerializer,
 };
 
 export const transfer = {
