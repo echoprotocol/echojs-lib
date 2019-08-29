@@ -43,3 +43,10 @@ export declare const sidechainEthWithdrawOperationPropsSerializer: StructSeriali
 	value: typeof uint64,
 	extensions: typeof extensions,
 }>;
+
+export declare const sidechainEthApproveWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	withdraw_id: typeof uint64,
+	extensions: typeof extensions,
+}>;
