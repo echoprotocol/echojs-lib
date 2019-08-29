@@ -28,7 +28,11 @@ import {
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 } from './committee_member';
 
-import { contractBaseOperationPropsSerializer, contractCreateOperationPropsSerializer } from './contract';
+import {
+	contractBaseOperationPropsSerializer,
+	contractCreateOperationPropsSerializer,
+	contractCallOperationPropsSerializer,
+} from './contract';
 
 import {
 	proposalCreateOperationPropsSerializer,
@@ -87,6 +91,7 @@ export const committeeMember = {
 export const contract = {
 	base: contractBaseOperationPropsSerializer,
 	create: contractCreateOperationPropsSerializer,
+	call: contractCallOperationPropsSerializer,
 };
 
 export { default as ethAddress } from './ethAddress';

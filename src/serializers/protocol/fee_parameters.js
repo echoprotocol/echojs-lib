@@ -38,7 +38,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.CONTRACT_CALL]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_CALL]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: new ISerializer(),
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: new ISerializer(),

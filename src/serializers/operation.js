@@ -29,7 +29,7 @@ const operationProps = {
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.overrideTransfer,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
-	[OPERATIONS_IDS.CONTRACT_CALL]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: new ISerializer(),
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: new ISerializer(),

@@ -29,7 +29,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.overrideTransfer,
 	[OperationId.ASSET_CLAIM_FEES]: typeof protocol.asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
-	[OperationId.CONTRACT_CALL]: ISerializer,
+	[OperationId.CONTRACT_CALL]: typeof protocol.contract.call,
 	[OperationId.CONTRACT_TRANSFER]: ISerializer,
 	[OperationId.SIDECHAIN_CHANGE_CONFIG]: ISerializer,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: ISerializer,
