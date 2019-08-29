@@ -31,3 +31,11 @@ export const contractTransferOperationPropsSerializer = struct({
 	amount: asset,
 	extensions,
 });
+
+export const contractFundPoolOperationPropsSerializer = struct({
+	fee: asset,
+	sender: accountId,
+	contract: contractId,
+	value: asset,
+	extensions,
+});

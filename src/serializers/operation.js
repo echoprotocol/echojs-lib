@@ -39,7 +39,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: protocol.sidechain.ethDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: protocol.sidechain.ethWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: protocol.sidechain.ethApproveWithdraw,
-	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: protocol.contract.fundPool,
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_ISSUE]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: new ISerializer(),
