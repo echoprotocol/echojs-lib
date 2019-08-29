@@ -41,6 +41,8 @@ import {
 	proposalDeleteOperationPropsSerializer,
 } from './proposal';
 
+import { sidechainChangeConfigOperationPropsSerializer } from './sidechain';
+
 import {
 	vestingBalanceCreateOperationPropsSerializer,
 	vestingPolicyInitializer,
@@ -104,6 +106,10 @@ export declare const proposal: {
 	create: typeof proposalCreateOperationPropsSerializer,
 	update: typeof proposalUpdateOperationPropsSerializer,
 	delete: typeof proposalDeleteOperationPropsSerializer,
+};
+
+export declare const sidechain: {
+	changeConfig: typeof sidechainChangeConfigOperationPropsSerializer,
 };
 
 export {

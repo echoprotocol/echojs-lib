@@ -31,7 +31,7 @@ const operationProps = {
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
 	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: protocol.contract.transfer,
-	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: protocol.sidechain.changeConfig,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: new ISerializer(),
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),

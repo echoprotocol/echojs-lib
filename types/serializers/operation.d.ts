@@ -31,7 +31,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
 	[OperationId.CONTRACT_CALL]: typeof protocol.contract.call,
 	[OperationId.CONTRACT_TRANSFER]: typeof protocol.contract.transfer,
-	[OperationId.SIDECHAIN_CHANGE_CONFIG]: ISerializer,
+	[OperationId.SIDECHAIN_CHANGE_CONFIG]: typeof protocol.sidechain.changeConfig,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: ISerializer,
 	[OperationId.TRANSFER_TO_ADDRESS]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: ISerializer,

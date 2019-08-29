@@ -40,7 +40,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CALL]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: new ISerializer(),
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: new ISerializer(),
