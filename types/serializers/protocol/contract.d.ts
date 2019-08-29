@@ -1,5 +1,6 @@
 import { StringSerializer, bool } from '../basic';
 import { asset, extensions } from '../chain';
+import { anyObjectId } from '../chain/id';
 import { accountId, assetId, contractId } from '../chain/id/protocol';
 import { StructSerializer, OptionalSerializer } from '../collections';
 
@@ -26,3 +27,11 @@ export declare const contractCallOperationPropsSerializer: StructSerializer<
 		extensions: typeof extensions,
 	}
 >;
+
+export declare const contractTransferOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	from: typeof contractId,
+	to: typeof anyObjectId,
+	amount: typeof asset,
+	extensions: typeof extensions,
+}>;

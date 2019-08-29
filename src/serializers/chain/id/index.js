@@ -1,5 +1,8 @@
+import AnyObjectIdSerializer from './AnyObjectId';
 import ObjectIdSerializer from './ObjectId';
 import * as protocol from './protocol';
+
+export const anyObjectId = new AnyObjectIdSerializer();
 
 /** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
 
@@ -16,4 +19,4 @@ import * as protocol from './protocol';
  */
 export const objectId = (reservedSpaceId, objectsTypesIds) => new ObjectIdSerializer(reservedSpaceId, objectsTypesIds);
 
-export { protocol, ObjectIdSerializer };
+export { protocol, ObjectIdSerializer, AnyObjectIdSerializer };
