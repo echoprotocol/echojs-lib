@@ -49,3 +49,10 @@ export const accountTransferOperationPropsSerializer = struct({
 	new_owner: accountId,
 	extensions,
 });
+
+export const accountAddressCreateOperationPropsSerializer = struct({
+	fee: asset,
+	owner: accountId,
+	label: stringSerializer,
+	extensions,
+});

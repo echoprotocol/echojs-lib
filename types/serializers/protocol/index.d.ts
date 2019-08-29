@@ -4,6 +4,7 @@ import {
 	accountUpdateOperationPropsSerializer,
 	accountWhitelistOperationPropsSerializer,
 	accountTransferOperationPropsSerializer,
+	accountAddressCreateOperationPropsSerializer,
 } from './account';
 
 import {
@@ -59,6 +60,7 @@ export declare const account: {
 	update: typeof accountUpdateOperationPropsSerializer,
 	whitelist: typeof accountWhitelistOperationPropsSerializer,
 	transfer: typeof accountTransferOperationPropsSerializer,
+	addressCreate: typeof accountAddressCreateOperationPropsSerializer,
 };
 
 export { priceSerializer as price, priceFeedSerializer as priceFeed } from './asset';
