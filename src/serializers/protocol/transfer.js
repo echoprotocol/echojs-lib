@@ -2,7 +2,7 @@ import { asset, extensions } from '../chain';
 import { accountId } from '../chain/id/protocol';
 import { struct } from '../collections';
 
-const transferOperationPropsSerializer = struct({
+export const transferOperationPropsSerializer = struct({
 	fee: asset,
 	from: accountId,
 	to: accountId,
@@ -10,4 +10,11 @@ const transferOperationPropsSerializer = struct({
 	extensions,
 });
 
-export default transferOperationPropsSerializer;
+export const overrideTransferOperationPropsSerializer = struct({
+	fee: asset,
+	issuer: accountId,
+	from: accountId,
+	to: accountId,
+	amount: asset,
+	extensions,
+});

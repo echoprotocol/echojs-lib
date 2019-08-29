@@ -1,7 +1,7 @@
 import * as ByteBuffer from 'bytebuffer';
 import ISerializer, { SerializerInput, SerializerOutput } from './ISerializer';
 import OperationId from '../interfaces/OperationId';
-import { transfer, account, asset, proposal, committeeMember, vesting, balance } from './protocol';
+import { transfer, account, asset, proposal, committeeMember, vesting, balance, overrideTransfer } from './protocol';
 
 export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER]: typeof transfer,
@@ -26,7 +26,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_CREATE]: typeof vesting.balanceCreate,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof balance.claim,
-	[OperationId.OVERRIDE_TRANSFER]: ISerializer,
+	[OperationId.OVERRIDE_TRANSFER]: typeof overrideTransfer,
 	[OperationId.ASSET_CLAIM_FEES]: ISerializer,
 	[OperationId.CONTRACT_CREATE]: ISerializer,
 	[OperationId.CONTRACT_CALL]: ISerializer,

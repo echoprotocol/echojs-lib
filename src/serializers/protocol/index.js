@@ -90,7 +90,10 @@ export const proposal = {
 	delete: proposalDeleteOperationPropsSerializer,
 };
 
-export { default as transfer } from './transfer';
+export {
+	transferOperationPropsSerializer as transfer,
+	overrideTransferOperationPropsSerializer as overrideTransfer,
+} from './transfer';
 
 export const vesting = {
 	balanceCreate: vestingBalanceCreateOperationPropsSerializer,

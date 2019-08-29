@@ -43,7 +43,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.BALANCE_CLAIM]: StructSerializer<{}>,
-	[OperationId.OVERRIDE_TRANSFER]: ISerializer,
+	[OperationId.OVERRIDE_TRANSFER]: typeof defaultFeeParametersSerializer,
 	[OperationId.ASSET_CLAIM_FEES]: ISerializer,
 	[OperationId.CONTRACT_CREATE]: ISerializer,
 	[OperationId.CONTRACT_CALL]: ISerializer,

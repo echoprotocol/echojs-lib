@@ -1,7 +1,7 @@
 import { staticVariant } from './collections';
 import ISerializer from './ISerializer';
 import { OPERATIONS_IDS, ECHO_ASSET_ID } from '../constants';
-import { transfer, account, asset, proposal, committeeMember, vesting, balance } from './protocol';
+import { transfer, account, asset, proposal, committeeMember, vesting, balance, overrideTransfer } from './protocol';
 
 const operationProps = {
 	[OPERATIONS_IDS.TRANSFER]: transfer,
@@ -26,7 +26,7 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: vesting.balanceCreate,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: balance.claim,
-	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: new ISerializer(),
+	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: overrideTransfer,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_CREATE]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_CALL]: new ISerializer(),
