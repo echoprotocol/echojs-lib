@@ -36,7 +36,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof protocol.transfer.toAddress,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: typeof protocol.sidechain.ethCreateAddress,
 	[OperationId.SIDECHAIN_ETH_APPROVE_ADDRESS]: typeof protocol.sidechain.ethApproveAddress,
-	[OperationId.SIDECHAIN_ETH_DEPOSIT]: ISerializer,
+	[OperationId.SIDECHAIN_ETH_DEPOSIT]: typeof protocol.sidechain.ethDeposit,
 	[OperationId.SIDECHAIN_ETH_WITHDRAW]: ISerializer,
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: ISerializer,
 	[OperationId.CONTRACT_FUND_POOL]: ISerializer,

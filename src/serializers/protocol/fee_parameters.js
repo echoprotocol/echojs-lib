@@ -45,7 +45,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: new ISerializer(),
