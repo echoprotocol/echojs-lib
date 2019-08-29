@@ -46,6 +46,7 @@ import {
 	sidechainChangeConfigOperationPropsSerializer,
 	sidechainEthCreateAddressOperationPropsSerializer,
 	sidechainEthDepositOperationPropsSerializer,
+	sidechainEthWithdrawOperationPropsSerializer,
 } from './sidechain';
 
 import {
@@ -125,6 +126,7 @@ export const sidechain = {
 	ethCreateAddress: sidechainEthCreateAddressOperationPropsSerializer,
 	ethApproveAddress: sidechainEthCreateAddressOperationPropsSerializer,
 	ethDeposit: sidechainEthDepositOperationPropsSerializer,
+	ethWithdraw: sidechainEthWithdrawOperationPropsSerializer,
 };
 
 export const transfer = {

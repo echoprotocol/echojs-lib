@@ -37,7 +37,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: protocol.sidechain.ethCreateAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: protocol.sidechain.ethApproveAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: protocol.sidechain.ethDeposit,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: protocol.sidechain.ethWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: new ISerializer(),
