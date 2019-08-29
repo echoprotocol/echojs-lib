@@ -41,4 +41,5 @@ export default class Transaction {
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
 	setRequiredFees(assetId: string): Promise<void>;
+	serialize(): Buffer;
 }

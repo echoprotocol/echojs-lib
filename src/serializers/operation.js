@@ -17,7 +17,7 @@ const operationProps = {
 	[OPERATIONS_IDS.ASSET_RESERVE]: protocol.asset.reserve,
 	[OPERATIONS_IDS.ASSET_FUND_FEE_POOL]: protocol.asset.fundFeePool,
 	[OPERATIONS_IDS.ASSET_PUBLISH_FEED]: protocol.asset.publishFeed,
-	[OPERATIONS_IDS.PROPOSAL_CREATE]: protocol.proposal,
+	[OPERATIONS_IDS.PROPOSAL_CREATE]: protocol.proposal.create,
 	[OPERATIONS_IDS.PROPOSAL_UPDATE]: protocol.proposal.update,
 	[OPERATIONS_IDS.PROPOSAL_DELETE]: protocol.proposal.delete,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE]: protocol.committeeMember.create,

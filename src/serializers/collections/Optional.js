@@ -51,7 +51,11 @@ export default class OptionalSerializer extends ISerializer {
 	 */
 	toRaw(value) {
 		if (value === undefined) return undefined;
-		return this.serializer.toRaw(value);
+		try {
+			return this.serializer.toRaw(value);
+		} catch (error) {
+			throw new Error(`optional type: ${error.message}`);
+		}
 	}
 
 	/**
@@ -60,8 +64,8 @@ export default class OptionalSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		uint8.appendToByteBuffer(raw === undefined ? 0 : 1);
-		this.serializer.appendToByteBuffer(raw, bytebuffer);
+		uint8.appendToByteBuffer(raw === undefined ? 0 : 1, bytebuffer);
+		if (raw !== undefined) this.serializer.appendToByteBuffer(raw, bytebuffer);
 	}
 
 }

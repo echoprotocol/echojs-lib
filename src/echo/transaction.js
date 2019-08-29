@@ -284,6 +284,10 @@ class Transaction {
 		});
 	}
 
+	serialize() {
+		return transaction.serialize(this.transactionObject);
+	}
+
 	/**
 	 * @param {()=>* =} wasBroadcastedCallback
 	 * @returns {Promise<*>}
