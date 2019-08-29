@@ -28,6 +28,6 @@ export const DEFAULT_BLOCKS_EXPIRATION_NUMBER = 20;
 export const DEFAULT_CACHE_EXPIRATION_TIME = null;
 export const DEFAULT_MIN_CACHE_CLEANING_TIME = 500;
 
-/** @typedef {typeof OBJECT_TYPES[keyof typeof OBJECT_TYPES]} e_OBJECT_TYPES */
+/** @typedef {typeof OBJECT_TYPES[keyof typeof OBJECT_TYPES]} OperationId */
 
 export { OPERATIONS_IDS, CACHE_MAPS, CHAIN_TYPES, CHAIN_CONFIG, API_CONFIG, OBJECT_TYPES, WS_CONSTANTS, protocol };

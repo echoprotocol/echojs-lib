@@ -8,8 +8,9 @@ import PublicKey from '../crypto/public-key';
 import Signature from '../crypto/signature';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
-import { getIdByPropName, operation as operationSerializer } from '../serializers/operations';
-import { transaction, signedTransaction } from '../serializers';
+import { transaction, signedTransaction, operation } from '../serializers';
+
+/** @typedef {import("../constants").OperationId} OperationId */
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -113,22 +114,21 @@ class Transaction {
 	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
 
 	/**
-	 * @param {keyof typeof operationsMap | keyof typeof operations} identifier
-	 * @param {{[key:string]:any}} [props]
+	 * @param {OperationId} operationId
+	 * @param {{ [key: string]: any }} [props]
 	 * @returns {Transaction}
 	 */
-	addOperation(identifier, props = {}) {
+	addOperation(operationId, props = {}) {
 		this.checkNotFinalized();
-		if (identifier === undefined) throw new Error('operation identifier is missing');
-		if (!['string', 'number'].includes(typeof identifier)) {
-			throw new Error('operation identifier is not a string or number');
+		if (operationId === undefined) throw new Error('operation identifier is missing');
+		if (typeof operationId !== 'number') {
+			throw new Error('operation id is not a number');
 		}
-		const operationId = typeof identifier === 'number' ? identifier : getIdByPropName(identifier);
 		validateUnsignedSafeInteger(operationId, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
 		const feeAssetIdIsMissing = !props.fee || props.fee.asset_id === undefined;
 		const feeAmountIsMissing = !props.fee || props.fee.amount === undefined;
-		const raw = operationSerializer.toRaw([operationId, props], true);
+		const raw = operation.toRaw([operationId, props], true);
 		if (feeAssetIdIsMissing) delete raw[1].fee.asset_id;
 		if (feeAmountIsMissing) delete raw[1].fee.amount;
 		this._operations.push(raw);
@@ -146,9 +146,9 @@ class Transaction {
 		/** @type Map<string,Array<_Operation>> */
 		const operationsByNotDefaultFee = new Map();
 		const defaultAssetOperations = [];
-		const addOperationToAsset = (notDefaultAssetId, operation) => {
+		const addOperationToAsset = (notDefaultAssetId, operationProps) => {
 			if (notDefaultAssetId === ECHO_ASSET_ID) {
-				defaultAssetOperations.push(operation);
+				defaultAssetOperations.push(operationProps);
 				return;
 			}
 			const arr = operationsByNotDefaultFee.get(notDefaultAssetId);

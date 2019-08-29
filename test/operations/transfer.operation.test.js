@@ -13,7 +13,7 @@ import PrivateKey from '../../src/crypto/private-key';
 import testExtensionsField from './_testExtensionsField';
 
 import { ACCOUNT, ASSET} from '../../src/constants/object-types';
-import { transfer } from '../../src/serializers/operations/props';
+import transfer from '../../src/serializers/protocol/transfer';
 
 const { OPERATIONS_IDS } = constants;
 // import bs58 from 'bs58'

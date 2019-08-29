@@ -4,7 +4,7 @@ import { asset, extensions, publicKey } from "../chain";
 import { accountId, proposalId } from "../chain/id/protocol";
 import { StructSerializer, VectorSerializer, SetSerializer } from "../collections";
 import OptionalSerializer from "../collections/Optional";
-import { OperationSerializer } from "../operations";
+import OperationSerializer from "../operation";
 
 export declare const proposalCreateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,

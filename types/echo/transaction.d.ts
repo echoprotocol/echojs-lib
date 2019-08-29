@@ -3,8 +3,7 @@ import PublicKey from "../crypto/public-key";
 import OperationId from "../interfaces/OperationId";
 import { asset } from "../serializers/chain";
 import { SerializerInput, SerializerOutput } from "../serializers/ISerializer";
-import { OperationSerializer } from "../serializers/operations";
-import { OperationPropsSerializer } from "../serializers/operations/operation";
+import OperationSerializer, { TOperationInput } from "../serializers/operation";
 
 declare enum OPERATION_RESULT_VARIANT { VOID = 0, OBJECT = 1, ASSET = 2 }
 
@@ -34,7 +33,7 @@ export default class Transaction {
 
 	addOperation<T extends OperationId>(
 		operationId: T,
-		props?: SerializerInput<OperationPropsSerializer<T>>,
+		props?: TOperationInput<T, true>,
 	): Transaction;
 
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;

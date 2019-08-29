@@ -3,12 +3,12 @@ import { uint32 } from '../basic/integers';
 import { asset, extensions, publicKey } from '../chain';
 import { accountId, proposalId } from '../chain/id/protocol';
 import { struct, vector, optional, set } from '../collections';
-import { operation } from '../operations';
+import opWrapper from './opWrapper';
 
 export const proposalCreateOperationPropsSerializer = struct({
 	fee: asset,
 	fee_paying_account: accountId,
-	proposed_ops: vector(operation),
+	proposed_ops: vector(opWrapper),
 	expiration_time: timePointSec,
 	review_period_seconds: optional(uint32),
 	extensions,

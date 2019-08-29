@@ -28,13 +28,11 @@ import {
 	isDynamicGlobalObjectId,
 } from '../utils/validators';
 
-import { operation } from '../serializers/operations';
-
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction } from '../serializers';
+import { transaction, signedTransaction, operation } from '../serializers';
 import { PublicKey } from '../crypto';
 
 /** @typedef {

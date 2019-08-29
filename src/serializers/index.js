@@ -1,8 +1,13 @@
 import * as basic from './basic';
 import * as collections from './collections';
 import * as chain from './chain';
-import * as operations from './operations';
+import OperationSerializer from './operation';
+import opWrapper from './protocol/opWrapper';
 
 export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
 
-export { basic, collections, chain, operations };
+export const operation = new OperationSerializer();
+
+opWrapper.init(operation);
+
+export { basic, collections, chain, OperationSerializer };

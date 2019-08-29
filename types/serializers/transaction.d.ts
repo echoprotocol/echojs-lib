@@ -2,13 +2,13 @@ import { timePointSec, BytesSerializer } from "./basic";
 import { uint16, uint32 } from "./basic/integers";
 import { extensions } from "./chain";
 import { StructSerializer, VectorSerializer } from "./collections";
-import { operation } from "./operations";
+import OperationSerializer from "./operation";
 
 declare const transactionSerializer: StructSerializer<{
 	ref_block_num: typeof uint16,
 	ref_block_prefix: typeof uint32,
 	expiration: typeof timePointSec,
-	operations: typeof operation,
+	operations: OperationSerializer,
 	extensions: typeof extensions,
 }>;
 export default transactionSerializer;
