@@ -58,7 +58,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_FUND_POOL]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_WHITELIST]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_ETH_ISSUE]: ISerializer,
+	[OperationId.SIDECHAIN_ETH_ISSUE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_BURN]: ISerializer,
 	[OperationId.SIDECHAIN_ERC20_REGISTER_TOKEN]: ISerializer,
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: ISerializer,

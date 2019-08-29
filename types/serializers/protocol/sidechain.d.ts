@@ -1,7 +1,7 @@
 import ethAddress from './ethAddress';
 import { uint64 } from '../basic/integers';
 import { asset, extensions } from '../chain';
-import { accountId } from '../chain/id/protocol';
+import { accountId, depositEthId } from '../chain/id/protocol';
 import { StructSerializer, VectorSerializer } from '../collections';
 import { config } from '../plugins/sidechain';
 
@@ -48,5 +48,13 @@ export declare const sidechainEthApproveWithdrawOperationPropsSerializer: Struct
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
 	withdraw_id: typeof uint64,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainEthIssueOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	value: typeof asset,
+	account: typeof accountId,
+	deposit_id: typeof depositEthId,
 	extensions: typeof extensions,
 }>;

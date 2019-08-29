@@ -41,7 +41,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: protocol.sidechain.ethApproveWithdraw,
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: protocol.contract.fundPool,
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: protocol.contract.whitelist,
-	[OPERATIONS_IDS.SIDECHAIN_ETH_ISSUE]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ETH_ISSUE]: protocol.sidechain.ethIssue,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: new ISerializer(),
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: new ISerializer(),
