@@ -1042,29 +1042,39 @@ describe('API', () => {
 		});
 	});
 
-	describe.only('WALLET API', () => {
-		const ws = new WS();
+	describe('WALLET API', () => {
 		beforeEach(async () => {
-			// await echo.connect('ws://127.0.0.1:6311', { apis: constants.WS_CONSTANTS.CHAIN_APIS });
 			await echo.connect(null, { wallet: 'ws://0.0.0.0:8888' });
 		});
 		afterEach(async () => {
-			await ws.close();
-			// await echo.disconnect();
+			await echo.disconnect();
 		});
-		describe('#getWalletInfo()', () => {
-			it('should get wallet info', async () => {
+		describe('#about()', () => {
+			it('should get wallet compile time info and client and dependencies versions', async () => {
 				try {
-					console.log('------------WITHIN-----------');
-
-					// await echo.api.getAccountCount();
-					// await echo.api.getDynamicGlobalProperties();
-					// await echo.api.getChainId();
-					const result = await echo.walletApi.info();
+					const result = await echo.walletApi.about();
+					expect(result)
+						.to
+						.be
+						.an('object');
 				} catch (e) {
 					throw e;
 				}
 			}).timeout(5000);
 		});
+
+		// describe('#info()', () => {
+		// 	it('should get wallet info', async () => {
+		// 		try {
+		// 			const result = await echo.walletApi.info();
+		// 			expect(result)
+		// 				.to
+		// 				.be
+		// 				.an('object');
+		// 		} catch (e) {
+		// 			throw e;
+		// 		}
+		// 	}).timeout(5000);
+		// });
 	});
 });

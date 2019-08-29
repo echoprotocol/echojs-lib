@@ -13,7 +13,7 @@ class WalletAPI {
 	 *  @method connect
 	 *	@param {String} url - remote node address
 	 *	@param {Object} options - connection params.
-	 *  @return {Promise}
+	 *  @returns {Promise}
 	 */
 	async connect(url, options) {
 		await this.wsRpc.connect(url, options);
@@ -22,20 +22,19 @@ class WalletAPI {
 	/**
 	 *  @method info
 	 *
-	 *  @return {Promise}
+	 *  @returns {Promise}
 	 */
 	info() {
-		console.log('----------HERE!!!---------');
-		return this.wsRpc.call(['info', []]);
+		return this.wsRpc.call([0, 'info', []]);
 	}
 
 	/**
 	 *  @method about
 	 *
-	 *  @return {Promise}
+	 *  @returns {Promise.<Object>}
 	 */
 	about() {
-		return this.wsRpc.call([this.api_id, 'about', []]);
+		return this.wsRpc.call([0, 'about', []]);
 	}
 
 }

@@ -9,7 +9,6 @@ import { STATUS } from '../constants/ws-constants';
 import ReconnectionWebSocket from './ws/reconnection-websocket';
 import WalletAPI from './ws-api/wallet-api';
 
-
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
 
 class Echo {
