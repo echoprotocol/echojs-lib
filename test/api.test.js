@@ -1096,20 +1096,19 @@ describe('API', () => {
 			}).timeout(5000);
 		});
 
-		// describe('#networkAddNodes()', () => {
-		// 	it('should get a multi-line string', async () => {
-		// 		try {
-		// 			const result = await echo.walletApi.networkAddNodes();
-		// 			console.log(result);
-		// 			// expect(result)
-		// 			// 	.to
-		// 			// 	.be
-		// 			// 	.an('string');
-		// 		} catch (e) {
-		// 			throw e;
-		// 		}
-		// 	}).timeout(5000);
-		// });
+		describe('#networkAddNodes()', () => {
+			it('should get a multi-line string', async () => {
+				try {
+					const result = await echo.walletApi.networkAddNodes(["0.0.0.0:6311", "0.0.0.0:6311"]);
+					expect(result)
+						.to
+						.be
+						.an('null');
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
 
 		describe('#networkGetConnectedPeers()', () => {
 			it('should get a array of connected peers', async () => {
@@ -1163,10 +1162,10 @@ describe('API', () => {
 		// 	}).timeout(5000);
 		// });
 
-		// describe('#unlock()', () => {
+		// describe.only('#unlock()', () => {
 		// 	it('should unlock the wallet', async () => {
 		// 		try {
-		// 			const cg = await echo.walletApi.unlock('qwe');
+		// 			const cg = await echo.walletApi.unlock(123);
 		// 			console.log(cg);
 		// 			const result = await echo.walletApi.isLocked();
 		// 			console.log(result);
@@ -1194,6 +1193,20 @@ describe('API', () => {
 			it('should dumps all private keys owned by the wallet', async () => {
 				try {
 					const result = await echo.walletApi.dumpPrivateKeys();
+					expect(result)
+						.to
+						.be
+						.an('array');
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#importKey()', () => {
+			it('should dumps all private keys owned by the wallet', async () => {
+				try {
+					const result = await echo.walletApi.importKey('1.2.11', '5JLi3M4H9qY3FMTyGW9TCC92ebbqNo36sUHwJqpKxvJMWN2XwbH');
 					expect(result)
 						.to
 						.be
@@ -1234,6 +1247,66 @@ describe('API', () => {
 			it('should saves the current wallet to the given filename', async () => {
 				try {
 					const result = await echo.walletApi.saveWalletFile();
+					console.log('result', result);
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#getTransactionId()', () => {
+			it('should saves the current wallet to the given filename', async () => {
+				try {
+					const result = await echo.walletApi.getTransactionId({});
+					expect(result)
+						.to
+						.be
+						.an('string');
+					console.log('result', result);
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#getPrivateKey()', () => {
+			it('should saves the current wallet to the given filename', async () => {
+				try {
+					const result = await echo.walletApi.getPrivateKey('ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo');
+					// expect(result)
+					// 	.to
+					// 	.be
+					// 	.an('string');
+					console.log('result', result);
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#listAccounts()', () => {
+			it('should saves the current wallet to the given filename', async () => {
+				try {
+					const result = await echo.walletApi.listAccounts('nathan', "12");
+					// expect(result)
+					// 	.to
+					// 	.be
+					// 	.an('string');
+					console.log('result', result);
+				} catch (e) {
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe.only('#listAccountBalances()', () => {
+			it('should saves the current wallet to the given filename', async () => {
+				try {
+					const result = await echo.walletApi.listAccountBalances('1.2.1');
+					// expect(result)
+					// 	.to
+					// 	.be
+					// 	.an('string');
 					console.log('result', result);
 				} catch (e) {
 					throw e;
