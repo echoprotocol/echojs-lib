@@ -10,5 +10,6 @@ export { default as futureExtension } from "./future_extension";
 export declare const publicKey: PublicKeySerializer;
 export declare const weight: typeof uint16;
 export declare const ripemd160: BytesSerializer;
+export declare const sha256: BytesSerializer;
 
 export { ids, PublicKeySerializer };

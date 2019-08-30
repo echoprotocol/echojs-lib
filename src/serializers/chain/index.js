@@ -10,5 +10,6 @@ export { default as futureExtension } from './future_extension';
 export const publicKey = new PublicKeySerializer();
 export const weight = uint16;
 export const ripemd160 = bytes(20);
+export const sha256 = bytes(32);
 
 export { ids, PublicKeySerializer };

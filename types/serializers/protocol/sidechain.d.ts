@@ -1,6 +1,6 @@
 import ethAddress from './ethAddress';
 import { uint64, uint8 } from '../basic/integers';
-import { asset, extensions } from '../chain';
+import { asset, extensions, sha256 } from '../chain';
 import { accountId, depositEthId, withdrawEthId } from '../chain/id/protocol';
 import { StructSerializer, VectorSerializer } from '../collections';
 import { config } from '../plugins/sidechain';
@@ -75,5 +75,16 @@ export declare const sidechainERC20RegisterTokenOperationPropsSerializer: Struct
 	name: StringSerializer,
 	symbol: StringSerializer,
 	decimals: typeof uint8,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainERC20DepositTokenOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	malicious_committeemen: VectorSerializer<typeof accountId>,
+	account: typeof accountId,
+	erc20_token_addr: typeof ethAddress,
+	value: StringSerializer,
+	transaction_hash: typeof sha256,
 	extensions: typeof extensions,
 }>;
