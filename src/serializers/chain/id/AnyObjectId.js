@@ -1,10 +1,8 @@
+import * as ByteBuffer from 'bytebuffer';
 import BigNumber from 'bignumber.js';
-import Long from 'long';
 import { uint64 } from '../../basic/integers';
 import ISerializer from '../../ISerializer';
 import { idRegex } from '../../../utils/validators';
-
-/** @typedef {import("bytebuffer")} ByteBuffer */
 
 /** @typedef {string} TInput */
 /** @typedef {string} TOutput */
@@ -29,7 +27,8 @@ export default class AnyObjectIdSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		this.validate(value);
-		const [reservedSpaceId, objectTypeId, instanceId] = value.split('.').map((str) => Long.fromString(str, true));
+		const [reservedSpaceId, objectTypeId, instanceId] = value.split('.').map((str) =>
+			ByteBuffer.Long.fromString(str, true));
 		const long = reservedSpaceId.shiftLeft(56).or(objectTypeId.shiftLeft(48).or(instanceId));
 		uint64.appendToByteBuffer(new BigNumber(long.toString()), bytebuffer);
 	}

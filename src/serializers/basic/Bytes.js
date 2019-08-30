@@ -37,8 +37,8 @@ export default class BytesSerializer extends ISerializer {
 	 */
 	toRaw(value) {
 		if (typeof value === 'string') {
-			if (!/^0x([\da-fA-F]{2})*$/.test(value)) throw new Error('invalid hex format');
-			value = Buffer.from(value.slice(2).toLowerCase(), 'hex');
+			if (!/^([\da-fA-F]{2})*$/.test(value)) throw new Error('invalid hex format');
+			value = Buffer.from(value.toLowerCase(), 'hex');
 		} else if (!Buffer.isBuffer(value)) throw new Error('invalid bytes type');
 		if (this.bytesCount !== undefined && value.length !== this.bytesCount) throw new Error('invalid bytes count');
 		return value.toString('hex');
@@ -50,8 +50,8 @@ export default class BytesSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		if (this.bytesCount !== undefined) varint32.appendToByteBuffer(raw.length, bytebuffer);
-		bytebuffer.append(value.toString('binary'), 'binary');
+		if (this.bytesCount === undefined) varint32.appendToByteBuffer(raw.length / 2, bytebuffer);
+		bytebuffer.append(Buffer.from(raw, 'hex').toString('binary'), 'binary');
 	}
 
 }

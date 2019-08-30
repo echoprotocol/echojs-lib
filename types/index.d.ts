@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import * as constants from './constants';
 import Echo from './echo';
 import * as validators from './utils/validators'
@@ -16,4 +17,4 @@ export { handleConnectionClosedError } from './utils/helpers';
 declare const echo: Echo;
 export default echo;
 
-export { Echo, constants, validators, converters, serializers };
+export { BigNumber, Echo, constants, validators, converters, serializers };

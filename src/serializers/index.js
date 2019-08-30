@@ -1,6 +1,8 @@
 import * as basic from './basic';
 import * as collections from './collections';
 import * as chain from './chain';
+import * as plugins from './plugins';
+import * as protocol from './protocol';
 import OperationSerializer from './operation';
 import opWrapper from './protocol/opWrapper';
 
@@ -10,4 +12,4 @@ export const operation = new OperationSerializer();
 
 opWrapper.init(operation);
 
-export { basic, collections, chain, OperationSerializer };
+export { basic, collections, chain, OperationSerializer, plugins, protocol };

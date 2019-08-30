@@ -1,4 +1,4 @@
-import Long from 'long';
+import ByteBuffer from 'bytebuffer';
 import IUIntSerializer from './IUIntSerializer';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
@@ -20,7 +20,7 @@ export default class UInt64Serializer extends IUIntSerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		bytebuffer.writeUint64(Long.fromString(raw));
+		bytebuffer.writeUint64(ByteBuffer.Long.fromString(raw));
 	}
 
 }

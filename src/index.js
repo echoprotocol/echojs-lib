@@ -1,4 +1,5 @@
 /* Chain */
+import BigNumber from 'bignumber.js';
 import Echo from './echo';
 import * as constants from './constants';
 import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
@@ -14,6 +15,7 @@ require('buffer');
 const { OPERATIONS_IDS, CACHE_MAPS } = constants;
 
 export {
+	BigNumber,
 	Echo,
 	constants,
 	PrivateKey,
