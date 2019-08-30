@@ -54,3 +54,11 @@ export declare const contractWhitelistOperationPropsSerializer: StructSerializer
 	remove_from_blacklist: SetSerializer<typeof accountId>,
 	extensions: typeof extensions,
 }>;
+
+export declare const contractUpdateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	sender: typeof accountId,
+	contract: typeof contractId,
+	new_owner: OptionalSerializer<typeof accountId>,
+	extensions: typeof extensions,
+}>;

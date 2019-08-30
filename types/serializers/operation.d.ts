@@ -47,18 +47,16 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof protocol.sidechain.erc20.depositToken,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof protocol.sidechain.erc20.withdrawToken,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof protocol.sidechain.erc20.approveTokenWithdraw,
-	[OperationId.CONTRACT_UPDATE]: ISerializer,
+	[OperationId.CONTRACT_UPDATE]: typeof protocol.contract.update,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;
 
 export type TOperationInput<T extends OperationId, TWithUnrequiredFee extends boolean> = [
 	T,
-	TWithUnrequiredFee extends false ? OperationInput<T> : (
-		'fee' extends keyof OperationInput<T> ?
-			Omit<OperationInput<T>, 'fee'> & { fee?: Partial<OperationInput<T>['fee']> } :
-			OperationInput<T>
-	),
+	TWithUnrequiredFee extends false ?
+		OperationInput<T> :
+		Omit<OperationInput<T>, 'fee'> & { fee?: Partial<OperationInput<T>['fee']> }
 ];
 
 export type TOperationOutput<T extends OperationId> = [T, SerializerOutput<OperationPropsSerializer<T>>];

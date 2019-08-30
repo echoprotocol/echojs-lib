@@ -16,14 +16,12 @@ import ISerializer from '../ISerializer';
 
 /**
  * @template {SerializersMap} T
- * @template {keyof T} TKey
- * @typedef {SerializerInput<T[TKey]>} TInput
+ * @typedef {{ [key in keyof T]: SerializerInput<T[key]> }} TInput
  */
 
 /**
  * @template {SerializersMap} T
- * @template {keyof T} TKey
- * @typedef {SerializerOutput<T[TKey]>} TOutput
+ * @typedef {{ [key in keyof T]: SerializerOutput<T[key]> }} TOutput
  */
 
 /**
@@ -59,13 +57,12 @@ export default class StructSerializer extends ISerializer {
 	}
 
 	/**
-	 * @template {keyof T} TKey
-	 * @param {TInput<T, TKey>} value
-	 * @returns {TOutput<T, TKey>}
+	 * @param {TInput<T>} value
+	 * @returns {TOutput<T>}
 	 */
 	toRaw(value) {
 		if (typeof value !== 'object' || value === null) throw new Error('serializable struct is not a object');
-		/** @type {TOutput<T, TKey>} */
+		/** @type {TOutput<T>} */
 		const result = {};
 		for (const key in this.serializers) {
 			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
@@ -80,8 +77,7 @@ export default class StructSerializer extends ISerializer {
 	}
 
 	/**
-	 * @template {keyof T} TKey
-	 * @param {TInput<T, TKey>} value
+	 * @param {TInput<T>} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {

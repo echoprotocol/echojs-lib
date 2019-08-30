@@ -1,7 +1,6 @@
 import { uint64, uint32, int64 } from '../basic/integers';
 import { OPERATIONS_IDS } from '../../constants';
 import { staticVariant, struct } from '../collections';
-import ISerializer from '../ISerializer';
 
 export const defaultFeeParametersSerializer = struct({ fee: uint64 });
 
@@ -56,7 +55,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.CONTRACT_UPDATE]: new ISerializer(),
+	[OPERATIONS_IDS.CONTRACT_UPDATE]: struct({ fee: int64 }),
 });
 
 export default feeParametersSerializer;

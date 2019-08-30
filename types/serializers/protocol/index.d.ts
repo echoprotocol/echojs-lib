@@ -36,6 +36,7 @@ import {
 	contractTransferOperationPropsSerializer,
 	contractFundPoolOperationPropsSerializer,
 	contractWhitelistOperationPropsSerializer,
+	contractUpdateOperationPropsSerializer,
 } from './contract';
 
 import {
@@ -108,6 +109,7 @@ export declare const contract: {
 	transfer: typeof contractTransferOperationPropsSerializer,
 	fundPool: typeof contractFundPoolOperationPropsSerializer,
 	whitelist: typeof contractWhitelistOperationPropsSerializer,
+	update: typeof contractUpdateOperationPropsSerializer,
 };
 
 export { default as ethAddress } from './ethAddress';

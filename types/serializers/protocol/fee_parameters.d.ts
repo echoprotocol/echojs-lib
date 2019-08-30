@@ -1,7 +1,6 @@
 import { uint64, uint32, int64 } from '../basic/integers';
 import { OPERATIONS_IDS } from '../../constants';
 import { staticVariant, struct, StructSerializer, StaticVariantSerializer } from '../collections';
-import ISerializer from '../ISerializer';
 import OperationId from '../../interfaces/OperationId';
 
 export declare const defaultFeeParametersSerializer: StructSerializer<{ fee: typeof uint64 }>;
@@ -64,7 +63,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof defaultFeeParametersSerializer,
-	[OperationId.CONTRACT_UPDATE]: ISerializer,
+	[OperationId.CONTRACT_UPDATE]: StructSerializer<{ fee: typeof int64 }>,
 }[T];
 
 declare const feeParametersSerializer: StaticVariantSerializer<{

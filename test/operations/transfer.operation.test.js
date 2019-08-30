@@ -70,7 +70,7 @@ describe('transfer', () => {
 					amount: 30
 				},
 			};
-			const result = transfer.serialize(txProps);
+			const result = transfer.default.serialize(txProps);
 			ok(Buffer.isBuffer(result));
 			strictEqual(result.toString('hex'), '1400000000000000017bc8031e000000000000000200');
 		});

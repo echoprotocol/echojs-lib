@@ -50,3 +50,11 @@ export const contractWhitelistOperationPropsSerializer = struct({
 	remove_from_blacklist: set(accountId),
 	extensions,
 });
+
+export const contractUpdateOperationPropsSerializer = struct({
+	fee: asset,
+	sender: accountId,
+	contract: contractId,
+	new_owner: optional(accountId),
+	extensions,
+});
