@@ -44,18 +44,7 @@ import {
 	proposalDeleteOperationPropsSerializer,
 } from './proposal';
 
-import {
-	sidechainChangeConfigOperationPropsSerializer,
-	sidechainEthCreateAddressOperationPropsSerializer,
-	sidechainEthDepositOperationPropsSerializer,
-	sidechainEthWithdrawOperationPropsSerializer,
-	sidechainEthApproveWithdrawOperationPropsSerializer,
-	sidechainEthIssueOperationPropsSerializer,
-	sidechainEthBurnOperationPropsSerializer,
-	sidechainERC20RegisterTokenOperationPropsSerializer,
-	sidechainERC20DepositTokenOperationPropsSerializer,
-	sidechainERC20WithdrawTokenOperationPropsSerializer,
-} from './sidechain';
+import * as _sidechain from './sidechain';
 
 import {
 	overrideTransferOperationPropsSerializer,
@@ -132,17 +121,9 @@ export const proposal = {
 };
 
 export const sidechain = {
-	changeConfig: sidechainChangeConfigOperationPropsSerializer,
-	ethCreateAddress: sidechainEthCreateAddressOperationPropsSerializer,
-	ethApproveAddress: sidechainEthCreateAddressOperationPropsSerializer,
-	ethDeposit: sidechainEthDepositOperationPropsSerializer,
-	ethWithdraw: sidechainEthWithdrawOperationPropsSerializer,
-	ethApproveWithdraw: sidechainEthApproveWithdrawOperationPropsSerializer,
-	ethIssue: sidechainEthIssueOperationPropsSerializer,
-	ethBurn: sidechainEthBurnOperationPropsSerializer,
-	erc20RegisterToken: sidechainERC20RegisterTokenOperationPropsSerializer,
-	erc20DepositToken: sidechainERC20DepositTokenOperationPropsSerializer,
-	erc20WithdrawToken: sidechainERC20WithdrawTokenOperationPropsSerializer,
+	changeConfig: _sidechain.sidechainChangeConfigOperationPropsSerializer,
+	erc20: _sidechain.erc20,
+	eth: _sidechain.eth,
 };
 
 export const transfer = {
