@@ -1,9 +1,10 @@
 import ethAddress from './ethAddress';
-import { uint64 } from '../basic/integers';
+import { uint64, uint8 } from '../basic/integers';
 import { asset, extensions } from '../chain';
 import { accountId, depositEthId, withdrawEthId } from '../chain/id/protocol';
 import { struct, vector } from '../collections';
 import { config } from '../plugins/sidechain';
+import { string as stringSerializer } from '../basic';
 
 export const sidechainChangeConfigOperationPropsSerializer = struct({
 	fee: asset,
@@ -64,5 +65,15 @@ export const sidechainEthBurnOperationPropsSerializer = struct({
 	value: asset,
 	account: accountId,
 	withdraw_id: withdrawEthId,
+	extensions,
+});
+
+export const sidechainERC20RegisterTokenOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	eth_addr: ethAddress,
+	name: stringSerializer,
+	symbol: stringSerializer,
+	decimals: uint8,
 	extensions,
 });

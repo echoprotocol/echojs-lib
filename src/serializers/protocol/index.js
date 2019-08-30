@@ -52,6 +52,7 @@ import {
 	sidechainEthApproveWithdrawOperationPropsSerializer,
 	sidechainEthIssueOperationPropsSerializer,
 	sidechainEthBurnOperationPropsSerializer,
+	sidechainERC20RegisterTokenOperationPropsSerializer,
 } from './sidechain';
 
 import {
@@ -137,6 +138,7 @@ export const sidechain = {
 	ethApproveWithdraw: sidechainEthApproveWithdrawOperationPropsSerializer,
 	ethIssue: sidechainEthIssueOperationPropsSerializer,
 	ethBurn: sidechainEthBurnOperationPropsSerializer,
+	erc20RegisterToken: sidechainERC20RegisterTokenOperationPropsSerializer,
 };
 
 export const transfer = {
