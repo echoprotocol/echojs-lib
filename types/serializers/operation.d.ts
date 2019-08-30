@@ -45,7 +45,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ETH_BURN]: typeof protocol.sidechain.ethBurn,
 	[OperationId.SIDECHAIN_ERC20_REGISTER_TOKEN]: typeof protocol.sidechain.erc20RegisterToken,
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof protocol.sidechain.erc20DepositToken,
-	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: ISerializer,
+	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof protocol.sidechain.erc20WithdrawToken,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: ISerializer,
 	[OperationId.CONTRACT_UPDATE]: ISerializer,
 }[T];

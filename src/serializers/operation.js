@@ -45,7 +45,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_BURN]: protocol.sidechain.ethBurn,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: protocol.sidechain.erc20RegisterToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: protocol.sidechain.erc20DepositToken,
-	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: new ISerializer(),
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: protocol.sidechain.erc20WithdrawToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: new ISerializer(),
 	[OPERATIONS_IDS.CONTRACT_UPDATE]: new ISerializer(),
 };

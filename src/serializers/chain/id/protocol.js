@@ -11,3 +11,4 @@ export const balanceId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OB
 export const contractId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.CONTRACT);
 export const depositEthId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.SIDECHAIN_ETH_DEPOSIT);
 export const withdrawEthId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.SIDECHAIN_ETH_WITHDRAW);
+export const erc20TokenId = new ObjectIdSerializer(RESERVED_SPACES.PROTOCOL_IDS, OBJECT_TYPES.ERC20_TOKEN);

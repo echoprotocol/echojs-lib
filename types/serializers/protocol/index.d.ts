@@ -55,6 +55,7 @@ import {
 	sidechainEthBurnOperationPropsSerializer,
 	sidechainERC20RegisterTokenOperationPropsSerializer,
 	sidechainERC20DepositTokenOperationPropsSerializer,
+	sidechainERC20WithdrawTokenOperationPropsSerializer,
 } from './sidechain';
 
 import {
@@ -142,6 +143,7 @@ export declare const sidechain: {
 	ethBurn: typeof sidechainEthBurnOperationPropsSerializer,
 	erc20RegisterToken: typeof sidechainERC20RegisterTokenOperationPropsSerializer,
 	erc20DepositToken: typeof sidechainERC20DepositTokenOperationPropsSerializer,
+	erc20WithdrawToken: typeof sidechainERC20WithdrawTokenOperationPropsSerializer,
 };
 
 export declare const transfer: {

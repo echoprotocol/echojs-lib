@@ -10,3 +10,4 @@ export declare const balanceId: ObjectIdSerializer<RESERVED_SPACES.PROTOCOL_IDS>
 export declare const contractId: ObjectIdSerializer<RESERVED_SPACES.PROTOCOL_IDS>;
 export declare const depositEthId: ObjectIdSerializer<RESERVED_SPACES.PROTOCOL_IDS>;
 export declare const withdrawEthId: ObjectIdSerializer<RESERVED_SPACES.PROTOCOL_IDS>;
+export declare const erc20TokenId: ObjectIdSerializer<RESERVED_SPACES.PROTOCOL_IDS>;
