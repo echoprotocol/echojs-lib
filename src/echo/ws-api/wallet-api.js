@@ -1,30 +1,24 @@
 import {
-	isNumber,
-	isArray,
-	isObjectId,
-	isBoolean,
-	isAssetName,
-	isAccountId,
-	isUInt64,
-	isAccountName,
-	isString,
-	isAssetId,
-	isObject,
-	isBalanceId,
-	isContractId,
-	isOperationHistoryId,
-	isContractResultId,
-	isBytecode,
-	isRipemd160,
-	isPublicKey,
-	isVoteId,
-	isCommitteeMemberId,
-	isBitAssetId,
-	isDynamicAssetDataId,
-	isEchoRandKey,
-	isOperationId,
-	isDynamicGlobalObjectId,
-	isUInt32,
+    isNumber,
+    isArray,
+    isObjectId,
+    isBoolean,
+    isAssetName,
+    isAccountId,
+    isUInt64,
+    isAccountName,
+    isString,
+    isAssetId,
+    isObject,
+    isPublicKey,
+    isVoteId,
+    isCommitteeMemberId,
+    isBitAssetId,
+    isDynamicAssetDataId,
+    isEchoRandKey,
+    isOperationId,
+    isDynamicGlobalObjectId,
+    isUInt32, validateUrl,
 } from '../../utils/validators';
 import { API_CONFIG } from '../../constants';
 import transaction, { signedTransaction } from '../../serializer/transaction-type';
@@ -157,7 +151,7 @@ class WalletAPI {
 	/**
 	 *  @method dumpPrivateKeys
 	 *
-	 *  @returns {Promise<Array>}
+	 *  @returns {Promise<Array.<String>>}
 	 */
 	dumpPrivateKeys() {
 		return this.wsRpc.call([0, 'dump_private_keys', []]);
@@ -239,7 +233,6 @@ class WalletAPI {
 	 *  @returns {Promise<String>}
 	 */
 	getTransactionId(signedTx) {
-		if (!isObject(signedTx)) throw new Error('transaction should be a object');
 		signedTransaction.validate(signedTx);
 
 		return this.wsRpc.call([0, 'get_transaction_id', [signedTx]]);
@@ -334,18 +327,43 @@ class WalletAPI {
 	/**
 	 *  @method registerAccount
 	 *
-	 *  @param  {Function} callback
 	 *  @param  {String} name
 	 * 	@param  {String} activeKey
 	 * 	@param  {String} echoRandKey
+     * 	@param  {String} registrarAccountId
+     * 	@param  {String} referrerAccountId
+     * 	@param  {String} referrerPercent
+     * 	@param  {String} shouldDoBroadcastToNetwork
 	 *
 	 *  @returns {Promise<Object>}
 	 */
-	registerAccount(callback, name, activeKey, echoRandKey) {
-		if (!isAccountName(name)) throw new Error('Name is invalid');
+	registerAccount(
+	    name,
+        activeKey,
+        echoRandKey,
+        registrarAccountId,
+        referrerAccountId,
+        referrerPercent,
+        shouldDoBroadcastToNetwork
+    ) {
+		if (!isString(name)) throw new Error('Name should be a string');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
-		return this.wsRpc.call([0, 'register_account', [callback, name, activeKey, echoRandKey]]);
+        if (!isAccountId(registrarAccountId)) throw new Error('Registrar accountId Id is invalid');
+        if (!isAccountId(referrerAccountId)) throw new Error('Registrar accountId Id is invalid');
+        if (!isUInt32(referrerPercent)) return Promise.reject(new Error('Block number should be a non negative integer'));
+
+		return this.wsRpc.call([0, 'register_account',
+            [
+                name,
+                activeKey,
+                echoRandKey,
+                registrarAccountId,
+                referrerAccountId,
+                referrerPercent,
+                shouldDoBroadcastToNetwork
+            ],
+        ]);
 	}
 
 	// TODO problems with args
@@ -353,45 +371,70 @@ class WalletAPI {
 	 *  @method createAccountWithBrainKey
 	 *	@param {String} brainKey
 	 *	@param {String} accountName
-	 *	@param {String} registrarAccount
-	 *	@param {String} referrerAccount
+	 *	@param {String} registrarAccountId
+	 *	@param {String} referrerAccountId
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Array>}
 	 */
-	createAccountWithBrainKey(brainKey, accountName, registrarAccount, referrerAccount, shouldDoBroadcastToNetwork) {
+	createAccountWithBrainKey(brainKey, accountName, registrarAccountId, referrerAccountId, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(registrarAccountId)) {
+            throw new Error('Accounts id should be string and valid');
+        }
+        if (!isAccountId(referrerAccountId)) {
+            throw new Error('Accounts id should be string and valid');
+        }
+
 		return this.wsRpc.call([
 			0, 'create_account_with_brain_key', [
-				brainKey, accountName, registrarAccount, referrerAccount, shouldDoBroadcastToNetwork],
+				brainKey, accountName, registrarAccountId, referrerAccountId, shouldDoBroadcastToNetwork],
 		]);
 	}
 
 	// TODO problems with args
 	/**
 	 *  @method transfer
-	 *	@param {String} fromAccount
-	 *	@param {String} toAccount
+	 *	@param {String} fromAccountNameOrId
+	 *	@param {String} toAccountNameOrId
 	 *	@param {String} amount
-	 *	@param {String} assetSymbol
+	 *	@param {String} assetIdOrName
 	 *	@param {String} memo
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	transfer(fromAccount, toAccount, amount, assetSymbol, memo, shouldDoBroadcastToNetwork) {
-		return this.wsRpc.call([0, 'transfer', [fromAccount, toAccount, amount, assetSymbol, memo, shouldDoBroadcastToNetwork]]);
+	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, memo, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
+
+		return this.wsRpc.call([0, 'transfer',
+            [fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, memo, shouldDoBroadcastToNetwork],
+        ]);
 	}
 
 	// TODO problems with args
 	/**
 	 *  @method transfer2
-	 *	@param {String} fromAccount
-	 *	@param {String} toAccount
+	 *	@param {String} fromAccountNameOrId
+	 *	@param {String} toAccountNameOrId
 	 *	@param {String} amount
-	 *	@param {String} assetSymbol
+	 *	@param {String} assetIdOrName
 	 *	@param {String} memo
-	 *  @returns {Promise<String>}
+	 *  @returns {Promise<Object>}
 	 */
-	transfer2(fromAccount, toAccount, amount, assetSymbol, memo) {
-		return this.wsRpc.call([0, 'transfer2', [fromAccount, toAccount, amount, assetSymbol, memo]]);
+	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, memo) {
+        if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
+
+		return this.wsRpc.call([0, 'transfer2', [fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, memo]]);
 	}
 
 	// TODO problems with args
@@ -405,6 +448,9 @@ class WalletAPI {
 	 */
 	//["1.2.11", "1.2.10", "white_listed", false]
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
+        if (!isAccountId(accountToList)) return Promise.reject(new Error('Account id is invalid'));
+
 		return this.wsRpc.call([0, 'whitelist_account',
 			[authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork],
 		]);
@@ -412,26 +458,34 @@ class WalletAPI {
 
 	/**
 	 *  @method getVestingBalances
-	 *	@param {String} accountId
+	 *	@param {String} accountNameOrId
 	 *  @returns {Promise<Array>}
 	 */
-	getVestingBalances(accountId) {
-		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+	getVestingBalances(accountNameOrId) {
+        if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
+            throw new Error('Account name or id is invalid');
+        }
 
-		return this.wsRpc.call([0, 'get_vesting_balances', [accountId]]);
+        return this.wsRpc.call([0, 'get_vesting_balances', [accountNameOrId]]);
 	}
 
 	// TODO problems with args
 	/**
 	 *  @method withdrawVesting
-	 *	@param {String} witnessName
+	 *	@param {String} witnessAccountNameOrId
 	 *	@param {String} amount
 	 *	@param {String} assetSymbol
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Array>}
 	 */
-	withdrawVesting(witnessName, amount, assetSymbol, shouldDoBroadcastToNetwork) {
-		return this.wsRpc.call([0, 'withdraw_vesting', [witnessName, amount, assetSymbol, shouldDoBroadcastToNetwork]]);
+	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
+        if (!(isAccountName(witnessAccountNameOrId) || isAccountId(witnessAccountNameOrId))) {
+            throw new Error('Account name or id is invalid');
+        }
+
+		return this.wsRpc.call([0, 'withdraw_vesting',
+            [witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork],
+        ]);
 	}
 
 	// TODO check positive result
@@ -466,17 +520,16 @@ class WalletAPI {
 	 *  @method getAccountHistory
 	 *	@param {String} accountIdOrName
 	 *	@param {Number} limit
-	 *  @returns {Promise<Array>}
+	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getAccountHistory(accountIdOrName, limit) {
 		if (!(isAccountName(accountIdOrName) || isAccountId(accountIdOrName))) {
 			throw new Error('Account name or id is invalid');
 		}
-		// if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
 		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
-		// if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
+
 		return this.wsRpc.call([0, 'get_account_history', [accountIdOrName, limit]]);
 	}
 
@@ -525,7 +578,7 @@ class WalletAPI {
 	 *	@param {String} accountIdOrName
 	 *	@param {String} symbol
 	 *	@param {Number} precision
-	 *	@param {String} assetOption
+	 *	@param {Object} assetOption
 	 *	@param {Object} bitassetOpts
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
@@ -564,6 +617,7 @@ class WalletAPI {
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
+
 		return this.wsRpc.call([0, 'update_bitasset', [assetIdOrName, newBitasset, shouldDoBroadcastToNetwork]]);
 	}
 
@@ -577,7 +631,10 @@ class WalletAPI {
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		return this.wsRpc.call([0, 'update_asset_feed_producers', [assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork]]);
+
+		return this.wsRpc.call([0, 'update_asset_feed_producers',
+            [assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork],
+        ]);
 	}
 
 	// TODO need help args
@@ -623,13 +680,13 @@ class WalletAPI {
 	// TODO need help args
 	/**
 	 *  @method getAsset
-	 *	@param {String} assetId
+	 *	@param {String} assetIdOrName
 	 *  @returns {Promise<Object>}
 	 */
-	getAsset(assetId) {
-		if (!isAssetId(assetId)) throw new Error('Asset id or name is invalid');
+	getAsset(assetIdOrName) {
+		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
 
-		return this.wsRpc.call([0, 'get_asset', [assetId]]);
+		return this.wsRpc.call([0, 'get_asset', [assetIdOrName]]);
 	}
 
 	// TODO need help args
@@ -639,6 +696,8 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getBitassetData(bitAssetId) {
+        if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
+
 		return this.wsRpc.call([0, 'get_bitasset_data', [bitAssetId]]);
 	}
 
@@ -682,67 +741,100 @@ class WalletAPI {
 
 	// GOVERNANCE
 
-	// TODO
+	// TODO check args and result
 	/**
 	 *  @method createCommitteeMember
-	 *	@param {String} accountId
+	 *	@param {String} accountIdOrName
 	 *	@param {String} url
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	createCommitteeMember(accountId, url, shouldDoBroadcastToNetwork) {
-		return this.wsRpc.call([0, 'create_committee_member', [accountId, url, shouldDoBroadcastToNetwork]]);
+	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
+
+		return this.wsRpc.call([0, 'create_committee_member', [accountIdOrName, url, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO
+	// TODO check result
 	/**
 	 *  @method getCommitteeMember
-	 *	@param {String} accountId
+	 *	@param {String} accountIdOrName
 	 *  @returns {Promise<Object>}
 	 */
-	getCommitteeMember(accountId) {
-		return this.wsRpc.call([0, 'get_committee_member', [accountId]]);
+	getCommitteeMember(accountIdOrName) {
+        if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isCommitteeMemberId(accountIdOrName)) {
+            return Promise.reject(new Error('Committee Member Id should contain valid committee id'));
+        }
+
+		return this.wsRpc.call([0, 'get_committee_member', [accountIdOrName]]);
 	}
 
-	// TODO
+	// TODO check result
 	/**
 	 *  @method listCommitteeMembers
-	 *	@param {String} committeeMemberName
+	 *	@param {String} lowerBoundName
 	 *	@param {Number} limit
 	 *  @returns {Promise<Object>}
 	 */
-	listCommitteeMembers(committeeMemberName, limit) {
-		return this.wsRpc.call([0, 'list_committee_members', [committeeMemberName, limit]]);
+	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,) {
+        if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
+        if (!isUInt64(limit) || limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
+            throw new Error(`Limit should be capped at ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
+        }
+
+		return this.wsRpc.call([0, 'list_committee_members', [lowerBoundName, limit]]);
 	}
 
-	// TODO
+	// TODO check result
 	/**
 	 *  @method voteForCommitteeMember
-	 *	@param {String} votingAccountId
-	 *	@param {Number} committeeMemberId
-	 *	@param {Boolean} approve
+	 *	@param {String} votingAccountIdOrName
+	 *	@param {Number} ownerOfCommitteeMember
+	 *	@param {Boolean} approveYourVote
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	voteForCommitteeMember(votingAccountId, committeeMemberId, approve, shouldDoBroadcastToNetwork) {
+	voteForCommitteeMember(votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
+            throw new Error('Voting accounts id or name should be string and valid');
+        }
+        if (!isAccountId(ownerOfCommitteeMember) || isAccountName(ownerOfCommitteeMember)) {
+            throw new Error('Owner of committee member accounts id or name should be string and valid');
+        }
+
 		return this.wsRpc.call([0, 'vote_for_committee_member',
-			[votingAccountId, committeeMemberId, approve, shouldDoBroadcastToNetwork],
+			[votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork],
 		]);
 	}
 
-	// TODO
+	// TODO check result
 	/**
 	 *  @method setVotingProxy
-	 *	@param {String} accountIdToUpdate
-	 *	@param {Number} votingAccountId
+	 *	@param {String} accountIdOrNameToUpdate
+	 *	@param {Number} votingAccountIdOrName
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	setVotingProxy(accountIdToUpdate, votingAccountId, shouldDoBroadcastToNetwork) {
-		return this.wsRpc.call([0, 'set_voting_proxy', [accountIdToUpdate, votingAccountId, shouldDoBroadcastToNetwork]]);
+	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(accountIdOrNameToUpdate) || isAccountName(accountIdOrNameToUpdate)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+        if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
+            throw new Error('Voting accounts id or name should be string and valid');
+        }
+
+		return this.wsRpc.call([0, 'set_voting_proxy',
+			[accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork],
+		]);
 	}
 
-	// TODO
+	// TODO check result and args
 	/**
 	 *  @method proposeParameterChange
 	 *	@param {String} accountId
@@ -752,10 +844,14 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	proposeParameterChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(accountId)) {
+            throw new Error('Accounts id should be string and valid');
+        }
+
 		return this.wsRpc.call([0, 'propose_parameter_change', [accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO
+	// TODO check result and args
 	/**
 	 *  @method proposeFeeChange
 	 *	@param {String} accountId
@@ -765,6 +861,10 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	proposeFeeChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
+        if (!isAccountId(accountId)) {
+            throw new Error('Accounts id should be string and valid');
+        }
+
 		return this.wsRpc.call([0, 'propose_fee_change', [accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork]]);
 	}
 
@@ -781,7 +881,7 @@ class WalletAPI {
 	 *  }
 	 */
 	getBlock(blockNum) {
-		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
+		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
 
 		return this.wsRpc.call([0, 'get_block', [blockNum]]);
 	}
@@ -803,7 +903,6 @@ class WalletAPI {
 	 *  }
 	 */
 	getGlobalProperties() {
-
 		return this.wsRpc.call([0, 'get_global_properties', []]);
 	}
 
@@ -824,6 +923,8 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getObject(objectId) {
+        if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
+
 		return this.wsRpc.call([0, 'get_object', [objectId]]);
 	}
 
@@ -905,6 +1006,8 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	proposeBuilderTransaction(transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
+        if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
+
 		return this.wsRpc.call([0, 'propose_builder_transaction',
 			[transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
 		]);
@@ -913,16 +1016,27 @@ class WalletAPI {
 	// TODO
 	/**
 	 *  @method proposeBuilderTransaction2
-	 *	@param {String} accountId
 	 *	@param {String|Number} transactionTypeHandle
+     *	@param {String} accountIdOrName
 	 *	@param {String} expirationTime
 	 *	@param {Number} reviewPeriod
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	proposeBuilderTransaction2(transactionTypeHandle, accountId, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
+	proposeBuilderTransaction2(
+	    transactionTypeHandle,
+        accountIdOrName,
+        expirationTime,
+        reviewPeriod,
+        shouldDoBroadcastToNetwork
+    ) {
+        if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
+        if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
+            throw new Error('Accounts id or name should be string and valid');
+        }
+
 		return this.wsRpc.call([0, 'propose_builder_transaction2',
-			[transactionTypeHandle, accountId, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
+			[transactionTypeHandle, accountIdOrName, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
 		]);
 	}
 
@@ -939,22 +1053,26 @@ class WalletAPI {
 	// TODO
 	/**
 	 *  @method serializeTransaction
-	 *	@param {Object} signedTransaction
+	 *	@param {Object} signedTx
 	 *  @returns {Promise<String>}
 	 */
-	serializeTransaction(signedTransaction) {
-		return this.wsRpc.call([0, 'serialize_transaction', [signedTransaction]]);
+	serializeTransaction(signedTx) {
+        signedTransaction.validate(signedTx);
+
+		return this.wsRpc.call([0, 'serialize_transaction', [signedTx]]);
 	}
 
 	// TODO
 	/**
 	 *  @method signTransaction
-	 *	@param {Object} unsignedTransaction
+	 *	@param {Object} unsignedTx
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	signTransaction(signedTransaction, shouldDoBroadcastToNetwork) {
-		return this.wsRpc.call([0, 'sign_transaction', [signedTransaction, shouldDoBroadcastToNetwork]]);
+	signTransaction(unsignedTx, shouldDoBroadcastToNetwork) {
+        transaction.validate(unsignedTx);
+
+		return this.wsRpc.call([0, 'sign_transaction', [unsignedTx, shouldDoBroadcastToNetwork]]);
 	}
 
 	// TODO
