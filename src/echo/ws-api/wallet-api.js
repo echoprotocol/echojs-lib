@@ -17,6 +17,7 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
+	isRipemd160,
 	isUInt8,
 	isUInt16,
 	isUInt32,
@@ -285,7 +286,7 @@ class WalletAPI {
 	/**
 	 *  @method deriveKeysFromBrainKey
 	 *	@param {String} brainKey
-	 *	@param {String} numberOfDesiredKeys
+	 *	@param {Number} numberOfDesiredKeys
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
@@ -630,7 +631,7 @@ class WalletAPI {
 	/**
 	 *  @method getVestingBalances
 	 *	@param {String} accountNameOrId
-	 *  @returns {Promise<Array>}
+	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getVestingBalances(accountNameOrId) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
@@ -756,7 +757,7 @@ class WalletAPI {
 	getContract(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
 
-		return this.wsRpc.call([0, 'get_contract', [contractId]]);
+		return this.wsRpc.call([0, ' ', [contractId]]);
 	}
 
 	// TODO check positive result and DOC
@@ -796,7 +797,7 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check positive result
+	//TODO check positive result
 	/**
 	 *  @method callContractNoChangingState
 	 *	@param {String} contractId
@@ -818,7 +819,7 @@ class WalletAPI {
 	/**
 	 *  @method getContractPoolBalance
 	 *	@param {String} contractId
-	 *  @returns {Promise<String>}
+	 *  @returns {Promise<Object>}
 	 */
 	getContractPoolBalance(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
@@ -830,7 +831,7 @@ class WalletAPI {
 	/**
 	 *  @method getContractPoolWhitelist
 	 *	@param {String} contractId
-	 *  @returns {Promise<String>}
+	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getContractPoolWhitelist(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
@@ -862,7 +863,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_deposits', [accountId]]);
 	}
 
-	// TODO check positive result and args
+	//TODO check positive result and args
 	/**
 	 *  @method registerErc20Token
 	 *	@param {String} accountId
@@ -889,19 +890,9 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getErc20Token(ethereumTokenAddress) {
+		if (!isRipemd160(ethereumTokenAddress)) throw new Error('Token address id should be a 20 bytes hex string');
+
 		return this.wsRpc.call([0, 'get_erc20_token', [ethereumTokenAddress]]);
-	}
-
-	//TODO check positive result //method not exist
-	/**
-	 *  @method checkErc20Token
-	 *	@param {String} accountId
-	 *  @returns {Promise<Boolean>}
-	 */
-	checkErc20Token(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'check_erc20_token', [accountId]]);
 	}
 
 	// TODO check positive result
@@ -928,7 +919,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId]]);
 	}
 
-	// TODO check positive result (array of object)?
+	//TODO check positive result (array of object)?
 	/**
 	 *  @method withdrawErc20Token
 	 *	@param {String} accountId
@@ -971,18 +962,22 @@ class WalletAPI {
 	getAccountAddresses(accountId, startFrom, limit) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
 		if (!isUInt64(startFrom)) throw new Error('Start from parameter should be non negative number');
-		if (!isNumber(limit)) throw new Error('Limit should be non negative integer');
+		if (!isUInt64(limit) || limit > API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT}`);
+		}
 
 		return this.wsRpc.call([0, 'get_account_addresses', [accountId, startFrom, limit]]);
 	}
 
-	//TODO check positive result
+	// TODO check positive result
 	/**
 	 *  @method getAccountByAddress
 	 *	@param {String} address
 	 *  @returns {Promise<String>}
 	 */
 	getAccountByAddress(address) {
+		if (!isRipemd160(address)) throw new Error('Address id should be a 20 bytes hex string');
+
 		return this.wsRpc.call([0, 'get_account_by_address', [address]]);
 	}
 
@@ -998,7 +993,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId]]);
 	}
 
-	// TODO pr-ms with args
+	//TODO pr-ms with args
 	/**
 	 *  @method approveProposal
 	 *	@param {String} feePayingAccountId
@@ -1032,7 +1027,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'generate_eth_address', [accountId, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO check positive result (array of object)?
+	//TODO check positive result (array of object)?
 	/**
 	 *  @method withdrawEth
 	 *	@param {String} accountId
@@ -1048,7 +1043,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'withdraw_eth', [accountId, ethAddress, value, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO check positive result
+	//TODO check positive result
 	/**
 	 *  @method floodNetwork
 	 *	@param {String} prefix
@@ -1083,7 +1078,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'list_assets', [lowerBoundSymbol, limit]]);
 	}
 
-	// TODO need help args check positive result
+	//TODO need help args check positive result
 	/**
 	 *  @method createAsset
 	 *	@param {String} accountIdOrName
@@ -1105,7 +1100,7 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO need help args check positive result
+	//TODO need help args check positive result
 	/**
 	 *  @method updateAsset
 	 *	@param {String} assetIdOrName
@@ -1125,7 +1120,7 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO need help args check positive result
+	//TODO need help args check positive result
 	/**
 	 *  @method updateBitasset
 	 *	@param {String} assetIdOrName
@@ -1139,7 +1134,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'update_bitasset', [assetIdOrName, newBitasset, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO need help args check positive result
+	//TODO need help args check positive result
 	/**
 	 *  @method updateAssetFeedProducers
 	 *	@param {String} assetIdOrName
@@ -1155,7 +1150,7 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO need help args check positive result
+	//TODO need help args check positive result
 	/**
 	 *  @method publishAssetFeed
 	 *	@param {String} accountId
@@ -1281,7 +1276,7 @@ class WalletAPI {
 	 *	@param {String} accountIdOrName
 	 *	@param {Number} desiredNumberOfCommitteeMembers
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object>}
 	 */
 	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
@@ -1303,11 +1298,8 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getCommitteeMember(accountIdOrName) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isCommitteeMemberId(accountIdOrName)) {
-			return Promise.reject(new Error('Committee Member Id should contain valid committee id'));
+		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName) || isCommitteeMemberId(accountIdOrName)) {
+			throw new Error('Accounts id, name or committee member Id should be string and valid');
 		}
 
 		return this.wsRpc.call([0, 'get_committee_member', [accountIdOrName]]);
@@ -1320,7 +1312,7 @@ class WalletAPI {
 	 *	@param {Number} limit
 	 *  @returns {Promise<Array.<Object>>}
 	 */
-	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,) {
+	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
 		if (!isUInt64(limit) || limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
