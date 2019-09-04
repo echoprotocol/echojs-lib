@@ -1,10 +1,48 @@
-export const RESERVED_SPACE_ID = {
-	RELATIVE_PROTOCOL: 0,
-	PROTOCOL: 1,
-	IMPLEMENTATION: 2,
+/**
+ * @typedef {Object} RESERVED_SPACES_t
+ * @property {0} RELATIVE_PROTOCOL_IDS
+ * @property {1} PROTOCOL_IDS
+ * @property {2} IMPLEMENTATION_IDS
+ */
+
+/** @typedef {RESERVED_SPACES_t[keyof RESERVED_SPACES_t]} e_RESERVED_SPACES */
+
+/** @type {RESERVED_SPACES_t} */
+export const RESERVED_SPACES = {
+	RELATIVE_PROTOCOL_IDS: 0,
+	PROTOCOL_IDS: 1,
+	IMPLEMENTATION_IDS: 2,
 };
 
-export const IMPLEMENTATION_OBJECT_TYPE_ID = {
+/**
+ * @typedef {Object} IMPLEMENTATION_OBJECT_TYPE_t
+ * @property {0} GLOBAL_PROPERTY
+ * @property {1} DYNAMIC_GLOBAL_PROPERTY
+ * @property {2} RESERVED
+ * @property {3} ASSET_DYNAMIC_DATA
+ * @property {4} ASSET_BITASSET_DATA
+ * @property {5} ACCOUNT_BALANCE
+ * @property {6} ACCOUNT_STATISTICS
+ * @property {7} TRANSACTION
+ * @property {8} BLOCK_SUMMARY
+ * @property {9} ACCOUNT_TRANSACTION_HISTORY
+ * @property {10} CHAIN_PROPERTY
+ * @property {11} BUDGET_RECORD
+ * @property {12} SPECIAL_AUTHORITY
+ * @property {13} BUYBACK_OBJECT
+ * @property {14} COLLATERAL_BID
+ * @property {15} CONTRACT_BALANCE
+ * @property {16} CONTRACT_HISTORY
+ * @property {17} CONTRACT_STATISTICS
+ * @property {18} ACCOUNT_ADDRESS
+ * @property {19} CONTRACT_POOL
+ * @property {20} MALICIOUS_COMMITTEEMEN
+ */
+
+/** @typedef {IMPLEMENTATION_OBJECT_TYPE_t[keyof IMPLEMENTATION_OBJECT_TYPE_t]} e_IMPLEMENTATION_OBJECT_TYPE */
+
+/** @type {IMPLEMENTATION_OBJECT_TYPE_t} */
+export const IMPLEMENTATION_OBJECT_TYPE = {
 	GLOBAL_PROPERTY: 0,
 	DYNAMIC_GLOBAL_PROPERTY: 1,
 	ASSET_DYNAMIC_DATA: 2,
@@ -25,6 +63,8 @@ export const IMPLEMENTATION_OBJECT_TYPE_ID = {
 	MALICIOUS_COMMITTEEMEN: 17,
 };
 
-export const VOTE_TYPE_ID = {
+/** @typedef {0} e_VOTE_TYPE */
+
+export const VOTE_TYPE = {
 	COMMITTEE: 0,
 };

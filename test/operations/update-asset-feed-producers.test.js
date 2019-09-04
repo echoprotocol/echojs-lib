@@ -28,10 +28,12 @@ describe('update asset feed producers', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 8',
-			'key "new_feed_producers"',
-			'set element with index 0',
-			'invalid id type',
+			'static variant with key 8',
+			'struct key "new_feed_producers"',
+			'set',
+			'vector element with index 0',
+			'instance id',
+			'value is not a number',
 		].join(': ');
 		it(`with message "${expectedErrorMessage}"`, function () {
 			if (!serializationError || !(serializationError instanceof Error)) this.skip();

@@ -1,5 +1,5 @@
+import { Long } from 'bytebuffer';
 import BigNumber from 'bignumber.js';
-import Long from 'long';
 import { idRegex } from './validators';
 
 const MAX_UINT64 = new BigNumber(2).pow(64).minus(1);
