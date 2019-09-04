@@ -51,12 +51,12 @@ console.log(CACHE_MAPS)
 
 #### Cache options
 
-| Param | Type |
-| --- | --- |
-| isUsed | `true` |
-| blocksLimit | `20` |
-| expirationTime | `null` |
-| minCleaningTime | `500` |
+| Param | Type | Default Value |
+| --- | --- | --- |
+| isUsed | `boolean` | `true` |
+| blocksLimit | `number | null` | `20` |
+| expirationTime | `number | null` |`null` |
+| minCleaningTime | `number` | `500` |
 
 `isUsed` - a flag that determines whether or not to use the cache.
 
