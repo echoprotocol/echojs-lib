@@ -1,17 +1,17 @@
 /**
  * @typedef {Object} RESERVED_SPACES_t
- * @property {0} RELATIVE_PROTOCOL_IDS
- * @property {1} PROTOCOL_IDS
- * @property {2} IMPLEMENTATION_IDS
+ * @property {0} RELATIVE_PROTOCOL
+ * @property {1} PROTOCOL
+ * @property {2} IMPLEMENTATION
  */
 
 /** @typedef {RESERVED_SPACES_t[keyof RESERVED_SPACES_t]} e_RESERVED_SPACES */
 
 /** @type {RESERVED_SPACES_t} */
-export const RESERVED_SPACES = {
-	RELATIVE_PROTOCOL_IDS: 0,
-	PROTOCOL_IDS: 1,
-	IMPLEMENTATION_IDS: 2,
+export const RESERVED_SPACE_ID = {
+	RELATIVE_PROTOCOL: 0,
+	PROTOCOL: 1,
+	IMPLEMENTATION: 2,
 };
 
 /**
@@ -42,7 +42,7 @@ export const RESERVED_SPACES = {
 /** @typedef {IMPLEMENTATION_OBJECT_TYPE_t[keyof IMPLEMENTATION_OBJECT_TYPE_t]} e_IMPLEMENTATION_OBJECT_TYPE */
 
 /** @type {IMPLEMENTATION_OBJECT_TYPE_t} */
-export const IMPLEMENTATION_OBJECT_TYPE = {
+export const IMPLEMENTATION_OBJECT_TYPE_ID = {
 	GLOBAL_PROPERTY: 0,
 	DYNAMIC_GLOBAL_PROPERTY: 1,
 	ASSET_DYNAMIC_DATA: 2,
@@ -65,6 +65,6 @@ export const IMPLEMENTATION_OBJECT_TYPE = {
 
 /** @typedef {0} e_VOTE_TYPE */
 
-export const VOTE_TYPE = {
+export const VOTE_TYPE_ID = {
 	COMMITTEE: 0,
 };

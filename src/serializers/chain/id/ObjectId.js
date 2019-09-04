@@ -1,7 +1,7 @@
 import { varint32 } from '../../basic/integers';
-import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from '../../../constants/chain-types';
+import { RESERVED_SPACE_ID, IMPLEMENTATION_OBJECT_TYPE_ID } from '../../../constants/chain-types';
 import ISerializer from '../../ISerializer';
-import { OBJECT_TYPES } from '../../../constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../../constants';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
 
@@ -25,9 +25,9 @@ import { OBJECT_TYPES } from '../../../constants';
 const objectIdPureRegexp = /^\d+\.\d+\.\d+$/;
 
 const _objectTypeIds = {
-	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: {},
-	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES,
-	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE,
+	[RESERVED_SPACE_ID.RELATIVE_PROTOCOL]: {},
+	[RESERVED_SPACE_ID.PROTOCOL]: PROTOCOL_OBJECT_TYPE_ID,
+	[RESERVED_SPACE_ID.IMPLEMENTATION]: IMPLEMENTATION_OBJECT_TYPE_ID,
 };
 
 /**
@@ -53,7 +53,7 @@ export default class ObjectIdSerializer extends ISerializer {
 	 * @param {ObjectTypeId<T> | ObjectTypeId<T>[]} objectsTypesIds
 	 */
 	constructor(reservedSpaceId, objectsTypesIds) {
-		if (!Object.values(RESERVED_SPACES).includes(reservedSpaceId)) throw new Error('invalid reserved space id');
+		if (!Object.values(RESERVED_SPACE_ID).includes(reservedSpaceId)) throw new Error('invalid reserved space id');
 		super();
 		/**
 		 * @private
