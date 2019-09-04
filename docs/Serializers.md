@@ -387,63 +387,75 @@ console.log(s.serialize(input).toString('hex'));
 
 #### Echorand Config
 
-Struct with fields:
+[Struct](#struct) with fields:
 
 |field|type|
 |-|-|
-|_time_net_1mb|`uint32`|
-|_time_net_256b|`uint32`|
-|_creator_count|`uint32`|
-|_verifier_count|`uint32`|
-|_ok_threshold|`uint32`|
-|_max_bba_steps|`uint32`|
-|_gc1_delay|`uint32`|
+|_time_net_1mb|[`uint32`](#integers)|
+|_time_net_256b|[`uint32`](#integers)|
+|_creator_count|[`uint32`](#integers)|
+|_verifier_count|[`uint32`](#integers)|
+|_ok_threshold|[`uint32`](#integers)|
+|_max_bba_steps|[`uint32`](#integers)|
+|_gc1_delay|[`uint32`](#integers)|
 
 ### Sidechain
 
 #### Eth method
+
+[Struct](#struct) with fields:
+
 |field|type|
 |-|-|
-|method|`string`|
-|gas|`uint64`|
+|method|[`string`](#string)|
+|gas|[`uint64`](#integers)|
 
 #### Eth topic
-`bytes(64)`
+[`bytes(64)`](#bytes)
 
 #### Fines
-```js
-struct({ generate_eth_address: int64 })
-```
+
+[Struct](#struct) with fields:
+
+|field|type|
+|-|-|
+|generate_eth_address|[int64](#integers)|
 
 #### Sidechain Config
+
+[Struct](#struct) with fields:
+
 |field|type|
 |-|-|
-|eth_contract_address|`bytes(20)`|
-|eth_committee_update_method|`eth method`|
-|eth_gen_address_method|`eth method`|
-|eth_withdraw_method|`eth method`|
-|eth_update_addr_method|`eth method`|
-|eth_withdraw_token_method|`eth method`|
-|eth_collect_tokens_method|`eth method`|
-|eth_committee_updated_topic|`eth topic`|
-|eth_gen_address_topic|`eth topic`|
-|eth_deposit_topic|`eth topic`|
-|eth_withdraw_topic|`eth topic`|
-|erc20_deposit_topic|`eth topic`|
-|erc20_withdraw_topic|`eth topic`|
-|ETH_asset_id|`assetId`|
-|fines|`fines`|
-|waiting_blocks|`uint32`|
+|eth_contract_address|[`bytes(20)`](#bytes)|
+|eth_committee_update_method|[`eth method`](#eth-method)|
+|eth_gen_address_method|[`eth method`](#eth-method)|
+|eth_withdraw_method|[`eth method`](#eth-method)|
+|eth_update_addr_method|[`eth method`](#eth-method)|
+|eth_withdraw_token_method|[`eth method`](#eth-method)|
+|eth_collect_tokens_method|[`eth method`](#eth-method)|
+|eth_committee_updated_topic|[`eth topic`](#eth-topic)|
+|eth_gen_address_topic|[`eth topic`](#eth-topic)|
+|eth_deposit_topic|[`eth topic`](#eth-topic)|
+|eth_withdraw_topic|[`eth topic`](#eth-topic)|
+|erc20_deposit_topic|[`eth topic`](#eth-topic)|
+|erc20_withdraw_topic|[`eth topic`](#eth-topic)|
+|ETH_asset_id|[`assetId`](#protocol-object-id)|
+|fines|[`fines`](#fines)|
+|waiting_blocks|[`uint32`](#integers)|
 
 #### ERC20 config
+
+[Struct](#struct) with fields:
+
 |field|type|
 |-|-|
-|contract_code|`string`|
-|create_token_fee|`uint64`|
-|transfer_topic|`eth topic`|
-|check_balance_method|`eth method`|
-|burn_method|`eth method`|
-|issue_method|`eth method`|
+|contract_code|[`string`](#string)|
+|create_token_fee|[`uint64`](#integers)|
+|transfer_topic|[`eth topic`](#eth-topic)|
+|check_balance_method|[`eth method`](#eth-method)|
+|burn_method|[`eth method`](#eth-method)|
+|issue_method|[`eth method`](#eth-method)|
 
 <hr/>
 
@@ -546,7 +558,7 @@ console.log(transfer.toRaw({
 <hr/>
 
 ## Operation
-Static variant, where key is `operationId` and value is properties of operation with this id.
+[Static variant](#static-variant), where key is `operationId` and value is properties of operation with this id.
 
 ```ts
 import { serializers, OPERATIONS_IDS } from "echojs-lib";
