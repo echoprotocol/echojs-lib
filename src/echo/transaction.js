@@ -1,17 +1,16 @@
 import BigNumber from 'bignumber.js';
-import ByteBuffer from 'bytebuffer';
 import { cloneDeep } from 'lodash';
 
 import Api from './api';
-import { operationById, operationByName } from './operations';
-import { isString, isNumber, isObject, validateUnsignedSafeInteger } from '../utils/validators';
+import { isObject, validateUnsignedSafeInteger } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
-import transaction, { signedTransaction } from '../serializer/transaction-type';
-import { toBuffer } from '../serializer/type';
 import Signature from '../crypto/signature';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
+import { transaction, signedTransaction, operation } from '../serializers';
+
+/** @typedef {import("../constants").OperationId} OperationId */
 
 /** @typedef {[number,{[key:string]:any}]} _Operation */
 
@@ -115,22 +114,24 @@ class Transaction {
 	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
 
 	/**
-	 * @param {string} name
-	 * @param {{[key:string]:any}} [props]
+	 * @param {OperationId} operationId
+	 * @param {{ [key: string]: any }} [props]
 	 * @returns {Transaction}
 	 */
-	addOperation(name, props = {}) {
+	addOperation(operationId, props = {}) {
 		this.checkNotFinalized();
-		if (name === undefined) throw new Error('name is missing');
-		if (!isString(name) && !isNumber(name)) throw new Error('name is not a string or id');
-		if (typeof name === 'number') validateUnsignedSafeInteger(name, 'operationId');
+		if (operationId === undefined) throw new Error('operation identifier is missing');
+		if (typeof operationId !== 'number') {
+			throw new Error('operation id is not a number');
+		}
+		validateUnsignedSafeInteger(operationId, 'operationId');
 		if (!isObject(props)) throw new Error('argument "props" is not a object');
-		const operationType = typeof name === 'number' ? operationById[name] : operationByName[name];
-		if (!operationType) throw new Error(`unknown operation ${name}`);
-		// TODO: proposal_create
-		const operation = [operationType.id, props];
-		operationType.validate(operation, false);
-		this._operations.push(operation);
+		const feeAssetIdIsMissing = !props.fee || props.fee.asset_id === undefined;
+		const feeAmountIsMissing = !props.fee || props.fee.amount === undefined;
+		const raw = operation.toRaw([operationId, props], true);
+		if (feeAssetIdIsMissing) delete raw[1].fee.asset_id;
+		if (feeAmountIsMissing) delete raw[1].fee.amount;
+		this._operations.push(raw);
 		return this;
 	}
 
@@ -145,9 +146,9 @@ class Transaction {
 		/** @type Map<string,Array<_Operation>> */
 		const operationsByNotDefaultFee = new Map();
 		const defaultAssetOperations = [];
-		const addOperationToAsset = (notDefaultAssetId, operation) => {
+		const addOperationToAsset = (notDefaultAssetId, operationProps) => {
 			if (notDefaultAssetId === ECHO_ASSET_ID) {
-				defaultAssetOperations.push(operation);
+				defaultAssetOperations.push(operationProps);
 				return;
 			}
 			const arr = operationsByNotDefaultFee.get(notDefaultAssetId);
@@ -155,7 +156,7 @@ class Transaction {
 			else arr.push(operation);
 		};
 		for (const op of operationTypes) {
-			if (op[1].fee === undefined) addOperationToAsset(assetId, op);
+			if (op[1].fee === undefined || op[1].fee.asset_id === undefined) addOperationToAsset(assetId, op);
 			else if (op[1].fee.amount === undefined) addOperationToAsset(op[1].fee.asset_id, op);
 		}
 		const notDefaultAssetsIds = [...operationsByNotDefaultFee.keys()];
@@ -211,16 +212,6 @@ class Transaction {
 		return this;
 	}
 
-	/** @returns {ByteBuffer} */
-	toByteBuffer() {
-		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
-		for (const operationData of this._operations) {
-			const operationType = operationById[operationData[0]];
-			operationType.appendToByteBuffer(operationData, result);
-		}
-		return result.copy(0, result.offset);
-	}
-
 	/**
 	 * @param {PrivateKey=} _privateKey
 	 */
@@ -249,7 +240,7 @@ class Transaction {
 		 * @type {number|undefined}
 		 */
 		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
-		const transactionBuffer = toBuffer(transaction, {
+		const transactionBuffer = transaction.serialize({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
@@ -257,11 +248,9 @@ class Transaction {
 			extensions: [],
 		});
 
-		this._signatures = this._signers.map(({ privateKey }) => {
-			const chainBuffer = Buffer.from(chainId, 'hex');
-			return Signature.signBuffer(Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]), privateKey);
-		});
-
+		const chainBuffer = Buffer.from(chainId, 'hex');
+		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
+		this._signatures = this._signers.map(({ privateKey }) => Signature.signBuffer(bufferToSign, privateKey));
 	}
 
 	/**
@@ -285,7 +274,7 @@ class Transaction {
 	 */
 	get transactionObject() {
 		this.checkFinalized();
-		return signedTransaction.toObject({
+		return signedTransaction.toRaw({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
 			expiration: this.expiration,
@@ -293,6 +282,10 @@ class Transaction {
 			extensions: [],
 			signatures: this._signatures.map((signature) => signature.toBuffer()),
 		});
+	}
+
+	serialize() {
+		return transaction.serialize(this.transactionObject);
 	}
 
 	/**
