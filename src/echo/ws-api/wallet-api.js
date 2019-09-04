@@ -73,7 +73,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'help_method', [method]]);
 	}
 
-	// TODO not working
 	/**
 	 *  @method info
 	 *
@@ -92,7 +91,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'about', []]);
 	}
 
-	// TODO check for node need or no?
 	/**
 	 *  @method networkAddNodes
 	 *	@param {Array<String>} nodes
@@ -107,7 +105,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'network_add_nodes', [nodes]]);
 	}
 
-	// TODO Promise<Array> of what (string, number?)
 	/**
 	 *  @method networkGetConnectedPeers
 	 *
@@ -175,7 +172,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'create_eddsa_keypair', []]);
 	}
 
-	// TODO Promise<Array> of what (string, number?)
 	/**
 	 *  @method dumpPrivateKeys
 	 *
@@ -196,7 +192,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'old_key_to_wif', [privateKey]]);
 	}
 
-	// TODO check validity and get positive result
 	/**
 	 *  @method importKey
 	 *	@param {String} accountNameOrId
@@ -212,7 +207,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'import_key', [accountNameOrId, privateKeyWif]]);
 	}
 
-	//TODO check validity and get positive result
 	/**
 	 *  @method importAccounts
 	 *	@param {String} filename
@@ -226,7 +220,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'import_accounts', [filename, password]]);
 	}
 
-	//TODO check validity and get positive result
 	/**
 	 *  @method importAccountKeys
 	 *	@param {String} filename
@@ -248,7 +241,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'import_account_keys', [filename, password, srcAccountName, destAccountName]]);
 	}
 
-	// TODO check args, result and return
 	/**
 	 *  @method importBalance
 	 *	@param {String} accountNameOrId
@@ -302,7 +294,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'is_public_key_registered', [publicKey]]);
 	}
 
-	// TODO signedTransaction or Unsigned?
 	/**
 	 *  @method getTransactionId
 	 *	@param {String} signedTx
@@ -314,7 +305,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_transaction_id', [signedTx]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getPrivateKey
 	 *	@param {String} publicKey
@@ -326,7 +316,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_private_key', [publicKey]]);
 	}
 
-	// TODO check positive result (true)
 	/**
 	 *  @method loadWalletFile
 	 *	@param {String} walletFilename
@@ -349,7 +338,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'normalize_brain_key', [brainKey]]);
 	}
 
-	// TODO check not empty file
 	/**
 	 *  @method saveWalletFile
 	 *	@param {String} walletFilename
@@ -360,8 +348,6 @@ class WalletAPI {
 
 		return this.wsRpc.call([0, 'save_wallet_file', [walletFilename]]);
 	}
-
-	// ACCOUNT CALLS
 
 	/**
 	 *  @method listMyAccounts
@@ -409,7 +395,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'list_id_balances', [accountId]]);
 	}
 
-	// TODO check result
 	/**
 	 *  @method registerAccount
 	 *
@@ -431,7 +416,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO problems with args check result
 	/**
 	 *  @method createAccountWithBrainKey
 	 *	@param {String} brainKey
@@ -452,7 +436,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO problems with args check result
 	/**
 	 *  @method createContract
 	 *	@param {String} registrarAccountName
@@ -495,7 +478,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO problems with args check result
 	/**
 	 *  @method callContract
 	 *	@param {String} registrarAccountName
@@ -531,7 +513,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO problems with args check result
 	/**
 	 *  @method contractFundFeePool
 	 *	@param {String} registrarAccountName
@@ -553,7 +534,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO  check result
 	/**
 	 *  @method getContractResult
 	 *	@param {String} contractId
@@ -567,7 +547,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO problems with args
 	/**
 	 *  @method transfer
 	 *	@param {String} fromAccountNameOrId
@@ -592,7 +571,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO problems with args
 	/**
 	 *  @method transfer2
 	 *	@param {String} fromAccountNameOrId
@@ -613,7 +591,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'transfer2', [fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName]]);
 	}
 
-	// TODO problems with args
 	/**
 	 *  @method whitelistAccount
 	 *	@param {String} authorizingAccount
@@ -622,7 +599,6 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	//["1.2.11", "1.2.10", "white_listed", false]
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isAccountId(accountToList)) return Promise.reject(new Error('Account id is invalid'));
@@ -646,7 +622,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_vesting_balances', [accountNameOrId]]);
 	}
 
-	//TODO problems with args
 	/**
 	 *  @method withdrawVesting
 	 *	@param {String} witnessAccountNameOrId
@@ -666,7 +641,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getAccount
 	 *	@param {String} accountNameOrId
@@ -680,7 +654,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account', [accountNameOrId]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getAccountId
 	 *	@param {String} accountName
@@ -693,7 +666,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_id', [accountName]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getAccountHistory
 	 *	@param {String} accountIdOrName
@@ -711,7 +683,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_history', [accountIdOrName, limit]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getRelativeAccountHistory
 	 *  Get operations relevant to the specified account referenced
@@ -742,7 +713,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_relative_account_history', [accountId, stop, limit, start]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getContractObject
 	 *	@param {String} contractId
@@ -754,7 +724,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_contract_object', [contractId]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getContract
 	 *	@param {String} contractId
@@ -766,7 +735,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, ' ', [contractId]]);
 	}
 
-	// TODO check positive result and DOC
 	/**
 	 *  @method whitelistContractPool
 	 *	@param {String} registrarAccountId
@@ -804,7 +772,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check positive result
 	/**
 	 *  @method callContractNoChangingState
 	 *	@param {String} contractId
@@ -822,7 +789,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check positive result and return
 	/**
 	 *  @method getContractPoolBalance
 	 *	@param {String} contractId
@@ -834,7 +800,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_contract_pool_balance', [contractId]]);
 	}
 
-	// TODO check positive result and return
 	/**
 	 *  @method getContractPoolWhitelist
 	 *	@param {String} contractId
@@ -846,7 +811,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_contract_pool_whitelist', [contractId]]);
 	}
 
-	// TODO check positive result (null or object)?
 	/**
 	 *  @method getEthAddress
 	 *	@param {String} accountId
@@ -858,7 +822,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_eth_address', [accountId]]);
 	}
 
-	// TODO check positive result (array of object)?
 	/**
 	 *  @method getAccountDeposits
 	 *	@param {String} accountId
@@ -870,7 +833,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_deposits', [accountId]]);
 	}
 
-	//TODO check positive result and args
 	/**
 	 *  @method registerErc20Token
 	 *	@param {String} accountId
@@ -890,7 +852,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check positive result (array of object)?
 	/**
 	 *  @method getErc20Token
 	 *	@param {String} ethereumTokenAddress
@@ -902,7 +863,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_erc20_token', [ethereumTokenAddress]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getErc20AccountDeposits
 	 *	@param {String} accountId
@@ -914,7 +874,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_erc20_account_deposits', [accountId]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getErc20AccountWithdrawals
 	 *	@param {String} accountId
@@ -926,7 +885,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId]]);
 	}
 
-	//TODO check positive result (array of object)?
 	/**
 	 *  @method withdrawErc20Token
 	 *	@param {String} accountId
@@ -944,7 +902,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check positive result
 	/**
 	 *  @method generateAccountAddress
 	 *	@param {String} accountId
@@ -959,7 +916,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'generate_account_address', [accountId, label, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO check positive result?
 	/**
 	 *  @method getAccountAddresses
 	 *	@param {String} accountId
@@ -977,7 +933,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_addresses', [accountId, startFrom, limit]]);
 	}
 
-	// TODO check positive result
 	/**
 	 *  @method getAccountByAddress
 	 *	@param {String} address
@@ -989,7 +944,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_by_address', [address]]);
 	}
 
-	// TODO check positive result (array of object)?
 	/**
 	 *  @method getAccountWithdrawals
 	 *	@param {String} accountId
@@ -1001,7 +955,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId]]);
 	}
 
-	//TODO pr-ms with args
 	/**
 	 *  @method approveProposal
 	 *	@param {String} feePayingAccountId
@@ -1023,7 +976,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check positive result (array of object)?
 	/**
 	 *  @method generateEthAddress
 	 *	@param {String} accountId
@@ -1037,7 +989,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'generate_eth_address', [accountId, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO check positive result (array of object)?
 	/**
 	 *  @method withdrawEth
 	 *	@param {String} accountId
@@ -1054,7 +1005,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'withdraw_eth', [accountId, ethAddress, value, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO check positive result
 	/**
 	 *  @method floodNetwork
 	 *	@param {String} prefix
@@ -1068,11 +1018,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'flood_network', [prefix, numberOfTransactions]]);
 	}
 
-	// TRADING CALLS
-
-	// ASSET CALLS
-
-	// TODO check positive result
 	/**
 	 *  @method listAssets
 	 *  @param  {String} lowerBoundSymbol
@@ -1089,7 +1034,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'list_assets', [lowerBoundSymbol, limit]]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method createAsset
 	 *	@param {String} accountIdOrName
@@ -1112,7 +1056,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method updateAsset
 	 *	@param {String} assetIdOrName
@@ -1133,7 +1076,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method updateBitasset
 	 *	@param {String} assetIdOrName
@@ -1148,7 +1090,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'update_bitasset', [assetIdOrName, newBitasset, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method updateAssetFeedProducers
 	 *	@param {String} assetIdOrName
@@ -1165,7 +1106,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method publishAssetFeed
 	 *	@param {String} accountId
@@ -1186,7 +1126,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO need help args check positive result
 	/**
 	 *  @method issueAsset
 	 *	@param {String} accountIdOrName
@@ -1206,7 +1145,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO need help args
 	/**
 	 *  @method getAsset
 	 *	@param {String} assetIdOrName
@@ -1218,7 +1156,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_asset', [assetIdOrName]]);
 	}
 
-	// TODO need help args
 	/**
 	 *  @method getBitassetData
 	 *	@param {String} bitAssetId
@@ -1230,7 +1167,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_bitasset_data', [bitAssetId]]);
 	}
 
-	// TODO need help args
 	/**
 	 *  @method fundAssetFeePool
 	 *	@param {String} fromAccountIdOrName
@@ -1251,7 +1187,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO need help args
 	/**
 	 *  @method reserveAsset
 	 *	@param {String} accountId
@@ -1270,9 +1205,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'reserve_asset', [accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork]]);
 	}
 
-	// GOVERNANCE
-
-	// TODO check args and result
 	/**
 	 *  @method createCommitteeMember
 	 *	@param {String} accountIdOrName
@@ -1290,7 +1222,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'create_committee_member', [accountIdOrName, url, shouldDoBroadcastToNetwork]]);
 	}
 
-	// TODO check result Array of what
 	/**
 	 *  @method setDesiredCommitteeMemberCount
 	 *	@param {String} accountIdOrName
@@ -1312,7 +1243,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check result
 	/**
 	 *  @method getCommitteeMember
 	 *	@param {String} accountIdOrName
@@ -1326,7 +1256,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_committee_member', [accountIdOrName]]);
 	}
 
-	// TODO check result Array of what
 	/**
 	 *  @method listCommitteeMembers
 	 *	@param {String} lowerBoundName
@@ -1342,7 +1271,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'list_committee_members', [lowerBoundName, limit]]);
 	}
 
-	// TODO check result
 	/**
 	 *  @method voteForCommitteeMember
 	 *	@param {String} votingAccountIdOrName
@@ -1366,7 +1294,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check result
 	/**
 	 *  @method setVotingProxy
 	 *	@param {String} accountIdOrNameToUpdate
@@ -1388,7 +1315,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check result and args
 	/**
 	 *  @method proposeParameterChange
 	 *	@param {String} accountId
@@ -1408,7 +1334,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check result and args
 	/**
 	 *  @method proposeFeeChange
 	 *	@param {String} accountId
@@ -1428,7 +1353,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO check result and args
 	/**
 	 *  @method changeSidechainConfig
 	 *	@param {String} registrarAccountId
@@ -1447,11 +1371,6 @@ class WalletAPI {
 		]);
 	}
 
-	// PRIVACY MODE (there are not working methods)
-
-	// Blockchain Inspection
-
-	//TODO check result
 	/**
 	 *  @method getBlock
 	 *  @param  {Number} blockNum
@@ -1489,7 +1408,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_account_count', []]);
 	}
 
-	// TODO check result
 	/**
 	 *  @method getGlobalProperties
 	 *
@@ -1523,8 +1441,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_object', [objectId]]);
 	}
 
-	// Transaction Builder
-
 	/**
 	 *  @method beginBuilderTransaction
 	 *
@@ -1534,7 +1450,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'begin_builder_transaction', []]);
 	}
 
-	// TODO add validators
 	/**
 	 *  @method addOperationToBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1545,7 +1460,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'add_operation_to_builder_transaction', [transactionTypeHandle, operation]]);
 	}
 
-	// TODO add validators
 	/**
 	 *  @method replaceOperationInBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1559,7 +1473,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO what is feeAsset shoould be?
 	/**
 	 *  @method setFeesOnBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1570,7 +1483,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'set_fees_on_builder_transaction', [transactionTypeHandle, feeAsset]]);
 	}
 
-	// TODO add validators
 	/**
 	 *  @method previewBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1580,7 +1492,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'preview_builder_transaction', [transactionTypeHandle]]);
 	}
 
-	// TODO add validators
 	/**
 	 *  @method signBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1593,7 +1504,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'sign_builder_transaction', [transactionTypeHandle, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO check args and get positive result
 	/**
 	 *  @method proposeBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1611,7 +1521,6 @@ class WalletAPI {
 		]);
 	}
 
-	//TODO check args and get positive result
 	/**
 	 *  @method proposeBuilderTransaction2
 	 *	@param {String|Number} transactionTypeHandle
@@ -1639,7 +1548,6 @@ class WalletAPI {
 		]);
 	}
 
-	// TODO add validators
 	/**
 	 *  @method removeBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
@@ -1649,7 +1557,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'remove_builder_transaction', [transactionTypeHandle]]);
 	}
 
-	// TODO signedTX?
 	/**
 	 *  @method serializeTransaction
 	 *	@param {Object} signedTx
@@ -1674,7 +1581,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'sign_transaction', [unsignedTx, shouldDoBroadcastToNetwork]]);
 	}
 
-	//TODO args and result
 	/**
 	 *  @method getPrototypeOperation
 	 *	@param {String} operationType
