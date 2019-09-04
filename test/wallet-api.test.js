@@ -1,8 +1,5 @@
 import { expect } from 'chai';
 import WS from '../src/echo/ws';
-import WSAPI from '../src/echo/ws-api';
-import Cache from '../src/echo/cache';
-import API from '../src/echo/api';
 
 import echo, { constants } from '../src';
 import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
@@ -10,24 +7,27 @@ import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
 import { url, accountId, accountName, contractId, ED_PRIVATE, WIF, transaction, transaction2 } from './_test-data';
 import { deepStrictEqual, ok } from 'assert';
 import { shouldReject } from './_test-utils';
-import { API_CONFIG } from '../src/constants';
+import { API_CONFIG, DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
+import { EXPIRATION_SECONDS } from '../src/constants/api-config';
 
-describe.only('WALLET API', () => {
+describe('WALLET API', () => {
+	const ws = new WS();
+
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
 	const walletFilename = '';
 	const amount = 1;
 	const transactionTypeHandle = 1;
 	const operation = ['get_object'];
-	const ws = new WS();
-	beforeEach(async () => {
+
+	before(async () => {
 		await echo.connect(null, { wallet: 'ws://0.0.0.0:8888' });
-		// await echo.walletApi.setPassword('qwe');
-		// await echo.walletApi.unlock('qwe');
+		await echo.walletApi.setPassword('qwe');
+		await echo.walletApi.unlock('qwe');
 	});
-	afterEach(async () => {
-		// await echo.disconnect();
-		await ws.close();
+	after(async () => {
+		await echo.disconnect();
+		// await ws.close();
 	});
 	describe('#about()', () => {
 		it('should get wallet compile time info and client and dependencies versions', async () => {
@@ -144,45 +144,50 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#lock()', () => {
-	// 	it('should lock the wallet', async () => {
-	// 		try {
-	// 			await echo.walletApi.lock();
-	// 			const result = await echo.walletApi.isLocked();
-	// 			await echo.walletApi.unlock('qwe');
-	// 			ok(result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#lock()', () => {
+		it('should lock the wallet', async () => {
+			try {
+				const shouldBeUnlocked = await echo.walletApi.isLocked();
+				ok(!shouldBeUnlocked);
+				await echo.walletApi.lock();
+				const shouldBeLocked = await echo.walletApi.isLocked();
+				ok(shouldBeLocked);
+				await echo.walletApi.unlock('qwe');
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe.only('#unlock()', () => {
-	// 	it('should unlock the wallet', async () => {
-	// 		try {
-	// 			const cg = await echo.walletApi.unlock(123);
-	// 			console.log(cg);
-	// 			const result = await echo.walletApi.isLocked();
-	// 			console.log(result);
-	// 			ok(!result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#unlock()', () => {
+		it('should unlock the wallet', async () => {
+			try {
+				await echo.walletApi.lock();
+				const shouldBeLocked = await echo.walletApi.isLocked();
+				ok(shouldBeLocked);
+				await echo.walletApi.unlock('qwe');
+				const shouldBeUnlocked = await echo.walletApi.isLocked();
+				ok(!shouldBeUnlocked);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#setPassword()', () => {
-	// 	it('should set new password', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.setPassword('qwe');
-	// 			// const result = await echo.walletApi.isLocked();
-	// 			console.log(result);
-	// 			// ok(!result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#setPassword()', () => {
+		it('should set new password', async () => {
+			try {
+				await echo.walletApi.setPassword('qweqwe');
+				const shouldBeLocked = await echo.walletApi.isLocked();
+				ok(shouldBeLocked);
+				await echo.walletApi.unlock('qweqwe');
+				const shouldBeUnlocked = await echo.walletApi.isLocked();
+				ok(!shouldBeUnlocked);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#createEddsaKeypair()', () => {
 		it('should create new EdDSA keypair encoded in base58', async () => {
@@ -1618,17 +1623,19 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#proposeFeeChange()', () => {
+	// describe.only('#proposeFeeChange()', () => {
 	// 	it('Should propose a fee change', async () => {
 	// 		try {
-	// 			const date = new Date(2019,9,5);
-	// 			const expirationTime = date.toString();
-	// 			const javaScriptRelease = Date.parse('04 Dec 2019 00:12:00 GMT');
+	//
+	// 			const headBlockTimeSeconds = Math.ceil(new Date('2019-09-04T07:05:25').getTime() / 1000);
+	// 			const expirationTime = Math.ceil((Date.now()  / 1000));
+	// 			const expiration = headBlockTimeSeconds + EXPIRATION_SECONDS;
+	// 			console.log(expiration);
 	// 			const changedValues = {};
-	// 			console.log(javaScriptRelease);
+	// 			console.log(headBlockTimeSeconds + '       ' + expirationTime);
 	// 			const result = await echo.walletApi.proposeFeeChange(
 	// 				accountId,
-	// 				javaScriptRelease,
+	// 				expirationTime,
 	// 				changedValues,
 	// 				shouldDoBroadcastToNetwork,
 	// 			);
@@ -1962,32 +1969,55 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#signTransaction()', () => {
-	// 	it('should get sing transaction', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.signTransaction(transaction2, shouldDoBroadcastToNetwork);
-	// 			console.log('------------result---------', result);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
-
-	describe('#getPrototypeOperation()', () => {
-		it('should returns an uninitialized object representing a given blockchain operation', async () => {
+	describe('#signTransaction()', () => {
+		it('should get sing transaction', async () => {
 			try {
-				const operationType = 'global_parameters_update_operation';
-				const result = await echo.walletApi.getPrototypeOperation(operationType);
+				const result = await echo.walletApi.signTransaction(/*transaction2*/{}, shouldDoBroadcastToNetwork);
 				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
 					.an('object');
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
+	describe('#getPrototypeOperation()', () => {
+		it('should returns an uninitialized object representing a given blockchain operation', async () => {
+			try {
+				const operationType = 'transfer_operation';
+				const result = await echo.walletApi.getPrototypeOperation(operationType);
+				expect(result)
+					.to
+					.be
+					.an('array').that.is.not.empty;
+				expect(result[1])
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].fee)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].from)
+					.to
+					.be
+					.an('string');
+				expect(result[1].to)
+					.to
+					.be
+					.an('string');
+				expect(result[1].amount)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].extensions)
+					.to
+					.be
+					.an('array');
 			} catch (e) {
 				console.log(e);
 				throw e;
