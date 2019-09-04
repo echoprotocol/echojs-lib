@@ -28,13 +28,11 @@ import {
 	isDynamicGlobalObjectId,
 } from '../utils/validators';
 
-import { operationById } from './operations';
-
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import transaction, { signedTransaction } from '../serializer/transaction-type';
+import { transaction, signedTransaction, operation } from '../serializers';
 import { PublicKey } from '../crypto';
 
 /** @typedef {
@@ -1848,9 +1846,9 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async getTransactionHex(tr) {
-		transaction.validate(tr);
+		const raw = transaction.toRaw(tr);
 		// transaction is signed
-		return this.wsApi.database.getTransactionHex(tr);
+		return this.wsApi.database.getTransactionHex(raw);
 	}
 
 	/**
@@ -1862,13 +1860,13 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async getRequiredSignatures(tr, availableKeys) {
-		transaction.validate(tr);
+		const raw = transaction.toRaw(tr);
 		if (!isArray(availableKeys)) throw new Error('Available keys ids should be an array');
 		if (!availableKeys.every((key) => isPublicKey(key))) {
 			throw new Error('Available keys should contain valid public keys');
 		}
 
-		return this.wsApi.database.getRequiredSignatures(transaction, availableKeys);
+		return this.wsApi.database.getRequiredSignatures(raw, availableKeys);
 	}
 
 	/**
@@ -1879,8 +1877,8 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async getPotentialSignatures(tr) {
-		transaction.validate(tr);
-		return this.wsApi.database.getPotentialSignatures(tr);
+		const raw = transaction.toRaw(tr);
+		return this.wsApi.database.getPotentialSignatures(raw);
 	}
 
 	/**
@@ -1891,8 +1889,8 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async verifyAuthority(tr) {
-		transaction.validate(tr);
-		return this.wsApi.database.verifyAuthority(tr);
+		const raw = transaction.toRaw(tr);
+		return this.wsApi.database.verifyAuthority(raw);
 	}
 
 	/**
@@ -1921,9 +1919,9 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async validateTransaction(tr) {
-		signedTransaction.validate(tr);
+		const raw = signedTransaction.toRaw(tr);
 		// signed transaction
-		return this.wsApi.database.validateTransaction(transaction);
+		return this.wsApi.database.validateTransaction(raw);
 	}
 
 	/**
@@ -1941,8 +1939,7 @@ class API {
 	 */
 	async getRequiredFees(operations, assetId = ECHO_ASSET_ID) {
 		if (!isArray(operations)) return Promise.reject(new Error('Operations should be an array'));
-		const operationsObjects = operations.map((op) => [op[0], operationById[op[0]].toObject(op, false)]);
-		return this.wsApi.database.getRequiredFees(operationsObjects, assetId);
+		return this.wsApi.database.getRequiredFees(operations.map((op) => operation.toRaw(op, true)), assetId);
 	}
 
 	/**

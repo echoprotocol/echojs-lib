@@ -55,6 +55,8 @@ To more examples and options look at section below
 
 [Constants](docs/Constants.md) - List of constants you can use
 
+[Serializers](docs/Serializers.md) - List of all serializers
+
 ## Run Tests
 
 Tests use a locally running Echo node. Therefore, before starting the tests, 
