@@ -21,8 +21,9 @@ services:
       --chain-id="e0b8b3f26b0107d5f1f5060266c9112554234036bb3b239afba3d258c6409196"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
-      --rpc-endpoint=0.0.0.0:8888
+      -r 0.0.0.0:8888
     ports:
       - 8888:8888
+    tty: true
     links:
       - echo
