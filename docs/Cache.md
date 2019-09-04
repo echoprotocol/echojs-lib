@@ -49,53 +49,45 @@ console.log(CACHE_MAPS)
 */
 ```
 
-#### Set cache options
-
-"isUsed" - a flag that determines whether or not to use the cache.
-
-If it "false" then the cache will not be used.
-
-If not specified, then the default is true.
-
-Values by default: 
+#### Cache options
 
 | Param | Type |
 | --- | --- |
-| isUsed | <code>true</code> |
-| blocksLimit | <code>20</code> |
-| expirationTime | <code>null</code> |
-| minCleaningTime | <code>500</code> |
+| isUsed | `true` |
+| blocksLimit | `20` |
+| expirationTime | `null` |
+| minCleaningTime | `500` |
+
+`isUsed` - a flag that determines whether or not to use the cache.
 
 ```javascript
 import echo from 'echolib-js';
-await echo.connect('ws://127.0.0.1:9000', { cache: { isUsed: false } });
+const cacheOptions = { isUsed: false };
+await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
 
-"blocksLimit" - the maximum number of blocks allows you to store in the cache must be integer.
+`blocksLimit` - the maximum number of blocks stored in cache. Must be a non-negative integer.
 
 ```javascript
 import echo from 'echolib-js';
-await echo.connect('ws://127.0.0.1:9000', { cache: { blocksLimit: 10 } });
+const cacheOptions = { blocksLimit: 10 };
+await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
 
-"expirationTime" - after this time, the block will be cleared from the cache.
-
-If "expirationTime" = null, then it will never be cleared.
+`expirationTime` - the time after which the object will be cleared from the cache. If equals to `null`, then it will never be cleared. Blocks will never be cleared this way _(see `isUsed` option)_.
 
 ```javascript
 import echo from 'echolib-js';
-await echo.connect('ws://127.0.0.1:9000', {cache: { expirationTime: 1000 } });
+const cacheOptions = { expirationTime: 1e3 };
+await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
 
-"minCleaningTime" - the time after which the block will be cleared from the cache
-after the expiration of "minCleaningTime" of the previous block.
+`minCleaningTime` - the minimal time after which objects will be cleared using `expirationTime`.
 
 ```javascript
 import echo from 'echolib-js';
-await echo.connect('ws://127.0.0.1:9000', {cache: { minCleaningTime: 1000 } });
+const cacheOptions = { minCleaningTime: 200 };
+await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
 
 > Cache data stored in Immutable.js objects
-
-
-
