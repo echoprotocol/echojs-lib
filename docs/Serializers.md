@@ -388,6 +388,7 @@ console.log(s.serialize(input).toString('hex'));
 #### Echorand Config
 
 Struct with fields:
+
 |field|type|
 |-|-|
 |_time_net_1mb|`uint32`|
