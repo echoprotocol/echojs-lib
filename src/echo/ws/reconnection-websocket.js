@@ -208,7 +208,7 @@ class ReconnectionWebSocket {
 
 		this._cbId += 1;
 
-		if (method === 'set_subscribe_callback' || method === 'subscribe_to_market' ||
+		if (method === 'set_subscribe_callback' ||
 			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
 			method === 'set_block_applied_callback' || method === 'set_consensus_message_callback' || method === 'register_account'
 		) {
@@ -221,7 +221,7 @@ class ReconnectionWebSocket {
 			params[2][0] = this._cbId;
 		}
 
-		if (method === 'unsubscribe_from_market' || method === 'unsubscribe_from_accounts') {
+		if (method === 'unsubscribe_from_accounts') {
 			if (typeof params[2][0] !== 'function') {
 				throw new Error('First parameter of unsub must be the original callback');
 			}

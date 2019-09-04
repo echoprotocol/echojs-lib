@@ -18,7 +18,7 @@ jobs:
         - npm run lint
         - audit-ci --moderate
     - stage: test
-      if: branch = master
+      if: type = pull_request
       name: "Run unit testing"
       services:
         - docker
