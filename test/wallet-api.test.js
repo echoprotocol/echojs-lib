@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import WS from '../src/echo/ws';
 
 import echo, { constants } from '../src';
 import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
@@ -11,7 +10,6 @@ import { API_CONFIG, DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
 import { EXPIRATION_SECONDS } from '../src/constants/api-config';
 
 describe('WALLET API', () => {
-	const ws = new WS();
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
@@ -27,7 +25,6 @@ describe('WALLET API', () => {
 	});
 	after(async () => {
 		await echo.disconnect();
-		// await ws.close();
 	});
 	describe('#about()', () => {
 		it('should get wallet compile time info and client and dependencies versions', async () => {
@@ -490,11 +487,11 @@ describe('WALLET API', () => {
 				expect(result[0])
 					.to
 					.be
-					.an('array').that.is.not.empty;;
+					.an('array').that.is.not.empty;
 				expect(result[0][0])
 					.to
 					.be
-					.an('string').that.is.not.empty;;
+					.an('string').that.is.not.empty;
 				expect(result[0][1])
 					.to
 					.be
