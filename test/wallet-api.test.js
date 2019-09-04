@@ -15,7 +15,7 @@ describe('WALLET API', () => {
 	const brainKey = 'some key12';
 	const walletFilename = '';
 	const amount = 1;
-	const transactionTypeHandle = '1';
+	const transactionTypeHandle = 1;
 	const operation = ['get_object'];
 
 	before(async () => {
