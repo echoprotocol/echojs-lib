@@ -20,9 +20,10 @@ services:
     volumes:
       - ./genesis.json:/echo/genesis.json
       - ./access.json:/echo/access.json
+
   echo-wallet:
     image: echoprotocol/echo-wallet:v0.9.0-rc.1
-    command:  -s ws://0.0.0.0:6311/ws
+    command:  echo:6311
       --chain-id="185b13385eeba45f7805738c476c0e8ca9b90b9d0dc92ce1c737a6ada53d006a"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
