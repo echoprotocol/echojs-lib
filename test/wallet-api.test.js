@@ -15,7 +15,7 @@ describe('WALLET API', () => {
 	const brainKey = 'some key12';
 	const walletFilename = '';
 	// const amount = 1;
-	// const transactionTypeHandle = 1;
+	const transactionTypeHandle = 1;
 	const operation = ['get_object'];
 
 	before(async () => {
@@ -1782,40 +1782,40 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#addOperationToBuilderTransaction()', () => {
-		it('should add operations to builder transaction', async () => {
-			try {
-				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#addOperationToBuilderTransaction()', () => {
+	// 	it('should add operations to builder transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('null');
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
-	describe('#replaceOperationInBuilderTransaction()', () => {
-		it('should replace operations in builder transaction', async () => {
-			try {
-				const unsignedOperation = 0;
-				const result = await echo.walletApi.replaceOperationInBuilderTransaction(
-					transactionTypeHandle,
-					unsignedOperation,
-					operation,
-				);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#replaceOperationInBuilderTransaction()', () => {
+	// 	it('should replace operations in builder transaction', async () => {
+	// 		try {
+	// 			const unsignedOperation = 0;
+	// 			const result = await echo.walletApi.replaceOperationInBuilderTransaction(
+	// 				transactionTypeHandle,
+	// 				unsignedOperation,
+	// 				operation,
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('null');
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	// describe('#setFeesOnBuilderTransaction()', () => {
 	// 	it('should set fees on builder transaction', async () => {
@@ -1834,38 +1834,38 @@ describe('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	describe('#previewBuilderTransaction()', () => {
-		it('should get preview of builder transaction', async () => {
-			try {
-				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#previewBuilderTransaction()', () => {
+	// 	it('should get preview of builder transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object').that.is.not.empty;
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
-	describe('#signBuilderTransaction()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const result = await echo.walletApi.signBuilderTransaction(
-					transactionTypeHandle,
-					shouldDoBroadcastToNetwork
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#signBuilderTransaction()', () => {
+	// 	it('should get sing transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.signBuilderTransaction(
+	// 				transactionTypeHandle,
+	// 				shouldDoBroadcastToNetwork
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object').that.is.not.empty;
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	// describe('#proposeBuilderTransaction()', () => {
 	// 	it('should get sing transaction', async () => {
