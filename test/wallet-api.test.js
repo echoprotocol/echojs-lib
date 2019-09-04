@@ -15,7 +15,7 @@ describe('WALLET API', () => {
 	const brainKey = 'some key12';
 	const walletFilename = '';
 	const amount = 1;
-	const transactionTypeHandle = 1;
+	const transactionTypeHandle = '1';
 	const operation = ['get_object'];
 
 	before(async () => {
@@ -466,7 +466,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('array');
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -974,7 +973,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -989,7 +988,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1030,7 +1029,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1049,7 +1048,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1068,7 +1067,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1132,7 +1131,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1148,7 +1147,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('string');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1167,7 +1166,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1243,7 +1242,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('null');
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1266,7 +1264,7 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1689,7 +1687,6 @@ describe('WALLET API', () => {
 			try {
 				const blockNumber = 1;
 				const result = await echo.walletApi.getBlockVirtualOps(blockNumber);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1740,7 +1737,6 @@ describe('WALLET API', () => {
 		it('should returns the block chain\'s slowly-changing settings', async () => {
 			try {
 				const result = await echo.walletApi.getDynamicGlobalProperties();
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1756,7 +1752,6 @@ describe('WALLET API', () => {
 		it('should returns the blockchain object', async () => {
 			try {
 				const result = await echo.walletApi.getObject(accountId);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1776,7 +1771,6 @@ describe('WALLET API', () => {
 		it('should returns number of built transaction', async () => {
 			try {
 				const result = await echo.walletApi.beginBuilderTransaction();
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1792,7 +1786,6 @@ describe('WALLET API', () => {
 		it('should add operations to builder transaction', async () => {
 			try {
 				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1813,7 +1806,6 @@ describe('WALLET API', () => {
 					unsignedOperation,
 					operation,
 				);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1846,7 +1838,6 @@ describe('WALLET API', () => {
 		it('should get preview of builder transaction', async () => {
 			try {
 				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1865,7 +1856,6 @@ describe('WALLET API', () => {
 					transactionTypeHandle,
 					shouldDoBroadcastToNetwork
 				);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1938,7 +1928,6 @@ describe('WALLET API', () => {
 		it('should get sing transaction', async () => {
 			try {
 				const result = await echo.walletApi.removeBuilderTransaction(transactionTypeHandle);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1954,7 +1943,6 @@ describe('WALLET API', () => {
 		it('should get serialize transaction', async () => {
 			try {
 				const result = await echo.walletApi.serializeTransaction(transaction);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1970,7 +1958,6 @@ describe('WALLET API', () => {
 		it('should get sing transaction', async () => {
 			try {
 				const result = await echo.walletApi.signTransaction(/*transaction2*/{}, shouldDoBroadcastToNetwork);
-				console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
