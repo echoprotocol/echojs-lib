@@ -57,8 +57,8 @@ describe('checkERC20Token', () => {
 			const opRes = await echo.api.getObject(opResId);
 			const contractId = opRes.contracts_id[0];
 			nonexistentContractId = [
-				constants.CHAIN_TYPES.RESERVED_SPACES.PROTOCOL_IDS,
-				constants.OBJECT_TYPES.CONTRACT,
+				constants.CHAIN_TYPES.RESERVED_SPACE_ID.PROTOCOL,
+				constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 				Number.parseInt(contractId.split('.')[2]) + 1,
 			].join('.');
 			console.log(nonexistentContractId);

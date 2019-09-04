@@ -9,12 +9,11 @@ console.log(constants.CHAIN_TYPES) // information about ids
 
 /*
 {
-    RESERVED_SPACES: {
-        RELATIVE_PROTOCOL_IDS: 0,
-        PROTOCOL_IDS: 1,
-        IMPLEMENTATION_IDS: 2,
+    RESERVED_SPACE_ID: {RELATIVE_PROTOCOL: 0,
+        PROTOCOL: 1,
+        IMPLEMENTATION: 2,
     },
-    IMPLEMENTATION_OBJECT_TYPE: {
+    IMPLEMENTATION_OBJECT_TYPE_ID: {
         GLOBAL_PROPERTY: 0,
         DYNAMIC_GLOBAL_PROPERTY: 1,
         ASSET_DYNAMIC_DATA: 2,
@@ -34,7 +33,7 @@ console.log(constants.CHAIN_TYPES) // information about ids
         CONTRACT_POOL: 16,
         MALICIOUS_COMMITTEEMEN: 17,
     },
-    VOTE_TYPE: {
+    VOTE_TYPE_ID: {
         COMMITTEE: 0,
     },
 }
