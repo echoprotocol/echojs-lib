@@ -73,14 +73,6 @@ try {
 <dd></dd>
 <dt><a href="#lookupAssetSymbols">lookupAssetSymbols(symbolsOrIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getOrderBook">getOrderBook(baseAssetName, quoteAssetName, depth)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getLimitOrders">getLimitOrders(baseAssetId, quoteAssetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getCallOrders">getCallOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
-<dt><a href="#getSettleOrders">getSettleOrders(assetId, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getMarginPositions">getMarginPositions(accountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getTicker">getTicker(baseAssetName, quoteAssetName)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
@@ -452,48 +444,6 @@ try {
 | --- | --- |
 | symbolsOrIds | <code>Array.&lt;String&gt;</code> |
 | force | <code>Boolean</code> |
-
-<a name="getOrderBook"></a>
-
-## getOrderBook(baseAssetName, quoteAssetName, depth) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| baseAssetName | <code>String</code> |
-| quoteAssetName | <code>String</code> |
-| depth | <code>Number</code> |
-
-<a name="getLimitOrders"></a>
-
-## getLimitOrders(baseAssetId, quoteAssetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| baseAssetId | <code>String</code> |
-| quoteAssetId | <code>String</code> |
-| limit | <code>Number</code> |
-
-<a name="getCallOrders"></a>
-
-## getCallOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| assetId | <code>String</code> |
-| limit | <code>Number</code> |
-
-<a name="getSettleOrders"></a>
-
-## getSettleOrders(assetId, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
-**Kind**: global function
-
-| Param | Type |
-| --- | --- |
-| assetId | <code>String</code> |
-| limit | <code>Number</code> |
 
 <a name="getMarginPositions"></a>
 
@@ -920,9 +870,7 @@ try {
     id:String,
     chain_id:String,
     immutable_parameters:{
-        min_committee_member_count:Number,
-        num_special_accounts:Number,
-        num_special_assets:Number
+        min_committee_member_count:Number
     }
 }
 ```
@@ -952,13 +900,8 @@ try {
        maximum_authority_membership:Number,
        reserve_percent_of_fee:Number,
        network_percent_of_fee:Number,
-       lifetime_referrer_percent_of_fee:Number,
        cashback_vesting_period_seconds:Number,
-       cashback_vesting_threshold:Number,
-       count_non_member_votes:Boolean,
-       allow_non_member_whitelists:Boolean,
        max_predicate_opcode:Number,
-       fee_liquidation_threshold:Number,
        accounts_per_fee_scale:Number,
        account_fee_scale_bitshifts:Number,
        max_authority_depth:Number,
@@ -1044,15 +987,12 @@ try {
     ECHO_DEFAULT_MAX_PROPOSAL_LIFETIME_SEC:Number,
     ECHO_DEFAULT_COMMITTEE_PROPOSAL_REVIEW_PERIOD_SEC:Number,
     ECHO_DEFAULT_NETWORK_PERCENT_OF_FEE:Number,
-    ECHO_DEFAULT_LIFETIME_REFERRER_PERCENT_OF_FEE:Number,
     ECHO_DEFAULT_MAX_BULK_DISCOUNT_PERCENT:Number,
     ECHO_DEFAULT_BULK_DISCOUNT_THRESHOLD_MIN:Number,
     ECHO_DEFAULT_BULK_DISCOUNT_THRESHOLD_MAX:String,
     ECHO_DEFAULT_CASHBACK_VESTING_PERIOD_SEC:Number,
-    ECHO_DEFAULT_CASHBACK_VESTING_THRESHOLD:Number,
     ECHO_DEFAULT_BURN_PERCENT_OF_FEE:Number,
     ECHO_DEFAULT_MAX_ASSERT_OPCODE:Number,
-    ECHO_DEFAULT_FEE_LIQUIDATION_THRESHOLD:Number,
     ECHO_DEFAULT_ACCOUNTS_PER_FEE_SCALE:Number,
     ECHO_DEFAULT_ACCOUNT_FEE_SCALE_BITSHIFTS:Number,
     ECHO_MAX_URL_LENGTH:Number,

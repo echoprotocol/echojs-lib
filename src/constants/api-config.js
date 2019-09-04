@@ -1,3 +1,5 @@
+import { OPERATION_HISTORY } from './object-types';
+
 export const LOOKUP_ACCOUNTS_DEFAULT_LIMIT = 100;
 export const LOOKUP_ACCOUNTS_MAX_LIMIT = 1000;
 
@@ -28,8 +30,8 @@ export const CONTRACT_HISTORY_MAX_LIMIT = 100;
 export const ORDER_BOOK_DEFAULT_DEPTH = 50;
 export const ORDER_BOOK_MAX_DEPTH = 50;
 
-export const START_OPERATION_HISTORY_ID = '1.10.0';
-export const STOP_OPERATION_HISTORY_ID = '1.10.0';
+export const START_OPERATION_HISTORY_ID = `1.${OPERATION_HISTORY}.0`;
+export const STOP_OPERATION_HISTORY_ID = `1.${OPERATION_HISTORY}.0`;
 
 export const LIST_ACCOUNTS_DEFAULT_LIMIT = 100;
 export const LIST_ACCOUNTS_MAX_LIMIT = 1000;

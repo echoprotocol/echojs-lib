@@ -176,18 +176,3 @@ echo.subscriber.setStatusSubscribe('disconnect', callbackOnDisconnect);
 echo.subscriber.removeStatusSubscribe(callbackOnConnect);
 echo.subscriber.removeStatusSubscribe(callbackOnDisconnect);
 ```
-
-
-#### Market Subscribe
-
-```javascript
-import echo from "echojs-lib";
-
-const callback = (result) => {};
-
-await echo.connect('ws://127.0.0.1:9000');
-
-await echo.subscriber.setMarketSubscribe('1.3.0', '1.3.1', callback);
-// to remove market subscriber
-echo.subscriber.removeMarketSubscribe('1.3.0', '1.3.1', callback);
-```
