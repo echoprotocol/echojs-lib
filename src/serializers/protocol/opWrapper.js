@@ -17,6 +17,7 @@ class OperationWrapperSerializer extends ISerializer {
 		this._operationSerializer = null;
 	}
 
+	/** @param {import("../operation").default} operationSerializer */
 	init(operationSerializer) {
 		if (this.operationSerializer) throw new Error('already inited');
 		if (!(operationSerializer instanceof ISerializer)) throw new Error('inited with no serializer');

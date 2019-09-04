@@ -6,6 +6,42 @@ All serializers has at least 4 methods:
 * `appendToByteBuffer(value,bytebuffer)` - appends result of `value` serialization to `bytebuffer`
 * `validate(value)` - just throws error, if `value` is invalid
 
+<hr/>
+
+* [Basic](#basic)
+  * [Integers](#integers)
+  * [Boolean](#boolean)
+  * [Bytes](#bytes)
+  * [Time point in seconds](#time-point-in-seconds)
+  * [String](#string)
+* [Collections](#collections)
+  * [Map](#map)
+  * [Optional](#optional)
+  * [Set](#set)
+  * [Static variant](#static-variant)
+  * [Struct](#struct)
+  * [Vector](#vector)
+* [Chain basic](#chain-basic)
+  * [IDs](#ids)
+    * [Any object ID](#any-object-id)
+	* [Object ID](#object-id)
+	* [Protocol Object ID](#protocol-object-id)
+  * [Asset](#asset)
+  * [Public Key](#public-key)
+* [Plugins](#plugins)
+  * [EchoRand](#echorand)
+    * [Config](#echorand-config)
+  * [SideChain](#sidechain)
+    * [Ethereum Method](#eth-method)
+    * [Ethereum Topic](#eth-topic)
+	* [Fines](#fines)
+	* [Config](#sidechain-config)
+	* [ERC20 Config](#erc20-config)
+* [Protocol Objects](#protocol)
+* [Operation](#operation)
+
+<hr/>
+
 ## Basic
 
 ### Integers
@@ -27,8 +63,8 @@ Example of serialization:
 import { serializers } from "echojs-lib";
 const { uint16 } = serializers.basic.integers;
 const input = '123';
-console.log(uint16.toRaw(input)); // prints number 123
-console.log(uint16.serialize(input).toString('hex')) // prints `7b00`
+console.log(uint16.toRaw(input)); // 123
+console.log(uint16.serialize(input)) // <Buffer 7b 00>
 ```
 
 ### Boolean
@@ -39,8 +75,8 @@ Example:
 ```ts
 import { serializers } from "echojs-lib";
 const { bool } = serializers.basic;
-console.log(bool.toRaw(true)); // prints boolean true
-console.log(bool.serialize(true).toString('hex')); // prints `01`
+console.log(bool.toRaw(true)); // true
+console.log(bool.serialize(true).toString('hex')); // <Buffer 01>
 ```
 
 ### Bytes
@@ -53,10 +89,8 @@ Example of serialization fixed-size bytes:
 ```ts
 import { serializers } from "echojs-lib";
 const { bytes } = serializers.basic;
-console.log(bytes(6).toRaw(Buffer.from('qweasd'))); // prints `717765617364`
-
-console.log(bytes(3).serialize(Buffer.from('qwe')).toString('hex'));
-// prints `717765`
+console.log(bytes(6).toRaw(Buffer.from('qweasd'))); // "717765617364"
+console.log(bytes(3).serialize(Buffer.from('qwe'))); // <Buffer 71 77 65>
 ```
 
 Example of serialization dynamic-size bytes:
@@ -64,9 +98,7 @@ Example of serialization dynamic-size bytes:
 import { serializers } from "echojs-lib";
 const { bytes } = serializers.basic;
 console.log(bytes().toRaw(Buffer.from('qweasd'))); // same as fixed-size
-
-console.log(bytes().serialize(Buffer.from('qwe')).toString('hex'));
-// prints `03717765`
+console.log(bytes().serialize(Buffer.from('qwe'))); // <Buffer 03 71 77 65>
 ```
 
 ### Time Point in Seconds
@@ -78,10 +110,10 @@ Output type is ISO-date format without locale (`Z`)
 ```ts
 import { serializers } from "echojs-lib";
 const { timePointSec } = serializers.basic;
-console.log(timePointSec.toRaw(1567157199)); // prints `2019-08-30T09:26:39`
-
-console.log(timePointSec.serialize(new Date(1567157199123)).toString('hex'));
-// prints `cfeb685d`
+const input = new Date(1567157199123);
+const seconds = Math.floor(input.getTime() / 1000);
+console.log(timePointSec.toRaw(seconds)); // "2019-08-30T09:26:39"
+console.log(timePointSec.serialize(input)); // <Buffer cf eb 68 5d>
 ```
 
 ### String
@@ -91,10 +123,8 @@ Input and output types are `string`
 ```ts
 import { serilizers } from "echojs-lib";
 const stringSerializer = serializers.basic.string;
-console.log(stringSerializer.toRaw('qwe')); // prints `qwe`
-
-console.log(stringSerializer.serialize('qwe').toString('hex'));
-// prints `03717765`
+console.log(stringSerializer.toRaw('qwe')); // "qwe"
+console.log(stringSerializer.serialize('qwe')); // <Buffer 03 71 77 65>
 ```
 
 <hr/>
@@ -119,8 +149,8 @@ const s = map(uint8, bool);
 const inputMap = new Map();
 inputMap.set(123, true);
 inputMap.set(234, false);
-console.log(s.toRaw(inputMap)); // prints [[123, true], [234, false]]
-console.log(s.serialize(inputMap).toString('hex')); // prints `027b01ea00`
+console.log(s.toRaw(inputMap)); // [[123, true], [234, false]]
+console.log(s.serialize(inputMap)); // <Buffer 02 7b 01 ea 00>
 
 const inputDict = { 123: true, 234: false };
 console.log(s.toRaw(inputDict));
@@ -141,8 +171,10 @@ import { serializers } from "echojs-lib";
 const { uint32 } = serializers.basic.integers;
 const { optional } = serializers.collections;
 const s = optional(uint32);
+
 console.log(s.toRaw(123)); // 123
 console.log(s.toRaw(undefined)); // undefined
+
 console.log(s.serialize(123)); // <Buffer 01 7b 00 00 00>
 console.log(s.serialize(undefined)); // <Buffer 00>
 ```
@@ -161,10 +193,13 @@ import { serializers } from "echojs-lib";
 const { uint32 } = serializers.basic.integers;
 const { set } = serializers.collections;
 const s = set(uint32);
+
 console.log(s.toRaw([123, 234])); // [123, 234]
 console.log(s.serialize([123, 234])); // <Buffer 02 7b 00 00 00 ea 00 00 00>
+
 console.log(s.toRaw(new Set([123, 234])));
 console.log(s.serialize(new Set([123, 234])));
+
 console.log(s.toRaw(undefined)); // []
 console.log(s.serialize(undefined)); // <Buffer 00>
 ```
@@ -181,7 +216,6 @@ const { uint16, uint32 } = serializers.basic.integers;
 const { staticVariant } = serializers.collections;
 const s = staticVariant({ 123: uint16, 234: uint32 });
 console.log(s.toRaw([123, 345])); // [123, 345]
-
 console.log(s.serialize([234, 345])); // <Buffer ea 01 59 01 00 00>
 // `ea 01` is variant (234)
 // `59 01 00 00` is value (345)
@@ -193,17 +227,14 @@ Input and output types are `{ [key: string]: value }`
 
 Serialize only values in provided order
 
-```js
+```ts
 import { serializers } from "echojs-lib";
 const { bool, bytes } = serializers.basic;
 const { struct } = serializers.collections;
 const s = struct({ cond: bool, hex: bytes(3) });
-
-console.log(s.toRaw({ cond: true, hex: Buffer.from('qwe') }));
-// { cond: true, hex: '717765' }
-
-console.log(s.serialize({ cond: false, hex: Buffer.from('qwe') }));
-// <Buffer 00 71 77 65>
+const input = { cond: true, hex: Buffer.from('qwe') };
+console.log(s.toRaw(input)); // { cond: true, hex: "717765" }
+console.log(s.serialize(input)); // <Buffer 00 71 77 65>
 // `00` - cond == false
 // `71 77 65` - hex == 'qwe'
 ```
@@ -245,8 +276,9 @@ Examples:
 ```ts
 import { serializers } from "echojs-lib";
 const { anyObjectId } = serializers.chain.ids;
-console.log(anyObjectId.toRaw('1.2.3')); // '1.2.3'
-console.log(anyObjectId.serialize('1.2.3')); // <Buffer 03 00 00 00 00 00 02 01>
+const input = '1.2.3';
+console.log(anyObjectId.toRaw(input)); // "1.2.3"
+console.log(anyObjectId.serialize(input)); // <Buffer 03 00 00 00 00 00 02 01>
 // `03 00 00 00 00 00` - instance id
 // `02` - object type id
 // `01` - reserved space id
@@ -277,7 +309,7 @@ const s = objectId(
 console.log(s.toRaw('1.9.123'));
 console.log(s.toRaw(123));
 console.log(s.toRaw(new BigNumber(123)));
-// '1.9.123'
+// "1.9.123"
 
 console.log(s.serialize('1.9.123'));
 console.log(s.serialize(123));
@@ -285,7 +317,7 @@ console.log(s.serialize(new BigNumber(123)));
 // <Buffer 7b>
 ```
 
-#### Protocol
+#### Protocol Object ID
 
 Protocol ids serializers are inited object id serializers.
 
@@ -309,7 +341,7 @@ const { accountId } = serializers.chain.ids.protocol;
 console.log(accountId.toRaw('1.2.123'));
 console.log(accountId.toRaw(123));
 console.log(accountId.toRaw(new BigNumber(123)));
-// '1.2.123'
+// "1.2.123"
 
 console.log(accountId.serialize('1.2.123'));
 console.log(accountId.serialize(123));
@@ -325,12 +357,9 @@ Example:
 ```ts
 import { serializers, BigNumber } from "echojs-lib";
 const { asset } = serializers.chain;
-
-console.log(asset.toRaw({ amount: 123, asset_id: '1.3.5' }));
-// { amount: '123', asset_id: '1.3.5' }
-
-console.log(asset.serialize({ amount: 123, asset_id: '1.3.5' }));
-// <Buffer 7b 00 00 00 00 00 00 00 05>
+const input = { amount: 123, asset_id: '1.3.5' };
+console.log(asset.toRaw(input)); // { amount: '123', asset_id: '1.3.5' }
+console.log(asset.serialize(input)); // <Buffer 7b 00 00 00 00 00 00 00 05>
 // `7b 00 00 00 00 00 00 00` - amount (123)
 // `05` - asset id (1.3.5)
 ```
@@ -345,9 +374,9 @@ import { serializers, PublicKey } from "echojs-lib";
 const { publicKey: s } = serializers.chain;
 const input = 'ECHO6sCu8oaqyoRGvzSHuiiytDpGVwnCGjB75RRcbQwZnb1Q';
 console.log(s.toRaw(input));
-// 'ECHO6sCu8oaqyoRGvzSHuiiytDpGVwnCGjB75RRcbQwZnb1Q'
+// "ECHO6sCu8oaqyoRGvzSHuiiytDpGVwnCGjB75RRcbQwZnb1Q"
 console.log(s.serialize(input).toString('hex'));
-// '5726eddee2d9bedf836be9b189c4b7c3bf3d8a742533f22e538a22d587b5d167'
+// "5726eddee2d9bedf836be9b189c4b7c3bf3d8a742533f22e538a22d587b5d167"
 ```
 
 <hr/>
@@ -356,7 +385,7 @@ console.log(s.serialize(input).toString('hex'));
 
 ### Echorand
 
-#### Config
+#### Echorand Config
 
 Struct with fields:
 |field|type|
@@ -385,7 +414,7 @@ Struct with fields:
 struct({ generate_eth_address: int64 })
 ```
 
-#### Config
+#### Sidechain Config
 |field|type|
 |-|-|
 |eth_contract_address|`bytes(20)`|
