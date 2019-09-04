@@ -103,7 +103,7 @@ console.log(bytes().serialize(Buffer.from('qwe'))); // <Buffer 03 71 77 65>
 
 ### Time Point in Seconds
 
-Input types are `Date` or input types of `uint32`-serializer in seconds (`number`, `string` and `BigNumber`).
+Input types are `Date` or input types of [`uint32`-serializer](#integers) in seconds (`number`, `string` and `BigNumber`).
 
 Output type is ISO-date format without locale (`Z`)
 
@@ -208,7 +208,7 @@ console.log(s.serialize(undefined)); // <Buffer 00>
 
 Input and output type is `[variant, value]`.
 
-Variant is serialized as `varint32`
+Variant is serialized as [`varint32`](#integers)
 
 ```ts
 import { serializers } from "echojs-lib";
@@ -241,7 +241,7 @@ console.log(s.serialize(input)); // <Buffer 00 71 77 65>
 
 ### Vector
 
-Input and output types are `value[]`. Insert size of vector as `varint32`
+Input and output types are `value[]`. Insert size of vector as [`varint32`](#integers)
 
 ```ts
 import { serializers } from "echojs-lib";
@@ -267,7 +267,7 @@ Input and output type is `string` in format
 ```ts
 `${reservedSpaceId}.${objectTypeId}.${instanceId}`
 ```
-At serialization returns serialized uint64 equals to
+At serialization returns serialized [`uint64`](#integers) equals to
 ```ts
 (((reservedSpaceId << 56) | objectTypeId) << 48) | instanceId
 ```
@@ -286,7 +286,7 @@ console.log(anyObjectId.serialize(input)); // <Buffer 03 00 00 00 00 00 02 01>
 
 #### Object id
 
-Input is `varint32` (equals to instance id) or `string` in format
+Input is [`varint32`](#integers) (equals to instance id) or `string` in format
 ```ts
 `${reservedSpaceId}.${objectTypeId}.${instanceId}`
 ```
@@ -351,7 +351,7 @@ console.log(accountId.serialize(new BigNumber(123)));
 
 ### Asset
 
-Is structure with field `amount`, that is `int64` and `asset_id` - `assetId`.
+Is structure with field `amount`, that is [`int64`](#integers) and `asset_id` - [`assetId`](#protocol-object-id).
 
 Example:
 ```ts
