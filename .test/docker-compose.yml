@@ -15,3 +15,14 @@ services:
     volumes:
       - ./genesis_devnet.json:/echo/genesis_devnet.json
       - ./access.json:/echo/access.json
+  echo-wallet:
+    image: echoprotocol/echo-wallet:v0.9.0-rc.1
+    command:  -s ws://192.168.1.93:6311/ws
+      --chain-id="e0b8b3f26b0107d5f1f5060266c9112554234036bb3b239afba3d258c6409196"
+      --wallet-file="/echo/walletdata/wallet.json"
+      --history-file="/echo/walletdata/history"
+      --rpc-endpoint=0.0.0.0:8888
+    ports:
+      - 8888:8888
+    links:
+      - echo
