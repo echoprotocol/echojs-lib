@@ -125,7 +125,7 @@ try {
 <dd></dd>
 <dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#registerAccount">registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;Array&gt;</code></dt>
+<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
@@ -267,7 +267,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| blockNum | <code>Number</code> | [Number of the block to retrieve header] |
+| blockNum | <code>Number</code> | [Number of the block to retrieve header  (non negative integer)] |
 
 <a name="getBlock"></a>
 
@@ -276,7 +276,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| blockNum | <code>Number</code> | [Number of the block to retrieve] |
+| blockNum | <code>Number</code> | [Number of the block to retrieve (non negative integer)] |
 
 <a name="getTransaction"></a>
 
@@ -285,8 +285,8 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| blockNum | <code>Number</code> | [Number of the block to retrieve] |
-| transactionIndex | <code>Number</code> | [Index of the transaction to retrieve] |
+| blockNum | <code>Number</code> | [Number of the block to retrieve  (non negative integer)] |
+| transactionIndex | <code>Number</code> | [Index of the transaction to retrieve (non negative integer)] |
 
 <a name="getChainProperties"></a>
 
@@ -330,7 +330,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>List.&lt;String&gt;</code> | [public keys] |
+| keys | <code>List.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccounts"></a>
@@ -361,7 +361,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountName | <code>String</code> | [Name of the account to retrieve] |
+| accountName | <code>String</code> | [Name of the account to retrieve. Min length - 1, max - 63] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccountReferences"></a>
@@ -381,7 +381,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountNames | <code>Array.&lt;String&gt;</code> | [Names of the accounts to retrieve accounts] |
+| accountNames | <code>Array.&lt;String&gt;</code> | [Names of the accounts to retrieve accounts. Min length of name - 1, max - 63] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="lookupAccounts"></a>
@@ -416,7 +416,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountName | <code>String</code> | [Name of the account to retrieve balances] |
+| accountName | <code>String</code> | [Name of the account to retrieve balances. Min length - 1, max - 63] |
 | assetIds | <code>Array.&lt;String&gt;</code> | [Ids of the asset to retrieve balances] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
@@ -436,7 +436,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountId | <code>String</code> | [Id of the balance to retrieve vesting balance] |
+| accountId | <code>String</code> | [Id of the account to retrieve vesting balance] |
 
 <a name="getAssets"></a>
 
@@ -567,7 +567,7 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | transaction | <code>Object</code> | [Transaction to retrieve] |
-| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys] |
+| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
 
 <a name="getPotentialSignatures"></a>
 
@@ -595,7 +595,7 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | accountNameOrId | <code>String</code> | [Id or name of the account to verify] |
-| signers | <code>Array.&lt;String&gt;</code> | [public keys] |
+| signers | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
 
 <a name="validateTransaction"></a>
 
@@ -633,8 +633,8 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | contractId | <code>String</code> | [Id of the contract to retrieve] |
-| fromBlock | <code>Number</code> | [Block number from which to retrieve] |
-| toBlock | <code>Number</code> | [Block number to which retrieve] |
+| fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
+| toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
 
 <a name="getContractResult"></a>
 
@@ -713,21 +713,20 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| signedTransactionObject | <code>Object</code> | [Id of the asset to retrieve] |
-| wasBroadcastedCallback | <code>Callback</code> | [the callback method] |
+| signedTransactionObject | <code>Object</code> | [Signed transaction] |
+| wasBroadcastedCallback | <code>Function</code> | [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="registerAccount"></a>
 
-## registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;Array&gt;</code>
+## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
-| ownerKey | <code>String</code> |
-| activeKey | <code>String</code> |
-| memoKey | <code>String</code> |
-| echoRandKey | <code>String</code> |
+| activeKey | <code>String</code> | [48-character string in bs58 with prefix "ECHO"] |
+| echoRandKey | <code>String</code> | [48-character string in bs58 with prefix "ECHO"] |
+| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="getAccountHistory"></a>
 
@@ -797,8 +796,8 @@ try {
 | --- | --- | --- |
 | tr | <code>Object</code> | [Transaction to broadcast] |
 | tr.ref_block_num | <code>Number</code> | [block number] |
-| tr.ref_block_prefix | <code>Number</code> | [block prefix] 
-| tr.operations | <code>Array</code> |
+| tr.ref_block_prefix | <code>Number</code> | [block prefix] |
+| tr.operations | <code>Array</code> |  [Includes fields: fee, from (accountId), to (accountId), amount, extensions] |
 | tr.signatures | <code>Array</code> | [eddsa signature] |
 
 <a name="broadcastBlock"></a>
@@ -855,7 +854,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>Array.&lt;String&gt;</code> | [public keys] |
+| keys | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
 
 <a name="getBlockVirtualOperations"></a>
 
@@ -864,7 +863,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>Number</code> | [Number of the block to retrieve] |
+| keys | <code>Number</code> | [Number of the block to retrieve (non negative integer)] |
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
