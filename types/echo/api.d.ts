@@ -17,6 +17,8 @@ import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
 import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
+import { asset } from '../serializers/chain';
+import { VectorSerializer } from '../serializers/collections';
 
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
@@ -24,7 +26,13 @@ export default class Api {
 	checkERC20Token(contractId: string): Promise<boolean>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
-	getAccountBalances(accountId: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
+
+	getAccountBalances(
+		accountId: string,
+		assetIds: Array<string>,
+		force?: boolean,
+	): Promise<VectorSerializer<typeof asset>['__TOutput__']>;
+
 	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
 	getAccountCount(): Promise<number>;
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;

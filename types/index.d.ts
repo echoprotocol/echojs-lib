@@ -17,4 +17,6 @@ export { handleConnectionClosedError } from './utils/helpers';
 declare const echo: Echo;
 export default echo;
 
+export declare const { OPERATIONS_IDS, CACHE_MAPS }: typeof constants;
+
 export { BigNumber, Echo, constants, validators, converters, serializers };

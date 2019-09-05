@@ -201,6 +201,20 @@ await echo
     .broadcast();
 ```
 
+#### Issue asset
+```js
+import echo, { OPERATIONS_IDS } from "echojs-lib";
+const wif = '5K2YUVmWfxbmvsNxCsfvArXdGXm7d5DC9pn4yD75k2UaSYgkXTh';
+await echo.connect('ws://127.0.0.1:6311');
+const tx = echo.createTransaction();
+tx.addOperation(OPERATIONS_IDS.ASSET_ISSUE, {
+	asset_to_issue: { asset_id: '1.3.1', amount: 123 },
+	issue_to_account: '1.2.12',
+	issuer: '1.2.23',
+});
+tx.addSigner(PrivateKey.fromWif(wif));
+await tx.broadcast();
+```
 
 #### Account update operation
 ```javascript
