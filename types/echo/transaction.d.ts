@@ -33,7 +33,7 @@ export default class Transaction {
 
 	addOperation<T extends OperationId>(
 		operationId: T,
-		props?: TOperationInput<T, true>,
+		props?: TOperationInput<T, true>[1],
 	): Transaction;
 
 	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;

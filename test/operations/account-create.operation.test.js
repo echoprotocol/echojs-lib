@@ -1,7 +1,7 @@
 import "mocha";
 import { ok } from "assert";
 
-import { Echo, constants, PrivateKey, PublicKey } from "../../src/index";
+import { Echo, constants, PrivateKey, PublicKey } from "../../";
 import { ED25519 } from '../../src/crypto';
 
 import { privateKey, accountId, url } from "../_test-data";

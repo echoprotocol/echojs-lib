@@ -1,7 +1,7 @@
 import 'mocha';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url, contractId } from '../_test-data';
-import { Echo, constants } from '../../src/index';
+import { Echo, constants } from '../../';
 import { expect } from 'chai';
 
 const { OPERATIONS_IDS } = constants;
