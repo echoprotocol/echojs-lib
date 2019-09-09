@@ -36,3 +36,10 @@ export function getMinContractBytecode() {
 		'218bd8b1ac3f4a17600b29970d584ed28b9189fa641b926d7b220102f60029',
 	].join('');
 }
+
+/** @returns {string} */
+export function getRandomAssetSymbol() {
+	const charCodes = new Array(16).fill(0).map(() => Math.floor(Math.random() * 26) + 65);
+	const result = String.fromCharCode(...charCodes);
+	return result;
+}

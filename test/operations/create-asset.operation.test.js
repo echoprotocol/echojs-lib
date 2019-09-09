@@ -1,16 +1,9 @@
 import 'mocha';
 import { accountId, url, privateKey } from '../_test-data';
-import { Echo, OPERATIONS_IDS } from '../../src';
-import { inspect } from 'util';
+import { getRandomAssetSymbol } from '../_test-utils';
+import { Echo, OPERATIONS_IDS } from '../../';
 import { OBJECT_TYPES } from '../../src/constants';
 import testExtensionsField from './_testExtensionsField';
-
-/** @returns {string} */
-function getRandomAssetSymbol() {
-	const charCodes = new Array(16).fill(0).map(() => Math.floor(Math.random() * 26) + 65);
-	const result = String.fromCharCode(...charCodes);
-	return result;
-}
 
 describe('create asset', () => {
 	const echo = new Echo();

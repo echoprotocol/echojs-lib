@@ -1,6 +1,7 @@
 
 describe('operations', () => {
 	require('./operations/account-create.operation.test');
+	require('./operations/asset-issue.test');
 	require('./operations/create-asset.operation.test');
 	require('./operations/transfer.operation.test');
 	require('./operations/create-contract.operation.test');

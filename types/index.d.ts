@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import * as constants from './constants';
 import Echo from './echo';
 import * as validators from './utils/validators'
@@ -10,9 +11,12 @@ export { default as ED25519 } from './crypto/ed25519';
 export { default as AES } from './crypto/aes';
 export { default as hash } from './crypto/hash';
 export { default as echoReducer } from './redux/reducer';
+import * as serializers from './serializers';
 export { handleConnectionClosedError } from './utils/helpers';
 
 declare const echo: Echo;
 export default echo;
 
-export { Echo, constants, validators, converters };
+export declare const { OPERATIONS_IDS, CACHE_MAPS }: typeof constants;
+
+export { BigNumber, Echo, constants, validators, converters, serializers };
