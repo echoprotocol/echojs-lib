@@ -5,6 +5,7 @@ import * as CHAIN_TYPES from './chain-types';
 import * as OBJECT_TYPES from './object-types';
 import * as OPERATIONS_IDS from './operations-ids';
 import * as WS_CONSTANTS from './ws-constants';
+import * as protocol from './protocol';
 
 export const START_OPERATION_ID = `1.${OBJECT_TYPES.OPERATION_HISTORY}.0`;
 export const CORE_ASSET_ID = `1.${OBJECT_TYPES.ASSET}.0`;
@@ -27,4 +28,6 @@ export const DEFAULT_BLOCKS_EXPIRATION_NUMBER = 20;
 export const DEFAULT_CACHE_EXPIRATION_TIME = null;
 export const DEFAULT_MIN_CACHE_CLEANING_TIME = 500;
 
-export { OPERATIONS_IDS, CACHE_MAPS, CHAIN_TYPES, CHAIN_CONFIG, API_CONFIG, OBJECT_TYPES, WS_CONSTANTS };
+/** @typedef {typeof OBJECT_TYPES[keyof typeof OBJECT_TYPES]} OperationId */
+
+export { OPERATIONS_IDS, CACHE_MAPS, CHAIN_TYPES, CHAIN_CONFIG, API_CONFIG, OBJECT_TYPES, WS_CONSTANTS, protocol };

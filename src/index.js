@@ -1,4 +1,5 @@
 /* Chain */
+import BigNumber from 'bignumber.js';
 import Echo from './echo';
 import * as constants from './constants';
 import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
@@ -6,7 +7,7 @@ import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
 import * as converters from './utils/converters';
-import serializer from './serializer';
+import * as serializers from './serializers';
 import Signature from './crypto/signature';
 
 require('buffer');
@@ -14,6 +15,7 @@ require('buffer');
 const { OPERATIONS_IDS, CACHE_MAPS } = constants;
 
 export {
+	BigNumber,
 	Echo,
 	constants,
 	PrivateKey,
@@ -26,7 +28,7 @@ export {
 	aes,
 	hash,
 	Signature,
-	serializer,
+	serializers,
 	PrivateKeyECDSA,
 	PublicKeyECDSA,
 	OPERATIONS_IDS,

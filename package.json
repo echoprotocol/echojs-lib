@@ -1,11 +1,11 @@
 {
 	"name": "echojs-lib",
-	"version": "1.6.0",
+	"version": "1.6.2",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {
-		"pretest": "babel-node ./test/preparation/preparation.js",
+		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
@@ -48,7 +48,6 @@
 		"immutable": "^3.8.1",
 		"isomorphic-ws": "^4.0.1",
 		"lodash": "^4.17.11",
-		"long": "^4.0.0",
 		"ws": "^7.1.1"
 	},
 	"devDependencies": {

@@ -1,6 +1,6 @@
 import 'mocha';
 
-import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../src/index';
+import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../';
 
 import { privateKey, accountId, url } from '../_test-data';
 import { fail, ok, strictEqual } from 'assert';
@@ -57,10 +57,10 @@ describe('account update', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'operation with id 2',
-			'key "active"',
+			'static variant with key 2',
+			'struct key "active"',
 			'optional type',
-			'serializable object is not a object',
+			'serializable struct is not a object',
 		].join(': ');
 		it(`with message "${expectedErrorMessage}"`, function () {
 			if (!serializationError || !(serializationError instanceof Error)) this.skip();

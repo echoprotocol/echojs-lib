@@ -1,22 +1,13 @@
 import { strictEqual, ok } from 'assert';
-import BigNumber from 'bignumber.js';
-import ByteBuffer from 'bytebuffer';
-import * as ed25519 from 'ed25519.js';
-import bs58 from 'bs58';
 
-import { Echo, constants } from '../../src';
-import { transfer } from '../../src/echo/operations';
-import PublicKey from '../../src/crypto/public-key';
-import Transaction from '../../src/echo/transaction';
-import ED25519 from '../../src/crypto/ed25519';
+import { Echo, constants, serializers } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
-import PrivateKey from '../../src/crypto/private-key';
 import testExtensionsField from './_testExtensionsField';
 
 import { ACCOUNT, ASSET} from '../../src/constants/object-types';
+import { operation } from '../../src/serializers';
 
 const { OPERATIONS_IDS } = constants;
-// import bs58 from 'bs58'
 const echo = new Echo();
 
 describe('transfer', () => {
@@ -27,7 +18,7 @@ describe('transfer', () => {
 	describe('- transfer', () => {
 		it('test', async () => {
 
-			const transaction = new Transaction(echo.api);
+			const transaction = echo.createTransaction();
 
 			transaction.addOperation(constants.OPERATIONS_IDS.TRANSFER, {
 				from: accountId,
@@ -40,14 +31,14 @@ describe('transfer', () => {
 
 			transaction.addSigner(privateKey);
 
-			const result = await transaction.broadcast();
+			await transaction.broadcast();
 
 		}).timeout(50000);
 	});
 
 	describe('successful validation', () => {
 		it('full object', () => {
-			transfer.validate([OPERATIONS_IDS.TRANSFER, {
+			operation.toRaw([OPERATIONS_IDS.TRANSFER, {
 				fee: {
 					asset_id: `1.${ASSET}.1`,
 					amount: 20
@@ -58,14 +49,13 @@ describe('transfer', () => {
 					asset_id: `1.${ASSET}.2`,
 					amount: 30
 				},
-			}]);
+			}], true);
 		});
 	});
 
-	describe('converting to bytebuffer', () => {
+	describe('converting to Buffer', () => {
 		it('minimal object', () => {
-			const transaction = new Transaction(echo.api);
-			transaction.addOperation('transfer', {
+			const txProps = {
 				// FIXME: remove optional fee
 				fee: {
 					asset_id: `1.${ASSET}.1`,
@@ -77,10 +67,10 @@ describe('transfer', () => {
 					asset_id: `1.${ASSET}.2`,
 					amount: 30
 				},
-			});
-			const result = transaction.toByteBuffer();
-			ok(result instanceof ByteBuffer);
-			strictEqual(result.toHex(), '1400000000000000017bc8031e000000000000000200');
+			};
+			const result = serializers.protocol.transfer.default.serialize(txProps);
+			ok(Buffer.isBuffer(result));
+			strictEqual(result.toString('hex'), '1400000000000000017bc8031e000000000000000200');
 		});
 	});
 
