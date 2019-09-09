@@ -405,8 +405,8 @@ class WalletAPI {
 	 *
 	 *  @param  {String} name
 	 * 	@param  {String} activeKey
-     * 	@param  {String} registrarAccountId
-     * 	@param  {Boolean} shouldDoBroadcastToNetwork
+	 * 	@param  {String} registrarAccountId
+	 * 	@param  {Boolean} shouldDoBroadcastToNetwork
 	 *
 	 *  @returns {Promise<Object>}
 	 */
@@ -1529,7 +1529,7 @@ class WalletAPI {
 	/**
 	 *  @method proposeBuilderTransaction2
 	 *	@param {String|Number} transactionTypeHandle
-     *	@param {String} accountIdOrName
+	 *	@param {String} accountIdOrName
 	 *	@param {String} expirationTime
 	 *	@param {Number} reviewPeriod
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
