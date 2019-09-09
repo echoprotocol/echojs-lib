@@ -33,7 +33,10 @@ export const transaction = {
 			}
 		]
 	],
-	"extensions": []
+	"extensions": [],
+	"signatures": [
+		"203d2b45b7ed61b9a4f2765114d11b02918300e2ff1396b115053c0226fa181ebf102d3b33f46fae62baa01e9acbe41f18491e33a7477c8404d953a948cff5981e"
+	]
 };
 
 export const transaction2 = {

@@ -1954,20 +1954,20 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#signTransaction()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const result = await echo.walletApi.signTransaction(/*transaction2*/{}, shouldDoBroadcastToNetwork);
-				expect(result)
-					.to
-					.be
-					.an('object');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#signTransaction()', () => {
+	// 	it('should get sing transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.signTransaction(transaction2/*{}*/, shouldDoBroadcastToNetwork);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object');
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	describe('#getPrototypeOperation()', () => {
 		it('should returns an uninitialized object representing a given blockchain operation', async () => {

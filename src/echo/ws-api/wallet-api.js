@@ -21,7 +21,6 @@ import {
 	validatePositiveSafeInteger,
 } from '../../utils/validators';
 import { API_CONFIG } from '../../constants';
-import transaction from '../../serializer/transaction-type';
 
 class WalletAPI {
 
@@ -296,13 +295,19 @@ class WalletAPI {
 
 	/**
 	 *  @method getTransactionId
-	 *	@param {String} signedTx
+	 *	@param {String} tr
 	 *  @returns {Promise<String>}
 	 */
-	getTransactionId(signedTx) {
-		transaction.validate(signedTx);
+	getTransactionId(tr) {
+		if (!tr) {
+			return Promise.reject(new Error('Transaction is required'));
+		}
 
-		return this.wsRpc.call([0, 'get_transaction_id', [signedTx]]);
+		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
+			return Promise.reject(new Error('Invalid transaction'));
+		}
+
+		return this.wsRpc.call([0, 'get_transaction_id', [tr]]);
 	}
 
 	/**
@@ -1559,26 +1564,38 @@ class WalletAPI {
 
 	/**
 	 *  @method serializeTransaction
-	 *	@param {Object} signedTx
+	 *	@param {Object} tr
 	 *  @returns {Promise<String>}
 	 */
-	serializeTransaction(signedTx) {
-		transaction.validate(signedTx);
+	serializeTransaction(tr) {
+		if (!tr) {
+			return Promise.reject(new Error('Transaction is required'));
+		}
 
-		return this.wsRpc.call([0, 'serialize_transaction', [signedTx]]);
+		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
+			return Promise.reject(new Error('Invalid transaction'));
+		}
+
+		return this.wsRpc.call([0, 'serialize_transaction', [tr]]);
 	}
 
 	/**
 	 *  @method signTransaction
-	 *	@param {Object} unsignedTx
+	 *	@param {Object} tr
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	signTransaction(unsignedTx, shouldDoBroadcastToNetwork) {
-		transaction.validate(unsignedTx);
+	signTransaction(tr, shouldDoBroadcastToNetwork) {
+		if (!tr) {
+			return Promise.reject(new Error('Transaction is required'));
+		}
+
+		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations) {
+			return Promise.reject(new Error('Invalid transaction'));
+		}
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsRpc.call([0, 'sign_transaction', [unsignedTx, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'sign_transaction', [tr, shouldDoBroadcastToNetwork]]);
 	}
 
 	/**
