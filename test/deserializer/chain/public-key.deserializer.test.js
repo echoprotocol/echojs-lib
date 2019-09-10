@@ -1,6 +1,6 @@
 import { deepStrictEqual } from 'assert';
-import { shouldReject } from '../_test-utils';
-import { serializers, PrivateKey } from '../../';
+import { shouldReject } from '../../_test-utils';
+import { serializers, PrivateKey } from '../../../';
 
 const { publicKey: public_key_s } = serializers.chain;
 
