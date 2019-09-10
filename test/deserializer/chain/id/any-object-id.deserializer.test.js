@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert';
-import { serializers } from '../../../';
+import { serializers } from '../../../../';
 
 const { anyObjectId } = serializers.chain.ids;
 
