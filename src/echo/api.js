@@ -1872,7 +1872,7 @@ class API {
 	/**
 	 *  @method getPotentialSignatures
 	 *
-	 *  @param  {Object} transaction
+	 *  @param  {Object} tr
 	 *
 	 *  @return {Promise.<*>}
 	 */
@@ -2420,11 +2420,6 @@ class API {
 
 		return this.wsApi.database.getBlockVirtualOperations(blockNum);
 	}
-
-	checker(val) {
-	    const a = [1,2,3,4].includes(val);
-	    console.log(a);
-    }
 
 	setOptions() { }
 
