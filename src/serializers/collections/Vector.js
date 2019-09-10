@@ -85,7 +85,7 @@ export default class VectorSerializer extends ISerializer {
 			it = nextIt;
 			result[i] = element;
 		}
-		return result;
+		return { res: result, newOffset: it };
 	}
 
 }
