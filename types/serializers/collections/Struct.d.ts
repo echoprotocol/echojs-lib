@@ -12,4 +12,5 @@ export default class StructSerializer<T extends SerializersMap> extends ISeriali
 	constructor(serializers: Readonly<T>);
 	toRaw(value: TInput<T>): TOutput<T>;
 	appendToByteBuffer(value: TInput<T>, bytebuffer: ByteBuffer): void;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput<T>, newOffset: number };
 }
