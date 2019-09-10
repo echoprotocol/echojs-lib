@@ -7,4 +7,5 @@ describe.only('deserializer', () => {
 	});
 
 	require('./deserializer/collections/index.collection.deserializer.test');
+	require('./deserializer/public-key.deserializer.test');
 });
