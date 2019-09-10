@@ -54,4 +54,19 @@ export default class BytesSerializer extends ISerializer {
 		bytebuffer.append(Buffer.from(raw, 'hex').toString('binary'), 'binary');
 	}
 
+	/**
+	 * @param {buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: string, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const lengthIsStatic = this.bytesCount !== undefined;
+		const { res: length, newOffset: from } = lengthIsStatic ?
+			{ res: this.bytesCount, newOffset: offset } :
+			varint32.readFromBuffer(buffer, offset);
+		const bytes = buffer.slice(from, from + length);
+		if (bytes.length !== length) throw new Error('unexpected end of buffer');
+		return { res: this.toRaw(bytes), newOffset: from + length };
+	}
+
 }

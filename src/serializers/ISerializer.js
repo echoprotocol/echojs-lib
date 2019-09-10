@@ -66,7 +66,6 @@ export default class ISerializer {
 	 */
 	deserialize(buffer) {
 		const { res, newOffset } = this.readFromBuffer(buffer);
-		console.log(newOffset);
 		if (newOffset !== buffer.length) throw new Error('excess info in the end of the buffer');
 		return res;
 	}
