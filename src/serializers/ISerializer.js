@@ -65,6 +65,7 @@ export default class ISerializer {
 	 * @returns {TOutput}
 	 */
 	deserialize(buffer) {
+		if (!Buffer.isBuffer(buffer)) throw new Error('invalid buffer type');
 		const { res, newOffset } = this.readFromBuffer(buffer);
 		if (newOffset !== buffer.length) throw new Error('excess info in the end of the buffer');
 		return res;
