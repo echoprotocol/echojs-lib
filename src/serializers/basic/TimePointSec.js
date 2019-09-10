@@ -43,4 +43,14 @@ export default class TimePointSecSerializer extends ISerializer {
 		uint32.appendToByteBuffer(totalSeconds, bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: seconds, newOffset } = uint32.readFromBuffer(buffer, offset);
+		return { res: this.toRaw(seconds), newOffset };
+	}
+
 }
