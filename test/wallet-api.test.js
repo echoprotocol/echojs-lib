@@ -8,8 +8,10 @@ import { deepStrictEqual, ok } from 'assert';
 import { shouldReject } from './_test-utils';
 import { API_CONFIG, DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
 import { EXPIRATION_SECONDS } from '../src/constants/api-config';
+import { int64 } from '../src/serializers/basic/integers';
+import { assetId } from '../src/serializers/chain/id/protocol';
 
-describe('WALLET API', () => {
+describe.only('WALLET API', () => {
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
@@ -68,7 +70,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#helpMethod()', () => {
+	describe.only('#helpMethod()', () => {
 		it('should get detailed help on a single API command', async () => {
 			try {
 				const method = 'get_account_count';
@@ -83,7 +85,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#networkAddNodes()', () => {
+	describe.only('#networkAddNodes()', () => {
 		it('should add new nodes to network', async () => {
 			try {
 				const nodes = ["0.0.0.0:6311", "0.0.0.0:6311"];
@@ -253,7 +255,7 @@ describe('WALLET API', () => {
 	// describe('#importAccounts()', () => {
 	// 	it('Should imports accounts to chosen filename', async () => {
 	// 		try {
-	// 			const filename = 'filename';
+	// 			const filename = 12/*'filename'*/;
 	// 			const password = 'password';
 	// 			const result = await echo.walletApi.importAccounts(filename, password);
 	// 			expect(result)
@@ -553,26 +555,29 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#registerAccount()', () => {
-	// 	it('should registers an account', async () => {
-	// 		try {
-	// 			const accountName = 'newName';
-	// 			const activeKey = 'ECHOBcDxkvsGKsbRu2ZhaqXtKAGvoT32DH3XK6J2eYk8JMtC';
-	// 			const result = await echo.walletApi.registerAccount(
-	// 				accountName,
-	// 				activeKey,
-	// 				accountId,
-	// 				shouldDoBroadcastToNetwork
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#registerAccount()', () => {
+		it('should registers an account', async () => {
+			try {
+				const accountName = 'newName';
+				const activeKey = 'ECHOBcDxkvsGKsbRu2ZhaqXtKAGvoT32DH3XK6J2eYk8JMtC';
+				const result = await echo.walletApi.registerAccount(
+					accountName,
+					activeKey,
+					accountId,
+					shouldDoBroadcastToNetwork
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result.name).equal(accountName);key_auths
+				expect(result.registrar).equal(accountId);
+				expect(result.key_auths[0][0]).equal(activeKey);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#createAccountWithBrainKey()', () => {
 	// 	it('should creates a new account and registers it', async () => {
@@ -814,49 +819,49 @@ describe('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#getAccountHistory()', () => {
-	// 	it('Should returns the most recent operations on the named account', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getAccountHistory(
-	// 				accountName,
-	// 				constants.API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('array').that.is.not.empty;
-	// 			expect(result[0])
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getAccountHistory()', () => {
+		it('Should returns the most recent operations on the named account', async () => {
+			try {
+				const result = await echo.walletApi.getAccountHistory(
+					accountName,
+					constants.API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT
+				);
+				expect(result)
+					.to
+					.be
+					.an('array');/*.that.is.not.empty;
+				expect(result[0])
+					.to
+					.be
+					.an('object').that.is.not.empty;*/
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#getRelativeAccountHistory()', () => {
-	// 	it('Should returns the relative operations on the named account from start number', async () => {
-	// 		try {
-	// 			const stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP;
-	// 			const limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT;
-	// 			const start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START;
-	// 			const result = await echo.walletApi.getRelativeAccountHistory(accountId, stop, limit, start);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('array').that.is.not.empty;
-	// 			expect(result[0])
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getRelativeAccountHistory()', () => {
+		it('Should returns the relative operations on the named account from start number', async () => {
+			try {
+				const stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP;
+				const limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT;
+				const start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START;
+				const result = await echo.walletApi.getRelativeAccountHistory(accountId, stop, limit, start);
+				expect(result)
+					.to
+					.be
+					.an('array');/*.that.is.not.empty;
+				expect(result[0])
+					.to
+					.be
+					.an('object').that.is.not.empty;*/
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#getContractObject()', () => {
 	// 	it('Should get the contract object by it\'s id', async () => {
@@ -1195,20 +1200,20 @@ describe('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#generateEthAddress()', () => {
-	// 	it('Should generate eth address', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.generateEthAddress(accountId, shouldDoBroadcastToNetwork);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#generateEthAddress()', () => {
+		it('Should generate eth address', async () => {
+			try {
+				const result = await echo.walletApi.generateEthAddress(accountId, shouldDoBroadcastToNetwork);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#withdrawEth()', () => {
 	// 	it('Should withdraw eth from address', async () => {
@@ -1271,31 +1276,34 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#createAsset()', () => {
-	// 	it('Should creates a new user-issued or market-issued asset', async () => {
-	// 		try {
-	// 			const symbol = 'TFYS';
-	// 			const precision = 0;
-	// 			const assetOption = {};
-	// 			const bitassetOpts = {};
-	// 			const result = await echo.walletApi.createAsset(
-	// 				accountId,
-	// 				symbol,
-	// 				precision,
-	// 				assetOption,
-	// 				bitassetOpts,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#createAsset()', () => {
+		it('Should creates a new user-issued or market-issued asset', async () => {
+			try {
+				const symbol = 'TFYS';
+				const precision = 1;
+				const assetOption = {
+					amount: 100/*int64*/,
+					asset_id: assetId,
+				};
+				const bitassetOpts = {};
+				const result = await echo.walletApi.createAsset(
+					accountId,
+					symbol,
+					precision,
+					assetOption,
+					bitassetOpts,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#updateAsset()', () => {
 	// 	it('Should update the core options on an asset', async () => {
@@ -1495,25 +1503,25 @@ describe('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#setDesiredCommitteeMemberCount()', () => {
-	// 	it('Should set your vote for the number of committee_members', async () => {
-	// 		try {
-	// 			const desiredNumberOfCommitteeMembers = 2;
-	// 			const result = await echo.walletApi.setDesiredCommitteeMemberCount(
-	// 				accountId,
-	// 				desiredNumberOfCommitteeMembers,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#setDesiredCommitteeMemberCount()', () => {
+		it('Should set your vote for the number of committee_members', async () => {
+			try {
+				const desiredNumberOfCommitteeMembers = 0;
+				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
+					/*accountId*/'1.2.11',
+					desiredNumberOfCommitteeMembers,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#getCommitteeMember()', () => {
 	// 	it('Should returns information about the given committee_member', async () => {
@@ -1665,22 +1673,23 @@ describe('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe.only('#getBlock()', () => {
-	// 	it('should get block by number', async () => {
-	// 		try {
-	// 			const blockNumber = 1;
-	// 			const result = await echo.walletApi.getBlock(blockNumber);
-	// 			console.log('------------result---------', result);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getBlock()', () => {
+		it('should get block by number', async () => {
+			try {
+				const blockNumber = 1;
+				const result = await echo.walletApi.getBlock(blockNumber);
+				// console.log('------------result---------', result);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result.round).equal(blockNumber);
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getBlockVirtualOps()', () => {
 		it('should get block virtual ops by number', async () => {

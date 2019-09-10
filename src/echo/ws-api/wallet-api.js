@@ -8,18 +8,14 @@ import {
 	isString,
 	isAssetId,
 	isObject,
-	isPublicKey,
 	isCommitteeMemberId,
 	isBitAssetId,
 	isRipemd160,
-	isUInt8,
-	isUInt16,
 	isUInt32,
 	isUInt64,
 	validateUrl,
-	isContractId,
-	validatePositiveSafeInteger,
 } from '../../utils/validators';
+import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 
 class WalletAPI {
@@ -67,9 +63,7 @@ class WalletAPI {
 	 *  @returns {Promise<String>}
 	 */
 	helpMethod(method) {
-		if (!isString(method)) throw new Error('method should be a string');
-
-		return this.wsRpc.call([0, 'help_method', [method]]);
+		return this.wsRpc.call([0, 'help_method', [serializers.basic.string.toRaw(method)]]);
 	}
 
 	/**
@@ -95,13 +89,9 @@ class WalletAPI {
 	 *	@param {Array<String>} nodes
 	 *  @returns {Promise<null>}
 	 */
+	// TODO
 	networkAddNodes(nodes) {
-		if (!isArray(nodes)) return Promise.reject(new Error('nodes should be a array'));
-		if (!nodes.every((node) => isString(node))) {
-			return Promise.reject(new Error('nodes should be a string'));
-		}
-
-		return this.wsRpc.call([0, 'network_add_nodes', [nodes]]);
+		return this.wsRpc.call([0, 'network_add_nodes', [serializers.basic.string.toRaw(nodes)]]);
 	}
 
 	/**
@@ -146,9 +136,9 @@ class WalletAPI {
 	 *  @returns {Promise<null>}
 	 */
 	unlock(password) {
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'unlock', [password]]);
+		return this.wsRpc.call([0, 'unlock',
+			[serializers.basic.string.toRaw(password)],
+		]);
 	}
 
 	/**
@@ -157,9 +147,7 @@ class WalletAPI {
 	 *  @returns {Promise<null>}
 	 */
 	setPassword(password) {
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'set_password', [password]]);
+		return this.wsRpc.call([0, 'set_password', [serializers.basic.string.toRaw(password)]]);
 	}
 
 	/**
@@ -198,12 +186,14 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importKey(accountNameOrId, privateKeyWif) {
-		if (!isAccountId(accountNameOrId) || isAccountName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
 		if (!isString(privateKeyWif)) throw new Error('private key should be a string');
 
-		return this.wsRpc.call([0, 'import_key', [accountNameOrId, privateKeyWif]]);
+		return this.wsRpc.call([0, 'import_key',
+			[
+				serializers.basic.string.toRaw(accountNameOrId),
+				privateKeyWif,
+			],
+		]);
 	}
 
 	/**
@@ -213,10 +203,12 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importAccounts(filename, password) {
-		if (!isString(filename)) throw new Error('filename should be a string');
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'import_accounts', [filename, password]]);
+		return this.wsRpc.call([0, 'import_accounts',
+			[
+				serializers.basic.string.toRaw(filename),
+				serializers.basic.string.toRaw(password),
+			],
+		]);
 	}
 
 	/**
@@ -228,8 +220,6 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importAccountKeys(filename, password, srcAccountName, destAccountName) {
-		if (!isString(filename)) throw new Error('filename should be a string');
-		if (!isString(password)) throw new Error('password should be a string');
 		if (!isAccountName(srcAccountName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
@@ -237,7 +227,14 @@ class WalletAPI {
 			throw new Error('Accounts id or name should be string and valid');
 		}
 
-		return this.wsRpc.call([0, 'import_account_keys', [filename, password, srcAccountName, destAccountName]]);
+		return this.wsRpc.call([0, 'import_account_keys',
+			[
+				serializers.basic.string.toRaw(filename),
+				serializers.basic.string.toRaw(password),
+				srcAccountName,
+				destAccountName,
+			],
+		]);
 	}
 
 	/**
@@ -248,16 +245,18 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importBalance(accountNameOrId, shouldDoBroadcastToNetwork, wifKeys) {
-		if (!isAccountId(accountNameOrId) || isAccountName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 		if (!isArray(wifKeys)) return Promise.reject(new Error('wifKeys should be an array'));
 		if (!wifKeys.every((key) => isString(key))) {
 			return Promise.reject(new Error('wif key should be a string'));
 		}
 
-		return this.wsRpc.call([0, 'import_balance', [accountNameOrId, shouldDoBroadcastToNetwork, wifKeys]]);
+		return this.wsRpc.call([0, 'import_balance',
+			[
+				serializers.basic.string.toRaw(accountNameOrId),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+				wifKeys,
+			],
+		]);
 	}
 
 	/**
@@ -276,10 +275,12 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
-		if (!isString(brainKey)) throw new Error('password should be a string');
-		validatePositiveSafeInteger(numberOfDesiredKeys);
-
-		return this.wsRpc.call([0, 'derive_keys_from_brain_key', [brainKey, numberOfDesiredKeys]]);
+		return this.wsRpc.call([0, 'derive_keys_from_brain_key',
+			[
+				serializers.basic.string.toRaw(brainKey),
+				serializers.basic.integers.int64.toRaw(numberOfDesiredKeys),
+			],
+		]);
 	}
 
 	/**
@@ -288,9 +289,9 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	isPublicKeyRegistered(publicKey) {
-		if (!isPublicKey(publicKey)) throw new Error('Public key is invalid');
-
-		return this.wsRpc.call([0, 'is_public_key_registered', [publicKey]]);
+		return this.wsRpc.call([0, 'is_public_key_registered',
+			[serializers.chain.publicKey.toRaw(publicKey)],
+		]);
 	}
 
 	/**
@@ -316,9 +317,7 @@ class WalletAPI {
 	 *  @returns {Promise<String>}
 	 */
 	getPrivateKey(publicKey) {
-		if (!isPublicKey(publicKey)) throw new Error('Active public key is invalid');
-
-		return this.wsRpc.call([0, 'get_private_key', [publicKey]]);
+		return this.wsRpc.call([0, 'get_private_key', [serializers.chain.publicKey.toRaw(publicKey)]]);
 	}
 
 	/**
@@ -327,9 +326,7 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	loadWalletFile(walletFilename) {
-		if (!isString(walletFilename)) throw new Error('wallet filename should be a string');
-
-		return this.wsRpc.call([0, 'load_wallet_file', [walletFilename]]);
+		return this.wsRpc.call([0, 'load_wallet_file', [serializers.basic.string.toRaw(walletFilename)]]);
 	}
 
 	/**
@@ -338,9 +335,7 @@ class WalletAPI {
 	 *  @returns {Promise<String>}
 	 */
 	normalizeBrainKey(brainKey) {
-		if (!isString(brainKey)) throw new Error('brain key should be a string');
-
-		return this.wsRpc.call([0, 'normalize_brain_key', [brainKey]]);
+		return this.wsRpc.call([0, 'normalize_brain_key', [serializers.basic.string.toRaw(brainKey)]]);
 	}
 
 	/**
@@ -349,9 +344,7 @@ class WalletAPI {
 	 *  @returns {Promise<null>}
 	 */
 	saveWalletFile(walletFilename) {
-		if (!isString(walletFilename)) throw new Error('brain key should be a string');
-
-		return this.wsRpc.call([0, 'save_wallet_file', [walletFilename]]);
+		return this.wsRpc.call([0, 'save_wallet_file', [serializers.basic.string.toRaw(walletFilename)]]);
 	}
 
 	/**
@@ -371,11 +364,16 @@ class WalletAPI {
 	 */
 	listAccounts(accountName, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(accountName)) throw new Error('account name should be a string');
-		if (!isUInt32(limit) || limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
+		if (!limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_accounts', [accountName, limit]]);
+		return this.wsRpc.call([0, 'list_accounts',
+			[
+				accountName,
+				serializers.basic.integers.uint32.toRaw(limit),
+			],
+		]);
 	}
 
 	/**
@@ -384,9 +382,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	listAccountBalances(accountId) {
-		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
-
-		return this.wsRpc.call([0, 'list_account_balances', [accountId]]);
+		return this.wsRpc.call([0, 'list_account_balances', [
+			serializers.chain.ids.protocol.accountId.toRaw(accountId),
+		]]);
 	}
 
 	/**
@@ -395,9 +393,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	listIdBalances(accountId) {
-		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
-
-		return this.wsRpc.call([0, 'list_id_balances', [accountId]]);
+		return this.wsRpc.call([0, 'list_id_balances', [
+			serializers.chain.ids.protocol.accountId.toRaw(accountId),
+		]]);
 	}
 
 	/**
@@ -412,12 +410,14 @@ class WalletAPI {
 	 */
 	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
 		if (!isString(name)) throw new Error('Name should be a string');
-		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
-		if (!isAccountId(registrarAccountId)) throw new Error('Registrar accountId Id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'register_account',
-			[name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork],
+			[
+				name,
+				serializers.chain.publicKey.toRaw(activeKey),
+				serializers.chain.ids.protocol.accountId.toRaw(registrarAccountId),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -433,11 +433,15 @@ class WalletAPI {
 		if (!isAccountId(registrarAccountId)) {
 			throw new Error('Accounts id should be string and valid');
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([
-			0, 'create_account_with_brain_key', [
-				brainKey, accountName, registrarAccountId, shouldDoBroadcastToNetwork],
+			0, 'create_account_with_brain_key',
+			[
+				serializers.basic.string.toRaw(brainKey),
+				accountName,
+				serializers.chain.ids.protocol.accountId.toRaw(registrarAccountId),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -464,22 +468,18 @@ class WalletAPI {
 		if (!isAccountName(registrarAccountName)) {
 			throw new Error('Accounts name should be string and valid');
 		}
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isAssetId(supportedAssetId)) throw new Error('Asset id is invalid');
-		if (!isBoolean(useEthereumAssetAccuracy)) {
-			return Promise.reject(new Error('useEthereumAssetAccuracy should be a boolean'));
-		}
-		if (!isBoolean(shouldSaveToWallet)) return Promise.reject(new Error('shouldSaveToWallet should be a boolean'));
 
 		return this.wsRpc.call([
-			0, 'create_contract', [
+			0, 'create_contract',
+			[
 				registrarAccountName,
-				contractCode,
-				amount,
-				assetType,
-				supportedAssetId,
-				useEthereumAssetAccuracy,
-				shouldSaveToWallet],
+				serializers.basic.string.toRaw(contractCode),
+				serializers.basic.integers.uint64.toRaw(amount),
+				serializers.basic.string.toRaw(assetType),
+				serializers.chain.ids.protocol.assetId.toRaw(supportedAssetId),
+				serializers.basic.bool.toRaw(useEthereumAssetAccuracy),
+				serializers.basic.bool.toRaw(shouldSaveToWallet),
+			],
 		]);
 	}
 
@@ -504,17 +504,16 @@ class WalletAPI {
 		if (!isAccountName(registrarAccountName)) {
 			throw new Error('Accounts name should be string and valid');
 		}
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isBoolean(shouldSaveToWallet)) return Promise.reject(new Error('shouldSaveToWallet should be a boolean'));
 
-		return this.wsRpc.call([
-			0, 'call_contract', [
+		return this.wsRpc.call([0, 'call_contract',
+			[
 				registrarAccountName,
-				contractCode,
-				amount,
-				assetType,
-				shouldSaveToWallet],
+				serializers.chain.ids.protocol.contractId.toRaw(contractId),
+				serializers.basic.string.toRaw(contractCode),
+				serializers.basic.integers.uint64.toRaw(amount),
+				serializers.basic.string.toRaw(assetType),
+				serializers.basic.bool.toRaw(shouldSaveToWallet),
+			],
 		]);
 	}
 
@@ -530,12 +529,14 @@ class WalletAPI {
 		if (!isAccountName(registrarAccountName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'contract_fund_fee_pool',
-			[registrarAccountName, contractId, amount, shouldDoBroadcastToNetwork],
+			[
+				registrarAccountName,
+				serializers.chain.ids.protocol.contractId.toRaw(contractId),
+				serializers.basic.integers.uint64.toRaw(amount),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -545,10 +546,8 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractResult(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
 		return this.wsRpc.call([0, 'get_contract_result',
-			[contractId],
+			[serializers.chain.ids.protocol.contractId.toRaw(contractId)],
 		]);
 	}
 
@@ -562,17 +561,14 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'transfer',
-			[fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork],
+			[
+				serializers.basic.string.toRaw(fromAccountNameOrId),
+				serializers.basic.string.toRaw(toAccountNameOrId),
+				serializers.basic.string.toRaw(amount),
+				serializers.basic.string.toRaw(assetIdOrName),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -585,15 +581,14 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
-		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-
-		return this.wsRpc.call([0, 'transfer2', [fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName]]);
+		return this.wsRpc.call([0, 'transfer2',
+			[
+				serializers.basic.string.toRaw(fromAccountNameOrId),
+				serializers.basic.string.toRaw(toAccountNameOrId),
+				serializers.basic.string.toRaw(amount),
+				serializers.basic.string.toRaw(assetIdOrName),
+			],
+		]);
 	}
 
 	/**
@@ -604,13 +599,18 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO newListingStatus
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
 		if (!isAccountId(accountToList)) return Promise.reject(new Error('Account id is invalid'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'whitelist_account',
-			[authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork],
+			[
+				serializers.basic.string.toRaw(authorizingAccount),
+				serializers.basic.string.toRaw(accountToList),
+				newListingStatus,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -620,11 +620,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getVestingBalances(accountNameOrId) {
-		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
-			throw new Error('Account name or id is invalid');
-		}
-
-		return this.wsRpc.call([0, 'get_vesting_balances', [accountNameOrId]]);
+		return this.wsRpc.call([0, 'get_vesting_balances', [serializers.basic.string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
@@ -636,13 +632,13 @@ class WalletAPI {
 	 *  @returns {Promise<Array>}
 	 */
 	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
-		if (!(isAccountName(witnessAccountNameOrId) || isAccountId(witnessAccountNameOrId))) {
-			throw new Error('Account name or id is invalid');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'withdraw_vesting',
-			[witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork],
+			[
+				serializers.basic.string.toRaw(witnessAccountNameOrId),
+				serializers.basic.string.toRaw(amount),
+				serializers.basic.string.toRaw(assetSymbol),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -652,11 +648,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getAccount(accountNameOrId) {
-		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
-			throw new Error('Account name or id is invalid');
-		}
-
-		return this.wsRpc.call([0, 'get_account', [accountNameOrId]]);
+		return this.wsRpc.call([0, 'get_account', [serializers.basic.string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
@@ -677,15 +669,17 @@ class WalletAPI {
 	 *	@param {Number} limit
 	 *  @returns {Promise<Array.<Object>>}
 	 */
-	getAccountHistory(accountIdOrName, limit) {
-		if (!(isAccountName(accountIdOrName) || isAccountId(accountIdOrName))) {
-			throw new Error('Account name or id is invalid');
-		}
-		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
+	getAccountHistory(accountIdOrName, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
+		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'get_account_history', [accountIdOrName, limit]]);
+		return this.wsRpc.call([0, 'get_account_history',
+			[
+				serializers.basic.string.toRaw(accountIdOrName),
+				serializers.basic.integers.int64.toRaw(limit),
+			],
+		]);
 	}
 
 	/**
@@ -708,14 +702,18 @@ class WalletAPI {
 		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
-		if (!isAccountId(accountId)) throw new Error('Account is invalid');
-		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
-		if (!isUInt64(limit) || limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
+		if (!limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
-		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
-		return this.wsRpc.call([0, 'get_relative_account_history', [accountId, stop, limit, start]]);
+		return this.wsRpc.call([0, 'get_relative_account_history',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.integers.uint64.toRaw(stop),
+				serializers.basic.integers.int64.toRaw(limit),
+				serializers.basic.integers.uint64.toRaw(start),
+			],
+		]);
 	}
 
 	/**
@@ -724,9 +722,9 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractObject(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_object', [contractId]]);
+		return this.wsRpc.call([0, 'get_contract_object',
+			[serializers.chain.ids.protocol.contractId.toRaw(contractId)],
+		]);
 	}
 
 	/**
@@ -735,9 +733,9 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContract(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, ' ', [contractId]]);
+		return this.wsRpc.call([0, 'get_contract',
+			[serializers.chain.ids.protocol.contractId.toRaw(contractId)],
+		]);
 	}
 
 	/**
@@ -751,6 +749,7 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO
 	whitelistContractPool(
 		registrarAccountId,
 		contractId,
@@ -760,19 +759,15 @@ class WalletAPI {
 		removeFromBlacklist,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (!isAccountId(registrarAccountId)) throw new Error('Account id is invalid');
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'whitelist_contract_pool',
 			[
-				registrarAccountId,
-				contractId,
-				addToWhitelist,
-				addToBlacklist,
-				removeFromWhitelist,
-				removeFromBlacklist,
-				shouldDoBroadcastToNetwork,
+				serializers.chain.ids.protocol.accountId.toRaw(registrarAccountId),
+				serializers.chain.ids.protocol.contractId.toRaw(contractId),
+				serializers.basic.string.toRaw(addToWhitelist),
+				serializers.basic.string.toRaw(addToBlacklist),
+				serializers.basic.string.toRaw(removeFromWhitelist),
+				serializers.basic.string.toRaw(removeFromBlacklist),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
 	}
@@ -786,11 +781,15 @@ class WalletAPI {
 	 *  @returns {Promise<String>}
 	 */
 	callContractNoChangingState(contractId, registrarAccountId, assetType, codeOfTheContract) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
 		if (!isAccountId(registrarAccountId)) throw new Error('Account id is invalid');
 
 		return this.wsRpc.call([0, 'call_contract_no_changing_state',
-			[contractId, registrarAccountId, assetType, codeOfTheContract],
+			[
+				serializers.chain.ids.protocol.contractId.toRaw(contractId),
+				serializers.chain.ids.protocol.accountId.toRaw(registrarAccountId),
+				serializers.basic.string.toRaw(assetType),
+				serializers.basic.string.toRaw(codeOfTheContract),
+			],
 		]);
 	}
 
@@ -800,9 +799,9 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractPoolBalance(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_pool_balance', [contractId]]);
+		return this.wsRpc.call([0, 'get_contract_pool_balance',
+			[serializers.chain.ids.protocol.contractId.toRaw(contractId)],
+		]);
 	}
 
 	/**
@@ -811,9 +810,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getContractPoolWhitelist(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_pool_whitelist', [contractId]]);
+		return this.wsRpc.call([0, 'get_contract_pool_whitelist',
+			[serializers.chain.ids.protocol.contractId.toRaw(contractId)],
+		]);
 	}
 
 	/**
@@ -822,9 +821,9 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getEthAddress(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_eth_address', [accountId]]);
+		return this.wsRpc.call([0, 'get_eth_address',
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId)],
+		]);
 	}
 
 	/**
@@ -833,9 +832,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getAccountDeposits(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_account_deposits', [accountId]]);
+		return this.wsRpc.call([0, 'get_account_deposits',
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId)],
+		]);
 	}
 
 	/**
@@ -845,15 +844,20 @@ class WalletAPI {
 	 *	@param {String} tokenName
 	 *	@param {String} tokenSymbol
 	 *	@param {Number} decimals
-	 *	@param {String} shouldDoBroadcastToNetwork
+	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO tokenName
 	registerErc20Token(accountId, ethereumTokenAddress, tokenName, tokenSymbol, decimals, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt8(decimals)) throw new Error('Precision should be a non negative integer');
 
 		return this.wsRpc.call([0, 'register_erc20_token',
-			[accountId, ethereumTokenAddress, tokenName, tokenSymbol, decimals, shouldDoBroadcastToNetwork],
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.string.toRaw(ethereumTokenAddress),
+				tokenName,
+				serializers.basic.string.toRaw(tokenSymbol),
+				serializers.basic.integers.uint8.toRaw(decimals),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -862,10 +866,11 @@ class WalletAPI {
 	 *	@param {String} ethereumTokenAddress
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO ethereumTokenAddress
 	getErc20Token(ethereumTokenAddress) {
 		if (!isRipemd160(ethereumTokenAddress)) throw new Error('Token address id should be a 20 bytes hex string');
 
-		return this.wsRpc.call([0, 'get_erc20_token', [ethereumTokenAddress]]);
+		return this.wsRpc.call([0, 'get_erc20_token', [serializers.basic.string.toRaw(ethereumTokenAddress)]]);
 	}
 
 	/**
@@ -874,9 +879,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getErc20AccountDeposits(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_erc20_account_deposits', [accountId]]);
+		return this.wsRpc.call([0, 'get_erc20_account_deposits',
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId)],
+		]);
 	}
 
 	/**
@@ -885,9 +890,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getErc20AccountWithdrawals(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId]]);
+		return this.wsRpc.call([0, 'get_erc20_account_withdrawals',
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId)],
+		]);
 	}
 
 	/**
@@ -896,14 +901,18 @@ class WalletAPI {
 	 *	@param {String} toEthereumAddress
 	 *	@param {String} erc20TokenId
 	 *	@param {String} withdrawAmount
-	 *	@param {String} shouldDoBroadcastToNetwork
+	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
 	withdrawErc20Token(accountId, toEthereumAddress, erc20TokenId, withdrawAmount, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
 		return this.wsRpc.call([0, 'withdraw_erc20_token',
-			[accountId, toEthereumAddress, erc20TokenId, withdrawAmount, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.string.toRaw(toEthereumAddress),
+				serializers.chain.ids.protocol.erc20TokenId.toRaw(erc20TokenId),
+				serializers.basic.string.toRaw(withdrawAmount),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -915,10 +924,13 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	generateAccountAddress(accountId, label, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'generate_account_address', [accountId, label, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'generate_account_address',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.string.toRaw(label),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -928,14 +940,19 @@ class WalletAPI {
 	 *	@param {Number} limit
 	 *  @returns {Promise<Array.<Object>>}
 	 */
+	// TODO max limit
 	getAccountAddresses(accountId, startFrom, limit) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt64(startFrom)) throw new Error('Start from parameter should be non negative number');
-		if (!isUInt64(limit) || limit > API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT) {
+		if (!limit > API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'get_account_addresses', [accountId, startFrom, limit]]);
+		return this.wsRpc.call([0, 'get_account_addresses',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.integers.uint64.toRaw(startFrom),
+				serializers.basic.integers.uint64.toRaw(limit),
+			],
+		]);
 	}
 
 	/**
@@ -943,6 +960,7 @@ class WalletAPI {
 	 *	@param {String} address
 	 *  @returns {Promise<String>}
 	 */
+	// TODO address
 	getAccountByAddress(address) {
 		if (!isRipemd160(address)) throw new Error('Address id should be a 20 bytes hex string');
 
@@ -955,9 +973,9 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getAccountWithdrawals(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId]]);
+		return this.wsRpc.call([0, 'get_account_withdrawals',
+			[serializers.chain.ids.protocol.accountId.toRaw(accountId)],
+		]);
 	}
 
 	/**
@@ -969,15 +987,15 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	approveProposal(feePayingAccountId, proposalId, delta, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(feePayingAccountId)) {
-			throw new Error('Account id is invalid');
-		}
-		if (!isString(proposalId)) throw new Error('proposal Id should be a string');
 		if (!isObject(delta)) throw new Error('delta should be a object');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'approve_proposal',
-			[feePayingAccountId, proposalId, delta, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(feePayingAccountId),
+				serializers.chain.ids.protocol.proposalId.toRaw(proposalId),
+				delta,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -988,26 +1006,31 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	generateEthAddress(accountId, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'generate_eth_address', [accountId, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'generate_eth_address',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
 	 *  @method withdrawEth
 	 *	@param {String} accountId
 	 *	@param {String} ethAddress
-	 *	@param {String} value
+	 *	@param {Number} value
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
 	withdrawEth(accountId, ethAddress, value, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt64(value)) return Promise.reject(new Error('Value should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'withdraw_eth', [accountId, ethAddress, value, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'withdraw_eth',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				serializers.basic.string.toRaw(ethAddress),
+				serializers.basic.integers.uint64.toRaw(value),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -1017,10 +1040,12 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	floodNetwork(prefix, numberOfTransactions) {
-		if (!isString(prefix)) throw new Error('Prefix should be a string');
-		if (!isUInt32(numberOfTransactions)) return Promise.reject(new Error('Value should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'flood_network', [prefix, numberOfTransactions]]);
+		return this.wsRpc.call([0, 'flood_network',
+			[
+				serializers.basic.string.toRaw(prefix),
+				serializers.basic.integers.uint32.toRaw(numberOfTransactions),
+			],
+		]);
 	}
 
 	/**
@@ -1031,12 +1056,16 @@ class WalletAPI {
 	 *  @return {Promise.<Array.<Asset>>}
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
-		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
-		if (!isUInt64(limit) || limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
+		if (!limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_assets', [lowerBoundSymbol, limit]]);
+		return this.wsRpc.call([0, 'list_assets',
+			[
+				serializers.basic.string.toRaw(lowerBoundSymbol),
+				serializers.basic.integers.uint32.toRaw(limit),
+			],
+		]);
 	}
 
 	/**
@@ -1049,15 +1078,21 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO bitassetOpts, assetOption
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isUInt8(precision)) throw new Error('Precision should be a non negative integer');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'create_asset',
-			[accountIdOrName, symbol, precision, bitassetOpts, shouldDoBroadcastToNetwork],
+			[
+				serializers.basic.string.toRaw(accountIdOrName),
+				serializers.basic.string.toRaw(symbol),
+				serializers.basic.integers.uint8.toRaw(precision),
+				bitassetOpts,
+				assetOption,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1074,10 +1109,14 @@ class WalletAPI {
 		if (!isAccountId(newIssuerIdOrName) || isAccountName(newIssuerIdOrName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'update_asset',
-			[assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork],
+			[
+				serializers.basic.string.toRaw(assetIdOrName),
+				serializers.basic.string.toRaw(newIssuerIdOrName),
+				newOptions,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1088,11 +1127,17 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
+	// TODO newBitasset
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsRpc.call([0, 'update_bitasset', [assetIdOrName, newBitasset, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'update_bitasset',
+			[
+				serializers.basic.string.toRaw(assetIdOrName),
+				newBitasset,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -1104,10 +1149,13 @@ class WalletAPI {
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'update_asset_feed_producers',
-			[assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork],
+			[
+				assetIdOrName,
+				newFeedProducers,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1120,14 +1168,15 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	publishAssetFeed(accountId, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'publish_asset_feed',
-			[accountId, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				assetIdOrName,
+				priceFeed,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1143,10 +1192,14 @@ class WalletAPI {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'issue_asset',
-			[accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork],
+			[
+				accountIdOrName,
+				amount,
+				assetTicker,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1185,10 +1238,14 @@ class WalletAPI {
 			throw new Error('Accounts id or name should be string and valid');
 		}
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'fund_asset_fee_pool',
-			[fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork],
+			[
+				fromAccountIdOrName,
+				assetIdOrName,
+				amount,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1201,13 +1258,16 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	reserveAsset(accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
-		}
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsRpc.call([0, 'reserve_asset', [accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'reserve_asset',
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				amount,
+				assetIdOrName,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -1222,9 +1282,14 @@ class WalletAPI {
 			throw new Error('Accounts id or name should be string and valid');
 		}
 		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsRpc.call([0, 'create_committee_member', [accountIdOrName, url, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'create_committee_member',
+			[
+				accountIdOrName,
+				url,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -1238,13 +1303,13 @@ class WalletAPI {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isUInt16(desiredNumberOfCommitteeMembers)) {
-			throw new Error('Desired number of committee members should be positive integer');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'set_desired_committee_member_count',
-			[accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork],
+			[
+				accountIdOrName,
+				serializers.basic.integers.uint16.toRaw(desiredNumberOfCommitteeMembers),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1269,11 +1334,16 @@ class WalletAPI {
 	 */
 	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
+		if (!limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_committee_members', [lowerBoundName, limit]]);
+		return this.wsRpc.call([0, 'list_committee_members',
+			[
+				lowerBoundName,
+				serializers.basic.integers.uint64.toRaw(limit),
+			],
+		]);
 	}
 
 	/**
@@ -1291,11 +1361,14 @@ class WalletAPI {
 		if (!isAccountId(ownerOfCommitteeMember) || isAccountName(ownerOfCommitteeMember)) {
 			throw new Error('Owner of committee member accounts id or name should be string and valid');
 		}
-		if (!isBoolean(approveYourVote)) return Promise.reject(new Error('approveYourVote should be a boolean'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'vote_for_committee_member',
-			[votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork],
+			[
+				votingAccountIdOrName,
+				ownerOfCommitteeMember,
+				serializers.basic.bool.toRaw(approveYourVote),
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1313,10 +1386,13 @@ class WalletAPI {
 		if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
 			throw new Error('Voting accounts id or name should be string and valid');
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'set_voting_proxy',
-			[accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork],
+			[
+				accountIdOrNameToUpdate,
+				votingAccountIdOrName,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1329,13 +1405,13 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	proposeParameterChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'propose_parameter_change',
-			[accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				expirationTime,
+				changedValues,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1348,13 +1424,13 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	proposeFeeChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'propose_fee_change',
-			[accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(accountId),
+				expirationTime,
+				changedValues,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1366,13 +1442,12 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	changeSidechainConfig(registrarAccountId, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(registrarAccountId)) {
-			throw new Error('Accounts id should be string and valid');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
 		return this.wsRpc.call([0, 'change_sidechain_config',
-			[registrarAccountId, changedValues, shouldDoBroadcastToNetwork],
+			[
+				serializers.chain.ids.protocol.accountId.toRaw(registrarAccountId),
+				changedValues,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1385,9 +1460,7 @@ class WalletAPI {
 	 *  }
 	 */
 	getBlock(blockNum) {
-		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'get_block', [blockNum]]);
+		return this.wsRpc.call([0, 'get_block', [serializers.basic.integers.uint32.toRaw(blockNum)]]);
 	}
 
 	/**
@@ -1399,9 +1472,7 @@ class WalletAPI {
 	 *  }
 	 */
 	getBlockVirtualOps(blockNum) {
-		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'get_block_virtual_ops', [blockNum]]);
+		return this.wsRpc.call([0, 'get_block_virtual_ops', [serializers.basic.integers.uint32.toRaw(blockNum)]]);
 	}
 
 	/**
@@ -1504,9 +1575,12 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	signBuilderTransaction(transactionTypeHandle, shouldDoBroadcastToNetwork) {
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'sign_builder_transaction', [transactionTypeHandle, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'sign_builder_transaction',
+			[
+				transactionTypeHandle,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
@@ -1519,10 +1593,14 @@ class WalletAPI {
 	 */
 	proposeBuilderTransaction(transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
 		if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'propose_builder_transaction',
-			[transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
+			[
+				transactionTypeHandle,
+				expirationTime,
+				reviewPeriod,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1546,10 +1624,15 @@ class WalletAPI {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'propose_builder_transaction2',
-			[transactionTypeHandle, accountIdOrName, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
+			[
+				transactionTypeHandle,
+				accountIdOrName,
+				expirationTime,
+				reviewPeriod,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
 		]);
 	}
 
@@ -1593,9 +1676,13 @@ class WalletAPI {
 		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations) {
 			return Promise.reject(new Error('Invalid transaction'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsRpc.call([0, 'sign_transaction', [tr, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'sign_transaction',
+			[
+				tr,
+				serializers.basic.bool.toRaw(shouldDoBroadcastToNetwork),
+			],
+		]);
 	}
 
 	/**
