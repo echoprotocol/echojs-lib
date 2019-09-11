@@ -1,10 +1,10 @@
 import authoritySerializer from "./authority";
 import VoteIdSerializer from "./VoteId";
-import { string as stringSerializer, StringSerializer } from "../basic";
-import { uint16, uint8 } from "../basic/integers";
-import { asset, publicKey, extensions } from "../chain";
+import { string as stringSerializer, StringSerializer } from "../basic/index";
+import { uint16, uint8 } from "../basic/integers/index";
+import { asset, publicKey, extensions } from "../chain/index";
 import { accountId } from "../chain/id/protocol";
-import { StructSerializer, SetSerializer } from "../collections";
+import { StructSerializer, SetSerializer } from "../collections/index";
 import OptionalSerializer from "../collections/Optional";
 
 export declare const accountOptionsSerializer: StructSerializer<{

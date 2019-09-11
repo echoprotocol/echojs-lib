@@ -1,8 +1,3 @@
-import {
-	isAccountId,
-	isString,
-	isObject,
-} from '../../utils/validators';
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 
@@ -16,7 +11,9 @@ const { privateKey, publicKey, ripemd160 } = serializers.chain;
 const { accountId, contractId, erc20TokenId, proposalId, assetId } = serializers.chain.ids.protocol;
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { priceFeed } = serializers.protocol;
-const config = serializers.plugins.echorand.config;
+const { config } = serializers.plugins.echorand;
+const { anyObjectId } = serializers.chain.ids;
+
 
 class WalletAPI {
 
@@ -383,8 +380,6 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
-		if (!isString(name)) throw new Error('Name should be a string');
-
 		return this.wsRpc.call([0, 'register_account',
 			[
 				string.toRaw(name),
@@ -557,9 +552,6 @@ class WalletAPI {
 	 */
 	// TODO newListingStatus
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
-		if (!isAccountId(accountToList)) return Promise.reject(new Error('Account id is invalid'));
-
 		return this.wsRpc.call([0, 'whitelist_account',
 			[
 				string.toRaw(authorizingAccount),
@@ -938,8 +930,6 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	approveProposal(feePayingAccountId, idOfProposal, delta, shouldDoBroadcastToNetwork) {
-		if (!isObject(delta)) throw new Error('delta should be a object');
-
 		return this.wsRpc.call([0, 'approve_proposal',
 			[
 				accountId.toRaw(feePayingAccountId),
@@ -1100,16 +1090,16 @@ class WalletAPI {
 	 *  @method publishAssetFeed
 	 *	@param {String} idOfAccount
 	 *	@param {String} assetIdOrName
-	 *	@param {Object} priceFeed
+	 *	@param {Object} priceOfFeed
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	publishAssetFeed(idOfAccount, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork) {
+	publishAssetFeed(idOfAccount, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'publish_asset_feed',
 			[
 				accountId.toRaw(idOfAccount),
 				string.toRaw(assetIdOrName),
-				priceFeed.toRaw(priceFeed),
+				priceFeed.toRaw(priceOfFeed),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1339,7 +1329,8 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'change_sidechain_config',
 			[
 				accountId.toRaw(registrarAccountId),
-				serializers.plugins.echorand.config.toRaw(changedValues),
+                config.toRaw(changedValues),
+				// serializers.plugins.echorand.config.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1406,7 +1397,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getObject(objectId) {
-		return this.wsRpc.call([0, 'get_object', [serializers.chain.ids.anyObjectId.toRaw(objectId)]]);
+		return this.wsRpc.call([0, 'get_object', [anyObjectId.toRaw(objectId)]]);
 	}
 
 	/**
