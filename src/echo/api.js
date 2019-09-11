@@ -1170,14 +1170,14 @@ class API {
 
 				let requestedObject = requestedObjects.shift();
 
-				if (!requestedObject || !requestedObject[1] || !requestedObject[1].account) {
+				if (!requestedObject || !requestedObject[1] || !requestedObject[1].index) {
 					resultArray[i] = null;
 					continue;
 				}
 
 				const { account } = requestedObject[1];
 				const immutableAccount = fromJS(account);
-				delete requestedObject[1].account;
+				delete requestedObject[1].index;
 
 				const requestArray = requestedObject[1].balances.map(({ id }) => id);
 

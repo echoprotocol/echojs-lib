@@ -8,6 +8,9 @@ import opWrapper from './protocol/opWrapper';
 
 export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
 
+export { approvalDelta } from './wallet';
+export { accountListing } from './protocol/account/index';
+
 export const operation = new OperationSerializer();
 
 opWrapper.init(operation);

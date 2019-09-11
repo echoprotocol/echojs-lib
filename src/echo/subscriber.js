@@ -202,7 +202,7 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
-		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.account)) {
+		if (isAccountTransactionHistoryId(object.id) && !subscribedAccounts.includes(object.index)) {
 			return null;
 		}
 
