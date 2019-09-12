@@ -1,14 +1,37 @@
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 
-const ethAddress = serializers.protocol.ethAddress;
+const { ethAddress } = serializers.protocol;
 const { vector } = serializers.collections;
 
-const { uint64, uint32, int64, uint16, uint8 } = serializers.basic.integers;
-const { timePointSec, variantObject, string, bool } = serializers.basic;
-const { operation, approvalDelta, accountListing, signedTransaction, transaction } = serializers;
+const {
+	uint64,
+	uint32,
+	int64,
+	uint16,
+	uint8,
+} = serializers.basic.integers;
+const {
+	timePointSec,
+	variantObject,
+	string,
+	bool,
+} = serializers.basic;
+const {
+	operation,
+	approvalDelta,
+	accountListing,
+	signedTransaction,
+	transaction,
+} = serializers;
 const { privateKey, publicKey, ripemd160 } = serializers.chain;
-const { accountId, contractId, erc20TokenId, proposalId, assetId } = serializers.chain.ids.protocol;
+const {
+	accountId,
+	contractId,
+	erc20TokenId,
+	proposalId,
+	assetId,
+} = serializers.chain.ids.protocol;
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { priceFeed } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
@@ -29,11 +52,11 @@ class WalletAPI {
 	/**
 	 *  @method connect
 	 *	@param {String} url - remote node address
-	 *	@param {Object} options - connection params.
+	 *	@param {Object} connectionOptions - connection params.
 	 *  @returns {Promise}
 	 */
-	async connect(url, options) {
-		await this.wsRpc.connect(url, options);
+	async connect(url, connectionOptions) {
+		await this.wsRpc.connect(url, connectionOptions);
 	}
 
 	/**
@@ -181,12 +204,7 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importKey(accountNameOrId, privateKeyWif) {
-		return this.wsRpc.call([0, 'import_key',
-			[
-				string.toRaw(accountNameOrId),
-				privateKey.toRaw(privateKeyWif),
-			],
-		]);
+		return this.wsRpc.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
 	}
 
 	/**
@@ -196,12 +214,7 @@ class WalletAPI {
 	 *  @returns {Promise<Boolean>}
 	 */
 	importAccounts(filename, password) {
-		return this.wsRpc.call([0, 'import_accounts',
-			[
-				string.toRaw(filename),
-				string.toRaw(password),
-			],
-		]);
+		return this.wsRpc.call([0, 'import_accounts', [string.toRaw(filename), string.toRaw(password)]]);
 	}
 
 	/**
@@ -257,10 +270,7 @@ class WalletAPI {
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
 		return this.wsRpc.call([0, 'derive_keys_from_brain_key',
-			[
-				string.toRaw(brainKey),
-				int64.toRaw(numberOfDesiredKeys),
-			],
+			[string.toRaw(brainKey), int64.toRaw(numberOfDesiredKeys)],
 		]);
 	}
 
@@ -339,12 +349,7 @@ class WalletAPI {
 			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_accounts',
-			[
-				string.toRaw(accountName),
-				uint32.toRaw(limit),
-			],
-		]);
+		return this.wsRpc.call([0, 'list_accounts', [string.toRaw(accountName), uint32.toRaw(limit)]]);
 	}
 
 	/**
@@ -353,9 +358,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	listAccountBalances(idOfAccount) {
-		return this.wsRpc.call([0, 'list_account_balances', [
-			accountId.toRaw(idOfAccount),
-		]]);
+		return this.wsRpc.call([0, 'list_account_balances', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -364,9 +367,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	listIdBalances(idOfAccount) {
-		return this.wsRpc.call([0, 'list_id_balances', [
-			accountId.toRaw(idOfAccount),
-		]]);
+		return this.wsRpc.call([0, 'list_id_balances', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -497,9 +498,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractResult(idOfContract) {
-		return this.wsRpc.call([0, 'get_contract_result',
-			[contractId.toRaw(idOfContract)],
-		]);
+		return this.wsRpc.call([0, 'get_contract_result', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
@@ -620,10 +619,7 @@ class WalletAPI {
 		}
 
 		return this.wsRpc.call([0, 'get_account_history',
-			[
-				string.toRaw(accountIdOrName),
-				int64.toRaw(limit),
-			],
+			[string.toRaw(accountIdOrName),	int64.toRaw(limit)],
 		]);
 	}
 
@@ -652,12 +648,7 @@ class WalletAPI {
 		}
 
 		return this.wsRpc.call([0, 'get_relative_account_history',
-			[
-				string.toRaw(accountIdOrName),
-				uint64.toRaw(stop),
-				int64.toRaw(limit),
-				uint64.toRaw(start),
-			],
+			[string.toRaw(accountIdOrName),	uint64.toRaw(stop),	int64.toRaw(limit),	uint64.toRaw(start)],
 		]);
 	}
 
@@ -667,9 +658,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractObject(idOfContract) {
-		return this.wsRpc.call([0, 'get_contract_object',
-			[contractId.toRaw(idOfContract)],
-		]);
+		return this.wsRpc.call([0, 'get_contract_object', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
@@ -678,9 +667,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContract(idOfContract) {
-		return this.wsRpc.call([0, 'get_contract',
-			[contractId.toRaw(idOfContract)],
-		]);
+		return this.wsRpc.call([0, 'get_contract', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
@@ -742,9 +729,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getContractPoolBalance(idOfContract) {
-		return this.wsRpc.call([0, 'get_contract_pool_balance',
-			[contractId.toRaw(idOfContract)],
-		]);
+		return this.wsRpc.call([0, 'get_contract_pool_balance', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
@@ -753,9 +738,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getContractPoolWhitelist(idOfContract) {
-		return this.wsRpc.call([0, 'get_contract_pool_whitelist',
-			[contractId.toRaw(idOfContract)],
-		]);
+		return this.wsRpc.call([0, 'get_contract_pool_whitelist', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
@@ -764,9 +747,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	getEthAddress(idOfAccount) {
-		return this.wsRpc.call([0, 'get_eth_address',
-			[accountId.toRaw(idOfAccount)],
-		]);
+		return this.wsRpc.call([0, 'get_eth_address', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -775,9 +756,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getAccountDeposits(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_deposits',
-			[accountId.toRaw(idOfAccount)],
-		]);
+		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -825,9 +804,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getErc20AccountDeposits(idOfAccount) {
-		return this.wsRpc.call([0, 'get_erc20_account_deposits',
-			[accountId.toRaw(idOfAccount)],
-		]);
+		return this.wsRpc.call([0, 'get_erc20_account_deposits', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -836,9 +813,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getErc20AccountWithdrawals(idOfAccount) {
-		return this.wsRpc.call([0, 'get_erc20_account_withdrawals',
-			[accountId.toRaw(idOfAccount)],
-		]);
+		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -871,12 +846,7 @@ class WalletAPI {
 	 */
 	generateAccountAddress(idOfAccount, label, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'generate_account_address',
-			[
-				accountId.toRaw(idOfAccount),
-				string.toRaw(label),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
-		]);
+			[accountId.toRaw(idOfAccount), string.toRaw(label),	bool.toRaw(shouldDoBroadcastToNetwork)]]);
 	}
 
 	/**
@@ -893,11 +863,7 @@ class WalletAPI {
 		}
 
 		return this.wsRpc.call([0, 'get_account_addresses',
-			[
-				accountId.toRaw(idOfAccount),
-				uint64.toRaw(startFrom),
-				uint64.toRaw(limit),
-			],
+			[accountId.toRaw(idOfAccount), uint64.toRaw(startFrom), uint64.toRaw(limit)],
 		]);
 	}
 
@@ -916,9 +882,7 @@ class WalletAPI {
 	 *  @returns {Promise<Array.<Object>>}
 	 */
 	getAccountWithdrawals(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_withdrawals',
-			[accountId.toRaw(idOfAccount)],
-		]);
+		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
@@ -948,26 +912,23 @@ class WalletAPI {
 	 */
 	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'generate_eth_address',
-			[
-				string.toRaw(accountIdOrName),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
+			[string.toRaw(accountIdOrName),	bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
 	}
 
 	/**
 	 *  @method withdrawEth
 	 *	@param {String} accountIdOrName
-	 *	@param {String} ethAddress
+	 *	@param {String} ethOfAddress
 	 *	@param {Number} value
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	withdrawEth(accountIdOrName, ethAddress, value, shouldDoBroadcastToNetwork) {
+	withdrawEth(accountIdOrName, ethOfAddress, value, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'withdraw_eth',
 			[
 				string.toRaw(accountIdOrName),
-				string.toRaw(ethAddress),
+				string.toRaw(ethOfAddress),
 				uint64.toRaw(value),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
@@ -982,10 +943,7 @@ class WalletAPI {
 	 */
 	floodNetwork(prefix, numberOfTransactions) {
 		return this.wsRpc.call([0, 'flood_network',
-			[
-				string.toRaw(prefix),
-				uint32.toRaw(numberOfTransactions),
-			],
+			[string.toRaw(prefix), uint32.toRaw(numberOfTransactions)],
 		]);
 	}
 
@@ -1001,12 +959,7 @@ class WalletAPI {
 			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_assets',
-			[
-				string.toRaw(lowerBoundSymbol),
-				uint32.toRaw(limit),
-			],
-		]);
+		return this.wsRpc.call([0, 'list_assets', [string.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
 	}
 
 	/**
@@ -1060,11 +1013,7 @@ class WalletAPI {
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'update_bitasset',
-			[
-				string.toRaw(assetIdOrName),
-				bitassetOptions.toRaw(newBitasset),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
+			[string.toRaw(assetIdOrName), bitassetOptions.toRaw(newBitasset), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
 	}
 
@@ -1189,11 +1138,7 @@ class WalletAPI {
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'create_committee_member',
-			[
-				string.toRaw(accountIdOrName),
-				string.toRaw(url),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
+			[string.toRaw(accountIdOrName),	string.toRaw(url), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
 	}
 
@@ -1235,10 +1180,7 @@ class WalletAPI {
 		}
 
 		return this.wsRpc.call([0, 'list_committee_members',
-			[
-				string.toRaw(lowerBoundName),
-				uint64.toRaw(limit),
-			],
+			[string.toRaw(lowerBoundName),	uint64.toRaw(limit)],
 		]);
 	}
 
@@ -1254,8 +1196,8 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'vote_for_committee_member',
 			[
 				string.toRaw(votingAccountIdOrName),
-				string.toRaw(votingAccountIdOrName),
-				bool.toRaw(ownerOfCommitteeMember),
+				string.toRaw(ownerOfCommitteeMember),
+				bool.toRaw(approveYourVote),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1306,7 +1248,6 @@ class WalletAPI {
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<Object>}
 	 */
-	// TODO
 	proposeFeeChange(idOfAccount, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'propose_fee_change',
 			[
@@ -1329,8 +1270,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'change_sidechain_config',
 			[
 				accountId.toRaw(registrarAccountId),
-                config.toRaw(changedValues),
-				// serializers.plugins.echorand.config.toRaw(changedValues),
+				config.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1417,10 +1357,7 @@ class WalletAPI {
 	 */
 	addOperationToBuilderTransaction(transactionTypeHandle, newOperation) {
 		return this.wsRpc.call([0, 'add_operation_to_builder_transaction',
-			[
-				uint16.toRaw(transactionTypeHandle),
-				vector(operation.toRaw(newOperation)),
-			],
+			[uint16.toRaw(transactionTypeHandle), vector(operation.toRaw(newOperation))],
 		]);
 	}
 
@@ -1449,10 +1386,7 @@ class WalletAPI {
 	 */
 	setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset) {
 		return this.wsRpc.call([0, 'set_fees_on_builder_transaction',
-			[
-				uint16.toRaw(transactionTypeHandle),
-				bool.toRaw(feeAsset),
-			],
+			[uint16.toRaw(transactionTypeHandle), bool.toRaw(feeAsset)],
 		]);
 	}
 
@@ -1462,9 +1396,7 @@ class WalletAPI {
 	 *  @returns {Promise<Object>}
 	 */
 	previewBuilderTransaction(transactionTypeHandle) {
-		return this.wsRpc.call([0, 'preview_builder_transaction',
-			[uint64.toRaw(transactionTypeHandle)],
-		]);
+		return this.wsRpc.call([0, 'preview_builder_transaction', [uint64.toRaw(transactionTypeHandle)]]);
 	}
 
 	/**
@@ -1475,10 +1407,7 @@ class WalletAPI {
 	 */
 	signBuilderTransaction(transactionTypeHandle, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'sign_builder_transaction',
-			[
-				uint16.toRaw(transactionTypeHandle),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
+			[uint16.toRaw(transactionTypeHandle), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
 	}
 
@@ -1534,9 +1463,7 @@ class WalletAPI {
 	 *  @returns {Promise<null>}
 	 */
 	removeBuilderTransaction(transactionTypeHandle) {
-		return this.wsRpc.call([0, 'remove_builder_transaction',
-			[uint16.toRaw(transactionTypeHandle)],
-		]);
+		return this.wsRpc.call([0, 'remove_builder_transaction', [uint16.toRaw(transactionTypeHandle)]]);
 	}
 
 	/**
@@ -1558,10 +1485,7 @@ class WalletAPI {
 	// TODO Assert Exception: maybe_found != nullptr: Unable to find Object'
 	signTransaction(tr, shouldDoBroadcastToNetwork) {
 		return this.wsRpc.call([0, 'sign_transaction',
-			[
-				transaction.toRaw(tr),
-				bool.toRaw(shouldDoBroadcastToNetwork),
-			],
+			[transaction.toRaw(tr), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
 	}
 

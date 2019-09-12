@@ -11,7 +11,7 @@ import { EXPIRATION_SECONDS } from '../src/constants/api-config';
 import { int64 } from '../src/serializers/basic/integers';
 import { assetId } from '../src/serializers/chain/id/protocol';
 
-describe.only('WALLET API', () => {
+describe('WALLET API', () => {
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
@@ -86,20 +86,20 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#networkAddNodes()', () => {
-		it('should add new nodes to network', async () => {
-			try {
-				const nodes = ["0.0.0.0:6311", "0.0.0.0:6311"];
-				const result = await echo.walletApi.networkAddNodes(nodes);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#networkAddNodes()', () => {
+	// 	it('should add new nodes to network', async () => {
+	// 		try {
+	// 			const nodes = ["0.0.0.0:6311", "0.0.0.0:6311"];
+	// 			const result = await echo.walletApi.networkAddNodes(nodes);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('null');
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	describe('#networkGetConnectedPeers()', () => {
 		it('should get a array of connected peers', async () => {
@@ -239,11 +239,11 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#importKey()', () => {
+	describe('#importKey()', () => {
 		it('Should imports the private key for an existing account', async () => {
 			try {
 				const result = await echo.walletApi.importKey('1.2.11', '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
-				console.log(result);
+				// console.log(result);
 				expect(result)
 					.to
 					.be
@@ -257,7 +257,7 @@ describe.only('WALLET API', () => {
 	// describe('#importAccounts()', () => {
 	// 	it('Should imports accounts to chosen filename', async () => {
 	// 		try {
-	// 			const filename = 12/*'filename'*/;
+	// 			const filename = '';
 	// 			const password = 'password';
 	// 			const result = await echo.walletApi.importAccounts(filename, password);
 	// 			expect(result)
@@ -273,7 +273,7 @@ describe.only('WALLET API', () => {
 	// describe('#importAccountKeys()', () => {
 	// 	it('Should imports accounts keys to chosen filename', async () => {
 	// 		try {
-	// 			const filename = 'filename';
+	// 			const filename = '';
 	// 			const password = 'password';
 	// 			const result = await echo.walletApi.importAccountKeys(filename, password, accountId, accountId);
 	// 			expect(result)
@@ -286,21 +286,21 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	describe.only('#importBalance()', () => {
-		it('should construct transaction', async () => {
-			try {
-				const wifKeys = [WIF];
-				const result = await echo.walletApi.importBalance(accountId, shouldDoBroadcastToNetwork, wifKeys);
-				console.log('result', result);
-				expect(result)
-					.to
-					.be
-					.an('object');
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#importBalance()', () => {
+	// 	it('should construct transaction', async () => {
+	// 		try {
+	// 			const wifKeys = [WIF];
+	// 			const result = await echo.walletApi.importBalance(accountId, shouldDoBroadcastToNetwork, wifKeys);
+	// 			console.log('result', result);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object');
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	describe('#suggestBrainKey()', () => {
 		it('should suggests a safe brain key', async () => {
@@ -375,7 +375,7 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#isPublicKeyRegistered()', () => {
+	describe('#isPublicKeyRegistered()', () => {
 		it('should determine is key linked to any registered account', async () => {
 			try {
 				const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
@@ -390,36 +390,36 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#getTransactionId()', () => {
-		it('should get transactin ID', async () => {
-			try {
-				const result = await echo.walletApi.getTransactionId(transaction);
-				console.log(result);
-				expect(result)
-					.to
-					.be
-					.an('string');
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
-	// describe('#getPrivateKey()', () => {
-	// 	it('should get the WIF private key', async () => {
+	// describe('#getTransactionId()', () => {
+	// 	it('should get transactin ID', async () => {
 	// 		try {
-	// 			const pubKey = 'ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo';
-	// 			const result = await echo.walletApi.getPrivateKey(pubKey);
+	// 			const result = await echo.walletApi.getTransactionId(transaction);
+	// 			console.log(result);
 	// 			expect(result)
 	// 				.to
 	// 				.be
 	// 				.an('string');
-	// 			console.log('result', result);
 	// 		} catch (e) {
 	// 			throw e;
 	// 		}
 	// 	}).timeout(5000);
 	// });
+
+	describe('#getPrivateKey()', () => {
+		it('should get the WIF private key', async () => {
+			try {
+				const pubKey = 'ECHOGCNquQJ6PsbqWts9Hwdea6GdAsfyTfJDq2r6BZbkMcNo';
+				const result = await echo.walletApi.getPrivateKey(pubKey);
+				expect(result)
+					.to
+					.be
+					.an('string');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#loadWalletFile()', () => {
 		it('should loads a specified wallet', async () => {
@@ -477,14 +477,13 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#listAccounts()', () => {
+	describe('#listAccounts()', () => {
 		it('should get lists all accounts registered in the blockchain', async () => {
 			try {
 				const result = await echo.walletApi.listAccounts(
 					accountName,
 					constants.API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT
 				);
-				console.log(result);
 				expect(result)
 					.to
 					.be
@@ -559,34 +558,34 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#registerAccount()', () => {
-		it('should registers an account', async () => {
-			try {
-				const accountName = 'newName';
-				const activeKey = 'ECHOBcDxkvsGKsbRu2ZhaqXtKAGvoT32DH3XK6J2eYk8JMtC';
-				const result = await echo.walletApi.registerAccount(
-					accountName,
-					activeKey,
-					accountId,
-					shouldDoBroadcastToNetwork
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				expect(result.name).equal(accountName);key_auths
-				expect(result.registrar).equal(accountId);
-				expect(result.key_auths[0][0]).equal(activeKey);
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#registerAccount()', () => {
+	// 	it('should registers an account', async () => {
+	// 		try {
+	// 			const accountName = 'ales';
+	// 			const activeKey = 'ECHOBcDxkvsGKsbRu2ZhaqXtKAGvoT32DH3XK6J2eYk8JMtC';
+	// 			const result = await echo.walletApi.registerAccount(
+	// 				accountName,
+	// 				activeKey,
+	// 				accountId,
+	// 				shouldDoBroadcastToNetwork
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object').that.is.not.empty;
+	// 			expect(result.name).equal(accountName);key_auths
+	// 			expect(result.registrar).equal(accountId);
+	// 			// expect(result.key_auths[0][0]).equal(activeKey);
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	// describe('#createAccountWithBrainKey()', () => {
 	// 	it('should creates a new account and registers it', async () => {
 	// 		try {
-	// 			const accountName = 'testName';
+	// 			const accountName = 'Jacj';
 	// 			const result = await echo.walletApi.createAccountWithBrainKey(
 	// 				brainKey,
 	// 				accountName,
@@ -609,7 +608,7 @@ describe.only('WALLET API', () => {
 	// 			const contractCode = 'contractCode';
 	// 			const amount = 1;
 	// 			const assetType = 'assetType';
-	// 			const supportedAssetId = '';
+	// 			const supportedAssetId = '1.3.0';
 	// 			const useEthereumAssetAccuracy = false;
 	// 			const shouldSaveToWallet = false;
 	//
@@ -658,32 +657,32 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#contractFundFeePool()', () => {
-	// 	it('should get fund fee pool of contract', async () => {
-	// 		try {
-	// 			const amount = 1;
-	//
-	// 			const result = await echo.walletApi.contractFundFeePool(
-	// 				accountName,
-	// 				contractId,
-	// 				amount,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#contractFundFeePool()', () => {
+		it('should get fund fee pool of contract', async () => {
+			try {
+				const amount = 1;
+
+				const result = await echo.walletApi.contractFundFeePool(
+					accountName,
+					contractId,
+					amount,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#getContractResult()', () => {
 	// 	it('should get the result of contract execution', async () => {
 	// 		try {
 	// 			const result = await echo.walletApi.getContractResult(contractId);
-	// 			console.log('------------result---------', result);
+	// 			// console.log('------------result---------', result);
 	// 			expect(result)
 	// 				.to
 	// 				.be
@@ -695,69 +694,71 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#transfer()', () => {
-	// 	it('should do transfer an amount from one account to another', async () => {
-	// 		try {
-	// 			const amount = 1;
-	//
-	// 			const result = await echo.walletApi.transfer(
-	// 				accountId,
-	// 				accountId,
-	// 				amount,
-	// 				constants.ECHO_ASSET_ID,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#transfer()', () => {
+		it('should do transfer an amount from one account to another', async () => {
+			try {
+				const amount = '1';
+				const toAccountId = '1.2.1';
 
-	// describe('#transfer2()', () => {
-	// 	it('should do transfer an amount from one account to another', async () => {
-	// 		try {
-	// 			const amount = 1;
-	//
-	// 			const result = await echo.walletApi.transfer2(
-	// 				accountId,
-	// 				accountId,
-	// 				amount,
-	// 				constants.ECHO_ASSET_ID,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+				const result = await echo.walletApi.transfer(
+					accountId,
+					toAccountId,
+					amount,
+					constants.ECHO_ASSET_ID,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#whitelistAccount()', () => {
-	// 	it('should whitelist accounts, primarily for transacting in whitelisted assets', async () => {
-	// 		try {
-	// 			const newListingStatus = 'white_listed';
-	//
-	// 			const result = await echo.walletApi.whitelistAccount(
-	// 				accountId,
-	// 				accountId,
-	// 				newListingStatus,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#transfer2()', () => {
+		it('should do transfer an amount from one account to another', async () => {
+			try {
+				const amount = '1';
+				const toAccountId = '1.2.1';
+
+				const result = await echo.walletApi.transfer2(
+					accountId,
+					toAccountId,
+					amount,
+					constants.ECHO_ASSET_ID,
+				);
+				expect(result)
+					.to
+					.be
+					.an('array').that.is.not.empty;
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
+	describe('#whitelistAccount()', () => {
+		it('should whitelist accounts, primarily for transacting in whitelisted assets', async () => {
+			try {
+				const newListingStatus = 1;
+
+				const result = await echo.walletApi.whitelistAccount(
+					accountId,
+					accountId,
+					newListingStatus,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getVestingBalances()', () => {
 		it('Should get information about a vesting balance object', async () => {
@@ -777,6 +778,7 @@ describe.only('WALLET API', () => {
 	// 	it('Should make withdraw a vesting balance', async () => {
 	// 		try {
 	// 			const assetSymbol = 'assetSymbol';
+	// 			const amount = '1';
 	// 			const result = await echo.walletApi.withdrawVesting(
 	// 				accountId,
 	// 				amount,
@@ -793,35 +795,35 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#getAccount()', () => {
-	// 	it('Should returns information about the given account', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getAccount(accountId);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getAccount()', () => {
+		it('Should returns information about the given account', async () => {
+			try {
+				const result = await echo.walletApi.getAccount(accountId);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#getAccountId()', () => {
-	// 	it('Should returns the id of a named account', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getAccountId(accountName);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('string');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getAccountId()', () => {
+		it('Should returns the id of a named account', async () => {
+			try {
+				const result = await echo.walletApi.getAccountId(accountName);
+				expect(result)
+					.to
+					.be
+					.an('string');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getAccountHistory()', () => {
 		it('Should returns the most recent operations on the named account', async () => {
@@ -838,7 +840,7 @@ describe.only('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;*/
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -860,42 +862,42 @@ describe.only('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;*/
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
 		}).timeout(5000);
 	});
 
-	// describe('#getContractObject()', () => {
-	// 	it('Should get the contract object by it\'s id', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getContractObject(contractId);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getContractObject()', () => {
+		it('Should get the contract object by it\'s id', async () => {
+			try {
+				const result = await echo.walletApi.getContractObject(contractId);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#getContract()', () => {
-	// 	it('Should get the contract information by the contract\'s id', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getContract(contractId);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getContract()', () => {
+		it('Should get the contract information by the contract\'s id', async () => {
+			try {
+				const result = await echo.walletApi.getContract(contractId);
+				expect(result)
+					.to
+					.be
+					.an('array');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#whitelistContractPool()', () => {
 	// 	it('Should whitelist or blacklist contract pool', async () => {
@@ -944,20 +946,20 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#getContractPoolBalance()', () => {
-	// 	it('Should get contract\'s fee pool balance', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getContractPoolBalance(contractId);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getContractPoolBalance()', () => {
+		it('Should get contract\'s fee pool balance', async () => {
+			try {
+				const result = await echo.walletApi.getContractPoolBalance(contractId);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#getContractPoolWhitelist()', () => {
 	// 	it('Should get contract\'s whitelist and blacklist', async () => {
@@ -993,10 +995,10 @@ describe.only('WALLET API', () => {
 		it('Should returns all approved deposits, for the given account id', async () => {
 			try {
 				const result = await echo.walletApi.getAccountDeposits(accountId);
-				// expect(result)
-				// 	.to
-				// 	.be
-				// 	.an('object');
+				expect(result)
+					.to
+					.be
+					.an('array');
 				// console.log('result', result);
 			} catch (e) {
 				throw e;
@@ -1004,30 +1006,30 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#registerErc20Token()', () => {
-	// 	it('Should creates a transaction to register erc20_token', async () => {
-	// 		try {
-	// 			const ethereumTokenAddress = 'f7d2658685b4efa75976645374f2bc27f714ed03';
-	// 			const tokenName = 'TradeForYou-S';
-	// 			const tokenSymbol = 'TFYS';
-	// 			const decimals = 0;
-	// 			const result = await echo.walletApi.registerErc20Token(
-	// 				accountId,
-	// 				ethereumTokenAddress,
-	// 				tokenName,
-	// 				tokenSymbol,
-	// 				decimals,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#registerErc20Token()', () => {
+		it('Should creates a transaction to register erc20_token', async () => {
+			try {
+				const ethereumTokenAddress = 'f7d2658685b4efa75976645374f2bc27f714ed03';
+				const tokenName = 'TradeForYou-S';
+				const tokenSymbol = 'TFYS';
+				const decimals = 0;
+				const result = await echo.walletApi.registerErc20Token(
+					accountId,
+					ethereumTokenAddress,
+					tokenName,
+					tokenSymbol,
+					decimals,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getErc20Token()', () => {
 		it('Should returns information about erc20 token', async () => {
@@ -1106,25 +1108,25 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#generateAccountAddress()', () => {
-	// 	it('Should generate account address', async () => {
-	// 		try {
-	// 			const label = 'label';
-	// 			const result = await echo.walletApi.generateAccountAddress(
-	// 				accountId,
-	// 				label,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#generateAccountAddress()', () => {
+		it('Should generate account address', async () => {
+			try {
+				const label = 'label';
+				const result = await echo.walletApi.generateAccountAddress(
+					accountId,
+					label,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getAccountAddresses()', () => {
 		it('Should get addresses of current account', async () => {
@@ -1147,7 +1149,7 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#getAccountByAddress()', () => {
+	describe('#getAccountByAddress()', () => {
 		it('Should get owner of specified address', async () => {
 			try {
 				const address = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
@@ -1212,34 +1214,34 @@ describe.only('WALLET API', () => {
 					.to
 					.be
 					.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
 		}).timeout(5000);
 	});
 
-	// describe('#withdrawEth()', () => {
-	// 	it('Should withdraw eth from address', async () => {
-	// 		try {
-	// 			const ethAddress = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
-	// 			const value = 1;
-	// 			const result = await echo.walletApi.withdrawEth(
-	// 				accountId,
-	// 				ethAddress,
-	// 				value,
-	// 				shouldDoBroadcastToNetwork,
-	// 				);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#withdrawEth()', () => {
+		it('Should withdraw eth from address', async () => {
+			try {
+				const ethAddress = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
+				const value = 1;
+				const result = await echo.walletApi.withdrawEth(
+					accountId,
+					ethAddress,
+					value,
+					shouldDoBroadcastToNetwork,
+					);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#floodNetwork()', () => {
 		it('What Should this do?', async () => {
@@ -1280,34 +1282,34 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#createAsset()', () => {
-		it('Should creates a new user-issued or market-issued asset', async () => {
-			try {
-				const symbol = 'TFYS';
-				const precision = 1;
-				const assetOption = {
-					amount: 100/*int64*/,
-					asset_id: assetId,
-				};
-				const bitassetOpts = {};
-				const result = await echo.walletApi.createAsset(
-					accountId,
-					symbol,
-					precision,
-					assetOption,
-					bitassetOpts,
-					shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object');
-				console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#createAsset()', () => {
+	// 	it('Should creates a new user-issued or market-issued asset', async () => {
+	// 		try {
+	// 			const symbol = 'TFYS';
+	// 			const precision = 1;
+	// 			const assetOption = {
+	// 				amount: 100,
+	// 				asset_id: assetId,
+	// 			};
+	// 			const bitassetOpts = {};
+	// 			const result = await echo.walletApi.createAsset(
+	// 				accountId,
+	// 				symbol,
+	// 				precision,
+	// 				assetOption,
+	// 				bitassetOpts,
+	// 				shouldDoBroadcastToNetwork,
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object');
+	// 			console.log('result', result);
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	// describe('#updateAsset()', () => {
 	// 	it('Should update the core options on an asset', async () => {
@@ -1422,7 +1424,7 @@ describe.only('WALLET API', () => {
 					.to
 					.be
 					.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1459,73 +1461,74 @@ describe.only('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
 		}).timeout(5000);
 	});
 
-	// describe('#reserveAsset()', () => {
-	// 	it('Should burns the given user-issued asset', async () => {
-	// 		try {
-	// 			const amount = '1';
-	// 			const result = await echo.walletApi.reserveAsset(
-	// 				accountId,
-	// 				amount,
-	// 				constants.ECHO_ASSET_ID,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
-
-	// describe('#createCommitteeMember()', () => {
-	// 	it('Should creates a committee_member object owned by the given account', async () => {
-	// 		try {
-	// 			const url = 'URL';
-	// 			const result = await echo.walletApi.createCommitteeMember(
-	// 				accountId,
-	// 				url,
-	// 				shouldDoBroadcastToNetwork,
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object');
-	// 			console.log('result', result);
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
-
-	describe('#setDesiredCommitteeMemberCount()', () => {
-		it('Should set your vote for the number of committee_members', async () => {
+	describe('#reserveAsset()', () => {
+		it('Should burns the given user-issued asset', async () => {
 			try {
-				const desiredNumberOfCommitteeMembers = 0;
-				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
-					/*accountId*/'1.2.11',
-					desiredNumberOfCommitteeMembers,
+				const amount = '1';
+				const result = await echo.walletApi.reserveAsset(
+					accountId,
+					amount,
+					constants.ECHO_ASSET_ID,
 					shouldDoBroadcastToNetwork,
 				);
 				expect(result)
 					.to
 					.be
 					.an('object');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
 		}).timeout(5000);
 	});
+
+	describe('#createCommitteeMember()', () => {
+		it('Should creates a committee_member object owned by the given account', async () => {
+			try {
+				const newAccountId = '1.2.1';
+				const url = '';
+				const result = await echo.walletApi.createCommitteeMember(
+					newAccountId,
+					url,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
+	// describe('#setDesiredCommitteeMemberCount()', () => {
+	// 	it('Should set your vote for the number of committee_members', async () => {
+	// 		try {
+	// 			const desiredNumberOfCommitteeMembers = 0;
+	// 			const result = await echo.walletApi.setDesiredCommitteeMemberCount(
+	// 				/*accountId*/'1.2.11',
+	// 				desiredNumberOfCommitteeMembers,
+	// 				shouldDoBroadcastToNetwork,
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object');
+	// 			console.log('result', result);
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	describe('#getCommitteeMember()', () => {
 		it('Should returns information about the given committee_member', async () => {
@@ -1536,7 +1539,7 @@ describe.only('WALLET API', () => {
 					.be
 					.an('object').that.is.not.empty;
 				expect(result.committee_member_account).equal(accountId);
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1735,21 +1738,21 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	// describe('#getGlobalProperties()', () => {
-	// 	it('should returns the number of registered accounts', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.getGlobalProperties();
-	// 			console.log('------------result---------', result);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object')
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#getGlobalProperties()', () => {
+		it('should returns the number of registered accounts', async () => {
+			try {
+				const result = await echo.walletApi.getGlobalProperties();
+				// console.log('------------result---------', result);
+				expect(result)
+					.to
+					.be
+					.an('object')
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	describe('#getDynamicGlobalProperties()', () => {
 		it('should returns the block chain\'s slowly-changing settings', async () => {
@@ -1853,38 +1856,38 @@ describe.only('WALLET API', () => {
 	// 	}).timeout(5000);
 	// });
 
-	// describe('#previewBuilderTransaction()', () => {
-	// 	it('should get preview of builder transaction', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#previewBuilderTransaction()', () => {
+		it('should get preview of builder transaction', async () => {
+			try {
+				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
-	// describe('#signBuilderTransaction()', () => {
-	// 	it('should get sing transaction', async () => {
-	// 		try {
-	// 			const result = await echo.walletApi.signBuilderTransaction(
-	// 				transactionTypeHandle,
-	// 				shouldDoBroadcastToNetwork
-	// 			);
-	// 			expect(result)
-	// 				.to
-	// 				.be
-	// 				.an('object').that.is.not.empty;
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#signBuilderTransaction()', () => {
+		it('should get sing transaction', async () => {
+			try {
+				const result = await echo.walletApi.signBuilderTransaction(
+					transactionTypeHandle,
+					shouldDoBroadcastToNetwork
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
 
 	// describe('#proposeBuilderTransaction()', () => {
 	// 	it('should get sing transaction', async () => {
@@ -1958,37 +1961,37 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#serializeTransaction()', () => {
-		it('should get serialize transaction', async () => {
-			try {
-				const result = await echo.walletApi.serializeTransaction(transaction);
-				console.log(result);
-				expect(result)
-					.to
-					.be
-					.an('string');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#serializeTransaction()', () => {
+	// 	it('should get serialize transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.serializeTransaction(transaction);
+	// 			console.log(result);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('string');
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
-	describe('#signTransaction()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const result = await echo.walletApi.signTransaction(transaction2, shouldDoBroadcastToNetwork);
-				console.log(result);
-				expect(result)
-					.to
-					.be
-					.an('object');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
+	// describe('#signTransaction()', () => {
+	// 	it('should get sing transaction', async () => {
+	// 		try {
+	// 			const result = await echo.walletApi.signTransaction(transaction2, shouldDoBroadcastToNetwork);
+	// 			console.log(result);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('object');
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 			throw e;
+	// 		}
+	// 	}).timeout(5000);
+	// });
 
 	describe('#getPrototypeOperation()', () => {
 		it('should returns an uninitialized object representing a given blockchain operation', async () => {
@@ -2039,74 +2042,5 @@ describe.only('WALLET API', () => {
 	// 		}
 	// 	}).timeout(5000);
 	// });
-
-});
-
-import { strictEqual, throws } from 'assert';
-import bs58 from 'bs58'
-import ED25519 from '../src/crypto/ed25519'
-import PrivateKey from '../src/crypto/private-key'
-import { ED_PRIVATE_WITHOUT_PREFIX } from './_test-data'
-
-describe('PrivateKey EdDSA', () => {
-
-	it('Public key from private ', async () => {
-
-		const edPrivateWithoutPrefix = bs58.decode(ED_PRIVATE_WITHOUT_PREFIX);
-		const edPrivateWithoutPrefixHex = edPrivateWithoutPrefix.toString('hex');
-		const res = ED25519.keyPairFromPrivateKey(edPrivateWithoutPrefixHex);
-
-		const publicKey = `ECHO${bs58.encode(res.publicKey)}`;
-		const privateKey = `ECHO${bs58.encode(res.privateKey)}`;
-		const prKey = PrivateKey.fromBuffer(res.privateKey);
-
-		strictEqual(publicKey, prKey.toPublicKey().toPublicKeyString());
-		strictEqual(ED_PRIVATE, privateKey);
-
-	});
-
-	it('toPrivateKeyString', async () => {
-
-		const edPrivateWithoutPrefix = bs58.decode(ED_PRIVATE_WITHOUT_PREFIX);
-		const edPrivateWithoutPrefixHex = edPrivateWithoutPrefix.toString('hex');
-		const res = ED25519.keyPairFromPrivateKey(edPrivateWithoutPrefixHex);
-
-		const publicKey = `ECHO${bs58.encode(res.publicKey)}`;
-		const privateKey = `ECHO${bs58.encode(res.privateKey)}`;
-		const prKey = PrivateKey.fromBuffer(res.privateKey);
-
-		const privateKeyString = prKey.toPrivateKeyString();
-
-		strictEqual(privateKeyString, ED_PRIVATE);
-
-	});
-
-	it('fromPrivateKeyString', async () => {
-
-		const privateKey = PrivateKey.fromPrivateKeyString(ED_PRIVATE);
-
-		strictEqual(privateKey.toWif(), WIF);
-		strictEqual(privateKey.toPrivateKeyString(), ED_PRIVATE);
-	});
-
-
-	it('fromPrivateKeyString return null', async () => {
-
-		const privateKey = PrivateKey.fromPrivateKeyString('wrong');
-
-		strictEqual(privateKey, null);
-
-	});
-
-
-	it('fromPrivateKeyStringOrThrow throw error', async () => {
-
-		throws(
-			() => {
-				PrivateKey.fromPrivateKeyStringOrThrow('wrong key');
-			},
-			/Expecting key to begin with/
-		);
-	});
 
 });
