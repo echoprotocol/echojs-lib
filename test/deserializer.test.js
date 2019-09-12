@@ -9,4 +9,5 @@ describe.only('deserializer', () => {
 	require('./deserializer/collections/index.collection.deserializer.test');
 	require('./deserializer/chain/chain.deserializer.test');
 	require('./deserializer/operation.deserializer.test');
+	require('./deserializer/vote-id-deserializer.test');
 });
