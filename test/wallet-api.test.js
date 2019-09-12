@@ -736,7 +736,7 @@ describe('WALLET API', () => {
 			} catch (e) {
 				throw e;
 			}
-		}).timeout(5000);
+		}).timeout(10000);
 	});
 
 	describe('#whitelistAccount()', () => {
@@ -757,7 +757,7 @@ describe('WALLET API', () => {
 			} catch (e) {
 				throw e;
 			}
-		}).timeout(5000);
+		}).timeout(10000);
 	});
 
 	describe('#getVestingBalances()', () => {
@@ -771,7 +771,7 @@ describe('WALLET API', () => {
 			} catch (e) {
 				throw e;
 			}
-		}).timeout(5000);
+		}).timeout(10000);
 	});
 
 	// describe('#withdrawVesting()', () => {
@@ -1040,6 +1040,21 @@ describe('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('object');
+				// console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
+	describe('#checkErc20Token()', () => {
+		it('Check on exist erc20 token should return true or false', async () => {
+			try {
+				const result = await echo.walletApi.checkErc20Token(contractId);
+				expect(result)
+					.to
+					.be
+					.an('boolean');
 				// console.log('result', result);
 			} catch (e) {
 				throw e;

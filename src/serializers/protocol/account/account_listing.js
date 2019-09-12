@@ -18,9 +18,6 @@ export default class AccountListingSerializer extends UInt8Serializer {
 		if (result > 4) throw new Error('invalid account listing');
 	}
 
-	/**
-	 *
-	 */
 	appendToByteBuffer() {
 		super.appendToByteBuffer();
 	}

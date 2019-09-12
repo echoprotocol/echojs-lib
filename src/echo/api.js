@@ -1170,7 +1170,7 @@ class API {
 
 				let requestedObject = requestedObjects.shift();
 
-				if (!requestedObject || !requestedObject[1] || !requestedObject[1].index) {
+				if (!requestedObject || !requestedObject[1] || !requestedObject[1].account) {
 					resultArray[i] = null;
 					continue;
 				}

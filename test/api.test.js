@@ -171,6 +171,7 @@ describe('API', () => {
 				debug: false,
 				apis: constants.WS_CONSTANTS.CHAIN_APIS
 			});
+
 		});
 		afterEach(async () => {
 			await ws.close();
@@ -382,7 +383,6 @@ describe('API', () => {
 					const accountId2 = `1.${constants.OBJECT_TYPES.ACCOUNT}.6`;
 
 					const accounts = await api.getFullAccounts([accountId1, accountId2]);
-
 					expect(accounts)
 						.to
 						.be

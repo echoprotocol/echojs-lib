@@ -16,9 +16,6 @@ export default class VariantObjectSerializer extends ISerializer {
 		return value;
 	}
 
-	/**
-	 *
-	 */
 	appendToByteBuffer() {
 		super.appendToByteBuffer();
 	}

@@ -19,9 +19,6 @@ export default class PrivateKeySerializer extends ISerializer {
 		return value.toWif();
 	}
 
-	/**
-	 *
-	 */
 	appendToByteBuffer() {
 		super.appendToByteBuffer();
 	}

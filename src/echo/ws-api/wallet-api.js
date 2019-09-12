@@ -799,6 +799,15 @@ class WalletAPI {
 	}
 
 	/**
+	 *  @method getErc20Token
+	 *	@param {String} idOfContract
+	 *  @returns {Promise<Boolean>}
+	 */
+	checkErc20Token(idOfContract) {
+		return this.wsRpc.call([0, 'check_erc20_token', [contractId.toRaw(idOfContract)]]);
+	}
+
+	/**
 	 *  @method getErc20AccountDeposits
 	 *	@param {String} idOfAccount
 	 *  @returns {Promise<Array.<Object>>}
