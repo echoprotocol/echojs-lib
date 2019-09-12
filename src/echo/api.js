@@ -1177,7 +1177,7 @@ class API {
 
 				const { account } = requestedObject[1];
 				const immutableAccount = fromJS(account);
-				delete requestedObject[1].index;
+				delete requestedObject[1].account;
 
 				const requestArray = requestedObject[1].balances.map(({ id }) => id);
 

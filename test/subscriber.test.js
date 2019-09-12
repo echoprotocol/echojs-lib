@@ -200,7 +200,7 @@ describe('SUBSCRIBER', () => {
         });
 	});
 
-    describe('index.js', () => {
+    describe('account', () => {
         describe('setAccountSubscribe', () => {
             it('is not a function', async () => {
                 try {

@@ -717,27 +717,27 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#transfer2()', () => {
-		it('should do transfer an amount from one account to another', async () => {
-			try {
-				const amount = '1';
-				const toAccountId = '1.2.1';
-
-				const result = await echo.walletApi.transfer2(
-					accountId,
-					toAccountId,
-					amount,
-					constants.ECHO_ASSET_ID,
-				);
-				expect(result)
-					.to
-					.be
-					.an('array').that.is.not.empty;
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(10000);
-	});
+	// describe.only('#transfer2()', () => {
+	// 	it('should do transfer an amount from one account to another', async () => {
+	// 		try {
+	// 			const amount = '1';
+	// 			const toAccountId = '1.2.2';
+	//
+	// 			const result = await echo.walletApi.transfer2(
+	// 				accountId,
+	// 				toAccountId,
+	// 				amount,
+	// 				constants.ECHO_ASSET_ID,
+	// 			);
+	// 			expect(result)
+	// 				.to
+	// 				.be
+	// 				.an('array').that.is.not.empty;
+	// 		} catch (e) {
+	// 			throw e;
+	// 		}
+	// 	}).timeout(10000);
+	// });
 
 	describe('#whitelistAccount()', () => {
 		it('should whitelist accounts, primarily for transacting in whitelisted assets', async () => {
