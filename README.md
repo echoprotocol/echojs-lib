@@ -75,6 +75,7 @@ After the node is started, you can run the tests:
 npm run test
 ```
 
+# License
 
 The MIT License
 
