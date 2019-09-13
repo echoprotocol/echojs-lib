@@ -16,7 +16,6 @@ const {
         ASSET_API,
         LOGIN_API,
         NETWORK_NODE_API,
-        WALLET_API
     } 
 } = constants; // access to different APIs
 

@@ -6,7 +6,6 @@ import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
-import ReconnectionWebSocket from './ws/reconnection-websocket';
 import WalletAPI from './ws-api/wallet-api';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
@@ -18,8 +17,7 @@ class Echo {
 		this.subscriber = new Subscriber(this._ws);
 		this._isInitModules = false;
 		this.initEchoApi = this.initEchoApi.bind(this);
-		this.wallet = new ReconnectionWebSocket();
-		this.walletApi = new WalletAPI(this.wallet);
+		this.walletApi = new WalletAPI();
 	}
 
 	get isConnected() {

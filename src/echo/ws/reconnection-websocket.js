@@ -243,6 +243,7 @@ class ReconnectionWebSocket {
 
 		return new Promise((resolve, reject) => {
 
+			console.log('-----------timeout-------------', timeout)
 			const timeoutId = setTimeout(() => {
 				reject(new Error(`RPC call time is over Id: ${request.id}`));
 
