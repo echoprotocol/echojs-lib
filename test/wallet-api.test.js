@@ -386,7 +386,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#getTransactionId()', () => {
+	describe.skip('#getTransactionId()', () => {
 		it('should get transactin ID', async () => {
 			try {
 				const result = await echo.walletApi.getTransactionId(transaction);
@@ -1939,7 +1939,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#serializeTransaction()', () => {
+	describe.skip('#serializeTransaction()', () => {
 		it('should get serialize transaction', async () => {
 			try {
 				const result = await echo.walletApi.serializeTransaction(transaction);
