@@ -18,8 +18,7 @@ class Echo {
 		this.subscriber = new Subscriber(this._ws);
 		this._isInitModules = false;
 		this.initEchoApi = this.initEchoApi.bind(this);
-		this.wallet = new ReconnectionWebSocket();
-		this.walletApi = new WalletAPI(this.wallet);
+		this.walletApi = new WalletAPI();
 	}
 
 	get isConnected() {
@@ -32,6 +31,23 @@ class Echo {
 	 */
 	get apis() { return new Set(this._ws.apis); }
 
+    async _connectToNode(address, options) {
+        await this._ws.connect(address, options);
+
+        if (this._isInitModules) {
+            return;
+        }
+
+        await this._initModules(options);
+
+        if (!options.store && this.store) {
+            options.store = this.store;
+        }
+
+        this.cache.setOptions(options);
+        this.subscriber.setOptions(options);
+	}
+
 	/**
 	 * @param {string} address
 	 * @param {Options} options
@@ -43,29 +59,8 @@ class Echo {
 
 		try {
 			await Promise.all([
-				(async () => {
-					if (address) {
-						await this._ws.connect(address, options);
-
-						if (this._isInitModules) {
-							return;
-						}
-
-						await this._initModules(options);
-
-						if (!options.store && this.store) {
-							options.store = this.store;
-						}
-
-						this.cache.setOptions(options);
-						this.subscriber.setOptions(options);
-					}
-				})(),
-				(async () => {
-					if (options.wallet) {
-						await this.walletApi.connect(options.wallet, options);
-					}
-				})(),
+                ...address ? [this._connectToNode(address, options)] : [],
+                ...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
 			]);
 		} catch (e) {
 			throw e;

@@ -21,23 +21,34 @@ import {
 	validatePositiveSafeInteger,
 } from '../../utils/validators';
 import { API_CONFIG } from '../../constants';
+import ReconnectionWebSocket from '../ws/reconnection-websocket';
+
+/**
+ * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
+ */
+
+/** @typedef {SignedTransactionSerializer['__TOutput__']} SignedTransaction */
+/** @typedef {typeof import("../../serializers/chain")['ripemd160']['__TOutput__']} TransactionIdType */
+/** @typedef {typeof import("../../serializers/chain")['asset']['__TOutput__']} Asset */
+/** @typedef {typeof import("../../serializers/transaction")['default']} TransactionSerializer */
+/** @typedef {TransactionSerializer['__TOutput__']} Transaction */
+/** @typedef {typeof import("../../serializers")['operation']['__TOutput__']} Operation */
+
 
 class WalletAPI {
 
 	/**
 	 *  @constructor
-	 *
-	 *  @param {ReconnectionWebSocket} wsRpc
 	 */
-	constructor(wsRpc) {
-		this.wsRpc = wsRpc;
+	constructor() {
+		this.wsRpc = new ReconnectionWebSocket();
 	}
 
 	/**
 	 *  @method connect
 	 *	@param {String} url - remote node address
-	 *	@param {Object} options - connection params.
-	 *  @returns {Promise}
+	 *	@param {Parameters<ReconnectionWebSocket['connect']>[1]} options - connection params.
+	 *  @returns {Promise<void>}
 	 */
 	async connect(url, options) {
 		await this.wsRpc.connect(url, options);
@@ -46,7 +57,7 @@ class WalletAPI {
 	/**
 	 *  @method exit
 	 *
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	exit() {
 		return this.wsRpc.call([0, 'exit', []]);
@@ -75,7 +86,7 @@ class WalletAPI {
 	/**
 	 *  @method info
 	 *
-	 *  @returns {Promise}
+	 *  @returns {Promise<string>}
 	 */
 	info() {
 		return this.wsRpc.call([0, 'info', []]);
@@ -84,7 +95,7 @@ class WalletAPI {
 	/**
 	 *  @method about
 	 *
-	 *  @returns {Promise.<Object>}
+	 *  @returns {Promise<Object>}
 	 */
 	about() {
 		return this.wsRpc.call([0, 'about', []]);
@@ -93,7 +104,7 @@ class WalletAPI {
 	/**
 	 *  @method networkAddNodes
 	 *	@param {Array<String>} nodes
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	networkAddNodes(nodes) {
 		if (!isArray(nodes)) return Promise.reject(new Error('nodes should be a array'));
@@ -107,7 +118,7 @@ class WalletAPI {
 	/**
 	 *  @method networkGetConnectedPeers
 	 *
-	 *  @returns {Promise<Array>}
+	 *  @returns {Promise<any[]>}
 	 */
 	networkGetConnectedPeers() {
 		return this.wsRpc.call([0, 'network_get_connected_peers', []]);
@@ -134,7 +145,7 @@ class WalletAPI {
 	/**
 	 *  @method lock
 	 *
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	lock() {
 		return this.wsRpc.call([0, 'lock', []]);
@@ -143,7 +154,7 @@ class WalletAPI {
 	/**
 	 *  @method unlock
 	 *	@param {String} password
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	unlock(password) {
 		if (!isString(password)) throw new Error('password should be a string');
@@ -154,7 +165,7 @@ class WalletAPI {
 	/**
 	 *  @method setPassword
 	 *	@param {String} password
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	setPassword(password) {
 		if (!isString(password)) throw new Error('password should be a string');
@@ -165,7 +176,7 @@ class WalletAPI {
 	/**
 	 *  @method createEddsaKeypair
 	 *
-	 *  @returns {Promise<Array.<String>>}
+	 *  @returns {Promise<[string, string]>}
 	 */
 	createEddsaKeypair() {
 		return this.wsRpc.call([0, 'create_eddsa_keypair', []]);
@@ -174,7 +185,7 @@ class WalletAPI {
 	/**
 	 *  @method dumpPrivateKeys
 	 *
-	 *  @returns {Promise<Array.<String>>}
+	 *  @returns {Promise<[string, string][]>}
 	 */
 	dumpPrivateKeys() {
 		return this.wsRpc.call([0, 'dump_private_keys', []]);
@@ -210,7 +221,7 @@ class WalletAPI {
 	 *  @method importAccounts
 	 *	@param {String} filename
 	 *	@param {String} password
-	 *  @returns {Promise<Boolean>}
+	 *  @returns {Promise<[string, boolean][]>}
 	 */
 	importAccounts(filename, password) {
 		if (!isString(filename)) throw new Error('filename should be a string');
@@ -273,7 +284,7 @@ class WalletAPI {
 	 *  @method deriveKeysFromBrainKey
 	 *	@param {String} brainKey
 	 *	@param {Number} numberOfDesiredKeys
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
 		if (!isString(brainKey)) throw new Error('password should be a string');
@@ -346,7 +357,7 @@ class WalletAPI {
 	/**
 	 *  @method saveWalletFile
 	 *	@param {String} walletFilename
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	saveWalletFile(walletFilename) {
 		if (!isString(walletFilename)) throw new Error('brain key should be a string');
@@ -357,7 +368,7 @@ class WalletAPI {
 	/**
 	 *  @method listMyAccounts
 	 *
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	listMyAccounts() {
 		return this.wsRpc.call([0, 'list_my_accounts', []]);
@@ -367,7 +378,7 @@ class WalletAPI {
 	 *  @method listAccounts
 	 *	@param {String} accountName
 	 *	@param {Number} limit
-	 *  @returns {Promise<Array.<Array.<String>>>}
+	 *  @returns {Promise<[string, string][]>}
 	 */
 	listAccounts(accountName, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(accountName)) throw new Error('account name should be a string');
@@ -392,7 +403,7 @@ class WalletAPI {
 	/**
 	 *  @method listIdBalances
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Asset[]>}
 	 */
 	listIdBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
@@ -408,7 +419,7 @@ class WalletAPI {
 	 * 	@param  {String} registrarAccountId
 	 * 	@param  {Boolean} shouldDoBroadcastToNetwork
 	 *
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
 		if (!isString(name)) throw new Error('Name should be a string');
@@ -427,7 +438,7 @@ class WalletAPI {
 	 *	@param {String} accountName
 	 *	@param {String} registrarAccountId
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	createAccountWithBrainKey(brainKey, accountName, registrarAccountId, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(registrarAccountId)) {
@@ -524,7 +535,7 @@ class WalletAPI {
 	 *	@param {String} contractId
 	 *	@param {Number} amount
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	contractFundFeePool(registrarAccountName, contractId, amount, shouldDoBroadcastToNetwork) {
 		if (!isAccountName(registrarAccountName)) {
@@ -559,7 +570,7 @@ class WalletAPI {
 	 *	@param {String} amount
 	 *	@param {String} assetIdOrName
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
@@ -602,7 +613,7 @@ class WalletAPI {
 	 *	@param {String} accountToList
 	 *	@param {String} newListingStatus
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
@@ -617,7 +628,7 @@ class WalletAPI {
 	/**
 	 *  @method getVestingBalances
 	 *	@param {String} accountNameOrId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getVestingBalances(accountNameOrId) {
 		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
@@ -633,7 +644,7 @@ class WalletAPI {
 	 *	@param {String} amount
 	 *	@param {String} assetSymbol
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Array>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
 		if (!(isAccountName(witnessAccountNameOrId) || isAccountId(witnessAccountNameOrId))) {
@@ -675,7 +686,7 @@ class WalletAPI {
 	 *  @method getAccountHistory
 	 *	@param {String} accountIdOrName
 	 *	@param {Number} limit
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getAccountHistory(accountIdOrName, limit) {
 		if (!(isAccountName(accountIdOrName) || isAccountId(accountIdOrName))) {
@@ -698,9 +709,7 @@ class WalletAPI {
 	 *  @param {Number} limit     [count operations (max 100)]
 	 *  @param {Number} start [Sequence number of the most recent operation to retrieve]
 	 *
-	 *  @return {
-	 *  	Promise.<Array.<AccountHistory>>
-	 *  }
+	 *  @return {Promise<Object[]>}
 	 */
 	async getRelativeAccountHistory(
 		accountId,
@@ -737,7 +746,7 @@ class WalletAPI {
 	getContract(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
 
-		return this.wsRpc.call([0, ' ', [contractId]]);
+		return this.wsRpc.call([0, 'get_contract', [contractId]]);
 	}
 
 	/**
@@ -749,7 +758,7 @@ class WalletAPI {
 	 *	@param {Array<String>} removeFromWhitelist
 	 *	@param {Array<String>} removeFromBlacklist
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	whitelistContractPool(
 		registrarAccountId,
@@ -797,7 +806,7 @@ class WalletAPI {
 	/**
 	 *  @method getContractPoolBalance
 	 *	@param {String} contractId
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<Asset>}
 	 */
 	getContractPoolBalance(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
@@ -808,7 +817,7 @@ class WalletAPI {
 	/**
 	 *  @method getContractPoolWhitelist
 	 *	@param {String} contractId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object>}
 	 */
 	getContractPoolWhitelist(contractId) {
 		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
@@ -819,7 +828,7 @@ class WalletAPI {
 	/**
 	 *  @method getEthAddress
 	 *	@param {String} accountId
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<string | undefined>}
 	 */
 	getEthAddress(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -830,7 +839,7 @@ class WalletAPI {
 	/**
 	 *  @method getAccountDeposits
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getAccountDeposits(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -846,7 +855,7 @@ class WalletAPI {
 	 *	@param {String} tokenSymbol
 	 *	@param {Number} decimals
 	 *	@param {String} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	registerErc20Token(accountId, ethereumTokenAddress, tokenName, tokenSymbol, decimals, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -860,7 +869,7 @@ class WalletAPI {
 	/**
 	 *  @method getErc20Token
 	 *	@param {String} ethereumTokenAddress
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<Object | undefined>}
 	 */
 	getErc20Token(ethereumTokenAddress) {
 		if (!isRipemd160(ethereumTokenAddress)) throw new Error('Token address id should be a 20 bytes hex string');
@@ -871,7 +880,7 @@ class WalletAPI {
 	/**
 	 *  @method getErc20AccountDeposits
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getErc20AccountDeposits(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -882,7 +891,7 @@ class WalletAPI {
 	/**
 	 *  @method getErc20AccountWithdrawals
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getErc20AccountWithdrawals(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -897,7 +906,7 @@ class WalletAPI {
 	 *	@param {String} erc20TokenId
 	 *	@param {String} withdrawAmount
 	 *	@param {String} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	withdrawErc20Token(accountId, toEthereumAddress, erc20TokenId, withdrawAmount, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -912,7 +921,7 @@ class WalletAPI {
 	 *	@param {String} accountId
 	 *	@param {String} label
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	generateAccountAddress(accountId, label, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -926,7 +935,7 @@ class WalletAPI {
 	 *	@param {String} accountId
 	 *	@param {Number} startFrom
 	 *	@param {Number} limit
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getAccountAddresses(accountId, startFrom, limit) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -941,7 +950,7 @@ class WalletAPI {
 	/**
 	 *  @method getAccountByAddress
 	 *	@param {String} address
-	 *  @returns {Promise<String>}
+	 *  @returns {Promise<string | undefined>}
 	 */
 	getAccountByAddress(address) {
 		if (!isRipemd160(address)) throw new Error('Address id should be a 20 bytes hex string');
@@ -952,7 +961,7 @@ class WalletAPI {
 	/**
 	 *  @method getAccountWithdrawals
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Object[]>}
 	 */
 	getAccountWithdrawals(accountId) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -966,7 +975,7 @@ class WalletAPI {
 	 *	@param {String} proposalId
 	 *	@param {Object} delta
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	approveProposal(feePayingAccountId, proposalId, delta, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(feePayingAccountId)) {
@@ -985,7 +994,7 @@ class WalletAPI {
 	 *  @method generateEthAddress
 	 *	@param {String} accountId
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	generateEthAddress(accountId, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -1000,7 +1009,7 @@ class WalletAPI {
 	 *	@param {String} ethAddress
 	 *	@param {String} value
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	withdrawEth(accountId, ethAddress, value, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
@@ -1014,7 +1023,7 @@ class WalletAPI {
 	 *  @method floodNetwork
 	 *	@param {String} prefix
 	 *	@param {String} numberOfTransactions
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<void>}
 	 */
 	floodNetwork(prefix, numberOfTransactions) {
 		if (!isString(prefix)) throw new Error('Prefix should be a string');
@@ -1028,7 +1037,7 @@ class WalletAPI {
 	 *  @param  {String} lowerBoundSymbol
 	 *  @param  {Number} limit
 	 *
-	 *  @return {Promise.<Array.<Asset>>}
+	 *  @return {Promise.<Asset[]>}
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
@@ -1047,7 +1056,7 @@ class WalletAPI {
 	 *	@param {Object} assetOption
 	 *	@param {Object} bitassetOpts
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
@@ -1067,7 +1076,7 @@ class WalletAPI {
 	 *	@param {String} newIssuerIdOrName
 	 *	@param {Object} newOptions
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	updateAsset(assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
@@ -1086,7 +1095,7 @@ class WalletAPI {
 	 *	@param {String} assetIdOrName
 	 *	@param {Object} newBitasset
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
@@ -1100,7 +1109,7 @@ class WalletAPI {
 	 *	@param {String} assetIdOrName
 	 *	@param {Array<String>} newFeedProducers
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
 		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
@@ -1117,7 +1126,7 @@ class WalletAPI {
 	 *	@param {String} assetIdOrName
 	 *	@param {Object} priceFeed
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	publishAssetFeed(accountId, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) {
@@ -1137,7 +1146,7 @@ class WalletAPI {
 	 *	@param {String} amount
 	 *	@param {String} assetTicker
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	issueAsset(accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
@@ -1178,7 +1187,7 @@ class WalletAPI {
 	 *	@param {String} assetIdOrName
 	 *	@param {String} amount
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	fundAssetFeePool(fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(fromAccountIdOrName) || isAccountName(fromAccountIdOrName)) {
@@ -1198,7 +1207,7 @@ class WalletAPI {
 	 *	@param {String} amount
 	 *	@param {String} assetIdOrName
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	reserveAsset(accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) {
@@ -1215,7 +1224,7 @@ class WalletAPI {
 	 *	@param {String} accountIdOrName
 	 *	@param {String} url
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
@@ -1232,7 +1241,7 @@ class WalletAPI {
 	 *	@param {String} accountIdOrName
 	 *	@param {Number} desiredNumberOfCommitteeMembers
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
@@ -1265,7 +1274,7 @@ class WalletAPI {
 	 *  @method listCommitteeMembers
 	 *	@param {String} lowerBoundName
 	 *	@param {Number} limit
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<[string, string][]>}
 	 */
 	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
@@ -1282,7 +1291,7 @@ class WalletAPI {
 	 *	@param {String} ownerOfCommitteeMember
 	 *	@param {Boolean} approveYourVote
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	voteForCommitteeMember(votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
@@ -1304,7 +1313,7 @@ class WalletAPI {
 	 *	@param {String} accountIdOrNameToUpdate
 	 *	@param {String} votingAccountIdOrName
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountIdOrNameToUpdate) || isAccountName(accountIdOrNameToUpdate)) {
@@ -1326,7 +1335,7 @@ class WalletAPI {
 	 *	@param {Number} expirationTime
 	 *	@param {Object} changedValues
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	proposeParameterChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) {
@@ -1345,7 +1354,7 @@ class WalletAPI {
 	 *	@param {Number} expirationTime
 	 *	@param {Object} changedValues
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	proposeFeeChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(accountId)) {
@@ -1363,7 +1372,7 @@ class WalletAPI {
 	 *	@param {String} registrarAccountId
 	 *	@param {Object} changedValues
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	changeSidechainConfig(registrarAccountId, changedValues, shouldDoBroadcastToNetwork) {
 		if (!isAccountId(registrarAccountId)) {
@@ -1380,9 +1389,7 @@ class WalletAPI {
 	 *  @method getBlock
 	 *  @param  {Number} blockNum
 	 *
-	 *  @return {
-	 *  	Promise.<Block>
-	 *  }
+	 *  @return {Promise<Object | undefined>}
 	 */
 	getBlock(blockNum) {
 		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
@@ -1394,9 +1401,7 @@ class WalletAPI {
 	 *  @method getBlockVirtualOps
 	 *  @param  {Number} blockNum
 	 *
-	 *  @return {
-	 *  	Promise.<Block>
-	 *  }
+	 *  @return {Promise<Object[]>}
 	 */
 	getBlockVirtualOps(blockNum) {
 		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
@@ -1407,7 +1412,7 @@ class WalletAPI {
 	/**
 	 *  @method getAccountCount
 	 *
-	 *  @return {Promise<Number>}
+	 *  @return {Promise<number | string>}
 	 */
 	getAccountCount() {
 		return this.wsRpc.call([0, 'get_account_count', []]);
@@ -1416,9 +1421,7 @@ class WalletAPI {
 	/**
 	 *  @method getGlobalProperties
 	 *
-	 *  @return {
-	 *  	Promise.<GlobalProperties>
-	 *  }
+	 *  @return {Promise<Object>}
 	 */
 	getGlobalProperties() {
 		return this.wsRpc.call([0, 'get_global_properties', []]);
@@ -1427,9 +1430,7 @@ class WalletAPI {
 	/**
 	 *  @method getDynamicGlobalProperties
 	 *
-	 *  @return {
-	 *  	Promise.<DynamicGlobalProperties>
-	 *  }
+	 *  @return {Promise<Object>}
 	 */
 	getDynamicGlobalProperties() {
 		return this.wsRpc.call([0, 'get_dynamic_global_properties', []]);
@@ -1438,7 +1439,7 @@ class WalletAPI {
 	/**
 	 *  @method getObject
 	 *	@param {String} objectId
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<any>}
 	 */
 	getObject(objectId) {
 		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
@@ -1459,7 +1460,7 @@ class WalletAPI {
 	 *  @method addOperationToBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
 	 *	@param {Array<String>} operation
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	addOperationToBuilderTransaction(transactionTypeHandle, operation) {
 		return this.wsRpc.call([0, 'add_operation_to_builder_transaction', [transactionTypeHandle, operation]]);
@@ -1470,7 +1471,7 @@ class WalletAPI {
 	 *	@param {String|Number} transactionTypeHandle
 	 *	@param {String|Number} unsignedOperation
 	 *	@param {Array<String>} operation
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	replaceOperationInBuilderTransaction(transactionTypeHandle, unsignedOperation, operation) {
 		return this.wsRpc.call([0, 'replace_operation_in_builder_transaction',
@@ -1482,7 +1483,7 @@ class WalletAPI {
 	 *  @method setFeesOnBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
 	 *	@param {String} feeAsset
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<Asset>}
 	 */
 	setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset) {
 		return this.wsRpc.call([0, 'set_fees_on_builder_transaction', [transactionTypeHandle, feeAsset]]);
@@ -1501,7 +1502,7 @@ class WalletAPI {
 	 *  @method signBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	signBuilderTransaction(transactionTypeHandle, shouldDoBroadcastToNetwork) {
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
@@ -1515,7 +1516,7 @@ class WalletAPI {
 	 *	@param {String} expirationTime
 	 *	@param {Number} reviewPeriod
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	proposeBuilderTransaction(transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
 		if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
@@ -1533,7 +1534,7 @@ class WalletAPI {
 	 *	@param {String} expirationTime
 	 *	@param {Number} reviewPeriod
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	proposeBuilderTransaction2(
 		transactionTypeHandle,
@@ -1556,7 +1557,7 @@ class WalletAPI {
 	/**
 	 *  @method removeBuilderTransaction
 	 *	@param {String|Number} transactionTypeHandle
-	 *  @returns {Promise<null>}
+	 *  @returns {Promise<void>}
 	 */
 	removeBuilderTransaction(transactionTypeHandle) {
 		return this.wsRpc.call([0, 'remove_builder_transaction', [transactionTypeHandle]]);
@@ -1583,7 +1584,7 @@ class WalletAPI {
 	 *  @method signTransaction
 	 *	@param {Object} tr
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<SignedTransaction>}
 	 */
 	signTransaction(tr, shouldDoBroadcastToNetwork) {
 		if (!tr) {

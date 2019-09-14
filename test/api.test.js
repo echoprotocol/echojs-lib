@@ -8,7 +8,7 @@ import echo, { constants } from '../src';
 import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
 
 import { url, accountId } from './_test-data';
-import { deepStrictEqual, ok } from 'assert';
+import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
 
