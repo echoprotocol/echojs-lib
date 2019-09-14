@@ -6,7 +6,6 @@ import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
-import ReconnectionWebSocket from './ws/reconnection-websocket';
 import WalletAPI from './ws-api/wallet-api';
 
 /** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
@@ -31,21 +30,26 @@ class Echo {
 	 */
 	get apis() { return new Set(this._ws.apis); }
 
-    async _connectToNode(address, options) {
-        await this._ws.connect(address, options);
+	/**
+	 * @param {string} address
+	 * @param {Options} options
+	 * @private
+	 */
+	async _connectToNode(address, options) {
+		await this._ws.connect(address, options);
 
-        if (this._isInitModules) {
-            return;
-        }
+		if (this._isInitModules) {
+			return;
+		}
 
-        await this._initModules(options);
+		await this._initModules(options);
 
-        if (!options.store && this.store) {
-            options.store = this.store;
-        }
+		if (!options.store && this.store) {
+			options.store = this.store;
+		}
 
-        this.cache.setOptions(options);
-        this.subscriber.setOptions(options);
+		this.cache.setOptions(options);
+		this.subscriber.setOptions(options);
 	}
 
 	/**
@@ -59,8 +63,8 @@ class Echo {
 
 		try {
 			await Promise.all([
-                ...address ? [this._connectToNode(address, options)] : [],
-                ...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
+				...address ? [this._connectToNode(address, options)] : [],
+				...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
 			]);
 		} catch (e) {
 			throw e;
