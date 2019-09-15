@@ -43,12 +43,9 @@ class WalletAPI {
 
 	/**
 	 *  @constructor
-	 *
-	 *  @param {ReconnectionWebSocket} wsRpc
 	 */
-	constructor(/*wsRpc*/) {
-		// this.wallet = new ReconnectionWebSocket();
-		this.wsRpc = new ReconnectionWebSocket()/*wsRpc*/;
+	constructor() {
+		this.wsRpc = new ReconnectionWebSocket();
 	}
 
 	/**
@@ -91,7 +88,7 @@ class WalletAPI {
 	/**
 	 *  @method info
 	 *
-	 *  @returns {Promise<string>}
+	 *  @returns {Promise<Object>}
 	 */
 	info() {
 		return this.wsRpc.call([0, 'info', []]);
@@ -242,12 +239,6 @@ class WalletAPI {
 	 *	@param {Array<String>} wifKeys
 	 *  @returns {Promise<SignedTransaction>}
 	 */
-	/* eslint-disable max-len */
-	/**
-	 * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
-	 */
-
-	/** @typedef {SignedTransactionSerializer['__TOutput__']} SignedTransaction */
 	importBalance(accountNameOrId, shouldDoBroadcastToNetwork, wifKeys) {
 		return this.wsRpc.call([0, 'import_balance',
 			[
@@ -362,7 +353,6 @@ class WalletAPI {
 	 *	@param {String} idOfAccount
 	 *  @returns {Promise<Asset[]>}
 	 */
-	/** @typedef {typeof import("../../serializers/chain")['asset']['__TOutput__']} Asset */
 	listAccountBalances(idOfAccount) {
 		return this.wsRpc.call([0, 'list_account_balances', [accountId.toRaw(idOfAccount)]]);
 	}
@@ -442,7 +432,7 @@ class WalletAPI {
 				string.toRaw(contractCode),
 				uint64.toRaw(amount),
 				string.toRaw(assetType),
-				optional(assetId).toRaw(supportedAssetId),
+				assetId.toRaw(supportedAssetId),
 				bool.toRaw(useEthereumAssetAccuracy),
 				bool.toRaw(shouldSaveToWallet),
 			],
@@ -534,7 +524,7 @@ class WalletAPI {
 	 *	@param {String} toAccountNameOrId
 	 *	@param {String} amount
 	 *	@param {String} assetIdOrName
-	 *  @returns {Promise<Object>}
+	 *  @returns {Promise<Array>}
 	 */
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
 		return this.wsRpc.call([0, 'transfer2',
@@ -551,7 +541,7 @@ class WalletAPI {
 	 *  @method whitelistAccount
 	 *	@param {String} authorizingAccount
 	 *	@param {String} accountToList
-	 *	@param {String} newListingStatus
+	 *	@param {Number} newListingStatus
 	 *	@param {Boolean} shouldDoBroadcastToNetwork
 	 *  @returns {Promise<SignedTransaction>}
 	 */
@@ -1492,7 +1482,6 @@ class WalletAPI {
 	 *	@param {String} operationType
 	 *  @returns {Promise<Operation>}
 	 */
-	/** @typedef {typeof import("../../serializers")['operation']['__TOutput__']} Operation */
 	getPrototypeOperation(operationType) {
 		return this.wsRpc.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
 	}
