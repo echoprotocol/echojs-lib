@@ -1,4 +1,4 @@
-import { inspect } from "util";
+import { inspect, promisify } from "util";
 import { expect } from 'chai';
 
 import echo, { constants } from '../src';
@@ -10,13 +10,11 @@ import { API_CONFIG } from '../src/constants';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 import { bytecode } from './operations/_contract.test';
-import { promisify } from 'util';
 
 describe('WALLET API', () => {
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
-	const walletFilename = '';
 	let contractResultId;
 
 	const assetOption = {
@@ -50,10 +48,6 @@ describe('WALLET API', () => {
 		await echo.connect(url,
 			{
 				connectionTimeout: 10000,
-				// maxRetries: 100,
-				// pingTimeout: 10000,
-				// pingDelay: 10000,
-				// debug: false,
                 apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: 'ws://0.0.0.0:8888',
 			}
@@ -120,7 +114,6 @@ describe('WALLET API', () => {
 	describe('#networkGetConnectedPeers()', () => {
 		it('should get a array of connected peers', async () => {
 			const result = await echo.walletApi.networkGetConnectedPeers();
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -196,7 +189,6 @@ describe('WALLET API', () => {
 	describe('#dumpPrivateKeys()', () => {
 		it('should dumps all private keys owned by the wallet', async () => {
 			const result = await echo.walletApi.dumpPrivateKeys();
-			// console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -257,7 +249,6 @@ describe('WALLET API', () => {
 		it('should construct transaction', async () => {
 			const wifKeys = [WIF];
 			const result = await echo.walletApi.importBalance(accountId, shouldDoBroadcastToNetwork, wifKeys);
-			// console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -353,7 +344,6 @@ describe('WALLET API', () => {
 			await unsignedTr.sign(PrivateKey.fromWif(pk));
 			const transaction = unsignedTr.transactionObject;
 			const result = await echo.walletApi.getTransactionId(transaction);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -369,12 +359,12 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('string');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#loadWalletFile()', () => {
 		it('should loads a specified wallet', async () => {
+			const walletFilename = '';
 			const result = await echo.walletApi.loadWalletFile(walletFilename);
 			ok(!result);
 		}).timeout(5000);
@@ -392,6 +382,7 @@ describe('WALLET API', () => {
 
 	describe('#saveWalletFile()', () => {
 		it('should saves the current wallet to the given filename', async () => {
+			const walletFilename = '';
 			const result = await echo.walletApi.saveWalletFile(walletFilename);
 			expect(result)
 				.to
@@ -403,7 +394,6 @@ describe('WALLET API', () => {
 	describe('#listMyAccounts()', () => {
 		it('should get lists all accounts controlled by this wallet', async () => {
 			const result = await echo.walletApi.listMyAccounts();
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -520,7 +510,6 @@ describe('WALLET API', () => {
 				accountId,
 				shouldDoBroadcastToNetwork
 			);
-			// console.log('---------result---------', result);
 			expect(result)
 				.to
 				.be
@@ -533,7 +522,6 @@ describe('WALLET API', () => {
 			const amount = 0;
 			const useEthereumAssetAccuracy = true;
 			const shouldSaveToWallet = true;
-
 			const result = await echo.walletApi.createContract(
 				accountId,
 				bytecode,
@@ -543,7 +531,6 @@ describe('WALLET API', () => {
 				useEthereumAssetAccuracy,
 				shouldSaveToWallet,
 			);
-			// console.log('----------result----------', result);
 			contractResultId = result.operation_results[0][1];
 			expect(result)
 				.to
@@ -558,7 +545,6 @@ describe('WALLET API', () => {
 				const contractCode = '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001';
 				const amount = 1;
 				const shouldSaveToWallet = true;
-
 				const result = await echo.walletApi.callContract(
 					accountName,
 					contractId,
@@ -586,7 +572,6 @@ describe('WALLET API', () => {
 				amount,
 				shouldDoBroadcastToNetwork,
 			);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -597,7 +582,6 @@ describe('WALLET API', () => {
 	describe('#getContractResult()', () => {
 		it('should get the result of contract execution', async () => {
 			const result = await echo.walletApi.getContractResult(contractResultId);
-			// console.log('------------result---------', result);
 			expect(result)
 				.to
 				.be
@@ -637,7 +621,6 @@ describe('WALLET API', () => {
 				amount,
 				constants.ECHO_ASSET_ID,
 			);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -672,7 +655,6 @@ describe('WALLET API', () => {
 	describe('#getVestingBalances()', () => {
 		it('Should get information about a vesting balance object', async () => {
 			const result = await echo.walletApi.getVestingBalances(accountId);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -708,7 +690,6 @@ describe('WALLET API', () => {
 				.be
 				.an('object').that.is.not.empty;
 			expect(result.id).equal(accountId);
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -728,12 +709,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array');/*.that.is.not.empty;
-			expect(result[0])
-				.to
-				.be
-				.an('object').that.is.not.empty;*/
-			// console.log('result', result);
+				.an('array');
 		}).timeout(5000);
 	});
 
@@ -751,7 +727,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -762,14 +737,12 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#getContract()', () => {
 		it('Should get the contract information by the contract\'s id', async () => {
 			const result = await echo.walletApi.getContract(contractId);
-			// console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -796,7 +769,6 @@ describe('WALLET API', () => {
 				removeFromBlacklist,
 				shouldDoBroadcastToNetwork,
 			);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -826,7 +798,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -863,7 +834,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('array');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -881,7 +851,6 @@ describe('WALLET API', () => {
 				decimals,
 				shouldDoBroadcastToNetwork,
 			);
-			// console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -915,11 +884,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('array');
-			// expect(result[0])
-			// 	.to
-			// 	.be
-			// 	.an('object');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -930,11 +894,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('array');
-			// expect(result[0])
-			// 	.to
-			// 	.be
-			// 	.an('object');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -943,7 +902,6 @@ describe('WALLET API', () => {
 			const toEthereumAddress = 'F7D2658685B4eFa75976645374F2bc27f714ED03';
 			const erc20TokenId = '1.15.0';
 			const withdrawAmount = '1';
-			// console.log('result', result);
 			const result = await echo.walletApi.withdrawErc20Token(
 				accountId,
 				toEthereumAddress,
@@ -970,7 +928,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -983,46 +940,28 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('array');
-			// expect(result[0])
-			// 	.to
-			// 	.be
-			// 	.an('object');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#getAccountByAddress()', () => {
 		it('Should get owner of specified address', async () => {
-			try {
-				const address = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
-				const result = await echo.walletApi.getAccountByAddress(address);
-				// expect(result)
-				// 	.to
-				// 	.be
-				// 	.an('string');
-				// console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const address = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
+			const result = await echo.walletApi.getAccountByAddress(address);
+			// expect(result)
+			// 	.to
+			// 	.be
+			// 	.an('string');
+			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#getAccountWithdrawals()', () => {
 		it('Should returns all approved withdrawals, for the given account id', async () => {
-			try {
-				const result = await echo.walletApi.getAccountWithdrawals(accountId);
-				expect(result)
-					.to
-					.be
-					.an('array');
-				// expect(result[0])
-				// 	.to
-				// 	.be
-				// 	.an('object');
-				// console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const result = await echo.walletApi.getAccountWithdrawals(accountId);
+			expect(result)
+				.to
+				.be
+				.an('array');
 		}).timeout(5000);
 	});
 
@@ -1062,45 +1001,35 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#withdrawEth()', () => {
 		it('Should withdraw eth from address', async () => {
-			try {
-				const ethAddress = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
-				const value = 1;
-				const result = await echo.walletApi.withdrawEth(
-					accountId,
-					ethAddress,
-					value,
-					shouldDoBroadcastToNetwork,
-					);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				// console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const ethAddress = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
+			const value = 1;
+			const result = await echo.walletApi.withdrawEth(
+				accountId,
+				ethAddress,
+				value,
+				shouldDoBroadcastToNetwork,
+				);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
 	describe('#floodNetwork()', () => {
-		it('What Should this do?', async () => {
-			try {
-				const prefix = 'prefix';
-				const numberOfTransactions = 1;
-				const result = await echo.walletApi.floodNetwork(prefix, numberOfTransactions);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				throw e;
-			}
+		it('Flood network', async () => {
+			const prefix = 'prefix';
+			const numberOfTransactions = 1;
+			const result = await echo.walletApi.floodNetwork(prefix, numberOfTransactions);
+			expect(result)
+				.to
+				.be
+				.an('null');
 		}).timeout(5000);
 	});
 
@@ -1115,11 +1044,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('array');
-			// expect(result)
-			// 	.to
-			// 	.be
-			// 	.an('object');
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1139,7 +1063,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1199,7 +1122,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1215,7 +1137,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1255,7 +1176,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1288,7 +1208,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1332,49 +1251,38 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
 	describe('#reserveAsset()', () => {
 		it('Should burns the given user-issued asset', async () => {
-			try {
-				const amount = '1';
-				const result = await echo.walletApi.reserveAsset(
-					accountId,
-					amount,
-					constants.ECHO_ASSET_ID,
-					shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				// console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const amount = '1';
+			const result = await echo.walletApi.reserveAsset(
+				accountId,
+				amount,
+				constants.ECHO_ASSET_ID,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
 	describe('#createCommitteeMember()', () => {
 		it('Should creates a committee_member object owned by the given account', async () => {
-			try {
-				const newAccountId = '1.2.1';
-				const url = '';
-				const result = await echo.walletApi.createCommitteeMember(
-					newAccountId,
-					url,
-					shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				// console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const newAccountId = '1.2.1';
+			const url = '';
+			const result = await echo.walletApi.createCommitteeMember(
+				newAccountId,
+				url,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1414,7 +1322,6 @@ describe('WALLET API', () => {
 				.be
 				.an('object').that.is.not.empty;
 			expect(result.committee_member_account).equal(accountId);
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1425,7 +1332,6 @@ describe('WALLET API', () => {
 				lowerBoundName,
 				constants.API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
 				);
-			// console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -1454,7 +1360,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1469,7 +1374,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1537,7 +1441,6 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('object').that.is.not.empty;
-			// console.log('result', result);
 		}).timeout(15000);
 	});
 
@@ -1545,7 +1448,6 @@ describe('WALLET API', () => {
 		it('should get block by number', async () => {
 			const blockNumber = 1;
 			const result = await echo.walletApi.getBlock(blockNumber);
-			// console.log('------------result---------', result);
 			expect(result)
 				.to
 				.be
@@ -1558,15 +1460,10 @@ describe('WALLET API', () => {
 		it('should get block virtual ops by number', async () => {
 			const blockNumber = 1;
 			const result = await echo.walletApi.getBlockVirtualOps(blockNumber);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
-				.an('array')/*.that.is.not.empty;
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;*/
+				.an('array');
 		}).timeout(5000);
 	});
 
@@ -1583,7 +1480,6 @@ describe('WALLET API', () => {
 	describe('#getGlobalProperties()', () => {
 		it('should returns the number of registered accounts', async () => {
 			const result = await echo.walletApi.getGlobalProperties();
-            // console.log('------------result---------', result);
             expect(result)
                 .to
                 .be
@@ -1594,7 +1490,6 @@ describe('WALLET API', () => {
 	describe('#getDynamicGlobalProperties()', () => {
 		it('should returns the block chain\'s slowly-changing settings', async () => {
 			const result = await echo.walletApi.getDynamicGlobalProperties();
-			// console.log('------------result---------', result);
 			expect(result)
 				.to
 				.be
@@ -1605,7 +1500,6 @@ describe('WALLET API', () => {
 	describe('#getObject()', () => {
 		it('should returns the blockchain object', async () => {
 			const result = await echo.walletApi.getObject(accountId);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -1632,7 +1526,6 @@ describe('WALLET API', () => {
 			await transaction.sign(PrivateKey.fromWif(pk));
 			const trx = transaction.transactionObject;
 			const result = await echo.walletApi.serializeTransaction(trx);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -1652,7 +1545,6 @@ describe('WALLET API', () => {
 			await tr.sign(PrivateKey.fromWif(pk));
 			const trx = tr.transactionObject;
 			const result = await echo.walletApi.signTransaction(trx, shouldDoBroadcastToNetwork);
-			// console.log(result);
 			expect(result)
 				.to
 				.be
@@ -1702,7 +1594,6 @@ describe('WALLET API', () => {
 		describe('#beginBuilderTransaction()', () => {
 			it('should returns number of built transaction', async () => {
 				const result = await echo.walletApi.beginBuilderTransaction();
-				// console.log(result);
 				expect(result)
 					.to
 					.be
@@ -1725,7 +1616,6 @@ describe('WALLET API', () => {
 					}
 				];
 				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
-				// console.log(result);
 				expect(result)
 					.to
 					.be
@@ -1770,7 +1660,6 @@ describe('WALLET API', () => {
 				const transactionTypeHandle = 3;
 				const feeAsset = 'ECHO';
 				const result = await echo.walletApi.setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1782,7 +1671,6 @@ describe('WALLET API', () => {
 			it('should get preview of builder transaction', async () => {
 				const transactionTypeHandle = 4;
 				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
-				// console.log(result);
 				expect(result)
 					.to
 					.be
@@ -1815,7 +1703,6 @@ describe('WALLET API', () => {
 					reviewPeriod,
 					shouldDoBroadcastToNetwork,
 				);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be
@@ -1835,7 +1722,6 @@ describe('WALLET API', () => {
 					reviewPeriod,
 					shouldDoBroadcastToNetwork,
 				);
-				// console.log('------------result---------', result);
 				expect(result)
 					.to
 					.be

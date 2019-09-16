@@ -4,6 +4,11 @@ import ReconnectionWebSocket from '../ws/reconnection-websocket';
 
 const { ethAddress } = serializers.protocol;
 const { vector, optional } = serializers.collections;
+const { privateKey, publicKey, ripemd160 } = serializers.chain;
+const { options, bitassetOptions } = serializers.protocol.asset;
+const { priceFeed } = serializers.protocol;
+const { config } = serializers.plugins.echorand;
+const { anyObjectId } = serializers.chain.ids;
 
 const {
 	uint64,
@@ -12,12 +17,14 @@ const {
 	uint16,
 	uint8,
 } = serializers.basic.integers;
+
 const {
 	timePointSec,
 	variantObject,
 	string,
 	bool,
 } = serializers.basic;
+
 const {
 	operation,
 	approvalDelta,
@@ -25,7 +32,7 @@ const {
 	signedTransaction,
 	transaction,
 } = serializers;
-const { privateKey, publicKey, ripemd160 } = serializers.chain;
+
 const {
 	accountId,
 	contractId,
@@ -33,10 +40,16 @@ const {
 	proposalId,
 	assetId,
 } = serializers.chain.ids.protocol;
-const { options, bitassetOptions } = serializers.protocol.asset;
-const { priceFeed } = serializers.protocol;
-const { config } = serializers.plugins.echorand;
-const { anyObjectId } = serializers.chain.ids;
+
+/**
+ * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
+ */
+/** @typedef {SignedTransactionSerializer['__TOutput__']} SignedTransaction */
+/** @typedef {typeof import("../../serializers/chain")['ripemd160']['__TOutput__']} TransactionIdType */
+/** @typedef {typeof import("../../serializers/chain")['asset']['__TOutput__']} Asset */
+/** @typedef {typeof import("../../serializers/transaction")['default']} TransactionSerializer */
+/** @typedef {TransactionSerializer['__TOutput__']} Transaction */
+/** @typedef {typeof import("../../serializers")['operation']['__TOutput__']} Operation */
 
 
 class WalletAPI {
@@ -367,12 +380,10 @@ class WalletAPI {
 
 	/**
 	 *  @method registerAccount
-	 *
 	 *  @param  {String} name
 	 * 	@param  {String} activeKey
 	 * 	@param  {String} registrarAccountId
 	 * 	@param  {Boolean} shouldDoBroadcastToNetwork
-	 *
 	 *  @returns {Promise<SignedTransaction>}
 	 */
 	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
@@ -626,10 +637,7 @@ class WalletAPI {
 	 *  @param {Number} stop [Sequence number of earliest operation]
 	 *  @param {Number} limit     [count operations (max 100)]
 	 *  @param {Number} start [Sequence number of the most recent operation to retrieve]
-	 *
-	 *  @return {
-	 *  	Promise.<Object[]>
-	 *  }
+	 *  @returns {Promise<Object[]>}
 	 */
 	async getRelativeAccountHistory(
 		accountIdOrName,
@@ -948,7 +956,6 @@ class WalletAPI {
 	 *  @method listAssets
 	 *  @param  {String} lowerBoundSymbol
 	 *  @param  {Number} limit
-	 *
 	 *  @return {Promise<Asset[]>}
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
@@ -1284,7 +1291,6 @@ class WalletAPI {
 	/**
 	 *  @method getBlockVirtualOps
 	 *  @param  {Number} blockNum
-	 *
 	 *  @return {Promise<Object[]>}
 	 */
 	getBlockVirtualOps(blockNum) {
