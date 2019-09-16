@@ -11,13 +11,11 @@ import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 import { bytecode } from './operations/_contract.test';
 
-describe.only('WALLET API', () => {
+describe('WALLET API', () => {
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';
 	const walletFilename = '';
-	let unsignedTr;
-	let transaction;
 	let contractResultId;
 
 	const assetOption = {
@@ -50,6 +48,11 @@ describe.only('WALLET API', () => {
 	beforeEach(async () => {
 		await echo.connect(url,
 			{
+				connectionTimeout: 10000,
+				// maxRetries: 100,
+				// pingTimeout: 10000,
+				// pingDelay: 10000,
+				// debug: false,
                 apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: 'ws://0.0.0.0:8888',
 			}
@@ -337,7 +340,7 @@ describe.only('WALLET API', () => {
 	describe('#getTransactionId()', () => {
 		it('should get transactin ID', async () => {
 			const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
-			unsignedTr = echo.createTransaction();
+			const unsignedTr = echo.createTransaction();
 			unsignedTr.addOperation(TRANSFER, {
 				from: accountId,
 				to: `1.${ACCOUNT}.7`,
@@ -347,7 +350,7 @@ describe.only('WALLET API', () => {
 				},
 			});
 			await unsignedTr.sign(PrivateKey.fromWif(pk));
-			transaction = unsignedTr.transactionObject;
+			const transaction = unsignedTr.transactionObject;
 			const result = await echo.walletApi.getTransactionId(transaction);
 			// console.log(result);
 			expect(result)
@@ -526,30 +529,26 @@ describe.only('WALLET API', () => {
 
 	describe('#createContract()', () => {
 		it('should creates a contract', async () => {
-			try {
-				const amount = 0;
-				const useEthereumAssetAccuracy = true;
-				const shouldSaveToWallet = true;
+			const amount = 0;
+			const useEthereumAssetAccuracy = true;
+			const shouldSaveToWallet = true;
 
-				const result = await echo.walletApi.createContract(
-					accountId,
-					bytecode,
-					amount,
-					constants.ECHO_ASSET_ID,
-					constants.ECHO_ASSET_ID,
-					useEthereumAssetAccuracy,
-					shouldSaveToWallet,
-				);
-				// console.log('----------result----------', result);
-				contractResultId = result.operation_results[0][1];
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				throw e;
-			}
-		}).timeout(15000);
+			const result = await echo.walletApi.createContract(
+				accountId,
+				bytecode,
+				amount,
+				constants.ECHO_ASSET_ID,
+				constants.ECHO_ASSET_ID,
+				useEthereumAssetAccuracy,
+				shouldSaveToWallet,
+			);
+			// console.log('----------result----------', result);
+			contractResultId = result.operation_results[0][1];
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(10000);
 	});
 
 	describe.skip('#callContract()', () => {
@@ -579,28 +578,23 @@ describe.only('WALLET API', () => {
 
 	describe('#contractFundFeePool()', () => {
 		it('should get fund fee pool of contract', async () => {
-			try {
-				const amount = 1;
-				const result = await echo.walletApi.contractFundFeePool(
-					accountName,
-					contractId,
-					amount,
-					shouldDoBroadcastToNetwork,
-				);
-				// console.log(result);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				throw e;
-			}
+			const amount = 1;
+			const result = await echo.walletApi.contractFundFeePool(
+				accountName,
+				contractId,
+				amount,
+				shouldDoBroadcastToNetwork,
+			);
+			// console.log(result);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
 	describe('#getContractResult()', () => {
 		it('should get the result of contract execution', async () => {
-			console.log('contractResultId', contractResultId);
 			const result = await echo.walletApi.getContractResult(contractResultId);
 			// console.log('------------result---------', result);
 			expect(result)
@@ -837,16 +831,12 @@ describe.only('WALLET API', () => {
 
 	describe.skip('#getContractPoolWhitelist()', () => {
 		it('Should get contract\'s whitelist and blacklist', async () => {
-			try {
-				const result = await echo.walletApi.getContractPoolWhitelist(contractId);
-				console.log('result', result);
-				expect(result)
-					.to
-					.be
-					.an('array');
-			} catch (e) {
-				throw e;
-			}
+			const result = await echo.walletApi.getContractPoolWhitelist(contractId);
+			console.log('result', result);
+			expect(result)
+				.to
+				.be
+				.an('array');
 		}).timeout(5000);
 	});
 
@@ -1009,7 +999,7 @@ describe.only('WALLET API', () => {
 				// 	.to
 				// 	.be
 				// 	.an('string');
-				console.log('result', result);
+				// console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1292,16 +1282,12 @@ describe.only('WALLET API', () => {
 
 	describe('#getAsset()', () => {
 		it('Should returns information about the given asset', async () => {
-			try {
-				const result = await echo.walletApi.getAsset(constants.ECHO_ASSET_ID);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				console.log('result', result);
-			} catch (e) {
-				throw e;
-			}
+			const result = await echo.walletApi.getAsset(constants.ECHO_ASSET_ID);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+			// console.log('result', result);
 		}).timeout(5000);
 	});
 
@@ -1401,9 +1387,7 @@ describe.only('WALLET API', () => {
 				accountId,
 				shouldDoBroadcastToNetwork
 			);
-    			console.log('---------newAccount---------', newAccount);
-				console.log('---------newAccount---------', newAccount.operations[0][1]);
-				console.log('---------voting_account---------', newAccount.operations[0][1].options.voting_account);
+				// console.log('---------voting_account---------', newAccount.operations[0][1].options.voting_account);
 				const desiredNumberOfCommitteeMembers = 0;
 				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
 					newAccount.operations[0][1].options.voting_account,
@@ -1632,191 +1616,10 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#beginBuilderTransaction()', () => {
-		it('should returns number of built transaction', async () => {
-			const transactionTypeHandle = 1;
-			const result = await echo.walletApi.beginBuilderTransaction();
-			// console.log(result);
-			expect(result)
-				.to
-				.be
-				.an('number');
-		}).timeout(5000);
-	});
-
-	describe('#addOperationToBuilderTransaction()', () => {
-		it('should add operations to builder transaction', async () => {
-			try {
-				const transactionTypeHandle = 2;
-				const operation = [4,
-					{
-						fee: {
-							amount: 1,
-							asset_id: '1.3.0',
-						},
-						account_id: accountId,
-						new_owner: '1.2.1',
-						extensions: [],
-					}
-				];
-				await echo.walletApi.beginBuilderTransaction();
-				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
-				console.log(result);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
-	describe.skip('#replaceOperationInBuilderTransaction()', () => {
-		it('should replace operations in builder transaction', async () => {
-			try {
-				const transactionTypeHandle = 3;
-				const operation = [4,
-					{
-						fee: {
-							amount: 1,
-							asset_id: '1.3.0',
-						},
-						account_id: accountId,
-						new_owner: '1.2.1',
-						extensions: [],
-					}
-				];
-				const unsignedOperation = 4;
-
-				await echo.walletApi.beginBuilderTransaction();
-				const result = await echo.walletApi.replaceOperationInBuilderTransaction(
-					transactionTypeHandle,
-					unsignedOperation,
-					operation,
-				);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
-	describe('#setFeesOnBuilderTransaction()', () => {
-		it('should set fees on builder transaction', async () => {
-			const transactionTypeHandle = 4;
-			const feeAsset = 'ECHO';
-			await echo.walletApi.beginBuilderTransaction();
-			const result = await echo.walletApi.setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset);
-			// console.log('------------result---------', result);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
-	describe('#previewBuilderTransaction()', () => {
-		it('should get preview of builder transaction', async () => {
-			await echo.walletApi.beginBuilderTransaction();
-			const transactionTypeHandle = 5;
-			const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
-			// console.log(result);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
-	describe('#signBuilderTransaction()', () => {
-		it('should get sing transaction', async () => {
-			const transactionTypeHandle = 6;
-			const result = await echo.walletApi.signBuilderTransaction(
-				transactionTypeHandle,
-				shouldDoBroadcastToNetwork
-			);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
-	describe('#proposeBuilderTransaction()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const transactionTypeHandle = 7;
-				const date = new Date(2020,9,5);
-				const reviewPeriod = 60000;
-				const result = await echo.walletApi.proposeBuilderTransaction(
-					transactionTypeHandle,
-					date,
-					reviewPeriod,
-					shouldDoBroadcastToNetwork,
-				);
-				// console.log('------------result---------', result);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
-	describe('#proposeBuilderTransaction2()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const transactionTypeHandle = 8;
-				const date = new Date(2020, 9, 5);
-				const reviewPeriod = 60000;
-				const result = await echo.walletApi.proposeBuilderTransaction2(
-					transactionTypeHandle,
-					accountId,
-					date,
-					reviewPeriod,
-					shouldDoBroadcastToNetwork,
-				);
-				// console.log('------------result---------', result);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
-	describe('#removeBuilderTransaction()', () => {
-		it('should get sing transaction', async () => {
-			try {
-				const transactionTypeHandle = 9;
-				const result = await echo.walletApi.removeBuilderTransaction(transactionTypeHandle);
-				expect(result)
-					.to
-					.be
-					.an('null');
-			} catch (e) {
-				console.log(e);
-				throw e;
-			}
-		}).timeout(5000);
-	});
-
 	describe('#serializeTransaction()', () => {
 		it('should get serialize transaction', async () => {
 			const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
-			transaction = echo.createTransaction();
+			const transaction = echo.createTransaction();
 			transaction.addOperation(TRANSFER, {
 				from: accountId,
 				to: `1.${ACCOUNT}.7`,
@@ -1889,6 +1692,187 @@ describe.only('WALLET API', () => {
 				.be
 				.an('array');
 		}).timeout(5000);
+	});
+
+	describe('API CONNECTION', () => {
+
+		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
+
+		describe('#beginBuilderTransaction()', () => {
+			it('should returns number of built transaction', async () => {
+				const result = await echo.walletApi.beginBuilderTransaction();
+				// console.log(result);
+				expect(result)
+					.to
+					.be
+					.an('number');
+			}).timeout(5000);
+		});
+
+		describe('#addOperationToBuilderTransaction()', () => {
+			it('should add operations to builder transaction', async () => {
+				try {
+					const transactionTypeHandle = 1;
+					const operation = [4,
+						{
+							fee: {
+								amount: 1,
+								asset_id: '1.3.0',
+							},
+							account_id: accountId,
+							new_owner: '1.2.1',
+							extensions: [],
+						}
+					];
+					const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
+					// console.log(result);
+					expect(result)
+						.to
+						.be
+						.an('null');
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe.skip('#replaceOperationInBuilderTransaction()', () => {
+			it('should replace operations in builder transaction', async () => {
+				try {
+					const transactionTypeHandle = 2;
+					const operation = [4,
+						{
+							fee: {
+								amount: 1,
+								asset_id: '1.3.0',
+							},
+							account_id: accountId,
+							new_owner: '1.2.1',
+							extensions: [],
+						}
+					];
+					const unsignedOperation = 4;
+					const result = await echo.walletApi.replaceOperationInBuilderTransaction(
+						transactionTypeHandle,
+						unsignedOperation,
+						operation,
+					);
+					expect(result)
+						.to
+						.be
+						.an('null');
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#setFeesOnBuilderTransaction()', () => {
+			it('should set fees on builder transaction', async () => {
+				const transactionTypeHandle = 3;
+				const feeAsset = 'ECHO';
+				const result = await echo.walletApi.setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset);
+				// console.log('------------result---------', result);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			}).timeout(5000);
+		});
+
+		describe('#previewBuilderTransaction()', () => {
+			it('should get preview of builder transaction', async () => {
+				const transactionTypeHandle = 4;
+				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
+				// console.log(result);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			}).timeout(5000);
+		});
+
+		describe('#signBuilderTransaction()', () => {
+			it('should get sing transaction', async () => {
+				const transactionTypeHandle = 5;
+				const result = await echo.walletApi.signBuilderTransaction(
+					transactionTypeHandle,
+					shouldDoBroadcastToNetwork
+				);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			}).timeout(5000);
+		});
+
+		describe('#proposeBuilderTransaction()', () => {
+			it('should get sing transaction', async () => {
+				try {
+					const transactionTypeHandle = 6;
+					const date = new Date(2020,9,5);
+					const reviewPeriod = 60000;
+					const result = await echo.walletApi.proposeBuilderTransaction(
+						transactionTypeHandle,
+						date,
+						reviewPeriod,
+						shouldDoBroadcastToNetwork,
+					);
+					// console.log('------------result---------', result);
+					expect(result)
+						.to
+						.be
+						.an('object').that.is.not.empty;
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#proposeBuilderTransaction2()', () => {
+			it('should get sing transaction', async () => {
+				try {
+					const transactionTypeHandle = 7;
+					const date = new Date(2020, 9, 5);
+					const reviewPeriod = 60000;
+					const result = await echo.walletApi.proposeBuilderTransaction2(
+						transactionTypeHandle,
+						accountId,
+						date,
+						reviewPeriod,
+						shouldDoBroadcastToNetwork,
+					);
+					// console.log('------------result---------', result);
+					expect(result)
+						.to
+						.be
+						.an('object').that.is.not.empty;
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
+		describe('#removeBuilderTransaction()', () => {
+			it('should get sing transaction', async () => {
+				try {
+					const transactionTypeHandle = 8;
+					const result = await echo.walletApi.removeBuilderTransaction(transactionTypeHandle);
+					expect(result)
+						.to
+						.be
+						.an('null');
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
+
 	});
 
 	// describe('#exit()', () => {
