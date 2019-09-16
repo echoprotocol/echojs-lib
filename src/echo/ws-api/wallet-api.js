@@ -393,7 +393,7 @@ class WalletAPI {
 	/**
 	 *  @method listAccountBalances
 	 *	@param {String} accountId
-	 *  @returns {Promise<Array.<Object>>}
+	 *  @returns {Promise<Asset[]>}
 	 */
 	listAccountBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
