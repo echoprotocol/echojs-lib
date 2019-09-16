@@ -10,6 +10,7 @@ import { API_CONFIG } from '../src/constants';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 import { bytecode } from './operations/_contract.test';
+import { promisify } from 'util';
 
 describe('WALLET API', () => {
 
@@ -1711,29 +1712,24 @@ describe('WALLET API', () => {
 
 		describe('#addOperationToBuilderTransaction()', () => {
 			it('should add operations to builder transaction', async () => {
-				try {
-					const transactionTypeHandle = 1;
-					const operation = [4,
-						{
-							fee: {
-								amount: 1,
-								asset_id: '1.3.0',
-							},
-							account_id: accountId,
-							new_owner: '1.2.1',
-							extensions: [],
-						}
-					];
-					const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
-					// console.log(result);
-					expect(result)
-						.to
-						.be
-						.an('null');
-				} catch (e) {
-					console.log(e);
-					throw e;
-				}
+				const transactionTypeHandle = 1;
+				const operation = [4,
+					{
+						fee: {
+							amount: 1,
+							asset_id: '1.3.0',
+						},
+						account_id: accountId,
+						new_owner: '1.2.1',
+						extensions: [],
+					}
+				];
+				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
+				// console.log(result);
+				expect(result)
+					.to
+					.be
+					.an('null');
 			}).timeout(5000);
 		});
 
@@ -1810,79 +1806,73 @@ describe('WALLET API', () => {
 
 		describe('#proposeBuilderTransaction()', () => {
 			it('should get sing transaction', async () => {
-				try {
-					const transactionTypeHandle = 6;
-					const date = new Date(2020,9,5);
-					const reviewPeriod = 60000;
-					const result = await echo.walletApi.proposeBuilderTransaction(
-						transactionTypeHandle,
-						date,
-						reviewPeriod,
-						shouldDoBroadcastToNetwork,
-					);
-					// console.log('------------result---------', result);
-					expect(result)
-						.to
-						.be
-						.an('object').that.is.not.empty;
-				} catch (e) {
-					console.log(e);
-					throw e;
-				}
+				const transactionTypeHandle = 6;
+				const date = new Date(2020,9,5);
+				const reviewPeriod = 60000;
+				const result = await echo.walletApi.proposeBuilderTransaction(
+					transactionTypeHandle,
+					date,
+					reviewPeriod,
+					shouldDoBroadcastToNetwork,
+				);
+				// console.log('------------result---------', result);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
 			}).timeout(5000);
 		});
 
 		describe('#proposeBuilderTransaction2()', () => {
 			it('should get sing transaction', async () => {
-				try {
-					const transactionTypeHandle = 7;
-					const date = new Date(2020, 9, 5);
-					const reviewPeriod = 60000;
-					const result = await echo.walletApi.proposeBuilderTransaction2(
-						transactionTypeHandle,
-						accountId,
-						date,
-						reviewPeriod,
-						shouldDoBroadcastToNetwork,
-					);
-					// console.log('------------result---------', result);
-					expect(result)
-						.to
-						.be
-						.an('object').that.is.not.empty;
-				} catch (e) {
-					console.log(e);
-					throw e;
-				}
+				const transactionTypeHandle = 7;
+				const date = new Date(2020, 9, 5);
+				const reviewPeriod = 60000;
+				const result = await echo.walletApi.proposeBuilderTransaction2(
+					transactionTypeHandle,
+					accountId,
+					date,
+					reviewPeriod,
+					shouldDoBroadcastToNetwork,
+				);
+				// console.log('------------result---------', result);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
 			}).timeout(5000);
 		});
 
 		describe('#removeBuilderTransaction()', () => {
 			it('should get sing transaction', async () => {
-				try {
-					const transactionTypeHandle = 8;
-					const result = await echo.walletApi.removeBuilderTransaction(transactionTypeHandle);
-					expect(result)
-						.to
-						.be
-						.an('null');
-				} catch (e) {
-					console.log(e);
-					throw e;
-				}
+				const transactionTypeHandle = 8;
+				const result = await echo.walletApi.removeBuilderTransaction(transactionTypeHandle);
+				expect(result)
+					.to
+					.be
+					.an('null');
 			}).timeout(5000);
 		});
 
 	});
 
-	// describe('#exit()', () => {
-	// 	it('should exit from wallet', async () => {
-	// 		try {
-	// 			await echo.walletApi.exit();
-	// 		} catch (e) {
-	// 			throw e;
-	// 		}
-	// 	}).timeout(5000);
-	// });
+	describe('#exit()', () => {
+		it('should exit from wallet', async () => {
+			const expectedError = 'timeout';
+			await Promise.all([
+				echo.walletApi.exit().then(() => {throw new Error('should not return')}),
+				promisify((cb) => setTimeout(() => cb(), 1e3))().then(async () => {
+					await echo.walletApi.info();
+					throw new Error('should not return');
+				}),
+				promisify((cb) => setTimeout(() => cb(), 3e3))().then(() => {
+					throw new Error(expectedError);
+				})
+			]).catch(((err) => {
+				if (err.message === expectedError) return;
+				throw err;
+			}));
+		}).timeout(5000);
+	});
 
 });
