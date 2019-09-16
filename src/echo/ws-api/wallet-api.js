@@ -284,7 +284,6 @@ class WalletAPI {
 	 *	@param {String} tr
 	 *  @returns {Promise<TransactionIdType>}
 	 */
-	/** @typedef {typeof import("../../serializers/chain")['ripemd160']['__TOutput__']} TransactionIdType */
 	getTransactionId(tr) {
 		return this.wsRpc.call([0, 'get_transaction_id', [signedTransaction.toRaw(tr)]]);
 	}
@@ -1230,7 +1229,7 @@ class WalletAPI {
 			[
 				accountId.toRaw(idOfAccount),
 				timePointSec.toRaw(expirationTime),
-				/*variantObject.toRaw*/(changedValues),
+				variantObject.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1249,7 +1248,7 @@ class WalletAPI {
 			[
 				accountId.toRaw(idOfAccount),
 				timePointSec.toRaw(expirationTime),
-				/*variantObject.toRaw*/(changedValues),
+				variantObject.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1343,8 +1342,6 @@ class WalletAPI {
 	 *	@param {Array<String>} newOperation
 	 *  @returns {Promise<void>}
 	 */
-	// TODO  static variant with key 25: struct key "registrar": instance id: value is not a number
-	// TODO problem in serializer
 	addOperationToBuilderTransaction(transactionTypeHandle, newOperation) {
 		return this.wsRpc.call([0, 'add_operation_to_builder_transaction',
 			[uint16.toRaw(transactionTypeHandle), operation.toRaw(newOperation)],
@@ -1363,7 +1360,7 @@ class WalletAPI {
 			[
 				uint16.toRaw(transactionTypeHandle),
 				uint64.toRaw(unsignedOperation),
-				/*vector(operation).toRaw*/(newOperation),
+				operation.toRaw(newOperation),
 			],
 		]);
 	}
