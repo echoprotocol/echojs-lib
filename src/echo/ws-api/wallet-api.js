@@ -20,6 +20,7 @@ import {
 	isContractId,
 	validatePositiveSafeInteger,
 } from '../../utils/validators';
+
 import { API_CONFIG } from '../../constants';
 import ReconnectionWebSocket from '../ws/reconnection-websocket';
 
