@@ -1511,83 +1511,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#serializeTransaction()', () => {
-		it('should get serialize transaction', async () => {
-			const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
-			const transaction = echo.createTransaction();
-			transaction.addOperation(TRANSFER, {
-				from: accountId,
-				to: `1.${ACCOUNT}.7`,
-				amount: {
-					asset_id: constants.ECHO_ASSET_ID,
-					amount: 1000
-				},
-			});
-			await transaction.sign(PrivateKey.fromWif(pk));
-			const trx = transaction.transactionObject;
-			const result = await echo.walletApi.serializeTransaction(trx);
-			expect(result)
-				.to
-				.be
-				.an('string');
-		}).timeout(5000);
-	});
-
-	describe('#signTransaction()', () => {
-		it('should get sing transaction', async () => {
-			const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
-			const tr = echo.createTransaction();
-			tr.addOperation(TRANSFER, {
-				from: accountId,
-				to: `1.${ACCOUNT}.1`,
-				amount: { asset_id: `1.${ASSET}.0`, amount: 10 },
-			});
-			await tr.sign(PrivateKey.fromWif(pk));
-			const trx = tr.transactionObject;
-			const result = await echo.walletApi.signTransaction(trx, shouldDoBroadcastToNetwork);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
-	describe('#getPrototypeOperation()', () => {
-		it('should returns an uninitialized object representing a given blockchain operation', async () => {
-			const operationType = 'transfer_operation';
-			const result = await echo.walletApi.getPrototypeOperation(operationType);
-			expect(result)
-				.to
-				.be
-				.an('array').that.is.not.empty;
-			expect(result[1])
-				.to
-				.be
-				.an('object').that.is.not.empty;
-			expect(result[1].fee)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-			expect(result[1].from)
-				.to
-				.be
-				.an('string');
-			expect(result[1].to)
-				.to
-				.be
-				.an('string');
-			expect(result[1].amount)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-			expect(result[1].extensions)
-				.to
-				.be
-				.an('array');
-		}).timeout(5000);
-	});
-
-	describe('API CONNECTION', () => {
+	describe('TRANSACTION BUILDER', () => {
 
 		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
 
@@ -1737,6 +1661,82 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('null');
+			}).timeout(5000);
+		});
+
+		describe('#serializeTransaction()', () => {
+			it('should get serialize transaction', async () => {
+				const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
+				const transaction = echo.createTransaction();
+				transaction.addOperation(TRANSFER, {
+					from: accountId,
+					to: `1.${ACCOUNT}.7`,
+					amount: {
+						asset_id: constants.ECHO_ASSET_ID,
+						amount: 1000
+					},
+				});
+				await transaction.sign(PrivateKey.fromWif(pk));
+				const trx = transaction.transactionObject;
+				const result = await echo.walletApi.serializeTransaction(trx);
+				expect(result)
+					.to
+					.be
+					.an('string');
+			}).timeout(5000);
+		});
+
+		describe('#signTransaction()', () => {
+			it('should get sing transaction', async () => {
+				const pk = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
+				const tr = echo.createTransaction();
+				tr.addOperation(TRANSFER, {
+					from: accountId,
+					to: `1.${ACCOUNT}.1`,
+					amount: { asset_id: `1.${ASSET}.0`, amount: 10 },
+				});
+				await tr.sign(PrivateKey.fromWif(pk));
+				const trx = tr.transactionObject;
+				const result = await echo.walletApi.signTransaction(trx, shouldDoBroadcastToNetwork);
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+			}).timeout(5000);
+		});
+
+		describe('#getPrototypeOperation()', () => {
+			it('should returns an uninitialized object representing a given blockchain operation', async () => {
+				const operationType = 'transfer_operation';
+				const result = await echo.walletApi.getPrototypeOperation(operationType);
+				expect(result)
+					.to
+					.be
+					.an('array').that.is.not.empty;
+				expect(result[1])
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].fee)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].from)
+					.to
+					.be
+					.an('string');
+				expect(result[1].to)
+					.to
+					.be
+					.an('string');
+				expect(result[1].amount)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[1].extensions)
+					.to
+					.be
+					.an('array');
 			}).timeout(5000);
 		});
 
