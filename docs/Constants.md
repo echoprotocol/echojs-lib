@@ -75,7 +75,6 @@ console.log(constants.WS_CONSTANTS) // websocket constants
     ASSET_API: 'asset',
     LOGIN_API: 'login',
     NETWORK_NODE_API: 'network_node',
-    WALLET_API: 'wallet',
     CHAIN_APIS: [
         DATABASE_API,
         NETWORK_BROADCAST_API,
@@ -84,7 +83,6 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         ASSET_API,
         LOGIN_API,
         NETWORK_NODE_API,
-        WALLET_API,
     ],
     DEFAULT_CHAIN_APIS: [
         DATABASE_API,

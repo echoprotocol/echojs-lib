@@ -635,7 +635,7 @@ class WalletAPI {
 	 *
 	 *  @param {String} accountIdOrName
 	 *  @param {Number} stop [Sequence number of earliest operation]
-	 *  @param {Number} limit     [count operations (max 100)]
+	 *  @param {Number} limit [count operations (max 100)]
 	 *  @param {Number} start [Sequence number of the most recent operation to retrieve]
 	 *  @returns {Promise<Object[]>}
 	 */
