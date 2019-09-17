@@ -3,6 +3,8 @@
 All serializers has at least 4 methods:
 * `toRaw(value)` - converts `value` to raw format (that is able to convert to JSON)
 * `serialize(value)` - converts `value` to serialized `Buffer`
+* `deserialize(buffer)` - converts serialized `buffer` to value (returns the same as `toRaw` method). Throws an error when buffer with invalid size is provided
+* `readFromBuffer(buffer, offset)` - converts serialized `buffer` to value (as `deserialize`) and start reading from byte with index, provided in `offset` parameter. By default `offset` is equals to `0`. Returns object with fields: `res` - deserialized value; `newOffset` - new position of reading cursor. Unlike `deserialize` method do not throws an error, when provided buffer with size greater than expected.
 * `appendToByteBuffer(value,bytebuffer)` - appends result of `value` serialization to `bytebuffer`
 * `validate(value)` - just throws error, if `value` is invalid
 
