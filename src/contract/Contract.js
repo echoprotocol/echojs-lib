@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
 import { ok, notStrictEqual } from 'assert';
 
-import Echo from '../echo/index';
+import Echo, { echo as defaultEcho } from '../echo/index';
 import PrivateKey from '../crypto/private-key';
 import { OPERATIONS_IDS, OBJECT_TYPES } from '../constants';
 
@@ -12,15 +12,15 @@ import { getMethodHash, getSignature, checkAbiFormat } from '../utils/solidity-u
 import { checkContractId } from '../utils/validators';
 import { decode } from './decoders';
 
-/** @typedef {import("../types/_Abi").Abi} Abi */
-/** @typedef {import("echojs-lib/types/echo/transaction").OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
+/** @typedef {import("../../types/contract/_Abi").Abi} Abi */
+/** @typedef {import("../../types/echo/transaction").OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
 
 class Contract {
 
 	/**
 	 * @param {Buffer|string} code
-	 * @param {Echo} echo
 	 * @param {PrivateKey} privateKey
+	 * @param {Echo} echo
 	 * @param {Object} [options]
 	 * @param {Array<*>} [options.args]
 	 * @param {Abi} [options.abi]
@@ -33,13 +33,15 @@ class Contract {
 	 */
 	static async deploy(
 		code,
-		echo,
 		privateKey,
+		echo,
 		options,
 	) {
+		const newEcho = echo || defaultEcho;
+
 		if (Buffer.isBuffer(code)) code = code.toString('hex');
 		else if (typeof code !== 'string') throw new Error('invalid code type');
-		if (!(echo instanceof Echo)) throw new Error('echo is not instance of Echo class');
+		if (!(newEcho instanceof Echo)) throw new Error('echo is not instance of Echo class');
 		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
 		if (!options) options = {};
 		if (options.abi !== undefined) checkAbiFormat(options.abi);
@@ -54,6 +56,8 @@ class Contract {
 		if (!options.value) options.value = {};
 		if (options.value.amount === undefined) options.value.amount = 0;
 		else {
+			options.value.amount = 1;
+			console.log(options.value.amount);
 			if (typeof options.value.amount === 'number') {
 				if (options.value.amount < 0) throw new Error('amount is negative');
 				if (Number.isSafeInteger(options.value.amount)) throw new Error('amount is not safe integer');
@@ -69,7 +73,7 @@ class Contract {
 		else if (/^1\.3\.(0|[1-9]\d*)$/.test(options.value.assetId) === false) {
 			throw new Error('invalid assetId format');
 		}
-		const [[accountId]] = await echo.api.getKeyReferences([privateKey.toPublicKey()]);
+		const [[accountId]] = await newEcho.api.getKeyReferences([privateKey.toPublicKey()]);
 		if (!accountId) throw new Error('No account with provided private key');
 		let rawArgs = '';
 		if (options.args !== undefined) {
@@ -79,33 +83,35 @@ class Contract {
 			ok(initArgsTypes.length === options.args.length, 'invalid arguments count');
 			rawArgs = encode(options.args.map((arg, index) => ({ value: arg, type: initArgsTypes[index] })));
 		}
-		const contractId = await echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
+		const contractId = await newEcho.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 			code: code + rawArgs,
 			eth_accuracy: options.ethAccuracy,
 			registrar: accountId,
 			supported_asset_id: options.supportedAssetId,
 			value: { amount: options.value.amount, asset_id: options.value.assetId },
-		}).addSigner(privateKey).broadcast().then(async (res) => {
-			/** @type {import("echojs-lib/types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
-			const [, opResId] = res[0].trx.operation_results[0];
-			const execRes = await echo.api.getContractResult(opResId, true).then((res) => res[1].exec_res);
-			if (execRes.excepted !== 'None') throw execRes;
-			const contractTypeId = OBJECT_TYPES.CONTRACT;
-			return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
-		}).catch((err) => {
-			if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
-			const expectedErrorPrefix = 'unspecified: Exception during execution: ';
-			if (!err.message.startsWith(expectedErrorPrefix)) throw err;
-			const execRes = JSON.parse(err.message.slice(expectedErrorPrefix.length));
-			if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
-				throw err;
-			}
-			const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
-			const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
-			throw new Error(errorMessageBuffer.toString('utf8'));
-		});
+		}).addSigner(privateKey).broadcast()
+			.then(async (res) => {
+			/** @type {import("../../types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
+				const [, opResId] = res[0].trx.operation_results[0];
+				const execRes = await newEcho.api.getContractResult(opResId, true).then((res) => res[1].exec_res);
+				if (execRes.excepted !== 'None') throw execRes;
+				const contractTypeId = OBJECT_TYPES.CONTRACT;
+				return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
+			})
+			.catch((err) => {
+				if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
+				const expectedErrorPrefix = 'unspecified: Exception during execution: ';
+				if (!err.message.startsWith(expectedErrorPrefix)) throw err;
+				const execRes = JSON.parse(err.message.slice(expectedErrorPrefix.length));
+				if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
+					throw err;
+				}
+				const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
+				const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
+				throw new Error(errorMessageBuffer.toString('utf8'));
+			});
 		if (options.abi === undefined) return contractId;
-		return new Contract(options.abi, { echo, contractId });
+		return new Contract(options.abi, { newEcho, contractId });
 	}
 
 	/** @returns {Set<string>} */
@@ -256,7 +262,7 @@ class Contract {
 		ok(options.abi === undefined, 'abi duplicate');
 		options.abi = this.abi;
 		/** @type {Contract} */
-		const newContract = await Contract.deploy(code, this.echo, privateKey, options);
+		const newContract = await Contract.deploy(code, privateKey, this.echo, options);
 		this.address = newContract.address;
 		return this;
 	}

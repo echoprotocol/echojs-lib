@@ -1,14 +1,14 @@
 import Transaction from '../echo/transaction';
 import Result from './ContractResult';
 
-/** @typedef {import("../types/_Abi").AbiArgument} AbiArgument */
-/** @typedef {import("echojs-lib/types/echo/transaction").OPERATION_RESULT} OPERATION_RESULT */
-/** @typedef {import('echojs-lib/types/echo/transaction').OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
+/** @typedef {import("../../types/_Abi").AbiArgument} AbiArgument */
+/** @typedef {import("../../types/echo/transaction").OPERATION_RESULT} OPERATION_RESULT */
+/** @typedef {import('../../types/echo/transaction').OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
 
 export default class ContractTransaction extends Transaction {
 
 	/**
-	 * @param {import('echojs-lib').Echo['api']} api
+	 * @param {import('../echo/index').Echo['api']} api
 	 * @param {import('./Method').default} method
 	 */
 	constructor(api, method) {

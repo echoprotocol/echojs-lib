@@ -11,7 +11,7 @@ import { checkContractId, contractIdRegExp } from '../utils/validators';
 const NATHAN_ID = '1.2.12';
 
 /** @typedef {import("./Contract").default} Contract */
-/** @typedef {import("../types/_Abi").AbiArgument} AbiArgument */
+/** @typedef {import("../../types/_Abi").AbiArgument} AbiArgument */
 /** @typedef {import("./ContractResult").default} ContractResult */
 
 /**
@@ -74,7 +74,12 @@ export default class Method {
 	 */
 	async call(options = {}) {
 		const stack = new Error().stack;
-		let { contractId, assetId, accountId, echo } = options;
+		let {
+			contractId,
+			assetId,
+			accountId,
+			echo,
+		} = options;
 		if (contractId === undefined) {
 			if (this._contract.address === undefined) throw new Error('no contractId');
 			contractId = this._contract.address;

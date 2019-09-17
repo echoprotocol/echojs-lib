@@ -8,9 +8,8 @@ import PrivateKey from '../../src/crypto/private-key';
 import Contract from '../../src/contract';
 import checkContractIdTests from './_checkContractId.test';
 import { getContract } from './__testContract';
-
-/** @type {{ wif: string, rpcAddress: string }} */
-const config = require('config');
+import { url, WIF } from '../_test-data';
+// import { bytecode, abi } from '../operations/_contract.test';
 
 describe('Method', () => {
 
@@ -21,9 +20,10 @@ describe('Method', () => {
 	before(async function () {
 		// eslint-disable-next-line no-invalid-this
 		this.timeout(9e3);
-		await echo.connect(config.rpcAddress);
+		await echo.connect(url);
 		const { abi, code } = await getContract();
-		contract = await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif), { abi });
+		console.log(code);
+		contract = await Contract.deploy(code, PrivateKey.fromWif(WIF), echo, { abi });
 	});
 
 	describe('call', () => {
@@ -116,7 +116,7 @@ describe('Method', () => {
 	describe('broadcast', () => {
 		it('successful', async () => {
 			const res = await contract.methods.setVariable(123)
-				.broadcast({ privateKey: PrivateKey.fromWif(config.wif) });
+				.broadcast({ privateKey: PrivateKey.fromWif(WIF) });
 			deepStrictEqual(new Set(Object.keys(res.contractResult)), new Set(['exec_res', 'tr_receipt']));
 			ok(BigNumber.isBigNumber(res.decodedResult));
 			ok(res.decodedResult.eq(123));

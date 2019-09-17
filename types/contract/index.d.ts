@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js';
-import { PrivateKey, Echo, Transaction } from 'echojs-lib';
-import * as EchoJSLib from 'echojs-lib';
-import { ContractResult as ApiContractResult } from 'echojs-lib/types/echo/api';
-import { BroadcastingResult } from 'echojs-lib/types/echo/transaction';
+import { Echo } from '../index';
+import  PrivateKey  from '../crypto/private-key';
+import  Transaction  from '../echo/transaction';
+import { ContractResult as ApiContractResult } from '../interfaces/ContractResult';
+import { BroadcastingResult } from '../echo/transaction';
 import { Abi } from './_Abi';
 
 declare class ContractResult<T, TEvents> {
@@ -105,7 +106,7 @@ declare function generateInterface(contractName: string, abi: Abi, indent?: stri
 
 export default Contract;
 export { default as BigNumber } from "bignumber.js";
-export { PrivateKey, default as echo, Echo } from "echojs-lib";
+export { default as echo } from "../index";
 export { default as encode } from "./encode";
 export { default as decode } from "./decode";
-export { Abi, Method, generateInterface, EchoJSLib };
+export { Abi, Method, generateInterface, PrivateKey, Echo };

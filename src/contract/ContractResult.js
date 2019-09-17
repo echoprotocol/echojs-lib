@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { decode } from './decoders';
 
-/** @typedef {import('echojs-lib/types/echo/transaction').BroadcastingResult} BroadcastingResult */
-/** @typedef {import('echojs-lib/types/echo/api').ContractResult} ContractResult */
+/** @typedef {import('../../types/echo/transaction').BroadcastingResult} BroadcastingResult */
+/** @typedef {import('../../types/echo/api').ContractResult} ContractResult */
 /** @typedef {import('./Method').default} Method */
 
 export default class Result {

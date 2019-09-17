@@ -6,10 +6,11 @@
 	"types": "./types/index.d.ts",
 	"scripts": {
 		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
+		"pretest-contract": "npm run build && babel-node ./test/contract/__pretest.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
-		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract/Contract.test.js",
+		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract/index.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",
@@ -54,7 +55,6 @@
 		"isomorphic-ws": "^4.0.1",
 		"lodash": "^4.17.11",
 		"ws": "^7.1.1",
-
 		"comprehension": "^1.1.2",
 		"js-sha3": "^0.8.0"
 	},
@@ -75,7 +75,6 @@
 		"mocha": "^5.2.0",
 		"redux": "^4.0.1",
 		"typescript": "^3.5.3",
-
 		"fs-extra": "^7.0.1"
 	}
 }

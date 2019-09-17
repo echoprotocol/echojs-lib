@@ -6,10 +6,8 @@ import PrivateKey from '../../src/crypto/private-key';
 import { getContract } from './__testContract';
 import Contract from '../../src/contract';
 import { ok, strictEqual } from 'assert';
-
-/** @type {{ wif: string, rpcAddress: string }} */
-const config = require('config');
-
+import { url, WIF } from '../_test-data';
+// import { bytecode, abi } from '../operations/_contract.test';
 /**
  * @param {string} id
  * @returns {boolean}
@@ -33,24 +31,24 @@ describe('deploy', () => {
 		this.timeout(8e3);
 		await Promise.all([
 			async () => ({ code, abi } = await getContract()),
-			async () => await echo.connect(config.rpcAddress),
+			async () => await echo.connect(url),
 		].map((func) => func()));
 	});
 
 	it('successful (without abi)', async () => {
-		const res = await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif));
+		const res = await Contract.deploy(code, PrivateKey.fromWif(WIF), echo);
 		strictEqual(typeof res, 'string', 'invalid result type');
 		ok(isContractId(res), 'invalid result format');
 	}).timeout(8e3);
 
 	it('successful (with abi)', async () => {
 		/** @type {Contract} */
-		const res = await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif), { abi });
+		const res = await Contract.deploy(code, PrivateKey.fromWif(WIF), echo, { abi });
 		ok(res instanceof Contract, 'expected result to be Contract class instance');
 		ok(isContractId(res.address), 'invalid contract address format');
 	}).timeout(7e3);
 
 	it('value is BigNumber', async () => {
-		await Contract.deploy(code, echo, PrivateKey.fromWif(config.wif), { value: { amount: new BigNumber(0) } });
+		await Contract.deploy(code, PrivateKey.fromWif(WIF), echo, { value: { amount: new BigNumber(0) } });
 	}).timeout(7e3);
 });

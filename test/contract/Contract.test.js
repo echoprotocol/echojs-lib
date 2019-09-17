@@ -23,37 +23,35 @@ const defaultAbiMethod = {
 	type: 'function',
 };
 
-describe.only('Contract', () => {
-	describe.only('initializing', () => {
-		it('abi is not an array', async () => {
-			try {
-				const apis = CHAIN_APIS;
-				await echo.connect(url, { apis });
-
-				const bytecode = '6080';
-				const privateKey = PrivateKey.fromWif('5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
-				console.log('passed');
-				// const contractId = await Contract.deploy(bytecode, echo, privateKey);
-
-				const contract = new Contract([], {
-					echo,
-					contractId: '1.9.0'
-				});
-				console.log('-------------contract---------', contract);
-
-				// const result = await contract.fallback(privateKey, 1, '1.3.0');
-				// const result = await contract.deploy(bytecode, privateKey, {});
-				// console.log('--------result-------------', result);
-
-
-				// or pass abi in options to get contract instance instead of new contract id
-				// const contract = await Contract.deploy(bytecode, echo, privateKey, { abi: require("abi.json") });
-				// console.log(contract);
-			} catch (e) {
-				console.log(e);
-			}
-		});
-	});
+describe('Contract', () => {
+	// describe.only('initializing', () => {
+	// 	it('abi is not an array', async () => {
+	// 		try {
+	// 			const apis = CHAIN_APIS;
+	// 			await echo.connect(url, { apis });
+	//
+	// 			console.log('-------------START---------');
+	// 			const bytecode = '6080';
+	// 			const privateKey = PrivateKey.fromWif('5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
+	// 			// const contract = await Contract.deploy(bytecode, privateKey, echo);
+	// 			// const contract = await Contract.deploy(bytecode, privateKey);
+	// 			console.log('-------------contract---------', contract);
+	//
+	// 			const contract = new Contract([], {
+	// 				echo,
+	// 				contractId: '1.9.0'
+	// 			});
+	// 			console.log('-------------contract---------', contract);
+	// 			console.log('-------PASSED---------');
+	//
+	// 			const result = await contract.fallback(privateKey, 1, /*'1.3.0'*/);
+	// 			// const result = await contract.deploy(bytecode, privateKey, {});
+	// 			console.log('--------result-------------', result);
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 		}
+	// 	});
+	// });
 	describe('initializing', () => {
 		it('abi is not an array', () => {
 			expect(() => new Contract('not_an_array')).to.throw(Error, 'abi is not an array');

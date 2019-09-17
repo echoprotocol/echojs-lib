@@ -104,3 +104,5 @@ class Echo {
 }
 
 export default Echo;
+
+export const echo = new Echo();
