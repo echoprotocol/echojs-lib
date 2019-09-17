@@ -68,4 +68,9 @@ export default class OperationSerializer extends ISerializer<
 	toRaw<T extends OperationId>(value: TOperationInput<T, false>): TOperationOutput<T>;
 	toRaw<T extends OperationId>(value: TOperationInput<T, true>, withUnrequiredFee: true): TOperationOutput<T>;
 	appendToByteBuffer<T extends OperationId>(value: TOperationInput<T, false>, bytebuffer: ByteBuffer): void;
+
+	readFromBuffer<T extends OperationId>(
+		buffer: Buffer,
+		offset?: number,
+	): { res: TOperationOutput<T>, newOffset: number };
 }

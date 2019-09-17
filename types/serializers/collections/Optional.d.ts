@@ -13,5 +13,5 @@ export default class OptionalSerializer<T extends ISerializer> extends ISerializ
 	): TProvided extends true ? SerializerOutput<T> : undefined;
 
 	appendToByteBuffer(value: TInput<T>, bytebuffer: ByteBuffer): void;
-
+	readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput<T>, newOffset: number };
 }

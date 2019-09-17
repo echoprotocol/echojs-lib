@@ -9,4 +9,5 @@ export default class VectorSerializer<T extends ISerializer> extends ISerializer
 	constructor(serializer: T);
 	toRaw(value: TInput<T>): TOutput<T>;
 	appendToByteBuffer(value: TInput<T>, bytebuffer: ByteBuffer): void;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput<T>, newOffset: number };
 }

@@ -27,4 +27,16 @@ export default class BoolSerializer extends ISerializer {
 		uint8.appendToByteBuffer(raw ? 1 : 0, bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset) {
+		const newOffset = offset + 1;
+		const byte = buffer[offset];
+		if (byte > 0x01) throw new Error('invalid bool byte');
+		return { res: byte === 0x01, newOffset };
+	}
+
 }
