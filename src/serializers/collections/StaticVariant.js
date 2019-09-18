@@ -98,4 +98,18 @@ export default class StaticVariantSerializer extends ISerializer {
 		serializer.appendToByteBuffer(variant, bytebuffer);
 	}
 
+	/**
+	 * @template {number} TVariant
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput<T, TVariant>, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: key, newOffset: from } = varint32.readFromBuffer(buffer, offset);
+		const serializer = this.serializers[key];
+		if (!serializer) throw new Error(`serializer with key ${key} not found`);
+		const { res: variant, newOffset } = serializer.readFromBuffer(buffer, from);
+		return { res: [key, variant], newOffset };
+	}
+
 }
