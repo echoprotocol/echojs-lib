@@ -8,7 +8,7 @@ let contractInfo = null;
 
 async function compileContract() {
 	const compiler = spawn(
-		process.env.SOLC_PATH || 'solcjs', //solc
+		process.env.SOLC_PATH || 'solc',
 		['--bin', '--abi', '-o', __dirname, `${__dirname}/TestContract.sol`],
 	);
 	await new Promise((resolve) => compiler.on('close', () => resolve()));
@@ -18,7 +18,7 @@ async function compileContract() {
 async function getContract() {
 	if (contractInfo === null) {
 		const [abiText, bytecodeHex] = await Promise.all(['abi', 'bin'].map(async (ext) => {
-			return await readFile(`${__dirname}/_home_user_WebstormProjects_echojs-lib_test_contract___testContract_TestContract_sol_TestContract.${ext}`, 'utf8');
+			return await readFile(`${__dirname}/TestContract.${ext}`, 'utf8');
 		}));
 		const abi = JSON.parse(abiText);
 

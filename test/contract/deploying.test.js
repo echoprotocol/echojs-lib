@@ -3,7 +3,7 @@ import { OBJECT_TYPES } from '../../src/constants';
 import Echo from '../../src/echo/index';
 import PrivateKey from '../../src/crypto/private-key';
 
-import { getContract } from './__testContract';
+// import { getContract } from './__testContract';
 import Contract from '../../src/contract';
 import { ok, strictEqual } from 'assert';
 import { url, /*WIF*/ } from '../_test-data';
@@ -18,11 +18,11 @@ function isContractId(id) {
 
 describe('deploy', () => {
 
-	/** @type {Buffer} */
+	// /** @type {Buffer} */
 	// let code = null;
 	const WIF = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
 
-	/** @type {import("../types/_Abi").Abi} */
+	// /** @type {import("../types/_Abi").Abi} */
 	// let abi = null;
 
 	let echo = new Echo();

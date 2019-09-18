@@ -7,7 +7,7 @@ import PrivateKey from '../../src/crypto/private-key';
 
 import Contract from '../../src/contract';
 import checkContractIdTests from './_checkContractId.test';
-import { getContract } from './__testContract';
+// import { getContract } from './__testContract';
 import { url, /*WIF*/ } from '../_test-data';
 import { bytecode as code, abi } from '../operations/_contract.test';
 
