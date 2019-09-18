@@ -119,6 +119,7 @@ export function encodeDynamicBytes(input) {
 	const code = $c({ count: partsCount, step: 32 }, (i) => input.value.slice(i, i + 32).toString('hex'));
 	const lastCodeIndex = partsCount - 1;
 	if (code[lastCodeIndex].length !== 64) {
+		// eslint-disable-next-line operator-assignment
 		code[lastCodeIndex] = code[lastCodeIndex] + $c(64 - code[lastCodeIndex].length, () => '0').join('');
 	}
 	return { type: 'dynamic', length: input.value.length, code };
@@ -140,6 +141,7 @@ export function encodeString(input) {
  */
 export function encodeDynamicArray(value, type) {
 	if (!Array.isArray(value)) throw new Error('value is not an array');
+	// eslint-disable-next-line no-use-before-define
 	return { type: 'dynamic', length: value.length, code: value.map((element) => encodeArgument(element, type)) };
 }
 
@@ -152,6 +154,7 @@ export function encodeDynamicArray(value, type) {
 export function encodeStaticArray(value, type, length) {
 	if (!Array.isArray(value)) throw new Error('value is not an array');
 	if (length !== value.length) throw new Error('invalid array elements count');
+	// eslint-disable-next-line no-use-before-define
 	return { type: 'static', length, code: value.map((element) => encodeArgument(element, type)) };
 }
 
@@ -163,14 +166,14 @@ export function encodeStaticArray(value, type, length) {
 export function encodeArgument(value, type) {
 	const dynamicArrayMatch = type.match(/^(.*)\[]$/);
 	if (dynamicArrayMatch) {
-		const type = dynamicArrayMatch[1];
-		return encodeDynamicArray(value, type);
+		const typeOfMatch = dynamicArrayMatch[1];
+		return encodeDynamicArray(value, typeOfMatch);
 	}
 	const staticArrayMatch = type.match(/^(.*)\[(\d+)]$/);
 	if (staticArrayMatch) {
-		const type = staticArrayMatch[1];
+		const typeOfMatch = staticArrayMatch[1];
 		const length = Number.parseInt(staticArrayMatch[2], 10);
-		return encodeStaticArray(value, type, length);
+		return encodeStaticArray(value, typeOfMatch, length);
 	}
 	const bytesMatch = type.match(/^bytes(\d+)$/);
 	if (bytesMatch) {
@@ -200,6 +203,7 @@ export function encodeArgument(value, type) {
  */
 export default function encode(input) {
 	if (!Array.isArray(input)) input = [input];
+	// eslint-disable-next-line max-len
 	/** @type {Array.<(string|{type: (string), code: Array<string|{type: (string), code: Array<string|_ArrayCode>, length: number}>, length: number}|number)>} */
 	let result = input.map(({ value, type }) => encodeArgument(value, type));
 	let post = [];
@@ -210,7 +214,7 @@ export default function encode(input) {
 			result.push(encodeUnsignedInteger(256, length), ...arr);
 		}
 		post = [];
-		for (let i = 0; i < result.length; i++) {
+		for (let i = 0; i < result.length; i += 1) {
 			if (['string', 'number'].includes(typeof result[i])) continue;
 			if (result[i].type === 'static') {
 				const shiftLength = result[i].code.length - 1;
@@ -220,7 +224,7 @@ export default function encode(input) {
 					...result.slice(i + 1),
 				];
 				result = result.map((element) =>
-					typeof element === 'number' && element > i ? element + shiftLength : element);
+					(typeof element === 'number' && element > i ? element + shiftLength : element));
 				i -= 1;
 				continue;
 			}
@@ -228,6 +232,6 @@ export default function encode(input) {
 			result[i] = undefined;
 		}
 	} while (post.length > 0);
-	return result.map((element) => typeof element === 'number' ? encodeUnsignedInteger(256, element * 32) : element)
+	return result.map((element) => (typeof element === 'number' ? encodeUnsignedInteger(256, element * 32) : element))
 		.join('');
 }

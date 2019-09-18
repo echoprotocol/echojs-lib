@@ -17,6 +17,7 @@ function checkValue(value) {
  */
 export function decodeBool(value) {
 	if (value === $c(64, () => '0').join('')) return false;
+	// eslint-disable-next-line prefer-template
 	if (value === $c(63, () => '0').join('') + '1') return true;
 	throw new Error('unable to decode bool');
 }
@@ -90,6 +91,7 @@ export function decodeStaticBytes(bytesCount, value) {
 function decodeArray(code, from, length, type) {
 	let shift = 0;
 	const res = $c(length, () => {
+		// eslint-disable-next-line no-shadow, no-use-before-define
 		const { shift: elementShift, res } = decodeArgument(code, from + shift, type);
 		shift += elementShift;
 		return res;
@@ -153,16 +155,16 @@ export function decodeArgument(code, index, type) {
 	}
 	const staticArrayMatch = type.match(/^(.+)\[(\d+)]$/);
 	if (staticArrayMatch) {
-		const type = staticArrayMatch[1];
+		const typeOfMatch = staticArrayMatch[1];
 		const length = Number.parseInt(staticArrayMatch[2], 10);
-		return decodeArray(code, index, length, type);
+		return decodeArray(code, index, length, typeOfMatch);
 	}
 	const dynamicArrayMatch = type.match(/^(.+)\[]$/);
 	if (dynamicArrayMatch) {
-		const type = dynamicArrayMatch[1];
+		const typeOfMatch = dynamicArrayMatch[1];
 		const offset = getOffset(code[index]);
 		const length = Number.parseInt(code[offset], 16);
-		const { res } = decodeArray(code, offset + 1, length, type);
+		const { res } = decodeArray(code, offset + 1, length, typeOfMatch);
 		return { shift: 1, res };
 	}
 	throw new Error(`unknown type ${type}`);

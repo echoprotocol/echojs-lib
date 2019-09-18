@@ -26,6 +26,7 @@ class Contract {
 	 * @param {Abi} [options.abi]
 	 * @param {boolean} [options.ethAccuracy]
 	 * @param {string} [options.supportedAssetId]
+	 * @param {string} [options.accountId]
 	 * @param {Object} [options.value]
 	 * @param {number|string|BigNumber} [options.value.amount=0]
 	 * @param {string} [options.value.assetId]
@@ -56,6 +57,7 @@ class Contract {
 		if (!options.value) options.value = {};
 		if (options.value.amount === undefined) options.value.amount = 0;
 		else {
+			// eslint-disable-next-line no-lonely-if
 			if (typeof options.value.amount === 'number') {
 				if (options.value.amount < 0) throw new Error('amount is negative');
 				if (Number.isSafeInteger(options.value.amount)) throw new Error('amount is not safe integer');
@@ -71,7 +73,12 @@ class Contract {
 		else if (/^1\.3\.(0|[1-9]\d*)$/.test(options.value.assetId) === false) {
 			throw new Error('invalid assetId format');
 		}
-		const [[accountId]] = await newEcho.api.getKeyReferences([privateKey.toPublicKey()]);
+		// TODO check
+		console.log('options.accountId', options.accountId);
+		const [[accountIds]] = options.accountId || await newEcho.api.getKeyReferences([privateKey.toPublicKey()]);
+		const accountId = options.accountId || accountIds;
+		console.log('accountId', accountIds);
+		console.log('accountId', accountId);
 		if (!accountId) throw new Error('No account with provided private key');
 		let rawArgs = '';
 		if (options.args !== undefined) {
@@ -91,7 +98,7 @@ class Contract {
 			.then(async (res) => {
 			/** @type {import("../../types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
 				const [, opResId] = res[0].trx.operation_results[0];
-				const execRes = await newEcho.api.getContractResult(opResId, true).then((res) => res[1].exec_res);
+				const execRes = await newEcho.api.getContractResult(opResId, true).then((result) => result[1].exec_res);
 				if (execRes.excepted !== 'None') throw execRes;
 				const contractTypeId = OBJECT_TYPES.CONTRACT;
 				return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;

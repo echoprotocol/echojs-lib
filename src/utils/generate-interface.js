@@ -49,6 +49,7 @@ function parseType(type, isInput = true) {
 function getArgs(inputs) {
 	let tupleIsUsed = false;
 	const res = inputs.map(({ name, type }, argIndex) => {
+		// eslint-disable-next-line no-shadow
 		const { res, tupleIsUsed: tupleUsedInArg } = parseType(type, true);
 		if (tupleUsedInArg) tupleIsUsed = true;
 		return `${name || `arg${argIndex}`}: ${res}`;
@@ -103,7 +104,12 @@ export default function generateInterface(contractName, abi, props = {}) {
 					names.delete(name);
 				} else if (!namesDuplicates.has(name)) names.add(name);
 				if (methods[signature]) throw new Error('signatures duplication');
-				methods[signature] = { name, str, signature, hash };
+				methods[signature] = {
+					name,
+					str,
+					signature,
+					hash,
+				};
 				break;
 			}
 			case 'constructor':
@@ -116,6 +122,7 @@ export default function generateInterface(contractName, abi, props = {}) {
 					events += '\n';
 				}
 				events += `${indent}${name}: {\n`;
+				// eslint-disable-next-line no-shadow
 				for (const { name, type } of inputs) {
 					const { res, tupleIsUsed: tupleUsedInArg } = parseType(type, false);
 					if (tupleUsedInArg) tupleIsUsed = true;

@@ -6,7 +6,6 @@
 	"types": "./types/index.d.ts",
 	"scripts": {
 		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
-		"pretest-contract": "npm run build && babel-node ./test/contract/__pretest.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",

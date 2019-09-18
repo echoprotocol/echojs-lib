@@ -1,7 +1,7 @@
 import { ok } from 'assert';
 import _ from 'lodash';
 
-import Echo from '../echo/index';
+import Echo, { echo as defaultEcho } from '../echo/index';
 import PrivateKey from '../crypto/private-key';
 import { OPERATIONS_IDS } from '../constants';
 import ContractTransaction from './ContractTransaction';
@@ -73,7 +73,8 @@ export default class Method {
 	 * @returns {Promise<Array<*>|*|null>}
 	 */
 	async call(options = {}) {
-		const stack = new Error().stack;
+		console.log('-------options-----------', options);
+		const { stack } = new Error().stack;
 		let {
 			contractId,
 			assetId,
@@ -88,13 +89,18 @@ export default class Method {
 		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
 		if (accountId === undefined) accountId = NATHAN_ID;
 		else if (!/^1\.2\.(0|[1-9]\d*)$/.test(accountId)) throw new Error('invalid accountId format');
+		console.log('-------ECHO-----------');
 		if (echo === undefined) {
+			// TODO check
+			this._contract.echo = defaultEcho; // i added
 			if (this._contract.echo === undefined) throw new Error('no echo instance');
+			// eslint-disable-next-line prefer-destructuring
 			echo = this._contract.echo;
 		} else if (!(echo instanceof Echo)) throw new Error('invalid echo instance');
 		try {
 			// FIXME: remove @type when JSDoc of callContractNoChangingState will be fixed
 			/** @type {string} */
+			// console.log('-------echo----------', echo);
 			const rawResult = await echo.api.callContractNoChangingState(contractId, accountId, assetId, this.code);
 			if (rawResult === '') {
 				if (this._abiMethodOutputs.length === 0) return null;
@@ -131,7 +137,13 @@ export default class Method {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const publicKey = options.privateKey.toPublicKey();
-				const [[registrar]] = await this._contract.echo.api.getKeyReferences([publicKey]);
+				// TODO check
+				this._contract.echo = defaultEcho;
+				options.registrar = '1.2.10';
+				const [[registrars]] = await this._contract.echo.api.getKeyReferences([publicKey]); //registrar
+				const registrar = options.registrar || registrars;
+				console.log('options.registrar', options.registrar);
+				console.log('registrar', registrar);
 				return resolve(this._createTransaction(
 					options.contractId,
 					registrar,
@@ -183,7 +195,7 @@ export default class Method {
 			.addOperation(OPERATIONS_IDS.CONTRACT_CALL, {
 				callee,
 				code: this.code,
-				registrar: registrar,
+				registrar,
 				value,
 			});
 		if (privateKey !== undefined) result.addSigner(privateKey);
