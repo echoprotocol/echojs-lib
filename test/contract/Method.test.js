@@ -8,21 +8,22 @@ import PrivateKey from '../../src/crypto/private-key';
 import Contract from '../../src/contract';
 import checkContractIdTests from './_checkContractId.test';
 import { getContract } from './__testContract';
-import { url, WIF } from '../_test-data';
-// import { bytecode, abi } from '../operations/_contract.test';
+import { url, /*WIF*/ } from '../_test-data';
+import { bytecode as code, abi } from '../operations/_contract.test';
 
 describe('Method', () => {
 
 	/** @type {Contract} */
 	let contract = null;
 	const echo = new Echo();
+	const WIF = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
 
 	before(async function () {
 		// eslint-disable-next-line no-invalid-this
 		this.timeout(9e3);
 		await echo.connect(url);
-		const { abi, code } = await getContract();
-		console.log(code);
+		// const { abi, code } = await getContract();
+		// console.log('Method_TEST', code);
 		contract = await Contract.deploy(code, PrivateKey.fromWif(WIF), echo, { abi });
 	});
 

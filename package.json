@@ -44,6 +44,7 @@
 		"bs58": "^4.0.1",
 		"buffer": "^5.2.1",
 		"bytebuffer": "^5.0.1",
+		"comprehension": "^1.1.2",
 		"create-hash": "^1.2.0",
 		"create-hmac": "^1.1.7",
 		"crypto-js": "^3.1.9-1",
@@ -53,10 +54,10 @@
 		"events": "^3.0.0",
 		"immutable": "^3.8.1",
 		"isomorphic-ws": "^4.0.1",
+		"js-sha3": "^0.8.0",
 		"lodash": "^4.17.11",
-		"ws": "^7.1.1",
-		"comprehension": "^1.1.2",
-		"js-sha3": "^0.8.0"
+		"solc": "^0.4.23",
+		"ws": "^7.1.1"
 	},
 	"devDependencies": {
 		"@babel/node": "^7.5.5",

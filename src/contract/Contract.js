@@ -56,8 +56,6 @@ class Contract {
 		if (!options.value) options.value = {};
 		if (options.value.amount === undefined) options.value.amount = 0;
 		else {
-			options.value.amount = 1;
-			console.log(options.value.amount);
 			if (typeof options.value.amount === 'number') {
 				if (options.value.amount < 0) throw new Error('amount is negative');
 				if (Number.isSafeInteger(options.value.amount)) throw new Error('amount is not safe integer');

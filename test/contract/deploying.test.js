@@ -6,8 +6,8 @@ import PrivateKey from '../../src/crypto/private-key';
 import { getContract } from './__testContract';
 import Contract from '../../src/contract';
 import { ok, strictEqual } from 'assert';
-import { url, WIF } from '../_test-data';
-// import { bytecode, abi } from '../operations/_contract.test';
+import { url, /*WIF*/ } from '../_test-data';
+import { bytecode as code, abi } from '../operations/_contract.test';
 /**
  * @param {string} id
  * @returns {boolean}
@@ -19,10 +19,11 @@ function isContractId(id) {
 describe('deploy', () => {
 
 	/** @type {Buffer} */
-	let code = null;
+	// let code = null;
+	const WIF = '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2';
 
 	/** @type {import("../types/_Abi").Abi} */
-	let abi = null;
+	// let abi = null;
 
 	let echo = new Echo();
 
@@ -30,7 +31,7 @@ describe('deploy', () => {
 		// eslint-disable-next-line no-invalid-this
 		this.timeout(8e3);
 		await Promise.all([
-			async () => ({ code, abi } = await getContract()),
+			// async () => ({ code, abi } = await getContract()),
 			async () => await echo.connect(url),
 		].map((func) => func()));
 	});
