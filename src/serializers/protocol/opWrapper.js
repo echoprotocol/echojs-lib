@@ -1,5 +1,7 @@
 import ISerializer from '../ISerializer';
 
+/** @typedef {import("../../echo/transaction").OperationId} OperationId */
+
 class OperationWrapperSerializer extends ISerializer {
 
 	/**
@@ -17,6 +19,9 @@ class OperationWrapperSerializer extends ISerializer {
 		this._operationSerializer = null;
 	}
 
+	/** @private */
+	onlyIfInited() { if (!this.operationSerializer) throw new Error('operation wrapper is not inited'); }
+
 	/** @param {import("../operation").default} operationSerializer */
 	init(operationSerializer) {
 		if (this.operationSerializer) throw new Error('already inited');
@@ -25,13 +30,24 @@ class OperationWrapperSerializer extends ISerializer {
 	}
 
 	/**
-	 * @template {import('../../echo/transaction').OperationId} T
+	 * @template {OperationId} T
 	 * @param {[T, { [key: string]: any }]} value
 	 * @returns {[T, { [key: string]: any }]}
 	 */
 	toRaw(value) {
-		if (!this.operationSerializer) throw new Error('operation wrapper is not inited');
+		this.onlyIfInited();
 		return this.operationSerializer.toRaw(value);
+	}
+
+	/**
+	 * @template {OperationId} T
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: [T, { [key: string]: any }], newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		this.onlyIfInited();
+		return this.operationSerializer.readFromBuffer(buffer, offset);
 	}
 
 }

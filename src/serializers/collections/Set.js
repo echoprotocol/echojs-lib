@@ -25,7 +25,7 @@ export default class SetSerializer extends VectorSerializer {
 
 	/**
 	 * @param {TInput<T>} value
-	 * @returns {TOutput<T>}
+	 * @returns {SerializerOutput<VectorSerializer<T>>}
 	 */
 	toRaw(value) {
 		if (value === undefined) value = [];
@@ -48,6 +48,17 @@ export default class SetSerializer extends VectorSerializer {
 			}
 		}
 		return raw;
+	}
+
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: SerializerOutput<VectorSerializer<T>>, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res, newOffset } = super.readFromBuffer(buffer, offset);
+		// `this.toRaw` is used here to check duplicates
+		return { res: this.toRaw(res), newOffset };
 	}
 
 }

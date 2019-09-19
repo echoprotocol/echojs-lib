@@ -1,7 +1,7 @@
 import { ok, strictEqual } from 'assert';
 import { url, accountId, privateKey } from '../../_test-data';
 import { shouldReject, getMinContractBytecode } from '../../_test-utils';
-import { Echo, OPERATIONS_IDS, constants } from '../../../src';
+import { Echo, OPERATIONS_IDS, constants } from '../../../';
 
 describe('checkERC20Token', () => {
 	/** @type {import("../../../types").Echo} */
@@ -57,8 +57,8 @@ describe('checkERC20Token', () => {
 			const opRes = await echo.api.getObject(opResId);
 			const contractId = opRes.contracts_id[0];
 			nonexistentContractId = [
-				constants.CHAIN_TYPES.RESERVED_SPACES.PROTOCOL_IDS,
-				constants.OBJECT_TYPES.CONTRACT,
+				constants.CHAIN_TYPES.RESERVED_SPACE_ID.PROTOCOL,
+				constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 				Number.parseInt(contractId.split('.')[2]) + 1,
 			].join('.');
 			console.log(nonexistentContractId);

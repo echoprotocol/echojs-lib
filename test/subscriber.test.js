@@ -7,7 +7,7 @@ import { shouldReject } from './_test-utils';
 import { Echo } from '../src';
 
 import { BASE, ACCOUNT, ASSET, CONTRACT } from '../src/constants/object-types';
-import { IMPLEMENTATION_OBJECT_TYPE } from '../src/constants/chain-types';
+import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../src/constants/chain-types';
 
 chai.use(spies);
 
@@ -283,10 +283,10 @@ describe('SUBSCRIBER', () => {
             it('test', (done) => {
                 let isCalled = false;
 
-                echo.api.getObjects([`2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`]);
+                echo.api.getObjects([`2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`]);
 
                 echo.subscriber.setGlobalSubscribe((result) => {
-                    if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`) {
+                    if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`) {
                         expect(result).to.be.an('array').that.is.not.empty;
                         expect(result[0]).to.be.an('object').that.is.not.empty;
                         expect(result[0].id).to.be.a('string');

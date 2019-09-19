@@ -62,8 +62,8 @@ export const assetUpdateFeedProducersOperationPropsSerializer = struct({
 export const assetIssueOperationPropsSerializer = struct({
 	fee: asset,
 	issuer: accountId,
-	asset_to_issuer: asset,
-	issuer_to_account: accountId,
+	asset_to_issue: asset,
+	issue_to_account: accountId,
 	extensions,
 });
 

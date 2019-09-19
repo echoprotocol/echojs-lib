@@ -1,13 +1,11 @@
 import { strictEqual, ok } from 'assert';
 
-import { Echo, constants } from '../../src';
-import Transaction from '../../src/echo/transaction';
+import { Echo, constants, serializers } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
 import testExtensionsField from './_testExtensionsField';
 
 import { ACCOUNT, ASSET} from '../../src/constants/object-types';
 import { operation } from '../../src/serializers';
-import { transfer } from '../../src/serializers/protocol';
 
 const { OPERATIONS_IDS } = constants;
 const echo = new Echo();
@@ -20,7 +18,7 @@ describe('transfer', () => {
 	describe('- transfer', () => {
 		it('test', async () => {
 
-			const transaction = new Transaction(echo.api);
+			const transaction = echo.createTransaction();
 
 			transaction.addOperation(constants.OPERATIONS_IDS.TRANSFER, {
 				from: accountId,
@@ -70,7 +68,7 @@ describe('transfer', () => {
 					amount: 30
 				},
 			};
-			const result = transfer.default.serialize(txProps);
+			const result = serializers.protocol.transfer.default.serialize(txProps);
 			ok(Buffer.isBuffer(result));
 			strictEqual(result.toString('hex'), '1400000000000000017bc8031e000000000000000200');
 		});

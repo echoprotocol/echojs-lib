@@ -9,4 +9,5 @@ export default abstract class IIntSerializer<TOutput extends string | number> ex
 	protected _maxAbsValue: BigNumber;
 	constructor(bitsCount: number);
 	toRaw(value: TInput): TOutput;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput, newOffset: number };
 }

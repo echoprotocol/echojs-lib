@@ -1,3 +1,4 @@
+import { varint32 } from './integers';
 import ISerializer from '../ISerializer';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
@@ -20,8 +21,19 @@ export default class StringSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		bytebuffer.writeVarint32(raw.length);
+		varint32.appendToByteBuffer(raw.length, bytebuffer);
 		bytebuffer.append(raw, 'binary');
+	}
+
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: string, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: length, newOffset: from } = varint32.readFromBuffer(buffer, offset);
+		const bytes = buffer.slice(from, from + length);
+		return { res: this.toRaw(bytes.toString()), newOffset: from + length };
 	}
 
 }
