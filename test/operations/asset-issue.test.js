@@ -22,8 +22,8 @@ describe('asset issue', () => {
 				issuer_permissions: 79,
 				flags: 0,
 				core_exchange_rate: {
-					base: { amount: 10, asset_id: `1.${constants.OBJECT_TYPES.ASSET}.0` },
-					quote: { amount: 1, asset_id: `1.${constants.OBJECT_TYPES.ASSET}.1` },
+					base: { amount: 10, asset_id: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0` },
+					quote: { amount: 1, asset_id: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.1` },
 				},
 				whitelist_authorities: [],
 				blacklist_authorities: [],
