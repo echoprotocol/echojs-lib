@@ -4,15 +4,15 @@ import * as protocol from './protocol';
 
 export const anyObjectId = new AnyObjectIdSerializer();
 
-/** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
+/** @typedef {import("../../../constants/chain-types").ReservedSpaceId} ReservedSpaceId */
 
 /**
- * @template {e_RESERVED_SPACES} T
+ * @template {ReservedSpaceId} T
  * @typedef {import("./ObjectId").ObjectTypeId<T>} ObjectTypeId
  */
 
 /**
- * @template {e_RESERVED_SPACES} T
+ * @template {ReservedSpaceId} T
  * @param {T} reservedSpaceId
  * @param {ObjectTypeId<T> | ObjectTypeId<T>[]} objectsTypesIds
  * @returns {ObjectIdSerializer<T>}

@@ -11,13 +11,13 @@ import { PROTOCOL_OBJECT_TYPE_ID } from '../../../constants';
  */
 
 /** @typedef {import("../../basic/integers").VarInt32Serializer} VarInt32Serializer */
-/** @typedef {import("../../../constants").e_OBJECT_TYPES} PROTOCOL_OBJECT_TYPE_ID */
-/** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
-/** @typedef {import("../../../constants/chain-types").e_IMPLEMENTATION_OBJECT_TYPE} e_IMPLEMENTATION_OBJECT_TYPE */
+/** @typedef {import("../../../constants").ProtocolObjectTypeId} ProtocolObjectTypeId */
+/** @typedef {import("../../../constants/chain-types").ReservedSpaceId} ReservedSpaceId */
+/** @typedef {import("../../../constants/chain-types").ImplementationObjectTypeId} ImplementationObjectTypeId */
 
 /**
- * @template {e_RESERVED_SPACES} T
- * @typedef {{ 0: never, 1: e_PROTOCOL_OBJECT_TYPE_ID, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
+ * @template {ReservedSpaceId} T
+ * @typedef {{ 0: never, 1: ProtocolObjectTypeId, 2: ImplementationObjectTypeId }[T]} ObjectTypeId
  */
 
 /** @typedef {string | SerializerInput<VarInt32Serializer>} TInput */
@@ -31,7 +31,7 @@ const _objectTypeIds = {
 };
 
 /**
- * @template {e_RESERVED_SPACES} T
+ * @template {ReservedSpaceId} T
  * @augments {ISerializer<string, string>}
  */
 export default class ObjectIdSerializer extends ISerializer {

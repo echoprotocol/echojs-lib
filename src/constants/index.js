@@ -28,7 +28,8 @@ export const DEFAULT_BLOCKS_EXPIRATION_NUMBER = 20;
 export const DEFAULT_CACHE_EXPIRATION_TIME = null;
 export const DEFAULT_MIN_CACHE_CLEANING_TIME = 500;
 
-/** @typedef {typeof PROTOCOL_OBJECT_TYPE_ID[keyof typeof PROTOCOL_OBJECT_TYPE_ID]} OperationId */
+/** @typedef {typeof PROTOCOL_OBJECT_TYPE_ID[keyof typeof PROTOCOL_OBJECT_TYPE_ID]} ProtocolObjectTypeId */
+/** @typedef {typeof OPERATIONS_IDS[keyof typeof OPERATIONS_IDS]} OperationId */
 
 export {
 	OPERATIONS_IDS,
