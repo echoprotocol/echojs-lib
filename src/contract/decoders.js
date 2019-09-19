@@ -17,8 +17,7 @@ function checkValue(value) {
  */
 export function decodeBool(value) {
 	if (value === $c(64, () => '0').join('')) return false;
-	// eslint-disable-next-line prefer-template
-	if (value === $c(63, () => '0').join('') + '1') return true;
+	if (value === `${$c(63, () => '0').join('')}1`) return true;
 	throw new Error('unable to decode bool');
 }
 
@@ -85,7 +84,7 @@ export function decodeStaticBytes(bytesCount, value) {
  * @param {Array<string>} code
  * @param {number} from
  * @param {number} length
- * @param {import('../types/_Abi').SolType} type
+ * @param {import('../types/contract/_Abi').SolType} type
  * @returns {{shift:number,res:Array<string>}}
  */
 function decodeArray(code, from, length, type) {

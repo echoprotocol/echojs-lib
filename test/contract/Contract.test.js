@@ -2,11 +2,7 @@ import 'mocha';
 import { deepStrictEqual, notStrictEqual, strictEqual, ok } from 'assert';
 import { expect } from 'chai';
 
-import PrivateKey from '../../src/crypto/private-key';
-import Contract from '../../src/contract';
-import echo from '../../src';
-import { url } from '../_test-data';
-import { CHAIN_APIS } from '../../src/constants/ws-constants';
+import { Contract } from '../../';
 
 /** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
 
@@ -24,34 +20,6 @@ const defaultAbiMethod = {
 };
 
 describe('Contract', () => {
-	// describe.only('initializing', () => {
-	// 	it('abi is not an array', async () => {
-	// 		try {
-	// 			const apis = CHAIN_APIS;
-	// 			await echo.connect(url, { apis });
-	//
-	// 			console.log('-------------START---------');
-	// 			const bytecode = '6080';
-	// 			const privateKey = PrivateKey.fromWif('5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
-	// 			// const contract = await Contract.deploy(bytecode, privateKey, echo);
-	// 			// const contract = await Contract.deploy(bytecode, privateKey);
-	// 			console.log('-------------contract---------', contract);
-	//
-	// 			const contract = new Contract([], {
-	// 				echo,
-	// 				contractId: '1.9.0'
-	// 			});
-	// 			console.log('-------------contract---------', contract);
-	// 			console.log('-------PASSED---------');
-	//
-	// 			const result = await contract.fallback(privateKey, 1, /*'1.3.0'*/);
-	// 			// const result = await contract.deploy(bytecode, privateKey, {});
-	// 			console.log('--------result-------------', result);
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 		}
-	// 	});
-	// });
 	describe('initializing', () => {
 		it('abi is not an array', () => {
 			expect(() => new Contract('not_an_array')).to.throw(Error, 'abi is not an array');

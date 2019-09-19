@@ -1,3 +1,10 @@
+### Connection
+
+#### Before use echo instances you should connect to node.
+You need do this once, before start, and after force disconnect (if you want to continue work).
+Lib provide reconnecting socket it can reconnect automatically after network disconnect or node disconnect, you can tune **maxRetries**  to set maximum count of retries and **connectionTimeout** to set delay betweeen reconnection attempts, also this param responsible for answering wating time.
+
+```javascript
 import echo, { constants } from 'echojs-lib';
 
 const { 

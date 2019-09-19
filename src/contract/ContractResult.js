@@ -1,35 +1,35 @@
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { decode } from './decoders';
 
 /** @typedef {import('../../types/echo/transaction').BroadcastingResult} BroadcastingResult */
-/** @typedef {import('../../types/echo/api').ContractResult} ContractResult */
+/** @typedef {import('../../types/interfaces/ContractResult').ContractResult} ContractResult */
 /** @typedef {import('./Method').default} Method */
 
 export default class Result {
 
 	/**
 	 * @readonly
-	 * @type {Array<BroadcastingResult>}
+	 * @type {BroadcastingResult[]}
 	 */
-	get transactionResult() { return _.cloneDeep(this._transactionResult); }
+	get transactionResult() { return cloneDeep(this._transactionResult); }
 
 	/**
 	 * @readonly
 	 * @type {ContractResult}
 	 */
-	get contractResult() { return _.cloneDeep(this._contractResult); }
+	get contractResult() { return cloneDeep(this._contractResult); }
 
 	/**
 	 * @readonly
-	 * @type {Array<any>|null|any}
+	 * @type {any[] | null | any}
 	 */
-	get decodedResult() { return _.cloneDeep(this._decodedResult); }
+	get decodedResult() { return cloneDeep(this._decodedResult); }
 
 	/**
 	 * @readonly
-	 * @type {{[eventName: string]: { [field: string]: string }}}
+	 * @type {{ [eventName: string]: { [field: string]: string } }}
 	 */
-	get events() { return _.cloneDeep(this._events); }
+	get events() { return cloneDeep(this._events); }
 
 	/**
 	 * @param {Method} method
@@ -49,12 +49,12 @@ export default class Result {
 		this._contractResult = contractResult;
 		/**
 		 * @private
-		 * @type {Array<any>|null|any}
+		 * @type {any[] | null | any}
 		 */
 		this._decodedResult = decode(this._contractResult.exec_res.output, method.outputs.map(({ type }) => type));
 		/**
 		 * @private
-		 * @type {{[eventName: string]: { [field: string]: any }}}
+		 * @type {{ [eventName: string]: { [field: string]: any } }}
 		 */
 		this._events = method.contract.parseLogs(contractResult.tr_receipt.log);
 	}

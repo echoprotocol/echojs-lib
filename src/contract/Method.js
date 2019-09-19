@@ -132,7 +132,6 @@ export default class Method {
 		return new Promise(async (resolve, reject) => {
 			try {
 				const publicKey = options.privateKey.toPublicKey();
-				// TODO check
 				const [[registrar]] = await this._contract.echo.api.getKeyReferences([publicKey]);
 				return resolve(this._createTransaction(
 					options.contractId,
