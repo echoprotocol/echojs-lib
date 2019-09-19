@@ -20,13 +20,13 @@ class Contract {
 	/**
 	 * @param {Buffer|string} code
 	 * @param {PrivateKey} privateKey
-	 * @param {Echo} echo
 	 * @param {Object} [options]
 	 * @param {Array<*>} [options.args]
 	 * @param {Abi} [options.abi]
 	 * @param {boolean} [options.ethAccuracy]
 	 * @param {string} [options.supportedAssetId]
 	 * @param {string} [options.accountId]
+	 * @param {Echo} [options.echo]
 	 * @param {Object} [options.value]
 	 * @param {number|string|BigNumber} [options.value.amount=0]
 	 * @param {string} [options.value.assetId]
@@ -35,14 +35,13 @@ class Contract {
 	static async deploy(
 		code,
 		privateKey,
-		echo,
 		options,
 	) {
-		const newEcho = echo || defaultEcho;
+		const echo = options.echo || defaultEcho;
 
 		if (Buffer.isBuffer(code)) code = code.toString('hex');
 		else if (typeof code !== 'string') throw new Error('invalid code type');
-		if (!(newEcho instanceof Echo)) throw new Error('echo is not instance of Echo class');
+		if (!(echo instanceof Echo)) throw new Error('echo is not instance of Echo class');
 		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
 		if (!options) options = {};
 		if (options.abi !== undefined) checkAbiFormat(options.abi);
@@ -73,12 +72,8 @@ class Contract {
 		else if (/^1\.3\.(0|[1-9]\d*)$/.test(options.value.assetId) === false) {
 			throw new Error('invalid assetId format');
 		}
-		// TODO check
-		console.log('options.accountId', options.accountId);
-		const [[accountIds]] = options.accountId || await newEcho.api.getKeyReferences([privateKey.toPublicKey()]);
+		const [[accountIds]] = await echo.api.getKeyReferences([privateKey.toPublicKey()]);
 		const accountId = options.accountId || accountIds;
-		console.log('accountId', accountIds);
-		console.log('accountId', accountId);
 		if (!accountId) throw new Error('No account with provided private key');
 		let rawArgs = '';
 		if (options.args !== undefined) {
@@ -88,7 +83,7 @@ class Contract {
 			ok(initArgsTypes.length === options.args.length, 'invalid arguments count');
 			rawArgs = encode(options.args.map((arg, index) => ({ value: arg, type: initArgsTypes[index] })));
 		}
-		const contractId = await newEcho.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
+		const contractId = await echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 			code: code + rawArgs,
 			eth_accuracy: options.ethAccuracy,
 			registrar: accountId,
@@ -98,7 +93,7 @@ class Contract {
 			.then(async (res) => {
 			/** @type {import("../../types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
 				const [, opResId] = res[0].trx.operation_results[0];
-				const execRes = await newEcho.api.getContractResult(opResId, true).then((result) => result[1].exec_res);
+				const execRes = await echo.api.getContractResult(opResId, true).then((result) => result[1].exec_res);
 				if (execRes.excepted !== 'None') throw execRes;
 				const contractTypeId = OBJECT_TYPES.CONTRACT;
 				return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
@@ -116,7 +111,7 @@ class Contract {
 				throw new Error(errorMessageBuffer.toString('utf8'));
 			});
 		if (options.abi === undefined) return contractId;
-		return new Contract(options.abi, { newEcho, contractId });
+		return new Contract(options.abi, { echo, contractId });
 	}
 
 	/** @returns {Set<string>} */
@@ -267,7 +262,7 @@ class Contract {
 		ok(options.abi === undefined, 'abi duplicate');
 		options.abi = this.abi;
 		/** @type {Contract} */
-		const newContract = await Contract.deploy(code, privateKey, this.echo, options);
+		const newContract = await Contract.deploy(code, privateKey, options);
 		this.address = newContract.address;
 		return this;
 	}

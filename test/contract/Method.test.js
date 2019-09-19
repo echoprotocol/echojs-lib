@@ -2,31 +2,29 @@ import 'mocha';
 import { strictEqual, ok, fail, deepStrictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import echo, { Echo } from '../../';
+import { Echo } from '../../';
 import { Contract } from '../../';
 import checkContractIdTests from './_checkContractId.test';
-import { getContract } from './__testContract';
+import { abi, bytecode as code } from '../operations/_contract.test';
 import { url, privateKey, accountId } from '../_test-data';
 
-describe.only('Method', () => {
+describe('Method', () => {
 
 	/** @type {Contract} */
 	let contract = null;
-	// const echo = new Echo();
+	const echo = new Echo();
 
 	before(async function () {
 		// eslint-disable-next-line no-invalid-this
-		this.timeout(9e3);
+		this.timeout(12e3);
 		await echo.connect(url);
-		const { abi, code } = await getContract();
-		contract = await Contract.deploy(code, privateKey, echo, { accountId, abi });
+		contract = await Contract.deploy(code, privateKey, { echo, accountId, abi });
 	});
 
 	describe('call', () => {
 
 		it('successful', async () => {
 			/** @type {BigNumber} */
-			// console.log('---------contract.methods-------', contract.methods.getVariable());
 			const zero = await contract.methods.getVariable().call();
 			ok(BigNumber.isBigNumber(zero), 'result is not a bigNumber');
 			ok(zero.eq(0), 'result is not a zero');
@@ -110,10 +108,10 @@ describe.only('Method', () => {
 		});
 	});
 
-	describe.only('broadcast', () => {
+	describe('broadcast', () => {
 		it('successful', async () => {
 			const res = await contract.methods.setVariable(123)
-				.broadcast({ privateKey: privateKey });
+				.broadcast({ privateKey: privateKey, registrar: accountId });
 			deepStrictEqual(new Set(Object.keys(res.contractResult)), new Set(['exec_res', 'tr_receipt']));
 			ok(BigNumber.isBigNumber(res.decodedResult));
 			ok(res.decodedResult.eq(123));
@@ -125,6 +123,6 @@ describe.only('Method', () => {
 				new Set(['id', 'block_num', 'trx_num', 'trx']),
 			);
 			ok(await contract.methods.getVariable().call().then((/** @type {BigNumber} */res) => res.eq(123)));
-		}).timeout(7e3);
+		}).timeout(10e3);
 	});
 });

@@ -1,7 +1,7 @@
 import { ok } from 'assert';
 import _ from 'lodash';
 
-import Echo, { echo as defaultEcho } from '../echo/index';
+import Echo from '../echo/index';
 import PrivateKey from '../crypto/private-key';
 import { OPERATIONS_IDS } from '../constants';
 import ContractTransaction from './ContractTransaction';
@@ -11,7 +11,7 @@ import { checkContractId, contractIdRegExp } from '../utils/validators';
 const NATHAN_ID = '1.2.12';
 
 /** @typedef {import("./Contract").default} Contract */
-/** @typedef {import("../../types/_Abi").AbiArgument} AbiArgument */
+/** @typedef {import("../../types/contract/_Abi").AbiArgument} AbiArgument */
 /** @typedef {import("./ContractResult").default} ContractResult */
 
 /**
@@ -73,7 +73,6 @@ export default class Method {
 	 * @returns {Promise<Array<*>|*|null>}
 	 */
 	async call(options = {}) {
-		console.log('-------options-----------', options);
 		const { stack } = new Error().stack;
 		let {
 			contractId,
@@ -89,10 +88,7 @@ export default class Method {
 		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
 		if (accountId === undefined) accountId = NATHAN_ID;
 		else if (!/^1\.2\.(0|[1-9]\d*)$/.test(accountId)) throw new Error('invalid accountId format');
-		console.log('-------ECHO-----------');
 		if (echo === undefined) {
-			// TODO check
-			this._contract.echo = defaultEcho; // i added
 			if (this._contract.echo === undefined) throw new Error('no echo instance');
 			// eslint-disable-next-line prefer-destructuring
 			echo = this._contract.echo;
@@ -100,7 +96,6 @@ export default class Method {
 		try {
 			// FIXME: remove @type when JSDoc of callContractNoChangingState will be fixed
 			/** @type {string} */
-			// console.log('-------echo----------', echo);
 			const rawResult = await echo.api.callContractNoChangingState(contractId, accountId, assetId, this.code);
 			if (rawResult === '') {
 				if (this._abiMethodOutputs.length === 0) return null;
@@ -138,12 +133,7 @@ export default class Method {
 			try {
 				const publicKey = options.privateKey.toPublicKey();
 				// TODO check
-				this._contract.echo = defaultEcho;
-				options.registrar = '1.2.10';
-				const [[registrars]] = await this._contract.echo.api.getKeyReferences([publicKey]); //registrar
-				const registrar = options.registrar || registrars;
-				console.log('options.registrar', options.registrar);
-				console.log('registrar', registrar);
+				const [[registrar]] = await this._contract.echo.api.getKeyReferences([publicKey]);
 				return resolve(this._createTransaction(
 					options.contractId,
 					registrar,
