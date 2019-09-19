@@ -7,8 +7,8 @@ import {
 	toDirectRepresentation,
 	toOnesComplementRepresentation,
 	toTwosComplementRepresentation,
-} from '../../../src/utils/number-representations';
-import { toTwosPower } from '../../../src/utils/converters';
+} from '../../../src/contract/utils/number-representations';
+import { toTwosPower } from '../../../src/contract/utils/converters';
 
 describe('number representations', () => {
 	describe('converters', () => {

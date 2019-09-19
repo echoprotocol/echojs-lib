@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
 import $c from 'comprehension';
 import encode from '../../../src/contract/encoders';
-import { toTwosPower } from '../../../src/utils/converters';
+import { toTwosPower } from '../../../src/contract/utils/converters';
 import { invalidContractIds as invalidAddressesIds } from '../_checkContractId.test';
 import { OBJECT_TYPES } from '../../../src/constants';
 

@@ -8,8 +8,8 @@ import { OPERATIONS_IDS, OBJECT_TYPES } from '../constants';
 
 import encode from './encoders';
 import Method from './Method';
-import { getMethodHash, getSignature, checkAbiFormat } from '../utils/solidity-utils';
-import { checkContractId } from '../utils/validators';
+import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-utils';
+import { checkContractId } from './utils/validators';
 import { decode } from './decoders';
 
 /** @typedef {import("../../types/contract/_Abi").Abi} Abi */

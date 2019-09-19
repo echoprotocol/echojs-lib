@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { checkBytesCount, checkIntegerSize } from '../utils/solidity-utils';
-import { fromTwosComplementRepresentation } from '../utils/number-representations';
-import { toTwosPower } from '../utils/converters';
+import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
+import { fromTwosComplementRepresentation } from './utils/number-representations';
+import { toTwosPower } from './utils/converters';
 import { OBJECT_TYPES } from '../constants';
 
 /** @param {string} value */

@@ -1,5 +1,5 @@
 import Contract from './Contract';
-import generateInterface from '../utils/generate-interface';
+import generateInterface from './utils/generate-interface';
 
 export default Contract;
 export { default as BigNumber } from 'bignumber.js';
