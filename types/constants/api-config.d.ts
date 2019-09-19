@@ -31,4 +31,7 @@ export const ORDER_BOOK_MAX_DEPTH: number;
 export const START_OPERATION_HISTORY_ID: string;
 export const STOP_OPERATION_HISTORY_ID: string;
 
+export const LIST_ACCOUNTS_DEFAULT_LIMIT: number;
+export const LIST_ACCOUNTS_MAX_LIMIT: number;
+
 export const EXPIRATION_SECONDS: number;
