@@ -43,7 +43,7 @@ function parseType(type, isInput = true) {
 }
 
 /**
- * @param {Array<import("../../types/_Abi").AbiArgument>} inputs
+ * @param {Array<import("../../../types/contract/_Abi").AbiArgument>} inputs
  * @returns {{ res: string, tupleIsUsed: boolean }}
  */
 function getArgs(inputs) {
@@ -59,7 +59,7 @@ function getArgs(inputs) {
 
 /**
  * @param {string} contractName
- * @param {import("../../types/_Abi").Abi} abi
+ * @param {import("../../../types/contract/_Abi").Abi} abi
  * @param {Object} [props]
  * @param {string} [props.indent]
  * @param {number} [props.maxStringLength]
