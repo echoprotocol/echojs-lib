@@ -23,7 +23,11 @@
 	"bugs": {
 		"url": "https://github.com/echoprotocol/echojs-lib/issues"
 	},
-	"author": "PixelPlex",
+	"author": {
+		"name": "PixelPlex, Inc.",
+		"email": "info@pixelplex.io",
+		"url": "https://pixelplex.io"
+	},
 	"license": "MIT",
 	"dependencies": {
 		"@babel/cli": "^7.2.3",
