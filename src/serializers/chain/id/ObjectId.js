@@ -11,13 +11,13 @@ import { PROTOCOL_OBJECT_TYPE_ID } from '../../../constants';
  */
 
 /** @typedef {import("../../basic/integers").VarInt32Serializer} VarInt32Serializer */
-/** @typedef {import("../../../constants").e_OBJECT_TYPES} e_OBJECT_TYPES */
+/** @typedef {import("../../../constants").e_OBJECT_TYPES} PROTOCOL_OBJECT_TYPE_ID */
 /** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
 /** @typedef {import("../../../constants/chain-types").e_IMPLEMENTATION_OBJECT_TYPE} e_IMPLEMENTATION_OBJECT_TYPE */
 
 /**
  * @template {e_RESERVED_SPACES} T
- * @typedef {{ 0: never, 1: e_OBJECT_TYPES, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
+ * @typedef {{ 0: never, 1: e_PROTOCOL_OBJECT_TYPE_ID, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
  */
 
 /** @typedef {string | SerializerInput<VarInt32Serializer>} TInput */
