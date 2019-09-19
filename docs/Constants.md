@@ -9,7 +9,8 @@ console.log(constants.CHAIN_TYPES) // information about ids
 
 /*
 {
-    RESERVED_SPACE_ID: {RELATIVE_PROTOCOL: 0,
+    RESERVED_SPACE_ID: {
+        RELATIVE_PROTOCOL: 0,
         PROTOCOL: 1,
         IMPLEMENTATION: 2,
     },

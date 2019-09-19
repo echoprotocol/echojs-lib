@@ -1,5 +1,5 @@
 /**
- * @typedef {Object} RESERVED_SPACES_t
+ * @typedef {Object} RESERVED_SPACE_ID_t
  * @property {0} RELATIVE_PROTOCOL
  * @property {1} PROTOCOL
  * @property {2} IMPLEMENTATION

@@ -1,4 +1,5 @@
-export declare enum RESERVED_SPACE_ID {RELATIVE_PROTOCOL = 0,
+export declare enum RESERVED_SPACE_ID {
+	RELATIVE_PROTOCOL = 0,
 	PROTOCOL = 1,
 	IMPLEMENTATION = 2,
 }
