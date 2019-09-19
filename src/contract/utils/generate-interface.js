@@ -134,7 +134,7 @@ export default function generateInterface(contractName, abi, props = {}) {
 			default:
 		}
 	}
-	events += '};';
+	events += '-------------------------check};';
 	let result = `import Contract${inputIsUsed ? ', { Method }' : ''} from "echojs-contract";\n`;
 	if (inputIsUsed || constructorArgs) result += 'import INPUT from "echojs-contract/types/_inputs";\n';
 	if (outputIsUsed) result += 'import OUTPUT from "echojs-contract/types/_outputs";\n';

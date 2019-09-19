@@ -7,6 +7,7 @@ import { Contract } from '../../';
 import checkContractIdTests from './_checkContractId.test';
 import { abi, bytecode as code } from '../operations/_contract.test';
 import { url, privateKey, accountId } from '../_test-data';
+import generateInterface from '../../src/contract/utils/generate-interface';
 
 describe('Method', () => {
 
@@ -18,7 +19,13 @@ describe('Method', () => {
 		// eslint-disable-next-line no-invalid-this
 		this.timeout(12e3);
 		await echo.connect(url);
-		contract = await Contract.deploy(code, privateKey, { echo, accountId, abi });
+		// contract = await Contract.deploy(code, privateKey, { echo, accountId, abi });
+	});
+	describe.only('generate', () => {
+		it('generate interface', () => {
+			const check = generateInterface('ales', abi);
+			console.log('check', check);
+		});
 	});
 
 	describe('call', () => {
