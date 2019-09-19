@@ -5,9 +5,9 @@
  * @property {2} IMPLEMENTATION
  */
 
-/** @typedef {RESERVED_SPACES_t[keyof RESERVED_SPACES_t]} ReservedSpaceId */
+/** @typedef {RESERVED_SPACE_ID_t[keyof RESERVED_SPACE_ID_t]} ReservedSpaceId */
 
-/** @type {RESERVED_SPACES_t} */
+/** @type {RESERVED_SPACE_ID_t} */
 export const RESERVED_SPACE_ID = {
 	RELATIVE_PROTOCOL: 0,
 	PROTOCOL: 1,
