@@ -89,4 +89,22 @@ export default class StructSerializer extends ISerializer {
 		}
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput<T>, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const result = {};
+		let it = offset;
+		for (const key in this.serializers) {
+			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
+			const serializer = this.serializers[key];
+			const { res: element, newOffset } = serializer.readFromBuffer(buffer, it);
+			it = newOffset;
+			result[key] = element;
+		}
+		return { res: result, newOffset: it };
+	}
+
 }

@@ -110,4 +110,14 @@ export default class ObjectIdSerializer extends ISerializer {
 		varint32.appendToByteBuffer(raw.split('.')[2], bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: string, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: instanceId, newOffset } = varint32.readFromBuffer(buffer, offset);
+		return { res: this.toRaw(instanceId), newOffset };
+	}
+
 }

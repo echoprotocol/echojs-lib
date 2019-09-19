@@ -1,11 +1,11 @@
 {
 	"name": "echojs-lib",
-	"version": "1.6.0",
+	"version": "1.6.2",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {
-		"pretest": "babel-node ./test/preparation/preparation.js",
+		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
@@ -23,7 +23,11 @@
 	"bugs": {
 		"url": "https://github.com/echoprotocol/echojs-lib/issues"
 	},
-	"author": "PixelPlex",
+	"author": {
+		"name": "PixelPlex, Inc.",
+		"email": "info@pixelplex.io",
+		"url": "https://pixelplex.io"
+	},
 	"license": "MIT",
 	"dependencies": {
 		"@babel/cli": "^7.2.3",

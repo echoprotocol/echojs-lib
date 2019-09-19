@@ -71,4 +71,21 @@ export default class VectorSerializer extends ISerializer {
 		for (const element of raw) this.serializer.appendToByteBuffer(element, bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput<T>, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: length, newOffset: from } = varint32.readFromBuffer(buffer, offset);
+		const result = new Array(length).fill(null);
+		let it = from;
+		for (let i = 0; i < length; i += 1) {
+			const { res: element, newOffset: nextIt } = this.serializer.readFromBuffer(buffer, it);
+			it = nextIt;
+			result[i] = element;
+		}
+		return { res: result, newOffset: it };
+	}
+
 }

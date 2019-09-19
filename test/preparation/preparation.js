@@ -1,4 +1,4 @@
-import echo, { constants, OPERATIONS_IDS } from '../../src';
+import echo, { constants, OPERATIONS_IDS } from '../../';
 import { url, privateKey, accountId } from './../_test-data';
 
 const prepare = async () => {

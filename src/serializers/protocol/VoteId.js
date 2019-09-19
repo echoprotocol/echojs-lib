@@ -38,4 +38,16 @@ export default class VoteIdSerializer extends ISerializer {
 		uint32.appendToByteBuffer((id << 8) | type, bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: num, newOffset } = uint32.readFromBuffer(buffer, offset);
+		// eslint-disable-next-line no-bitwise
+		const [type, id] = [num % 0x100, num >> 8];
+		return { res: this.toRaw({ type, id }), newOffset };
+	}
+
 }

@@ -1,7 +1,7 @@
 import { ok, strictEqual } from 'assert';
 import { url, accountId, privateKey } from '../../_test-data';
 import { shouldReject, getMinContractBytecode } from '../../_test-utils';
-import { Echo, OPERATIONS_IDS, constants } from '../../../src';
+import { Echo, OPERATIONS_IDS, constants } from '../../../';
 
 describe('checkERC20Token', () => {
 	/** @type {import("../../../types").Echo} */

@@ -5,8 +5,10 @@ export default abstract class ISerializer<TInput = any, TOutput = any> {
 	__TOutput__: TOutput;
 	abstract appendToByteBuffer(value: TInput, bytebuffer: ByteBuffer): void;
 	abstract toRaw(value: TInput): TOutput;
+	abstract readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput, newOffset: number };
 	validate(value: TInput): void;
 	serialize(value: TInput): Buffer;
+	deserialize(buffer: Buffer): TOutput;
 }
 
 export type SerializerInput<T extends ISerializer> = T['__TInput__'];

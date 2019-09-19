@@ -1,6 +1,6 @@
 import 'mocha';
 
-import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../src/index';
+import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../';
 
 import { privateKey, accountId, url } from '../_test-data';
 import { fail, ok, strictEqual } from 'assert';

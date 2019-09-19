@@ -18,4 +18,5 @@ export default class ObjectIdSerializer<T extends RESERVED_SPACE_ID> extends ISe
 	constructor(reservedSpaceId: T, objectTypeId: ObjectTypeId<T> | ObjectTypeId<T>[]);
 	toRaw(value: TInput): string;
 	appendToByteBuffer(value: TInput, bytebuffer: ByteBuffer): void;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: string, newOffset: number };
 }
