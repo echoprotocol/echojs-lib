@@ -4,7 +4,7 @@ import { ok, notStrictEqual } from 'assert';
 
 import Echo, { echo as defaultEcho } from '../echo/index';
 import PrivateKey from '../crypto/private-key';
-import { OPERATIONS_IDS, OBJECT_TYPES } from '../constants';
+import { OPERATIONS_IDS, PROTOCOL_OBJECT_TYPE_ID } from '../constants';
 
 import encode from './encoders';
 import Method from './Method';
@@ -95,7 +95,7 @@ class Contract {
 				const [, opResId] = res[0].trx.operation_results[0];
 				const execRes = await echo.api.getContractResult(opResId, true).then((result) => result[1].exec_res);
 				if (execRes.excepted !== 'None') throw execRes;
-				const contractTypeId = OBJECT_TYPES.CONTRACT;
+				const contractTypeId = PROTOCOL_OBJECT_TYPE_ID.CONTRACT;
 				return `1.${contractTypeId}.${new BigNumber(execRes.new_address.slice(2), 16).toString(10)}`;
 			})
 			.catch((err) => {

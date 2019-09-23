@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
-import { OBJECT_TYPES } from '../../constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../constants';
 
 const MAX_CONTRACT_ID = new BigNumber(2).pow(152).minus(1);
-const CONTRACT_TYPE_ID = OBJECT_TYPES.CONTRACT;
-const ACCOUNT_TYPE_ID = OBJECT_TYPES.ACCOUNT;
+const CONTRACT_TYPE_ID = PROTOCOL_OBJECT_TYPE_ID.CONTRACT;
+const ACCOUNT_TYPE_ID = PROTOCOL_OBJECT_TYPE_ID.ACCOUNT;
 
 export const contractIdRegExp = new RegExp(`^1\\.${CONTRACT_TYPE_ID}\\.(([1-9]\\d*)|0)$`);
 export const addressRegExp = new RegExp(`^1\\.(${CONTRACT_TYPE_ID}|${ACCOUNT_TYPE_ID})\\.(([1-9]\\d*)|0)$`);

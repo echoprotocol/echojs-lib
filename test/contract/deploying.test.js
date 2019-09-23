@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { OBJECT_TYPES } from '../../src/constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../src/constants';
 import { Echo } from '../../';
 import { Contract } from '../../';
 import { ok, strictEqual } from 'assert';
@@ -10,7 +10,7 @@ import { abi, bytecode as code } from '../operations/_contract.test';
  * @returns {boolean}
  */
 function isContractId(id) {
-	return new RegExp(`^1\\.${OBJECT_TYPES.CONTRACT}\\.[1-9]\\d*$`).test(id);
+	return new RegExp(`^1\\.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}\\.[1-9]\\d*$`).test(id);
 }
 
 describe('deploy', () => {

@@ -6,7 +6,7 @@ import $c from 'comprehension';
 import encode from '../../../src/contract/encoders';
 import { toTwosPower } from '../../../src/contract/utils/converters';
 import { invalidContractIds as invalidAddressesIds } from '../_checkContractId.test';
-import { OBJECT_TYPES } from '../../../src/constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../../src/constants';
 
 describe('encode', () => {
 
@@ -129,11 +129,11 @@ describe('encode', () => {
 		});
 		it('objectId gt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.${OBJECT_TYPES.CONTRACT}.${toTwosPower(152).plus(123).toString(10)}`,
+			value: `1.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.${toTwosPower(152).plus(123).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		it('objectId eqt 2**152', () => expect(() => encode({
 			type: 'address',
-			value: `1.${OBJECT_TYPES.CONTRACT}.${toTwosPower(152).toString(10)}`,
+			value: `1.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.${toTwosPower(152).toString(10)}`,
 		})).to.throw(Error, 'objectId is greater or equals to 2**152'));
 		describe('successful', () => {
 			it('account', () => strictEqual(
@@ -141,12 +141,12 @@ describe('encode', () => {
 				'000000000000000000000000000000000000000000000000000000000000007b',
 			));
 			it('contract', () => strictEqual(
-				encode({ type: 'address', value: `1.${OBJECT_TYPES.CONTRACT}.321` }),
+				encode({ type: 'address', value: `1.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.321` }),
 				'0000000000000000000000000100000000000000000000000000000000000141',
 			));
 			it('preoverflow', () => strictEqual(encode({
 				type: 'address',
-				value: `1.${OBJECT_TYPES.CONTRACT}.5708990770823839524233143877797980545530986495`,
+				value: `1.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.5708990770823839524233143877797980545530986495`,
 			}), '00000000000000000000000001ffffffffffffffffffffffffffffffffffffff'));
 		});
 	});
