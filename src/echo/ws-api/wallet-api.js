@@ -85,9 +85,10 @@ class WalletAPI {
 	}
 
 	/**
-	 * @method info
+	 * Returns info such as client version, git version of graphene/fc, version of boost, openssl.
 	 *
-	 * @returns {Promise<string>}
+	 * @method info
+	 * @returns {Promise<string>} compile time info and client and dependencies versions
 	 */
 	info() {
 		return this.wsRpc.call([0, 'info', []]);
@@ -1399,10 +1400,12 @@ class WalletAPI {
 	}
 
 	/**
+	 * Returns the number of accounts registered on the blockchain.
+	 *
 	 * @method getBlockVirtualOps
 	 * @param  {Number} blockNum
 	 *
-	 * @return {Promise<Object[]>}
+	 * @return {Promise<Object[]>} the number of registered accounts
 	 */
 	getBlockVirtualOps(blockNum) {
 		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
