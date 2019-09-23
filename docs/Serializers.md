@@ -304,8 +304,8 @@ Example:
 import { serializers, constants, PROTOCOL_OBJECT_TYPE_ID, BigNumber } from "echojs-lib";
 const { objectId } = serializers.chain.ids;
 const s = objectId(
-	constants.CHAIN_TYPES.RESERVED_SPACES.PROTOCOL_IDS,
-	constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
+    constants.CHAIN_TYPES.RESERVED_SPACE_ID.PROTOCOL,
+    constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 );
 
 console.log(s.toRaw('1.9.123'));

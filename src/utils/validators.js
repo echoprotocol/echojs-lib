@@ -51,15 +51,15 @@ const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BA
 const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
 
-const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
-const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ASSET_DYNAMIC_DATA);
-const bitAssetIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ASSET_BITASSET_DATA);
-const accountBalanceIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_BALANCE);
-const accountStatisticsIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_STATISTICS);
-const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.TRANSACTION);
-const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.BLOCK_SUMMARY);
-const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ACCOUNT_TRANSACTION_HISTORY);
-const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.CONTRACT_HISTORY);
+const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
+const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ASSET_DYNAMIC_DATA);
+const bitAssetIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ASSET_BITASSET_DATA);
+const accountBalanceIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_BALANCE);
+const accountStatisticsIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_STATISTICS);
+const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.TRANSACTION);
+const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.BLOCK_SUMMARY);
+const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_TRANSACTION_HISTORY);
+const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.CONTRACT_HISTORY);
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;

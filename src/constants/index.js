@@ -21,14 +21,15 @@ export const CLOSE_CALL_ORDER = 'close-call-order';
 export const BITASSET_UPDATE = 'bitasset-update';
 
 export const ECHO_ASSET_ID = `1.${PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
-export const DYNAMIC_GLOBAL_OBJECT_ID = `2.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}.0`;
+export const DYNAMIC_GLOBAL_OBJECT_ID = `2.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`;
 
 export const USE_CACHE_BY_DEFAULT = true;
 export const DEFAULT_BLOCKS_EXPIRATION_NUMBER = 20;
 export const DEFAULT_CACHE_EXPIRATION_TIME = null;
 export const DEFAULT_MIN_CACHE_CLEANING_TIME = 500;
 
-/** @typedef {typeof PROTOCOL_OBJECT_TYPE_ID[keyof typeof PROTOCOL_OBJECT_TYPE_ID]} OperationId */
+/** @typedef {typeof PROTOCOL_OBJECT_TYPE_ID[keyof typeof PROTOCOL_OBJECT_TYPE_ID]} ProtocolObjectTypeId */
+/** @typedef {typeof OPERATIONS_IDS[keyof typeof OPERATIONS_IDS]} OperationId */
 
 export {
 	OPERATIONS_IDS,
