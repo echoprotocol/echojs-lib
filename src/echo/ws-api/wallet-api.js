@@ -85,19 +85,20 @@ class WalletAPI {
 	}
 
 	/**
-	 * Returns info such as client version, git version of graphene/fc, version of boost, openssl.
+	 * Returns info
 	 *
 	 * @method info
-	 * @returns {Promise<string>} compile time info and client and dependencies versions
+	 * @returns {Promise<string>}
 	 */
 	info() {
 		return this.wsRpc.call([0, 'info', []]);
 	}
 
 	/**
+	 * Returns info such as client version, git version of graphene/fc, version of boost, openssl.
 	 * @method about
 	 *
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<Object>} compile time info and client and dependencies versions
 	 */
 	about() {
 		return this.wsRpc.call([0, 'about', []]);
@@ -368,19 +369,28 @@ class WalletAPI {
 	}
 
 	/**
+	 * Lists all accounts controlled by this wallet.
+     * This returns a list of the full account objects for all accounts whose private keys we possess.
 	 * @method listMyAccounts
 	 *
-	 * @returns {Promise<Object[]>}
+	 * @returns {Promise<Object[]>} a list of account objects
 	 */
 	listMyAccounts() {
 		return this.wsRpc.call([0, 'list_my_accounts', []]);
 	}
 
 	/**
+	 * Lists all accounts registered in the blockchain.
+	 * This returns a list of all account names and their account ids, sorted by account name.
+	 * Use the \c lowerbound and limit parameters to page through the list.  To retrieve all accounts,
+     * start by setting \c lowerbound to the empty string \c "", and then each iteration, pass
+     * the last account name returned as the \c lowerbound for the next \c list_accounts() call.
+	 *
 	 * @method listAccounts
-	 * @param {String} accountName
-	 * @param {Number} limit
-	 * @returns {Promise<[string, string][]>}
+	 * @param {String} accountName [lowerbound the name of the first account to return.
+	 * If the named account does not exist, the list will start at the account that comes after \c lowerbound]
+	 * @param {Number} limit [the maximum number of accounts to return (max: 1000)]
+	 * @returns {Promise<[string, string][]>} a list of accounts mapping account names to account ids
 	 */
 	listAccounts(accountName, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!isString(accountName)) throw new Error('account name should be a string');
@@ -392,9 +402,13 @@ class WalletAPI {
 	}
 
 	/**
+	 * List the balances of an account.
+	 * Each account can have multiple balances, one for each type of asset owned by that account.
+	 * The returned list will only contain assets for which the account has a nonzero balance.
+	 *
 	 * @method listAccountBalances
-	 * @param {String} accountId
-	 * @returns {Promise<Asset[]>}
+	 * @param {String} accountId [id the name or id of the account whose balances you want]
+	 * @returns {Promise<Asset[]>} a list of the given account's balances
 	 */
 	listAccountBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
@@ -403,9 +417,11 @@ class WalletAPI {
 	}
 
 	/**
+	 * List the balances of an account or a contract.
+	 *
 	 * @method listIdBalances
-	 * @param {String} accountId
-	 * @returns {Promise<Asset[]>}
+	 * @param {String} accountId [id the id of either an account or a contract]
+	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
 	listIdBalances(accountId) {
 		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
@@ -685,10 +701,14 @@ class WalletAPI {
 	}
 
 	/**
+	 * Returns the most recent operations on the named account.
+	 * This returns a list of operation history objects, which describe activity on the account.
+	 *
 	 * @method getAccountHistory
-	 * @param {String} accountIdOrName
-	 * @param {Number} limit
-	 * @returns {Promise<Object[]>}
+	 * @param {String} accountIdOrName [the name or id of the account]
+	 * @param {Number} limit [the number of entries to return (starting from the most recent)]
+	 *
+	 * @returns {Promise<Object[]>} a list of \c operation_history_objects
 	 */
 	getAccountHistory(accountIdOrName, limit) {
 		if (!(isAccountName(accountIdOrName) || isAccountId(accountIdOrName))) {
@@ -702,11 +722,10 @@ class WalletAPI {
 	}
 
 	/**
-	 * @method getRelativeAccountHistory
-	 *  Get operations relevant to the specified account referenced
-	 *  by an event numbering specific to the account.
+	 *  Returns the relative operations on the named account from start number.
 	 *
-	 * @param {String} accountId
+     * @method getRelativeAccountHistory
+	 * @param {String} accountIdOrName [the name or id of the account]
 	 * @param {Number} stop [Sequence number of earliest operation]
 	 * @param {Number} limit     [count operations (max 100)]
 	 * @param {Number} start [Sequence number of the most recent operation to retrieve]
@@ -714,19 +733,19 @@ class WalletAPI {
 	 * @return {Promise<Object[]>}
 	 */
 	async getRelativeAccountHistory(
-		accountId,
+		accountIdOrName,
 		stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP,
 		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
-		if (!isAccountId(accountId)) throw new Error('Account is invalid');
+		if (!isAccountId(accountIdOrName)) throw new Error('Account is invalid');
 		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
 		if (!isUInt64(limit) || limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
 		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
 
-		return this.wsRpc.call([0, 'get_relative_account_history', [accountId, stop, limit, start]]);
+		return this.wsRpc.call([0, 'get_relative_account_history', [accountIdOrName, stop, limit, start]]);
 	}
 
 	/**
@@ -1035,11 +1054,14 @@ class WalletAPI {
 	}
 
 	/**
-	 * @method listAssets
-	 * @param  {String} lowerBoundSymbol
-	 * @param  {Number} limit
+	 * Lists all assets registered on the blockchain. To list all assets,
+	 * pass the empty string \c "" for the lowerbound to start at the beginning of the list, and iterate as necessary.
 	 *
-	 * @return {Promise.<Asset[]>}
+	 * @method listAssets
+	 * @param  {String} lowerBoundSymbol [the symbol of the first asset to include in the list.]
+	 * @param  {Number} limit [the maximum number of assets to return (max: 100)]
+	 *
+	 * @return {Promise.<Asset[]>} the list of asset objects, ordered by symbol
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
 		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
@@ -1414,9 +1436,10 @@ class WalletAPI {
 	}
 
 	/**
+	 * Returns the number of accounts registered on the blockchain.
 	 * @method getAccountCount
 	 *
-	 * @return {Promise<number | string>}
+	 * @return {Promise<number | string>} the number of registered accounts
 	 */
 	getAccountCount() {
 		return this.wsRpc.call([0, 'get_account_count', []]);
