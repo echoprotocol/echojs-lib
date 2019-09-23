@@ -4,7 +4,7 @@ import  PrivateKey  from '../crypto/private-key';
 import  Transaction  from '../echo/transaction';
 import { ContractResult as ApiContractResult } from '../interfaces/ContractResult';
 import { BroadcastingResult } from '../echo/transaction';
-import { Abi } from './_Abi';
+import { Abi } from '../interfaces/Abi';
 
 declare class ContractResult<T, TEvents> {
 	readonly transactionResult: BroadcastingResult;

@@ -11,7 +11,7 @@ import { checkContractId, contractIdRegExp } from './utils/validators';
 const NATHAN_ID = '1.2.12';
 
 /** @typedef {import("./Contract").default} Contract */
-/** @typedef {import("../../types/contract/_Abi").AbiArgument} AbiArgument */
+/** @typedef {import("../../types/interfaces/Abi").AbiArgument} AbiArgument */
 /** @typedef {import("./ContractResult").default} ContractResult */
 
 /**

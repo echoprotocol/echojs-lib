@@ -12,6 +12,8 @@ import Signature from './crypto/signature';
 import Contract from './contract/Contract';
 import encode from './contract/encoders';
 import { decode } from './contract/decoders';
+import Method from './contract/Method';
+import { generateInterface } from './contract';
 
 require('buffer');
 
@@ -39,6 +41,8 @@ export {
 	Contract,
 	encode,
 	decode,
+	Method,
+	generateInterface,
 };
 
 export { handleConnectionClosedError } from './utils/helpers';
