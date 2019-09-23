@@ -170,8 +170,8 @@ export default function generateInterface(contractName, abi, props = {}) {
 		result += `${indent}${indent}${indent}echo?: Echo,\n`;
 		result += `${indent}${indent}${indent}value?: { amount?: number | string | BigNumber, asset_id?: string },\n`;
 		result += `${indent}${indent}${indent}args: [${constructorArgs[0].type}]\n`;
-		result += `${indent}${indent}}\n`;
-		result += `${indent})\n`;
+		result += `${indent}${indent}},\n`;
+		result += `${indent});\n`;
 	}
 	result += `${indent}readonly methods: {\n`;
 	result += Object.keys(methods).map((type) => {
