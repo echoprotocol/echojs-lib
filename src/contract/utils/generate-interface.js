@@ -147,8 +147,6 @@ export default function generateInterface(contractName, abi, props = {}) {
 	result += '\n';
 	result += events;
 	result += '\n';
-	// result += methods.map(({ str }) => `${str}\n`).join('');
-	result += '\n';
 	let genericType = constructorArgs === undefined
 		? '' : `<[${constructorArgs.map(({ type }) => parseType(type).res).join(', ')}]>`;
 	const getInitStr = () => `export default class ${contractName} extends Contract${genericType} {`;
