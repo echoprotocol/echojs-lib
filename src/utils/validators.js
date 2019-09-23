@@ -4,7 +4,7 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-import { OBJECT_TYPES, CHAIN_TYPES } from '../constants';
+import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES } from '../constants';
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -41,15 +41,15 @@ function generateProtocolImplObjectIdRegExp(ImplObjectId) {
 	return new RegExp(`^2\\.${ImplObjectId}\\.(0|[1-9]\\d*)$`);
 }
 
-const accountIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ACCOUNT);
-const assetIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.ASSET);
-const committeeMemberIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.COMMITTEE_MEMBER);
-const proposalIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.PROPOSAL);
-const operationHistoryIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.OPERATION_HISTORY);
-const vestingBalanceIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.VESTING_BALANCE);
-const balanceIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.BALANCE);
-const contractIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT);
-const contractResultIdRegex = generateProtocolObjectIdRegExp(OBJECT_TYPES.CONTRACT_RESULT);
+const accountIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.ACCOUNT);
+const assetIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.ASSET);
+const committeeMemberIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER);
+const proposalIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.PROPOSAL);
+const operationHistoryIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY);
+const vestingBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.VESTING_BALANCE);
+const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BALANCE);
+const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
+const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
 
 const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
 const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE.ASSET_DYNAMIC_DATA);

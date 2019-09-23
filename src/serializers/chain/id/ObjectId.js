@@ -1,7 +1,7 @@
 import { varint32 } from '../../basic/integers';
 import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from '../../../constants/chain-types';
 import ISerializer from '../../ISerializer';
-import { OBJECT_TYPES } from '../../../constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../../constants';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
 
@@ -11,13 +11,13 @@ import { OBJECT_TYPES } from '../../../constants';
  */
 
 /** @typedef {import("../../basic/integers").VarInt32Serializer} VarInt32Serializer */
-/** @typedef {import("../../../constants").e_OBJECT_TYPES} e_OBJECT_TYPES */
+/** @typedef {import("../../../constants").e_PROTOCOL_OBJECT_TYPE_ID} e_PROTOCOL_OBJECT_TYPE_ID */
 /** @typedef {import("../../../constants/chain-types").e_RESERVED_SPACES} e_RESERVED_SPACES */
 /** @typedef {import("../../../constants/chain-types").e_IMPLEMENTATION_OBJECT_TYPE} e_IMPLEMENTATION_OBJECT_TYPE */
 
 /**
  * @template {e_RESERVED_SPACES} T
- * @typedef {{ 0: never, 1: e_OBJECT_TYPES, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
+ * @typedef {{ 0: never, 1: e_PROTOCOL_OBJECT_TYPE_ID, 2: e_IMPLEMENTATION_OBJECT_TYPE }[T]} ObjectTypeId
  */
 
 /** @typedef {string | SerializerInput<VarInt32Serializer>} TInput */
@@ -26,7 +26,7 @@ const objectIdPureRegexp = /^\d+\.\d+\.\d+$/;
 
 const _objectTypeIds = {
 	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: {},
-	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES,
+	[RESERVED_SPACES.PROTOCOL_IDS]: PROTOCOL_OBJECT_TYPE_ID,
 	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE,
 };
 

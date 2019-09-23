@@ -4,7 +4,7 @@ import { toBigInteger, toTwosPower } from './utils/converters';
 import { toTwosComplementRepresentation } from './utils/number-representations';
 import { checkBytesCount, checkIntegerSize } from './utils/solidity-utils';
 import { addressRegExp } from './utils/validators';
-import { OBJECT_TYPES } from '../constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../constants';
 
 /**
  * @param {boolean} value
@@ -55,7 +55,7 @@ export function encodeAddress(address) {
 	const [, instanceTypeId, objectId] = address.split('.').map((str) => new BigNumber(str, 10));
 	const preRes = objectId.toString(16);
 	if (preRes.length > 38) throw new Error('objectId is greater or equals to 2**152');
-	const isContract = instanceTypeId.eq(OBJECT_TYPES.CONTRACT);
+	const isContract = instanceTypeId.eq(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 	return [
 		$c(25, () => 0).join(''),
 		isContract ? '1' : '0',

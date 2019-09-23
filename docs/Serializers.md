@@ -301,11 +301,11 @@ Serializer parameters:
 
 Example:
 ```ts
-import { serializers, constants, OBJECT_TYPES, BigNumber } from "echojs-lib";
+import { serializers, constants, PROTOCOL_OBJECT_TYPE_ID, BigNumber } from "echojs-lib";
 const { objectId } = serializers.chain.ids;
 const s = objectId(
 	constants.CHAIN_TYPES.RESERVED_SPACES.PROTOCOL_IDS,
-	constants.OBJECT_TYPES.CONTRACT,
+	constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 );
 
 console.log(s.toRaw('1.9.123'));

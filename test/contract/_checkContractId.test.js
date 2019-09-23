@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
-import { OBJECT_TYPES } from '../../src/constants';
+import { PROTOCOL_OBJECT_TYPE_ID } from '../../src/constants';
 
-const CONTRACT_TYPE_ID = OBJECT_TYPES.CONTRACT;
+const CONTRACT_TYPE_ID = PROTOCOL_OBJECT_TYPE_ID.CONTRACT;
 
 export const invalidContractIds = [
 	`1.${CONTRACT_TYPE_ID}.`,

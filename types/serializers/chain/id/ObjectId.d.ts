@@ -1,12 +1,12 @@
 import * as ByteBuffer from "bytebuffer";
 import ISerializer, { SerializerInput } from "../../ISerializer";
 import { RESERVED_SPACES, IMPLEMENTATION_OBJECT_TYPE } from "../../../constants/chain-types";
-import { OBJECT_TYPES } from "../../../constants";
+import { PROTOCOL_OBJECT_TYPE_ID } from "../../../constants";
 import { VarInt32Serializer } from "../../basic/integers";
 
 export type ObjectTypeId<T extends RESERVED_SPACES> = {
 	[RESERVED_SPACES.RELATIVE_PROTOCOL_IDS]: never;
-	[RESERVED_SPACES.PROTOCOL_IDS]: OBJECT_TYPES;
+	[RESERVED_SPACES.PROTOCOL_IDS]: PROTOCOL_OBJECT_TYPE_ID;
 	[RESERVED_SPACES.IMPLEMENTATION_IDS]: IMPLEMENTATION_OBJECT_TYPE;
 }[T];
 
