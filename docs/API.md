@@ -330,7 +330,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>List.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
+| keys | <code>List.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccounts"></a>
@@ -484,8 +484,8 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| baseAssetName | <code>String</code> | [Base name of the asset] |
-| quoteAssetName | <code>String</code> | [Quote name of the asset] |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
 
 <a name="get24Volume"></a>
 
@@ -494,8 +494,8 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| baseAssetName | <code>String</code> | [Base name of the asset] |
-| quoteAssetName | <code>String</code> | [Quote name of the asset] |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
 
 <a name="getTradeHistory"></a>
 
@@ -504,8 +504,8 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| baseAssetName | <code>String</code> | [Base name of the asset] |
-| quoteAssetName | <code>String</code> | [Quote name of the asset] |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
 | start | <code>Number</code> | [Id of the earliest operation to retrieve] |
 | stop | <code>Number</code> | [Id of the most recent operation to retrieve] |
 | limit | <code>Number</code> | [count operations (max 100)] |
@@ -567,7 +567,7 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | transaction | <code>Object</code> | [Transaction to retrieve] |
-| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
+| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 
 <a name="getPotentialSignatures"></a>
 
@@ -595,7 +595,7 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | accountNameOrId | <code>String</code> | [Id or name of the account to verify] |
-| signers | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
+| signers | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 
 <a name="validateTransaction"></a>
 
@@ -664,9 +664,9 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | contractId | <code>String</code> | [Id of the contract to call] |
-| accountId | <code>String</code> | [Id of the account to call] |
-| assetId | <code>String</code> | [Id of the asset to call] |
-| bytecode | <code>String</code> | [The hash of the method to call] |
+| accountId | <code>String</code> | [Id of the account for which the call will being simulated] |
+| assetId | <code>String</code> | [Id of the asset with which the call will being simulated] |
+| bytecode | <code>String</code> | [The bytecode of the method to call] |
 
 <a name="getContracts"></a>
 
@@ -724,8 +724,8 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
-| activeKey | <code>String</code> | [48-character string in bs58 with prefix "ECHO"] |
-| echoRandKey | <code>String</code> | [48-character string in bs58 with prefix "ECHO"] |
+| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
 | wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="getAccountHistory"></a>
@@ -854,7 +854,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>Array.&lt;String&gt;</code> | [public keys (key - 48-character string in bs58 with prefix "ECHO")] |
+| keys | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 
 <a name="getBlockVirtualOperations"></a>
 
