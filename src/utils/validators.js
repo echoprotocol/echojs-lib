@@ -317,3 +317,7 @@ export const isTimePointSec = (v) => {
 		return false;
 	}
 };
+
+export const isAccountIdOrName = (v) => {
+	if (!isAccountId(v) && !isAccountName(v)) throw new Error('Accounts id or name should be string and valid');
+};

@@ -1,6 +1,7 @@
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 import ReconnectionWebSocket from '../ws/reconnection-websocket';
+import { isAccountIdOrName } from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
 const { vector, optional } = serializers.collections;
@@ -62,6 +63,7 @@ class WalletAPI {
 	}
 
 	/**
+	 * Init params and connect to chain.
 	 * @method connect
 	 * @param {String} url - remote node address
 	 * @param {Parameters<ReconnectionWebSocket['connect']>[1]} connectionOptions - connection params.
@@ -260,6 +262,7 @@ class WalletAPI {
 	 * @returns {Promise<Boolean>} true if the key was imported
 	 */
 	importKey(accountNameOrId, privateKeyWif) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
 	}
 
@@ -310,6 +313,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	importBalance(accountNameOrId, shouldDoBroadcastToNetwork, wifKeys) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'import_balance',
 			[
 				string.toRaw(accountNameOrId),
@@ -463,12 +467,13 @@ class WalletAPI {
 	/**
 	 * List the balances of an account or a contract.
 	 * @method listAccountBalances
-	 * @param {String} idOfAccount [id the id of either an account or a contract]
+	 * @param {String} accountNameOrId [id the id of either an account or a contract]
 	 *
 	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
-	listAccountBalances(idOfAccount) {
-		return this.wsRpc.call([0, 'list_account_balances', [accountId.toRaw(idOfAccount)]]);
+	listAccountBalances(accountNameOrId) {
+		isAccountIdOrName(accountNameOrId);
+		return this.wsRpc.call([0, 'list_account_balances', [string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
@@ -495,17 +500,18 @@ class WalletAPI {
 	 * Shorter names are more expensive to register; the rules are still in flux,
 	 * but in general names of more than 8 characters with at least one digit will be cheap]
 	 * @param  {String} activeKey [the active key for the new account]
-	 * @param  {String} registrarAccountId [the account which will pay the fee to register the user]
+	 * @param  {String} accountNameOrId [the account which will pay the fee to register the user]
 	 * @param  {Boolean} shouldDoBroadcastToNetwork [true to broadcast the transaction on the network]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
 	 */
-	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
+	registerAccount(name, activeKey, accountNameOrId, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'register_account',
 			[
 				string.toRaw(name),
 				publicKey.toRaw(activeKey),
-				accountId.toRaw(registrarAccountId),
+				string.toRaw(accountNameOrId),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -522,17 +528,18 @@ class WalletAPI {
 	 * @param {String} accountName [the name of the account, must be unique on the blockchain.
 	 * Shorter names are more expensive to register; the rules are still in flux,
 	 * but in general names of more than 8 characters with at least one digit will be cheap]
-	 * @param {String} registrarAccountId [the account which will pay the fee to register the user]
+	 * @param {String} accountNameOrId [the account which will pay the fee to register the user]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true to broadcast the transaction on the network]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
 	 */
-	createAccountWithBrainKey(brainKey, accountName, registrarAccountId, shouldDoBroadcastToNetwork) {
+	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'create_account_with_brain_key',
 			[
 				string.toRaw(brainKey),
 				string.toRaw(accountName),
-				accountId.toRaw(registrarAccountId),
+				string.toRaw(accountNameOrId),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -541,7 +548,7 @@ class WalletAPI {
 	/**
 	 * Upload/Create a contract.
 	 * @method createContract
-	 * @param {String} registrarAccountName [name of the account creating the contract]
+	 * @param {String} accountNameOrId [name of the account creating the contract]
 	 * @param {String} contractCode [code of the contract]
 	 * @param {Number} amount [the amount of asset transferred to the contract]
 	 * @param {String} assetType [the type of the asset transferred to the contract]
@@ -554,7 +561,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the signed transaction creating the contract
 	 */
 	createContract(
-		registrarAccountName,
+		accountNameOrId,
 		contractCode,
 		amount,
 		assetType,
@@ -562,9 +569,10 @@ class WalletAPI {
 		useEthereumAssetAccuracy,
 		shouldSaveToWallet,
 	) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'create_contract',
 			[
-				string.toRaw(registrarAccountName),
+				string.toRaw(accountNameOrId),
 				string.toRaw(contractCode),
 				uint64.toRaw(amount),
 				string.toRaw(assetType),
@@ -578,7 +586,7 @@ class WalletAPI {
 	/**
 	 * Call a contract.
 	 * @method callContract
-	 * @param {String} registrarAccountName [name of the account calling the contract]
+	 * @param {String} accountNameOrId [name of the account calling the contract]
 	 * @param {String} idOfContract [the id of the contract to call]
 	 * @param {String} contractCode [the hash of the method to call]
 	 * @param {Number} amount [the amount of asset transferred to the contract]
@@ -588,16 +596,17 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the signed transaction calling the contract
 	 */
 	callContract(
-		registrarAccountName,
+		accountNameOrId,
 		idOfContract,
 		contractCode,
 		amount,
 		assetType,
 		shouldSaveToWallet,
 	) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'call_contract',
 			[
-				string.toRaw(registrarAccountName),
+				string.toRaw(accountNameOrId),
 				contractId.toRaw(idOfContract),
 				string.toRaw(contractCode),
 				uint64.toRaw(amount),
@@ -610,17 +619,18 @@ class WalletAPI {
 	/**
 	 * Fund feepool of contract.
 	 * @method contractFundFeePool
-	 * @param {String} registrarAccountName [name of the account which fund contract's feepool]
+	 * @param {String} accountNameOrId [name of the account which fund contract's feepool]
 	 * @param {String} idOfContract [the id of the contract's feepool]
 	 * @param {Number} amount [the amount of asset transferred to the contract in default asset_id_type()]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [whether to broadcast the fund contract operation to the network]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	contractFundFeePool(registrarAccountName, idOfContract, amount, shouldDoBroadcastToNetwork) {
+	contractFundFeePool(accountNameOrId, idOfContract, amount, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'contract_fund_fee_pool',
 			[
-				string.toRaw(registrarAccountName),
+				string.toRaw(accountNameOrId),
 				contractId.toRaw(idOfContract),
 				uint64.toRaw(amount),
 				bool.toRaw(shouldDoBroadcastToNetwork),
@@ -651,6 +661,8 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction transferring funds
 	 */
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(fromAccountNameOrId);
+		isAccountIdOrName(toAccountNameOrId);
 		return this.wsRpc.call([0, 'transfer',
 			[
 				string.toRaw(fromAccountNameOrId),
@@ -674,6 +686,8 @@ class WalletAPI {
 	 * @returns {Promise<Array>} the transaction ID along with the signed transaction
 	 */
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
+		isAccountIdOrName(fromAccountNameOrId);
+		isAccountIdOrName(toAccountNameOrId);
 		return this.wsRpc.call([0, 'transfer2',
 			[
 				string.toRaw(fromAccountNameOrId),
@@ -705,6 +719,8 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing the whitelisting status
 	 */
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(authorizingAccount);
+		isAccountIdOrName(accountToList);
 		return this.wsRpc.call([0, 'whitelist_account',
 			[
 				string.toRaw(authorizingAccount),
@@ -723,6 +739,7 @@ class WalletAPI {
 	 * @returns {Promise<Object[]>} vesting balance object with info
 	 */
 	getVestingBalances(accountNameOrId) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'get_vesting_balances', [string.toRaw(accountNameOrId)]]);
 	}
 
@@ -738,6 +755,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(witnessAccountNameOrId);
 		return this.wsRpc.call([0, 'withdraw_vesting',
 			[
 				string.toRaw(witnessAccountNameOrId),
@@ -756,6 +774,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the public account data stored in the blockchain
 	 */
 	getAccount(accountNameOrId) {
+		isAccountIdOrName(accountNameOrId);
 		return this.wsRpc.call([0, 'get_account', [string.toRaw(accountNameOrId)]]);
 	}
 
@@ -780,6 +799,7 @@ class WalletAPI {
 	 * @returns {Promise<Object[]>} a list of `operation_history_objects`
 	 */
 	getAccountHistory(accountIdOrName, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
+		isAccountIdOrName(accountIdOrName);
 		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
@@ -805,6 +825,7 @@ class WalletAPI {
 		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
+		isAccountIdOrName(accountIdOrName);
 		if (!limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
@@ -839,7 +860,7 @@ class WalletAPI {
 	/**
 	 * Whitelist or blacklist contract pool.
 	 * @method whitelistContractPool
-	 * @param {String} registrarAccountId [is an owner of contract which perform whitelisting or blacklisting]
+	 * @param {String} accountIdOrName [is an owner of contract which perform whitelisting or blacklisting]
 	 * @param {String} idOfContract [whitelisting or blacklisting applying for this contract]
 	 * @param {Array<String>} addToWhitelist [leave it empty if you don't want to add some account to whitelist]
 	 * @param {Array<String>} addToBlacklist [leave it empty if you don't want to add some account to blacklist]
@@ -852,7 +873,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	whitelistContractPool(
-		registrarAccountId,
+		accountIdOrName,
 		idOfContract,
 		addToWhitelist,
 		addToBlacklist,
@@ -860,9 +881,10 @@ class WalletAPI {
 		removeFromBlacklist,
 		shouldDoBroadcastToNetwork,
 	) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'whitelist_contract_pool',
 			[
-				accountId.toRaw(registrarAccountId),
+				string.toRaw(accountIdOrName),
 				contractId.toRaw(idOfContract),
 				vector(string).toRaw(addToWhitelist),
 				vector(string).toRaw(addToBlacklist),
@@ -877,17 +899,18 @@ class WalletAPI {
 	 * Call a contract. Same as `call_contract()` but doesn't change the state.
 	 * @method callContractNoChangingState
 	 * @param {String} idOfContract [the id of the contract to call]
-	 * @param {String} registrarAccountName [name of the account calling the contract]
+	 * @param {String} accountIdOrName [name of the account calling the contract]
 	 * @param {String} assetType [the type of the asset transferred to the contract]
 	 * @param {String} codeOfTheContract [the hash of the method to call]
 	 *
 	 * @returns {Promise<String>}
 	 */
-	callContractNoChangingState(idOfContract, registrarAccountName, assetType, codeOfTheContract) {
+	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'call_contract_no_changing_state',
 			[
 				contractId.toRaw(idOfContract),
-				string.toRaw(registrarAccountName),
+				string.toRaw(accountIdOrName),
 				string.toRaw(assetType),
 				string.toRaw(codeOfTheContract),
 			],
@@ -941,7 +964,7 @@ class WalletAPI {
 	/**
 	 * Creates a transaction to register erc20_token for sidechain.
 	 * @method registerErc20Token
-	 * @param {String} idOfAccount [the account who create erc20 token and become his owner]
+	 * @param {String} accountIdOrName [the account who create erc20 token and become his owner]
 	 * @param {String} ethereumTokenAddress [the address of token erc20 token in ethereum network]
 	 * @param {String} tokenName [name of the token in echo network]
 	 * @param {String} tokenSymbol [symbol of the token in echo network]
@@ -951,16 +974,17 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	registerErc20Token(
-		idOfAccount,
+		accountIdOrName,
 		ethereumTokenAddress,
 		tokenName,
 		tokenSymbol,
 		decimals,
 		shouldDoBroadcastToNetwork,
 	) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'register_erc20_token',
 			[
-				accountId.toRaw(idOfAccount),
+				string(accountIdOrName),
 				string.toRaw(ethereumTokenAddress),
 				string.toRaw(tokenName),
 				string.toRaw(tokenSymbol),
