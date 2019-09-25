@@ -41,3 +41,6 @@ export {
 	WS_CONSTANTS,
 	protocol,
 };
+
+export const AMOUNT_MAX_NUMBER = (2 ** 63) - 1;
+export const ECHO_MAX_SHARE_SUPPLY = 1000000000000000;

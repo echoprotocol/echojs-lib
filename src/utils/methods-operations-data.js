@@ -1,4 +1,4 @@
-const methodsArray = [
+const walletAPIMethodsArray = [
 	'help',
 	'help_method',
 	'info',
@@ -152,4 +152,4 @@ const operationPrototypeArray = [
 	'contract_update_operation',
 ];
 
-export { methodsArray, operationPrototypeArray };
+export { walletAPIMethodsArray, operationPrototypeArray };

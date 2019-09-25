@@ -4,8 +4,8 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES } from '../constants';
-import { methodsArray, operationPrototypeArray } from './check';  // TODO check
+import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY } from '../constants';
+import { walletAPIMethodsArray, operationPrototypeArray } from './methods-operations-data';
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -329,7 +329,7 @@ export const isAssetIdOrName = (v) => {
 };
 
 export const isMethodExists = (v) => {
-	if (!methodsArray.includes(v)) throw new Error('This method does not exists');
+	if (!walletAPIMethodsArray.includes(v)) throw new Error('This method does not exists');
 };
 
 export const isOperationPrototypeExists = (v) => {
@@ -351,20 +351,14 @@ export const isOldPrivateKey = (v) => {
 	return true;
 };
 
-export const isValidAmount = (v) => {
+const validateAmount = (v) => {
 	if (!isString(v)) return false;
 
-	console.log(amountRegex.test(v));
-	if (amountRegex.test(v)) return false;
-
 	const integer = Math.abs(Number(v.split('.')[0]));
-	const maxNumber = 2 ** 63;
 
-	const ECHO_MAX_SHARE_SUPPLY = 1000000000000000;
+	if (integer > (AMOUNT_MAX_NUMBER)) return false;
 
-	if ((integer > (maxNumber - 1))) return false;
-
-	if (!(integer * 1e12 < ECHO_MAX_SHARE_SUPPLY)) return false;
-
-	return true;
+    return (integer * 1e12 < ECHO_MAX_SHARE_SUPPLY);
 };
+
+export const isValidAmount = (v) => amountRegex.test(v) && validateAmount(v);

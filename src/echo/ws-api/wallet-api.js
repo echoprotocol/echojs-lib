@@ -13,7 +13,7 @@ import {
 	isNotEmptyString,
 	isAssetName,
 	isContractCode,
-	isValidAmount,
+    isValidAmount,
 } from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
