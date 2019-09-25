@@ -20,4 +20,5 @@ export default class MapSerializer<TKey extends ISerializer, TValue extends ISer
 	constructor(keySerializer: TKey, valueSerializer: TValue);
 	toRaw(value: TInput<TKey, TValue>): TOutput<TKey, TValue>;
 	appendToByteBuffer(value: TInput<TKey, TValue>, bytebuffer: ByteBuffer): void;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: TOutput<TKey, TValue>, newOffset: number };
 }

@@ -11,4 +11,5 @@ export default class SetSerializer<T extends ISerializer> extends VectorSerializ
 	serialize(value: TInput<T>): Buffer;
 	toRaw(value: TInput<T>): SerializerOutput<VectorSerializer<T>>;
 	appendToByteBuffer(value: TInput<T>, bytebuffer: ByteBuffer): void;
+	readFromBuffer(buffer: Buffer, offset?: number): { res: SerializerOutput<VectorSerializer<T>>, newOffset: number };
 }

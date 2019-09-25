@@ -127,10 +127,31 @@ export default class MapSerializer extends ISerializer {
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
 		varint32.appendToByteBuffer(raw.length, bytebuffer);
-		for (const [key, element] of value) {
+		for (const [key, element] of raw) {
 			this.keySerializer.appendToByteBuffer(key, bytebuffer);
 			this.valueSerializer.appendToByteBuffer(element, bytebuffer);
 		}
+	}
+
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput<TKey, TValue> newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: length, newOffset: from } = varint32.readFromBuffer(buffer, offset);
+		const result = new Array(length).fill(null);
+		let it = from;
+		for (let i = 0; i < length; i += 1) {
+			const keyDeserialization = this.keySerializer.readFromBuffer(buffer, it);
+			it = keyDeserialization.newOffset;
+			const key = keyDeserialization.res;
+			const valueDeserialization = this.valueSerializer.readFromBuffer(buffer, it);
+			it = valueDeserialization.newOffset;
+			const value = valueDeserialization.res;
+			result[i] = [key, value];
+		}
+		return { res: this.toRaw(result), newOffset: it };
 	}
 
 }

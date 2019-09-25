@@ -33,4 +33,17 @@ export default class PublicKeySerializer extends ISerializer {
 		bytebuffer.append(publicKey.toBuffer().toString('binary'), 'binary');
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const length = 32;
+		const newOffset = offset + length;
+		if (newOffset > buffer.length) throw new Error('unexpected end of buffer');
+		const bytes = buffer.slice(offset, newOffset);
+		return { res: PublicKey.fromBuffer(bytes).toString(), newOffset };
+	}
+
 }
