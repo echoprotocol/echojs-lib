@@ -6,9 +6,12 @@ import {
 	isAssetIdOrName,
 	isMethodExists,
 	isAccountName,
-	isBytecode,
+	// isBytecode,
 	isContractResultId,
 	validateUrl,
+	// isPrivateKey,
+	isOperationPrototypeExists,
+	isNotEmptyString,
 } from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
@@ -255,6 +258,7 @@ class WalletAPI {
 	 * @returns {Promise<String>} string new in WIF eddsa private key
 	 */
 	oldKeyToWif(accountPrivateKey) {
+		// isPrivateKey(accountPrivateKey);
 		return this.wsRpc.call([0, 'old_key_to_wif', [string.toRaw(accountPrivateKey)]]);
 	}
 
@@ -1002,6 +1006,8 @@ class WalletAPI {
 		shouldDoBroadcastToNetwork,
 	) {
 		isAccountIdOrName(accountIdOrName);
+		if (!isNotEmptyString(tokenName)) throw new Error('Name should be string and valid');
+		if (!isNotEmptyString(tokenSymbol)) throw new Error('Name should be string and valid');
 		return this.wsRpc.call([0, 'register_erc20_token',
 			[
 				string.toRaw(accountIdOrName),
@@ -1972,6 +1978,7 @@ class WalletAPI {
 	 * @returns {Promise<Operation>} a default-constructed operation of the given type
 	 */
 	getPrototypeOperation(operationType) {
+		isOperationPrototypeExists(operationType);
 		return this.wsRpc.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
 	}
 

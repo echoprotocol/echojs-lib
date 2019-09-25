@@ -1710,7 +1710,7 @@ describe.only('WALLET API', () => {
 
 		describe('#getPrototypeOperation()', () => {
 			it('should returns an uninitialized object representing a given blockchain operation', async () => {
-				const operationType = 'transfer_operation';
+				const operationType = 'sjg';
 				const result = await echo.walletApi.getPrototypeOperation(operationType);
 				expect(result)
 					.to
