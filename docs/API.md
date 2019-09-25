@@ -27,6 +27,8 @@ try {
 <dd></dd>
 <dt><a href="#getObject">getObject(objectId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
 <dd></dd>
+<dt><a href="#checkERC20Token">checkERC20Token(contractId)</a> ⇒ <code>Promise.&lt;boolean&gt;</code></dt>
+<dd></dd>
 <dt><a href="#getBlockHeader">getBlockHeader(blockNum)</a> ⇒ <code><a href="#BlockHeader">Promise.&lt;BlockHeader&gt;</a></code></dt>
 <dd></dd>
 <dt><a href="#getBlock">getBlock(blockNum)</a> ⇒ <code><a href="#Block">Promise.&lt;Block&gt;</a></code></dt>
@@ -119,7 +121,11 @@ try {
 <dd></dd>
 <dt><a href="#getRecentTransactionById">getRecentTransactionById(transactionId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#registerAccount">registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;Array&gt;</code></dt>
+<dt><a href="#getFeePool">getFeePool(assetId)</a> ⇒ <code>Promise.&lt;BigNumber&gt;</code></dt>
+<dd></dd>
+<dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
@@ -138,6 +144,10 @@ try {
 <dt><a href="#getContractHistory
  Get operations relevant to the specified account.">getContractHistory
  Get operations relevant to the specified account.(contractId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractHistory&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getFullContract
+ Get full contract info.">getFullContract
+ Get full contract info.(contractId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
 <dd></dd>
 <dt><a href="#broadcastTransaction
 	Broadcast a transaction to the network.">broadcastTransaction
@@ -158,6 +168,10 @@ try {
 <dt><a href="#getAllAssetHolders
  Array of all asset IDs with the number of holders.">getAllAssetHolders
  Array of all asset IDs with the number of holders.()</a> ⇒ <code>Promise.&lt;Array.&lt;{asset_id: String, count: Number}&gt;&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBalanceObjects">getBalanceObjects(keys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBlockVirtualOperations">getBlockVirtualOperations(blockNum)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 </dl>
 
@@ -222,57 +236,66 @@ try {
 ## getObjects(objectIds, force) ⇒ <code>Promise.&lt;Array.&lt;Object&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| objectIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| objectIds | <code>Array.&lt;String&gt;</code> | [Id of the objects to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getObject"></a>
 
 ## getObject(objectId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| objectId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| objectId | <code>String</code> | [Id of the object to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
+
+<a name="checkERC20Token"></a>
+
+## checkERC20Token(contractId) ⇒ <code>Promise.&lt;Boolean&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to checking] |
 
 <a name="getBlockHeader"></a>
 
 ## getBlockHeader(blockNum) ⇒ [<code>Promise.&lt;BlockHeader&gt;</code>](#BlockHeader)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| blockNum | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| blockNum | <code>Number</code> | [Number of the block to retrieve header  (non negative integer)] |
 
 <a name="getBlock"></a>
 
 ## getBlock(blockNum) ⇒ [<code>Promise.&lt;Block&gt;</code>](#Block)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| blockNum | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| blockNum | <code>Number</code> | [Number of the block to retrieve (non negative integer)] |
 
 <a name="getTransaction"></a>
 
 ## getTransaction(blockNum, transactionIndex) ⇒ [<code>Promise.&lt;Transaction&gt;</code>](#Transaction)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| blockNum | <code>Number</code> |
-| transactionIndex | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| blockNum | <code>Number</code> | [Number of the block to retrieve  (non negative integer)] |
+| transactionIndex | <code>Number</code> | [Index of the transaction to retrieve (non negative integer)] |
 
 <a name="getChainProperties"></a>
 
 ## getChainProperties(force) ⇒ [<code>Promise.&lt;ChainProperties&gt;</code>](#ChainProperties)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getGlobalProperties"></a>
 
@@ -283,18 +306,18 @@ try {
 ## getConfig(force) ⇒ [<code>Promise.&lt;Config&gt;</code>](#Config)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getChainId"></a>
 
 ## getChainId(force) ⇒ <code>Promise.&lt;String&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getDynamicGlobalProperties"></a>
 
@@ -307,69 +330,69 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keys | <code>List.&lt;String&gt;</code> | [public keys] |
-| force | <code>Boolean</code> |  |
+| keys | <code>List.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccounts"></a>
 
 ## getAccounts(accountIds, force) ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountIds | <code>Array.&lt;String&gt;</code> | [Id of the accounts to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getFullAccounts"></a>
 
 ## getFullAccounts(accountNamesOrIds, subscribe, force) ⇒ <code>Promise.&lt;Array.&lt;FullAccount&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountNamesOrIds | <code>Array.&lt;String&gt;</code> |
-| subscribe | <code>Boolean</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountNamesOrIds | <code>Array.&lt;String&gt;</code> | [Id or names of the accounts to retrieve] |
+| subscribe | <code>Boolean</code> | [Subscribe to change this account or not] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccountByName"></a>
 
 ## getAccountByName(accountName, force) ⇒ [<code>Promise.&lt;Account&gt;</code>](#Account)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountName | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountName | <code>String</code> | [Name of the account to retrieve. Min length - 1, max - 63] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getAccountReferences"></a>
 
 ## getAccountReferences(accountId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve his references] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="lookupAccountNames"></a>
 
 ## lookupAccountNames(accountNames, force) ⇒ <code>Promise.&lt;Array.&lt;Account&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountNames | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountNames | <code>Array.&lt;String&gt;</code> | [Names of the accounts to retrieve accounts. Min length of name - 1, max - 63] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="lookupAccounts"></a>
 
 ## lookupAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;Array.&lt;AccountName, AccountId&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| lowerBoundName | <code>String</code> |
-| limit | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| lowerBoundName | <code>String</code> |  [Name of the earliest account to retrieve] |
+| limit | <code>Number</code> | [count operations (max 1000)] |
 
 <a name="getAccountCount"></a>
 
@@ -380,161 +403,161 @@ try {
 ## getAccountBalances(accountId, assetIds, force) ⇒ <code>Promise.&lt;Object&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
-| assetIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve balances] |
+| assetIds | <code>Array.&lt;String&gt;</code> | [Ids of the asset to retrieve balances] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getNamedAccountBalances"></a>
 
 ## getNamedAccountBalances(accountName, assetIds, force) ⇒ <code>Promise.&lt;Object&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountName | <code>String</code> |
-| assetIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountName | <code>String</code> | [Name of the account to retrieve balances. Min length - 1, max - 63] |
+| assetIds | <code>Array.&lt;String&gt;</code> | [Ids of the asset to retrieve balances] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getVestedBalances"></a>
 
 ## getVestedBalances(balanceIds) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| balanceIds | <code>Array.&lt;String&gt;</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| balanceIds | <code>Array.&lt;String&gt;</code> | [Ids of the balance to retrieve vested balances] |
 
 <a name="getVestingBalances"></a>
 
 ## getVestingBalances(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve vesting balance] |
 
 <a name="getAssets"></a>
 
 ## getAssets(assetIds, force) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| assetIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| assetIds | <code>Array.&lt;String&gt;</code> | [Ids of the assets to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="listAssets"></a>
 
 ## listAssets(lowerBoundSymbol, limit) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| lowerBoundSymbol | <code>String</code> |
-| limit | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| lowerBoundSymbol | <code>String</code> |  [Symbol of the earliest asset to retrieve] |
+| limit | <code>Number</code> | [count operations (max 100)] |
 
 <a name="lookupAssetSymbols"></a>
 
 ## lookupAssetSymbols(symbolsOrIds, force) ⇒ <code>Promise.&lt;Array.&lt;Asset&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| symbolsOrIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| symbolsOrIds | <code>Array.&lt;String&gt;</code> | [Symbols or Ids of the assets to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getMarginPositions"></a>
 
 ## getMarginPositions(accountId) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
 
 <a name="getTicker"></a>
 
 ## getTicker(baseAssetName, quoteAssetName) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| baseAssetName | <code>String</code> |
-| quoteAssetName | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
 
 <a name="get24Volume"></a>
 
 ## get24Volume(baseAssetName, quoteAssetName) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| baseAssetName | <code>String</code> |
-| quoteAssetName | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
 
 <a name="getTradeHistory"></a>
 
 ## getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| baseAssetName | <code>String</code> |
-| quoteAssetName | <code>String</code> |
-| start | <code>Number</code> |
-| stop | <code>Number</code> |
-| limit | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| baseAssetName | <code>String</code> | [Name of the base asset] |
+| quoteAssetName | <code>String</code> | [Name of the quote asset] |
+| start | <code>Number</code> | [Id of the earliest operation to retrieve] |
+| stop | <code>Number</code> | [Id of the most recent operation to retrieve] |
+| limit | <code>Number</code> | [count operations (max 100)] |
 
 <a name="getCommitteeMembers"></a>
 
 ## getCommitteeMembers(committeeMemberIds, force) ⇒ <code>Promise.&lt;Array.&lt;Committee&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| committeeMemberIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| committeeMemberIds | <code>Array.&lt;String&gt;</code> | [Ids of the committee members to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getCommitteeMemberByAccount"></a>
 
 ## getCommitteeMemberByAccount(accountId, force) ⇒ [<code>Promise.&lt;Committee&gt;</code>](#Committee)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="lookupCommitteeMemberAccounts"></a>
 
 ## lookupCommitteeMemberAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| lowerBoundName | <code>String</code> |
-| limit | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| lowerBoundName | <code>String</code> |  [Name of the earliest committee member to retrieve] |
+| limit | <code>Number</code> | [count operations (max 1000)] |
 
 <a name="lookupVoteIds"></a>
 
 ## lookupVoteIds(votes, force) ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| votes | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| votes | <code>Array.&lt;String&gt;</code> | [Ids of the vote to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getTransactionHex"></a>
 
 ## getTransactionHex(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| transaction | <code>Object</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| transaction | <code>Object</code> | [Transaction to retrieve] |
 
 <a name="getRequiredSignatures"></a>
 
@@ -543,26 +566,26 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| transaction | <code>Object</code> |  |
-| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys] |
+| transaction | <code>Object</code> | [Transaction to retrieve] |
+| availableKeys | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 
 <a name="getPotentialSignatures"></a>
 
 ## getPotentialSignatures(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| transaction | <code>Object</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| transaction | <code>Object</code> | [Transaction to retrieve] |
 
 <a name="verifyAuthority"></a>
 
 ## verifyAuthority(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| transaction | <code>Object</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| transaction | <code>Object</code> | [Transaction to retrieve] |
 
 <a name="verifyAccountAuthority"></a>
 
@@ -571,121 +594,139 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountNameOrId | <code>Object</code> |  |
-| signers | <code>Array.&lt;String&gt;</code> | [public keys] |
+| accountNameOrId | <code>String</code> | [Id or name of the account to verify] |
+| signers | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
 
 <a name="validateTransaction"></a>
 
 ## validateTransaction(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| transaction | <code>Object</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| transaction | <code>Object</code> | [Transaction to retrieve] |
 
 <a name="getRequiredFees"></a>
 
 ## getRequiredFees(operations, assetId) ⇒ <code>Promise.&lt;Array.&lt;{asset\_id:String, amount:Number}&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| operations | <code>Array.&lt;Object&gt;</code> |
-| assetId | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| operations | <code>Array.&lt;Object&gt;</code> | [Operations to retrieve] |
+| assetId | <code>String</code> | [Id of the asset to retrieve] |
 
 <a name="getProposedTransactions"></a>
 
 ## getProposedTransactions(accountNameOrId) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| accountNameOrId | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| accountNameOrId | <code>String</code> | [Id or name of the account to retrieve transactions] |
 
 <a name="getContractLogs"></a>
 
 ## getContractLogs(contractId, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| contractId | <code>String</code> |
-| fromBlock | <code>Number</code> |
-| toBlock | <code>Number</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
+| toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
 
 <a name="getContractResult"></a>
 
 ## getContractResult(resultContractId, force) ⇒ [<code>Promise.&lt;ContractResult&gt;</code>](#ContractResult)
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| resultContractId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| resultContractId | <code>String</code> | [Id of the contract result to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getContract"></a>
 
 ## getContract(contractId, force) ⇒ <code>Promise.&lt;[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| contractId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="callContractNoChangingState"></a>
 
 ## callContractNoChangingState(contractId, accountId, assetId, bytecode) ⇒ <code>Promise.&lt;String&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| contractId | <code>String</code> |
-| accountId | <code>String</code> |
-| assetId | <code>String</code> |
-| bytecode | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to call] |
+| accountId | <code>String</code> | [Id of the account for which the call will being simulated] |
+| assetId | <code>String</code> | [Id of the asset with which the call will being simulated] |
+| bytecode | <code>String</code> | [The bytecode of the method to call] |
 
 <a name="getContracts"></a>
 
 ## getContracts(contractIds, force) ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| contractIds | <code>Array.&lt;String&gt;</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| contractIds | <code>Array.&lt;String&gt;</code> | [Ids of the contracts to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getContractBalances"></a>
 
 ## getContractBalances(contractId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| contractId | <code>String</code> |
-| force | <code>Boolean</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="getRecentTransactionById"></a>
 
 ## getRecentTransactionById(transactionId) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| transactionId | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| transactionId | <code>String</code> | [Id of the transaction to retrieve] |
+
+<a name="getFeePool"></a>
+
+## getFeePool(assetId) ⇒ <code>Promise.&lt;BigNumber&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| assetId | <code>String</code> | [Id of the asset to retrieve] |
+
+<a name="broadcastTransactionWithCallback"></a>
+
+## broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| signedTransactionObject | <code>Object</code> | [Signed transaction] |
+| wasBroadcastedCallback | <code>Function</code> | [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="registerAccount"></a>
 
-## registerAccount(name, ownerKey, activeKey, memoKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;Array&gt;</code>
+## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| name | <code>String</code> |
-| ownerKey | <code>String</code> |
-| activeKey | <code>String</code> |
-| memoKey | <code>String</code> |
-| echoRandKey | <code>String</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
+| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="getAccountHistory"></a>
 
@@ -694,7 +735,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountId | <code>String</code> |  |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
 | stop | <code>String</code> | [Id of the earliest operation to retrieve] |
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>String</code> | [Id of the most recent operation to retrieve] |
@@ -706,7 +747,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountId | <code>String</code> |  |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
 | stop | <code>Number</code> | [Sequence number of earliest operation] |
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>Number</code> | [Sequence number of the most recent operation to retrieve] |
@@ -718,8 +759,8 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| accountId | <code>String</code> |  |
-| operationId | <code>String</code> |  |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
+| operationId | <code>String</code> | [Id of the operation to retrieve] |
 | start | <code>Number</code> | [Id of the most recent operation to retrieve] |
 | stop | <code>Number</code> | [Id of the earliest operation to retrieve] |
 | limit | <code>Number</code> | [count operations (max 100)] |
@@ -731,23 +772,33 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| contractId | <code>String</code> |  |
+| contractId | <code>String</code> | [Id of the contract to retrieve] |
 | stop | <code>String</code> | [Id of the earliest operation to retrieve] |
 | limit | <code>Number</code> | [count operations (max 100)] |
 | start | <code>String</code> | [Id of the most recent operation to retrieve] |
+
+<a name="getFullContract"></a>
+
+## getFullContract(contractId, force) ⇒ <code>Promise.&lt;Object&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
 
 <a name="broadcastTransaction"></a>
 
 ## broadcastTransaction(tr) ⇒ <code>Promise.&lt;\*&gt;</code>
 **Kind**: global function
 
-| Param | Type |
-| --- | --- |
-| tr | <code>Object</code> |
-| tr.ref_block_num | <code>Number</code> |
-| tr.ref_block_prefix | <code>Number</code> |
-| tr.operations | <code>Array</code> |
-| tr.signatures | <code>Array</code> |
+| Param | Type | Description |
+| --- | --- | --- |
+| tr | <code>Object</code> | [Transaction to broadcast] |
+| tr.ref_block_num | <code>Number</code> | [block number] |
+| tr.ref_block_prefix | <code>Number</code> | [block prefix] |
+| tr.operations | <code>Array</code> |  [Includes fields: fee, from (accountId), to (accountId), amount, extensions] |
+| tr.signatures | <code>Array</code> | [eddsa signature] |
 
 <a name="broadcastBlock"></a>
 
@@ -776,7 +827,7 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| assetId | <code>String</code> | [asset id to retrieve] |
+| assetId | <code>String</code> | [Id of the asset to retrieve] |
 | start | <code>Number</code> | [account id to start retrieving from] |
 | limit | <code>Number</code> | [count accounts (max 100)] |
 
@@ -788,13 +839,31 @@ try {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| assetId | <code>String</code> | [asset id to retrieve] |
+| assetId | <code>String</code> | [Id of the asset to retrieve] |
 
 <a name="getAllAssetHolders"></a>
 
 ## getAllAssetHolders() ⇒ <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Array.&lt;{asset\_id: String, count: Number}&gt;&gt;</code> - [ { asset_id: '1.3.0', count: 8 } ]
+
+<a name="getBalanceObjects"></a>
+
+## getBalanceObjects(keys) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keys | <code>Array.&lt;String&gt;</code> | [public keys (string in bs58 with prefix "ECHO")] |
+
+<a name="getBlockVirtualOperations"></a>
+
+## getBlockVirtualOperations(blockNum) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| keys | <code>Number</code> | [Number of the block to retrieve (non negative integer)] |
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
