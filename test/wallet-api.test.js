@@ -1035,15 +1035,18 @@ describe.only('WALLET API', () => {
 
 	describe('#listAssets()', () => {
 		it('Should get lists of all assets registered', async () => {
-			const lowerBoundSymbol = 'TFYS';
 			const result = await echo.walletApi.listAssets(
-				lowerBoundSymbol,
+				constants.ECHO_ASSET_ID,
 				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT
 			);
 			expect(result)
 				.to
 				.be
-				.an('array');
+				.an('array').that.is.not.empty;
+			expect(result[0])
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1582,7 +1585,7 @@ describe.only('WALLET API', () => {
 		describe('#setFeesOnBuilderTransaction()', () => {
 			it('should set fees on builder transaction', async () => {
 				const transactionTypeHandle = 3;
-				const feeAsset = 'ECHO';
+				const feeAsset = '1.3.0';
 				const result = await echo.walletApi.setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset);
 				expect(result)
 					.to

@@ -5,6 +5,7 @@ import bs58 from 'bs58';
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES } from '../constants';
+import methodsArray from './check';  // TODO check
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -320,4 +321,12 @@ export const isTimePointSec = (v) => {
 
 export const isAccountIdOrName = (v) => {
 	if (!isAccountId(v) && !isAccountName(v)) throw new Error('Accounts id or name should be string and valid');
+};
+
+export const isAssetIdOrName = (v) => {
+	if (!isAssetId(v) && !isAssetName(v)) throw new Error('Assets id or name should be string and valid');
+};
+
+export const isMethodExists = (v) => {
+	if (!methodsArray.includes(v)) throw new Error('This method does not exists');
 };

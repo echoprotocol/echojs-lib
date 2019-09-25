@@ -1,7 +1,15 @@
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 import ReconnectionWebSocket from '../ws/reconnection-websocket';
-import { isAccountIdOrName } from '../../utils/validators';
+import {
+	isAccountIdOrName,
+	isAssetIdOrName,
+	isMethodExists,
+	isAccountName,
+	isBytecode,
+	isContractResultId,
+	validateUrl,
+} from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
 const { vector, optional } = serializers.collections;
@@ -104,6 +112,7 @@ class WalletAPI {
 	 * @returns {Promise<String>} a multi-line string suitable for displaying on a terminal
 	 */
 	helpMethod(method) {
+		isMethodExists(method);
 		return this.wsRpc.call([0, 'help_method', [string.toRaw(method)]]);
 	}
 
@@ -267,10 +276,10 @@ class WalletAPI {
 	}
 
 	/**
-	 * Imports accounts from a BitShares 0.x wallet file. Current wallet file must be unlocked to perform the import.
+	 * Imports accounts from a blockchain wallet file. Current wallet file must be unlocked to perform the import.
 	 * @method importAccounts
-	 * @param {String} filename [the BitShares 0.x wallet file to import]
-	 * @param {String} password [the password to encrypt the BitShares 0.x wallet file]
+	 * @param {String} filename [the blockchain wallet file to import]
+	 * @param {String} password [the password to encrypt the blockchain wallet file]
 	 *
 	 * @returns {<[string, boolean][]>} a map containing the accounts found and whether imported
 	 */
@@ -279,19 +288,22 @@ class WalletAPI {
 	}
 
 	/**
-	 * Imports from a BitShares 0.x wallet file, find keys that were bound to a given account name on
-	 * the BitShares 0.x chain, rebind them to an account name on the 2.0 chain.
+	 * Imports from a blockchain wallet file, find keys that were bound to a given account name on
+	 * the blockchain, rebind them to an account name on the chain.
 	 * Current wallet file must be unlocked to perform the import.
 	 * @method importAccountKeys
-	 * @param {String} filename [the BitShares 0.x wallet file to import]
-	 * @param {String} password [the password to encrypt the BitShares 0.x wallet file]
-	 * @param {String} srcAccountName [name of the account on BitShares 0.x chain]
-	 * @param {String} destAccountName [name of the account on BitShares 2.0 chain, can be same or different
+	 * @param {String} filename [the blockchain wallet file to import]
+	 * @param {String} password [the password to encrypt the blockchain wallet file]
+	 * @param {String} srcAccountName [name of the account on blockchain]
+	 * @param {String} destAccountName [name of the account on blockchain, can be same or different
 	 * to `src_account_name`]
 	 *
 	 * @returns {Promise<Boolean>} whether the import has succeeded
 	 */
 	importAccountKeys(filename, password, srcAccountName, destAccountName) {
+		if (!isAccountName(srcAccountName)) throw new Error('srcAccount name should be string and valid');
+		if (!isAccountName(destAccountName)) throw new Error('destAccount name should be string and valid');
+
 		return this.wsRpc.call([0, 'import_account_keys',
 			[
 				string.toRaw(filename),
@@ -396,7 +408,7 @@ class WalletAPI {
 	 * so this may cause you to overwrite your original wallet unless you also call `set_wallet_filename()`
 	 *
 	 * @method loadWalletFile
-	 * @param {String} walletFilename [wallet_filename the filename of the wallet JSON file to load.
+	 * @param {String} walletFilename [the filename of the wallet JSON file to load.
 	 * If `wallet_filename` is empty, it reloads the existing wallet file]
 	 *
 	 * @returns {Promise<Boolean>} true if the specified wallet is loaded
@@ -457,6 +469,7 @@ class WalletAPI {
 	 * @returns {Promise<[string, string][]>} a list of accounts mapping account names to account ids
 	 */
 	listAccounts(lowerbound, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
+		if (!isAccountName(lowerbound)) throw new Error('Account name should be string and valid');
 		if (!limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
 			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`);
 		}
@@ -570,12 +583,13 @@ class WalletAPI {
 		shouldSaveToWallet,
 	) {
 		isAccountIdOrName(accountNameOrId);
+		// if (!isBytecode(contractCode)) throw new Error('Bytecode should be string and valid');
 		return this.wsRpc.call([0, 'create_contract',
 			[
 				string.toRaw(accountNameOrId),
 				string.toRaw(contractCode),
 				uint64.toRaw(amount),
-				string.toRaw(assetType),
+				assetId.toRaw(assetType),
 				assetId.toRaw(supportedAssetId),
 				bool.toRaw(useEthereumAssetAccuracy),
 				bool.toRaw(shouldSaveToWallet),
@@ -610,7 +624,7 @@ class WalletAPI {
 				contractId.toRaw(idOfContract),
 				string.toRaw(contractCode),
 				uint64.toRaw(amount),
-				string.toRaw(assetType),
+				assetId.toRaw(assetType),
 				bool.toRaw(shouldSaveToWallet),
 			],
 		]);
@@ -646,6 +660,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the result of the contract
 	 */
 	getContractResult(contractResultId) {
+		if (!isContractResultId(contractResultId)) throw new Error('Contract resultId should be string and valid');
 		return this.wsRpc.call([0, 'get_contract_result', [string.toRaw(contractResultId)]]);
 	}
 
@@ -663,6 +678,8 @@ class WalletAPI {
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(fromAccountNameOrId);
 		isAccountIdOrName(toAccountNameOrId);
+		isAssetIdOrName(assetIdOrName);
+
 		return this.wsRpc.call([0, 'transfer',
 			[
 				string.toRaw(fromAccountNameOrId),
@@ -688,6 +705,8 @@ class WalletAPI {
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
 		isAccountIdOrName(fromAccountNameOrId);
 		isAccountIdOrName(toAccountNameOrId);
+		isAssetIdOrName(assetIdOrName);
+
 		return this.wsRpc.call([0, 'transfer2',
 			[
 				string.toRaw(fromAccountNameOrId),
@@ -760,7 +779,7 @@ class WalletAPI {
 			[
 				string.toRaw(witnessAccountNameOrId),
 				string.toRaw(amount),
-				string.toRaw(assetSymbol),
+				assetId.toRaw(assetSymbol),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -786,6 +805,7 @@ class WalletAPI {
 	 * @returns {Promise<String>} the id of the named account
 	 */
 	getAccountId(accountName) {
+		if (!isAccountName(accountName)) throw new Error('Account name should be string and valid');
 		return this.wsRpc.call([0, 'get_account_id', [string.toRaw(accountName)]]);
 	}
 
@@ -886,10 +906,10 @@ class WalletAPI {
 			[
 				string.toRaw(accountIdOrName),
 				contractId.toRaw(idOfContract),
-				vector(string).toRaw(addToWhitelist),
-				vector(string).toRaw(addToBlacklist),
-				vector(string).toRaw(removeFromWhitelist),
-				vector(string).toRaw(removeFromBlacklist),
+				vector(accountId).toRaw(addToWhitelist),
+				vector(accountId).toRaw(addToBlacklist),
+				vector(accountId).toRaw(removeFromWhitelist),
+				vector(accountId).toRaw(removeFromBlacklist),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -911,7 +931,7 @@ class WalletAPI {
 			[
 				contractId.toRaw(idOfContract),
 				string.toRaw(accountIdOrName),
-				string.toRaw(assetType),
+				assetId.toRaw(assetType),
 				string.toRaw(codeOfTheContract),
 			],
 		]);
@@ -984,8 +1004,8 @@ class WalletAPI {
 		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'register_erc20_token',
 			[
-				string(accountIdOrName),
-				string.toRaw(ethereumTokenAddress),
+				string.toRaw(accountIdOrName),
+				ethAddress.toRaw(ethereumTokenAddress),
 				string.toRaw(tokenName),
 				string.toRaw(tokenSymbol),
 				uint8.toRaw(decimals),
@@ -1041,7 +1061,7 @@ class WalletAPI {
 	/**
 	 * Creates a transaction to withdraw erc20_token.
 	 * @method withdrawErc20Token
-	 * @param {String} idOfAccount [the account who withdraw erc20 token]
+	 * @param {String} accountIdOrName [the account who withdraw erc20 token]
 	 * @param {String} toEthereumAddress [the Ethereum address where withdraw erc20 token]
 	 * @param {String} idOferc20Token [the erc20 token id in ECHO]
 	 * @param {String} withdrawAmount [the amount withdraw]
@@ -1049,11 +1069,12 @@ class WalletAPI {
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	withdrawErc20Token(idOfAccount, toEthereumAddress, idOferc20Token, withdrawAmount, shouldDoBroadcastToNetwork) {
+	withdrawErc20Token(accountIdOrName, toEthereumAddress, idOferc20Token, withdrawAmount, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'withdraw_erc20_token',
 			[
-				accountId.toRaw(idOfAccount),
-				string.toRaw(toEthereumAddress),
+				string.toRaw(accountIdOrName),
+				ethAddress.toRaw(toEthereumAddress),
 				erc20TokenId.toRaw(idOferc20Token),
 				string.toRaw(withdrawAmount),
 				bool.toRaw(shouldDoBroadcastToNetwork),
@@ -1064,15 +1085,16 @@ class WalletAPI {
 	/**
 	 * Generate address of specified account
 	 * @method generateAccountAddress
-	 * @param {String} idOfAccount [ID of the account]
+	 * @param {String} accountIdOrName [ID or name of the account]
 	 * @param {String} label [label for new account address]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true if you wish to broadcast the transaction]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	generateAccountAddress(idOfAccount, label, shouldDoBroadcastToNetwork) {
+	generateAccountAddress(accountIdOrName, label, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'generate_account_address',
-			[accountId.toRaw(idOfAccount), string.toRaw(label),	bool.toRaw(shouldDoBroadcastToNetwork)]]);
+			[string.toRaw(accountIdOrName), string.toRaw(label),	bool.toRaw(shouldDoBroadcastToNetwork)]]);
 	}
 
 	/**
@@ -1104,7 +1126,7 @@ class WalletAPI {
 	/**
 	 * Returns all approved withdrawals, for the given account id.
 	 * @method getAccountWithdrawals
-	 * @param {String} idOfAccount [account the id of the account to provide information about]
+	 * @param {String} idOfAccount [the id of the account to provide information about]
 	 *
 	 * @returns {Promise<Object[]>} the all public withdrawals data stored in the blockchain
 	 */
@@ -1143,6 +1165,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'generate_eth_address',
 			[string.toRaw(accountIdOrName),	bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
@@ -1159,10 +1182,11 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawEth(accountIdOrName, ethOfAddress, value, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'withdraw_eth',
 			[
 				string.toRaw(accountIdOrName),
-				string.toRaw(ethOfAddress),
+				ethAddress.toRaw(ethOfAddress),
 				uint64.toRaw(value),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
@@ -1198,7 +1222,7 @@ class WalletAPI {
 			throw new Error(`Limit should be capped at ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
 		}
 
-		return this.wsRpc.call([0, 'list_assets', [string.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
+		return this.wsRpc.call([0, 'list_assets', [assetId.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
 	}
 
 	/**
@@ -1222,6 +1246,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction creating a new asset
 	 */
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'create_asset',
 			[
 				string.toRaw(accountIdOrName),
@@ -1253,6 +1278,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the asset
 	 */
 	updateAsset(assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork) {
+		isAssetIdOrName(assetIdOrName);
+		isAccountIdOrName(newIssuerIdOrName);
+
 		return this.wsRpc.call([0, 'update_asset',
 			[
 				string.toRaw(assetIdOrName),
@@ -1278,6 +1306,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
+		isAssetIdOrName(assetIdOrName);
 		return this.wsRpc.call([0, 'update_bitasset',
 			[string.toRaw(assetIdOrName), bitassetOptions.toRaw(newBitasset), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
@@ -1296,6 +1325,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset's feed producers
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
+		isAssetIdOrName(assetIdOrName);
+		if (!newFeedProducers.every((idOrName) => !isAccountIdOrName(idOrName))) {
+			throw new Error('Accounts should contain valid account names or ids');
+		}
 		return this.wsRpc.call([0, 'update_asset_feed_producers',
 			[
 				string.toRaw(assetIdOrName),
@@ -1311,24 +1344,29 @@ class WalletAPI {
 	 * used to tune the market for a particular market-issued asset. For each value in the feed,
 	 * the median across all committee_member feeds for that asset is calculated and the market
 	 * for the asset is configured with the median of that value.
+	 *
 	 * The feed object in this command contains three prices: a call price limit, a short price limit,
 	 * and a settlement price. The call limit price is structured as (collateral asset) / (debt asset)
 	 * and the short limit price is structured as (asset for sale) / (collateral asset).
 	 * Note that the asset IDs are opposite to each other, so if we're publishing a feed for USD,
 	 * the call limit price will be ECHO/USD and the short limit price will be USD/ECHO. The settlement price may be
 	 * flipped either direction, as long as it is a ratio between the market-issued asset and its collateral.
+	 *
 	 * @method publishAssetFeed
-	 * @param {String} idOfAccount [the account publishing the price feed]
+	 * @param {String} accountIdOrName [the account publishing the price feed]
 	 * @param {String} assetIdOrName [the name or id of the asset whose feed we're publishing]
 	 * @param {Object} priceOfFeed [object containing the three prices making up the feed]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true to broadcast the transaction on the network]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the price feed for the given asset
 	 */
-	publishAssetFeed(idOfAccount, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
+	publishAssetFeed(accountIdOrName, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
+		isAssetIdOrName(assetIdOrName);
+
 		return this.wsRpc.call([0, 'publish_asset_feed',
 			[
-				accountId.toRaw(idOfAccount),
+				string.toRaw(accountIdOrName),
 				string.toRaw(assetIdOrName),
 				priceFeed.toRaw(priceOfFeed),
 				bool.toRaw(shouldDoBroadcastToNetwork),
@@ -1347,6 +1385,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction issuing the new shares
 	 */
 	issueAsset(accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'issue_asset',
 			[
 				string.toRaw(accountIdOrName),
@@ -1365,6 +1404,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the information about the asset stored in the block chain
 	 */
 	getAsset(assetIdOrName) {
+		isAssetIdOrName(assetIdOrName);
 		return this.wsRpc.call([0, 'get_asset', [string.toRaw(assetIdOrName)]]);
 	}
 
@@ -1395,6 +1435,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction funding the fee pool
 	 */
 	fundAssetFeePool(fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(fromAccountIdOrName);
+		isAssetIdOrName(assetIdOrName);
+
 		return this.wsRpc.call([0, 'fund_asset_fee_pool',
 			[
 				string.toRaw(fromAccountIdOrName),
@@ -1420,6 +1463,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction burning the asset
 	 */
 	reserveAsset(accountIdOrName, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
+		isAssetIdOrName(assetIdOrName);
+
 		return this.wsRpc.call([0, 'reserve_asset',
 			[
 				string.toRaw(accountIdOrName),
@@ -1442,6 +1488,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering a committee_member
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
+		if (!validateUrl(url) && url !== '') throw new Error('Url should be string and valid');
+
 		return this.wsRpc.call([0, 'create_committee_member',
 			[string.toRaw(accountIdOrName),	string.toRaw(url), bool.toRaw(shouldDoBroadcastToNetwork)],
 		]);
@@ -1459,6 +1508,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'set_desired_committee_member_count',
 			[
 				string.toRaw(accountIdOrName),
@@ -1477,6 +1527,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the information about the committee_member stored in the block chain
 	 */
 	getCommitteeMember(accountIdOrName) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'get_committee_member', [string.toRaw(accountIdOrName)]]);
 	}
 
@@ -1524,6 +1575,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given committee_member
 	 */
 	voteForCommitteeMember(votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(votingAccountIdOrName);
+		isAccountIdOrName(ownerOfCommitteeMember);
+
 		return this.wsRpc.call([0, 'vote_for_committee_member',
 			[
 				string.toRaw(votingAccountIdOrName),
@@ -1550,6 +1604,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrNameToUpdate);
+		isAccountIdOrName(votingAccountIdOrName);
+
 		return this.wsRpc.call([0, 'set_voting_proxy',
 			[
 				string.toRaw(accountIdOrNameToUpdate),
@@ -1563,17 +1620,18 @@ class WalletAPI {
 	 * Creates a transaction to propose a parameter change.
 	 * Multiple parameters can be specified if an atomic change is desired.
 	 * @method proposeParameterChange
-	 * @param {String} idOfAccount [the account paying the fee to propose the tx]
+	 * @param {String} accountIdOrName [the account paying the fee to propose the tx]
 	 * @param {Number} expirationTime [timestamp specifying when the proposal will either take effect or expire]
 	 * @param {Object} changeValues [the values to change; all other chain parameters are filled in with default values]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true if you wish to broadcast the transaction]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	proposeParameterChange(idOfAccount, expirationTime, changeValues, shouldDoBroadcastToNetwork) {
+	proposeParameterChange(accountIdOrName, expirationTime, changeValues, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'propose_parameter_change',
 			[
-				accountId.toRaw(idOfAccount),
+				string.toRaw(accountIdOrName),
 				timePointSec.toRaw(expirationTime),
 				variantObject.toRaw(changeValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
@@ -1584,7 +1642,7 @@ class WalletAPI {
 	/**
 	 * Propose a fee change.
 	 * @method proposeFeeChange
-	 * @param {String} idOfAccount [the account paying the fee to propose the tx]
+	 * @param {String} accountIdOrName [the account paying the fee to propose the tx]
 	 * @param {Number} expirationTime [timestamp specifying when the proposal will either take effect or expire]
 	 * @param {Object} changedValues [map of operation type to new fee. Operations may be specified by name or ID.
 	 * The "scale" key changes the scale. All other operations will maintain current values]
@@ -1592,10 +1650,11 @@ class WalletAPI {
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	proposeFeeChange(idOfAccount, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
+	proposeFeeChange(accountIdOrName, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'propose_fee_change',
 			[
-				accountId.toRaw(idOfAccount),
+				string.toRaw(accountIdOrName),
 				timePointSec.toRaw(expirationTime),
 				variantObject.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
@@ -1606,16 +1665,17 @@ class WalletAPI {
 	/**
 	 * Change sidechain config.
 	 * @method changeSidechainConfig
-	 * @param {String} registrarAccountId [the account id who changing side chain config]
+	 * @param {String} accountIdOrName [the account id who changing side chain config]
 	 * @param {Object} changedValues [the values to change]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true if you wish to broadcast the transaction]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	changeSidechainConfig(registrarAccountId, changedValues, shouldDoBroadcastToNetwork) {
+	changeSidechainConfig(accountIdOrName, changedValues, shouldDoBroadcastToNetwork) {
+		isAccountIdOrName(accountIdOrName);
 		return this.wsRpc.call([0, 'change_sidechain_config',
 			[
-				accountId.toRaw(registrarAccountId),
+				string.toRaw(accountIdOrName),
 				config.toRaw(changedValues),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
@@ -1760,6 +1820,7 @@ class WalletAPI {
 	 * @returns {Promise<Asset>} total fees
 	 */
 	setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset) {
+		isAssetIdOrName(feeAsset);
 		return this.wsRpc.call([0, 'set_fees_on_builder_transaction',
 			[uint16.toRaw(transactionTypeHandle), string.toRaw(feeAsset)],
 		]);
@@ -1843,6 +1904,8 @@ class WalletAPI {
 		reviewPeriod,
 		shouldDoBroadcastToNetwork,
 	) {
+		isAccountIdOrName(accountIdOrName);
+
 		return this.wsRpc.call([0, 'propose_builder_transaction2',
 			[
 				uint16.toRaw(transactionTypeHandle),
