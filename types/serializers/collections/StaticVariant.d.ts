@@ -18,4 +18,9 @@ export default class StaticVariantSerializer<T extends Variants> extends ISerial
 	constructor(serializers: Readonly<T>);
 	toRaw<TVariant extends number>(value: TInput<T, TVariant>): TOutput<T, TVariant>;
 	appendToByteBuffer<TVariant extends number>(value: TInput<T, TVariant>, bytebuffer: ByteBuffer): void;
+
+	readFromBuffer<TVariant extends number>(
+		buffer: Buffer,
+		offset?: number,
+	): { res: TOutput<T, TVariant>, newOffset: number };
 }

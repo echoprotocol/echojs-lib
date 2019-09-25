@@ -33,4 +33,19 @@ export default class AnyObjectIdSerializer extends ISerializer {
 		uint64.appendToByteBuffer(new BigNumber(long.toString()), bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: serializedId, newOffset } = uint64.readFromBuffer(buffer, offset);
+		const bn = new BigNumber(serializedId);
+		const reservedSpaceId = bn.idiv('0x100000000000000');
+		const objectTypeId = bn.mod('0x100000000000000').idiv(0x1000000000000);
+		const instanceId = bn.mod(0x1000000000000);
+		const fullId = [reservedSpaceId, objectTypeId, instanceId].map((part) => part.toString(10)).join('.');
+		return { res: this.toRaw(fullId), newOffset };
+	}
+
 }

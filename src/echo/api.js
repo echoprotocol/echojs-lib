@@ -1896,7 +1896,7 @@ class API {
 	/**
 	 *  @method verifyAccountAuthority
 	 *
-	 *  @param  {Object} accountNameOrId
+	 *  @param  {String} accountNameOrId
 	 *  @param  {Array<String>} signers [public keys]
 	 *
 	 *  @return {Promise.<*>}
@@ -2401,7 +2401,7 @@ class API {
 
 	/**
 	 *
-	 * @param {Object} keys
+	 * @param {Array<String>} keys
 	 * @return {*}
 	 */
 	getBalanceObjects(keys) {

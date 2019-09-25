@@ -4,8 +4,6 @@ function notImplementedSerialization() { throw new Error('serialization is not i
 
 /**
  * @abstract
- * @class
- * @name ISerializer
  * @template TInput
  * @template TOutput
  */
@@ -40,6 +38,15 @@ export default class ISerializer {
 	// eslint-disable-next-line no-unused-vars
 	toRaw(value) { notImplementedSerialization(); }
 
+	/**
+	 * @abstract
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput, newOffset: number }}
+	 */
+	// eslint-disable-next-line no-unused-vars
+	readFromBuffer(buffer, offset) { notImplementedSerialization(); }
+
 	/** @param {TInput} value */
 	validate(value) { this.toRaw(value); }
 
@@ -53,12 +60,18 @@ export default class ISerializer {
 		return result.copy(0, result.offset).toBuffer();
 	}
 
-}
+	/**
+	 * @param {Buffer} buffer
+	 * @returns {TOutput}
+	 */
+	deserialize(buffer) {
+		if (!Buffer.isBuffer(buffer)) throw new Error('invalid buffer type');
+		const { res, newOffset } = this.readFromBuffer(buffer);
+		if (newOffset !== buffer.length) throw new Error('excess info in the end of the buffer');
+		return res;
+	}
 
-/**
- * @property {string} Qwe
- * @memberof ISerializer
- */
+}
 
 /**
  * @template {ISerializer} T

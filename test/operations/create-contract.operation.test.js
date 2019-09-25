@@ -2,7 +2,7 @@ import 'mocha';
 import { ok } from 'assert';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url } from '../_test-data';
-import { Echo, constants } from '../../src/index';
+import { Echo, constants } from '../../';
 
 const { OPERATIONS_IDS } = constants;
 import { ECHO_ASSET_ID } from '../../src/constants';

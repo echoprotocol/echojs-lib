@@ -21,9 +21,7 @@ import IIntSerializer from './IIntSerializer';
 export default class IUIntSerializer extends IIntSerializer {
 
 	/** @param {number} bitsCount */
-	constructor(bitsCount) {
-		super(bitsCount + 1);
-	}
+	constructor(bitsCount) { super(bitsCount, true); }
 
 	/**
 	 * @param {SerializerInput<IIntSerializer<T>>} value

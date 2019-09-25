@@ -78,4 +78,11 @@ export default class OperationSerializer extends ISerializer {
 		return operationSerializer.appendToByteBuffer(value, bytebuffer);
 	}
 
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: any, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) { return operationSerializer.readFromBuffer(buffer, offset); }
+
 }

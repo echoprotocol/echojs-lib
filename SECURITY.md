@@ -1,6 +1,6 @@
 # Reporting Security Issues
 
-The Echo team takes security errors at Echo Bridge seriously. We appreciate your efforts and will make every effort to recognize your contribution.
+The Echo team takes security errors at Echojs-lib seriously. We appreciate your efforts and will make every effort to recognize your contribution.
 
 To report a security issue, write [security@echo-dev.io](mailto:security@echo-dev.io) and include the word "SECURITY" in the subject.
 
