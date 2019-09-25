@@ -1872,7 +1872,7 @@ class API {
 	/**
 	 *  @method getPotentialSignatures
 	 *
-	 *  @param  {Object} tr
+	 *  @param  {Object} transaction
 	 *
 	 *  @return {Promise.<*>}
 	 */
