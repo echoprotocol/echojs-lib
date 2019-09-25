@@ -17,4 +17,4 @@ export const string = new StringSerializer();
 export const timePointSec = new TimePointSecSerializer();
 export const variantObject = new VariantObjectSerializer();
 
-export { integers, BoolSerializer, BytesSerializer, TimePointSecSerializer };
+export { integers, BoolSerializer, BytesSerializer, TimePointSecSerializer, VariantObjectSerializer };

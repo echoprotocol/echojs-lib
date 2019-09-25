@@ -28,7 +28,6 @@ const {
 const {
 	operation,
 	approvalDelta,
-	accountListing,
 	signedTransaction,
 	transaction,
 } = serializers;
@@ -40,6 +39,8 @@ const {
 	proposalId,
 	assetId,
 } = serializers.chain.ids.protocol;
+
+const { accountListing } = serializers.protocol;
 
 /**
  * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
@@ -349,7 +350,7 @@ class WalletAPI {
 	 * @returns {Promise<[string, string][]>}
 	 */
 	listAccounts(accountName, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
-		if (!limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
+		if (limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
 			throw new Error(`field 'limit' should be less than or equals to ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`);
 		}
 		return this.wsRpc.call([0, 'list_accounts', [string.toRaw(accountName), uint32.toRaw(limit)]]);
@@ -596,7 +597,7 @@ class WalletAPI {
 	 * @returns {Promise<Object[]>}
 	 */
 	getAccountHistory(accountIdOrName, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
-		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
+		if (limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			throw new Error(`field 'limit' should be less than or equals to ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
 		}
 
@@ -620,7 +621,7 @@ class WalletAPI {
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
 		const maxLimitValue = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT;
-		if (!limit > maxLimitValue) {
+		if (limit > maxLimitValue) {
 			throw new Error(`field 'limit' should be less than or equals to ${maxLimitValue}`);
 		}
 		return this.wsRpc.call([0, 'get_relative_account_history', [
@@ -928,7 +929,7 @@ class WalletAPI {
 	 * @return {Promise<Asset[]>}
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
-		if (!limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
+		if (limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
 			throw new Error(`field 'limit' should be less than or equals to ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
 		}
 		return this.wsRpc.call([0, 'list_assets', [string.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
@@ -1133,7 +1134,7 @@ class WalletAPI {
 	 */
 	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		const maxLimitValue = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT;
-		if (!limit > maxLimitValue) {
+		if (limit > maxLimitValue) {
 			throw new Error(`field 'limit' should be less than or equals to ${maxLimitValue}`);
 		}
 		return this.wsRpc.call([0, 'list_committee_members', [string.toRaw(lowerBoundName), uint64.toRaw(limit)]]);

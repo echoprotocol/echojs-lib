@@ -1,7 +1,7 @@
 import ISerializer, { SerializerInput } from "../ISerializer";
 
-type TInput = Array<any>;
-type TOutput = Array<any>;
+type TInput = [string, any];
+type TOutput = [string, any];
 
 export default class VariantObjectSerializer extends ISerializer<TInput, TOutput> {
     toRaw(value: TInput): TOutput;

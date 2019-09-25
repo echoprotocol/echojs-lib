@@ -5,6 +5,9 @@ import {
 	accountWhitelistOperationPropsSerializer,
 	accountTransferOperationPropsSerializer,
 	accountAddressCreateOperationPropsSerializer,
+    AccountListingSerializer,
+    accountListing,
+    ACCOUNT_LISTING,
 } from './account';
 
 import {
@@ -73,6 +76,7 @@ export const account = {
 };
 
 export { priceSerializer as price, priceFeedSerializer as priceFeed } from './asset';
+export { accountListing } from './account';
 
 export const asset = {
 	options: assetOptionsSerializer,
@@ -86,6 +90,7 @@ export const asset = {
 	fundFeePool: assetFundFeePoolOperationPropsSerializer,
 	publishFeed: assetPublishFeedOperationPropsSerializer,
 	claimFees: assetClaimFeesOperationPropsSerializer,
+	price: accountListing,
 };
 
 export { default as authority } from './authority';
