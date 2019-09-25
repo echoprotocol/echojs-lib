@@ -199,6 +199,7 @@ describe.only('WALLET API', () => {
 	describe('#oldKeyToWif()', () => {
 		it('Should dumps private key from old b58 format to new WIF', async () => {
 			const result = await echo.walletApi.oldKeyToWif(ED_PRIVATE);
+			console.log(result);
 			expect(result)
 				.to
 				.be
@@ -593,7 +594,7 @@ describe.only('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#transfer()', () => {
+	describe.only('#transfer()', () => {
 		it('should do transfer an amount from one account to another', async () => {
 			const amount = '1';
 			const toAccountId = '1.2.1';
@@ -613,7 +614,7 @@ describe.only('WALLET API', () => {
 
 	describe('#transfer2()', () => {
 		it('should do transfer an amount from one account to another', async () => {
-			const amount = '1';
+			const amount = '1.00';
 			const toAccountId = '1.2.2';
 			const result = await echo.walletApi.transfer2(
 				accountId,

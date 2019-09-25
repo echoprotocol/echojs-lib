@@ -2,7 +2,7 @@
 import BN from 'bignumber.js';
 import bs58 from 'bs58';
 
-import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
+import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES } from '../constants';
 import { methodsArray, operationPrototypeArray } from './check';  // TODO check
@@ -65,6 +65,7 @@ const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IM
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
 const voteIdTypeRegex = /^[0]{1}:[0-9]+/;
+const amountRegex = /^(-?)([1-9](\d)*|0)(\.\d{0,11}[1-9])?$/;
 
 const MAX_UINTX_VALUES = {
 	64: new BN(2).pow(64).minus(1),
@@ -337,20 +338,33 @@ export const isOperationPrototypeExists = (v) => {
 
 export const isNotEmptyString = (v) => isString(v) && !!v.trim();
 
-// export const isPrivateKey = (v) => {
-// 	if (!isString(v)) return false;
-//
-// 	// function getBinarySize(string) {
-// 	const check = bs58.decode(v);
-//
-// 	console.log("HERE!!!!!!!!!!", check);
-// 	const chr = Buffer.byteLength(v, 'utf8');
-// 	console.log("HERE!!!!!!!!!!", chr);
-//
-//
-// 	if (bs58.decode(v).length !== LENGTH_DECODE_PUBLIC_KEY) {
-// 		throw new Error('Invalid private key');
-// 	}
-//
-// 	return true;
-// };
+export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0);
+
+
+export const isOldPrivateKey = (v) => {
+	if (!isString(v)) return false;
+
+	if (bs58.decode(v).length !== LENGTH_DECODE_PRIVATE_KEY) {
+		throw new Error('Invalid private key');
+	}
+
+	return true;
+};
+
+export const isValidAmount = (v) => {
+	if (!isString(v)) return false;
+
+	console.log(amountRegex.test(v));
+	if (amountRegex.test(v)) return false;
+
+	const integer = Math.abs(Number(v.split('.')[0]));
+	const maxNumber = 2 ** 63;
+
+	const ECHO_MAX_SHARE_SUPPLY = 1000000000000000;
+
+	if ((integer > (maxNumber - 1))) return false;
+
+	if (!(integer * 1e12 < ECHO_MAX_SHARE_SUPPLY)) return false;
+
+	return true;
+};

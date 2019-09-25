@@ -6,12 +6,14 @@ import {
 	isAssetIdOrName,
 	isMethodExists,
 	isAccountName,
-	// isBytecode,
 	isContractResultId,
 	validateUrl,
-	// isPrivateKey,
+	isOldPrivateKey,
 	isOperationPrototypeExists,
 	isNotEmptyString,
+	isAssetName,
+	isContractCode,
+	isValidAmount,
 } from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
@@ -28,6 +30,7 @@ const {
 	int64,
 	uint16,
 	uint8,
+	uint256,
 } = serializers.basic.integers;
 
 const {
@@ -258,7 +261,7 @@ class WalletAPI {
 	 * @returns {Promise<String>} string new in WIF eddsa private key
 	 */
 	oldKeyToWif(accountPrivateKey) {
-		// isPrivateKey(accountPrivateKey);
+		isOldPrivateKey(accountPrivateKey);
 		return this.wsRpc.call([0, 'old_key_to_wif', [string.toRaw(accountPrivateKey)]]);
 	}
 
@@ -366,6 +369,8 @@ class WalletAPI {
 	 * @returns {Promise<Object[]>} A list of keys that are deterministically derived from the brainkey
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
+		if (numberOfDesiredKeys < 1) throw new Error('Number should be positive integer');
+
 		return this.wsRpc.call([0, 'derive_keys_from_brain_key',
 			[string.toRaw(brainKey), int64.toRaw(numberOfDesiredKeys)],
 		]);
@@ -523,7 +528,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
 	 */
 	registerAccount(name, activeKey, accountNameOrId, shouldDoBroadcastToNetwork) {
+		if (!isAccountName(name)) throw new Error('Name should be string and valid');
 		isAccountIdOrName(accountNameOrId);
+
 		return this.wsRpc.call([0, 'register_account',
 			[
 				string.toRaw(name),
@@ -551,7 +558,9 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
 	 */
 	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, shouldDoBroadcastToNetwork) {
+		if (!isAccountName(accountName)) throw new Error('Name should be string and valid');
 		isAccountIdOrName(accountNameOrId);
+
 		return this.wsRpc.call([0, 'create_account_with_brain_key',
 			[
 				string.toRaw(brainKey),
@@ -587,7 +596,8 @@ class WalletAPI {
 		shouldSaveToWallet,
 	) {
 		isAccountIdOrName(accountNameOrId);
-		// if (!isBytecode(contractCode)) throw new Error('Bytecode should be string and valid');
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+
 		return this.wsRpc.call([0, 'create_contract',
 			[
 				string.toRaw(accountNameOrId),
@@ -622,6 +632,8 @@ class WalletAPI {
 		shouldSaveToWallet,
 	) {
 		isAccountIdOrName(accountNameOrId);
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+
 		return this.wsRpc.call([0, 'call_contract',
 			[
 				string.toRaw(accountNameOrId),
@@ -682,6 +694,7 @@ class WalletAPI {
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(fromAccountNameOrId);
 		isAccountIdOrName(toAccountNameOrId);
+		if (isValidAmount(amount)) throw new Error('Invalid number');
 		isAssetIdOrName(assetIdOrName);
 
 		return this.wsRpc.call([0, 'transfer',
@@ -709,6 +722,7 @@ class WalletAPI {
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
 		isAccountIdOrName(fromAccountNameOrId);
 		isAccountIdOrName(toAccountNameOrId);
+		if (!isValidAmount(amount)) throw new Error('Invalid number');
 		isAssetIdOrName(assetIdOrName);
 
 		return this.wsRpc.call([0, 'transfer2',
@@ -782,7 +796,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'withdraw_vesting',
 			[
 				string.toRaw(witnessAccountNameOrId),
-				string.toRaw(amount),
+				uint256.toRaw(amount),
 				assetId.toRaw(assetSymbol),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
@@ -931,6 +945,8 @@ class WalletAPI {
 	 */
 	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
 		isAccountIdOrName(accountIdOrName);
+		if (!isContractCode(codeOfTheContract)) throw new Error('Byte code should be string and valid');
+
 		return this.wsRpc.call([0, 'call_contract_no_changing_state',
 			[
 				contractId.toRaw(idOfContract),
@@ -1077,12 +1093,13 @@ class WalletAPI {
 	 */
 	withdrawErc20Token(accountIdOrName, toEthereumAddress, idOferc20Token, withdrawAmount, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(accountIdOrName);
+
 		return this.wsRpc.call([0, 'withdraw_erc20_token',
 			[
 				string.toRaw(accountIdOrName),
 				ethAddress.toRaw(toEthereumAddress),
 				erc20TokenId.toRaw(idOferc20Token),
-				string.toRaw(withdrawAmount),
+				uint256.toRaw(withdrawAmount),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
@@ -1099,6 +1116,8 @@ class WalletAPI {
 	 */
 	generateAccountAddress(accountIdOrName, label, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(accountIdOrName);
+		if (!isNotEmptyString(label)) throw new Error('Label should be string and valid');
+
 		return this.wsRpc.call([0, 'generate_account_address',
 			[string.toRaw(accountIdOrName), string.toRaw(label),	bool.toRaw(shouldDoBroadcastToNetwork)]]);
 	}
@@ -1253,6 +1272,8 @@ class WalletAPI {
 	 */
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(accountIdOrName);
+		if (!isAssetName(symbol)) throw new Error('Assets symbol should be string and valid');
+
 		return this.wsRpc.call([0, 'create_asset',
 			[
 				string.toRaw(accountIdOrName),
@@ -1395,7 +1416,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'issue_asset',
 			[
 				string.toRaw(accountIdOrName),
-				string.toRaw(amount),
+				uint256.toRaw(amount),
 				string.toRaw(assetTicker),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
@@ -1424,6 +1445,7 @@ class WalletAPI {
 	 * @returns {Promise<Object>} the BitAsset-specific data for this asset
 	 */
 	getBitassetData(bitassetIdOrName) {
+		isAssetIdOrName(bitassetIdOrName);
 		return this.wsRpc.call([0, 'get_bitasset_data', [string.toRaw(bitassetIdOrName)]]);
 	}
 
@@ -1448,7 +1470,7 @@ class WalletAPI {
 			[
 				string.toRaw(fromAccountIdOrName),
 				string.toRaw(assetIdOrName),
-				string.toRaw(amount),
+				uint256.toRaw(amount),
 				bool.toRaw(shouldDoBroadcastToNetwork),
 			],
 		]);
