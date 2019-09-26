@@ -9,7 +9,6 @@ import * as approvalDelta from './wallet';
 
 export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
 
-
 export const operation = new OperationSerializer();
 
 opWrapper.init(operation);

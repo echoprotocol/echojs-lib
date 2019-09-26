@@ -23,8 +23,8 @@ export default class PrivateKeySerializer extends ISerializer {
 		super.appendToByteBuffer();
 	}
 
-    readFromBuffer() {
-        super.readFromBuffer();
+	readFromBuffer() {
+		super.readFromBuffer();
 	}
 
 }
