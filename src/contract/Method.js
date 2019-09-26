@@ -1,48 +1,56 @@
-import { ok } from 'assert';
-import _ from 'lodash';
+import BigNumber from 'bignumber.js';
 
-import Echo from '../echo/index';
-import PrivateKey from '../crypto/private-key';
-import { OPERATIONS_IDS } from '../constants';
-import ContractTransaction from './ContractTransaction';
-import { decode } from './decoders';
-import { checkContractId, contractIdRegExp } from './utils/validators';
+import { ECHO_ASSET_ID, OPERATIONS_IDS } from '../constants';
+import { contract as contractOperations } from '../serializers/protocol';
 
-const NATHAN_ID = '1.2.12';
-
+/** @typedef {import("../crypto/private-key").default} PrivateKey */
+/** @typedef {import("../echo").default} Echo */
+/** @typedef {import("../echo/transaction").default} Transaction */
+/** @typedef {import("../serializers/basic/integers").UInt64Serializer} UInt64Serializer */
 /** @typedef {import("./Contract").default} Contract */
-/** @typedef {import("../../types/contract/_Abi").AbiArgument} AbiArgument */
-/** @typedef {import("./ContractResult").default} ContractResult */
+
+/** @typedef {'create' | 'call'} MethodType */
 
 /**
- * @typedef {Object} CallOptions
- * @property {string} [contractId]
- * @property {string} [assetId]
- * @property {string} [accountId]
- * @property {Echo} [echo]
- */
-
-/**
- * @typedef {Object} SendOptions
- * @property {string} [contractId]
+ * @typedef {Object} CommonOperationOptions
+ * @property {{ amount?: UInt64Serializer['__TInput__'], assetId?: string }} [fee]
  * @property {string} [registrar]
- * @property {PrivateKey} [privateKey]
- * @property {{ amount:number|string|BigNumber, asset_id:string }} [value]
+ * @property {UInt64Serializer['__TInput__'] | { amount?: UInt64Serializer['__TInput__'], assetId?: string }} [value]
  */
 
-export default class Method {
+/**
+ * @typedef {CommonOperationOptions & _CreateOperationOptions} CreateOperationOptions
+ * @typedef {Object} _CreateOperationOptions
+ * @property {boolean} [ethAccuracy]
+ * @property {string} [supportedAssetId]
+ */
+
+/**
+ * @typedef {CommonOperationOptions & _CallOperationOptions} CallOperationOptions
+ * @typedef {Object} _CallOperationOptions
+ * @property {string} [callee]
+ */
+
+/**
+ * @template {MethodType} T
+ * @typedef {{ create: CreateOperationOptions, call: CallOperationOptions }[T]} OperationOptions
+ */
+
+/**
+ * @template {MethodType} T
+ * @typedef {typeof contractOperations[T]['__TInput__']} RawOperation
+ */
+
+/** @typedef {{ echo?: Echo }} OptionsWithEcho */
+
+/** @template {MethodType} T */
+class Method {
 
 	/**
 	 * @readonly
-	 * @type {string}
+	 * @type {Buffer}
 	 */
 	get code() { return this._code; }
-
-	/**
-	 * @readonly
-	 * @type {Array<AbiArgument>}
-	 */
-	get outputs() { return _.cloneDeep(this._abiMethodOutputs); }
 
 	/**
 	 * @readonly
@@ -50,7 +58,25 @@ export default class Method {
 	 */
 	get contract() { return this._contract; }
 
-	constructor(contract, abiMethodOutputs, code) {
+	/**
+	 * @readonly
+	 * @type {{ create: typeof OPERATIONS_IDS['CONTRACT_CREATE'], call: typeof OPERATIONS_IDS['CONTRACT_CALL'] }[T]}
+	 */
+	get operationId() {
+		return this._type === 'create' ? OPERATIONS_IDS.CONTRACT_CREATE : OPERATIONS_IDS.CONTRACT_CALL;
+	}
+
+	/**
+	 * @param {Buffer} code
+	 * @param {Contract} contract
+	 * @param {T} type
+	 */
+	constructor(code, contract, type) {
+		/**
+		 * @private
+		 * @type {Buffer}
+		 */
+		this._code = code;
 		/**
 		 * @private
 		 * @type {Contract}
@@ -58,136 +84,56 @@ export default class Method {
 		this._contract = contract;
 		/**
 		 * @private
-		 * @type {Array<AbiArgument>}
+		 * @type {T}
 		 */
-		this._abiMethodOutputs = abiMethodOutputs;
-		/**
-		 * @private
-		 * @type {string}
-		 */
-		this._code = code;
+		this._type = type;
 	}
 
 	/**
-	 * @param {CallOptions} [options]
-	 * @returns {Promise<Array<*>|*|null>}
+	 * @param {OperationOptions<T>} [options]
+	 * @returns {RawOperation<T>}
 	 */
-	async call(options = {}) {
-		const { stack } = new Error().stack;
-		let {
-			contractId,
-			assetId,
-			accountId,
-			echo,
-		} = options;
-		if (contractId === undefined) {
-			if (this._contract.address === undefined) throw new Error('no contractId');
-			contractId = this._contract.address;
-		} else checkContractId(contractId);
-		if (assetId === undefined) assetId = '1.3.0';
-		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
-		if (accountId === undefined) accountId = NATHAN_ID;
-		else if (!/^1\.2\.(0|[1-9]\d*)$/.test(accountId)) throw new Error('invalid accountId format');
-		if (echo === undefined) {
-			if (this._contract.echo === undefined) throw new Error('no echo instance');
-			// eslint-disable-next-line prefer-destructuring
-			echo = this._contract.echo;
-		} else if (!(echo instanceof Echo)) throw new Error('invalid echo instance');
-		try {
-			// FIXME: remove @type when JSDoc of callContractNoChangingState will be fixed
-			/** @type {string} */
-			const rawResult = await echo.api.callContractNoChangingState(contractId, accountId, assetId, this.code);
-			if (rawResult === '') {
-				if (this._abiMethodOutputs.length === 0) return null;
-				throw new Error('call failed');
-			}
-			return decode(rawResult, this._abiMethodOutputs.map(({ type }) => type));
-		} catch (error) {
-			error.stack = stack;
-			throw error;
+	toOperation(options = {}) {
+		const fee = options.fee === undefined ? { amount: 0, assetId: ECHO_ASSET_ID } : {
+			amount: options.fee.amount || 0,
+			assetId: options.fee.assetId === undefined ? ECHO_ASSET_ID : options.fee.assetId,
+		};
+		const registrar = options.registrar !== undefined ? options.registrar : this.contract.registrarId;
+		let value = options.value === undefined ? { amount: 0, assetId: ECHO_ASSET_ID } : options.value;
+		if (typeof value !== 'object' || value instanceof BigNumber) {
+			value = { amount: value, assetId: ECHO_ASSET_ID };
 		}
-	}
-
-	/**
-	 * @param {SendOptions} options
-	 * @returns {ContractTransaction|Promise<ContractTransaction>}
-	 */
-	buildTransaction(options = {}) {
-		if (options.registrar === undefined && options.privateKey === undefined) {
-			throw new Error('no registar provided');
-		}
-		if (options.privateKey !== undefined && !(options.privateKey instanceof PrivateKey)) {
-			throw new Error('invalid privateKey');
-		}
-		if (options.contractId !== undefined) {
-			if (!contractIdRegExp.test(options.contractId)) throw new Error('invalid contractId format');
-		} else {
-			if (this._contract.address === undefined) throw new Error('contractId is not provided');
-			options.contractId = this._contract.address;
-		}
-		if (options.registrar !== undefined) {
-			if (!/^1\.2\.(0|[1-9]\d*)$/.test(options.registrar)) throw new Error('invalid registrar format');
-			return this._createTransaction(options.contractId, options.registrar, options.privateKey, options.value);
-		}
-		return new Promise(async (resolve, reject) => {
-			try {
-				const publicKey = options.privateKey.toPublicKey();
-				const [[registrar]] = await this._contract.echo.api.getKeyReferences([publicKey]);
-				return resolve(this._createTransaction(
-					options.contractId,
-					registrar,
-					options.privateKey,
-					options.value,
-				));
-			} catch (err) {
-				return reject(err);
-			}
+		return contractOperations[this._type].toRaw({
+			...options,
+			fee,
+			registrar,
+			value,
 		});
 	}
 
 	/**
-	 * @param {SendOptions} options
-	 * @returns {Promise<ContractResult>}
+	 * @param {Transaction} tx
+	 * @param {OperationOptions<T>} [options]
 	 */
-	async broadcast(options = {}) {
-		ok(options.privateKey !== undefined, 'private key not provided');
-		const tx = await this.buildTransaction(options);
-		let result;
-		try {
-			result = await tx.broadcast();
-		} catch (err) {
-			if (typeof err !== 'object' || err.code !== 1 || typeof err.message !== 'string') throw err;
-			const expectedErrorPrefix = 'unspecified: Exception during execution: ';
-			if (!err.message.startsWith(expectedErrorPrefix)) throw err;
-			const execRes = JSON.parse(err.message.slice(expectedErrorPrefix.length));
-			if (execRes.excepted !== 'RevertInstruction' || execRes.output.slice(0, 8) !== '08c379a0') {
-				throw err;
-			}
-			const errorMessageLength = Number.parseInt(execRes.output.slice(72, 136), 16);
-			const errorMessageBuffer = Buffer.from(execRes.output.slice(136), 'hex').slice(0, errorMessageLength);
-			throw new Error(errorMessageBuffer.toString('utf8'));
-		}
-		return result;
+	addToTransaction(tx, options) { tx.addOperation(this.operationId, this.toOperation(options)); }
+
+	/**
+	 * @param {OperationOptions<T> & OptionsWithEcho} [options]
+	 * @returns {Transaction}
+	 */
+	buildTransaction(options = {}) {
+		const echo = options.echo === undefined ? this.contract.echo : options.echo;
+		if (!echo) throw new Error('echo instance is not provided');
+		return echo.createTransaction().addOperation(this.toOperation(options));
 	}
 
 	/**
-	 * @private
-	 * @param {string} callee
-	 * @param {string} registrar
-	 * @param {PrivateKey} [privateKey]
-	 * @param {{ amount:number|string|BigNumber, asset_id:string }} [value]
-	 * @returns {ContractTransaction}
+	 * @param {PrivateKey} privateKey
+	 * @param {OperationOptions<T> & OptionsWithEcho} options
+	 * @returns {Promise<unknown>}
 	 */
-	_createTransaction(callee, registrar, privateKey, value) {
-		value = { amount: 0, asset_id: '1.3.0', ...value };
-		const result = new ContractTransaction(this._contract.echo.api, this)
-			.addOperation(OPERATIONS_IDS.CONTRACT_CALL, {
-				callee,
-				code: this.code,
-				registrar,
-				value,
-			});
-		if (privateKey !== undefined) result.addSigner(privateKey);
+	async send(privateKey, options) {
+		const result = await this.buildTransaction(options).addSigner(privateKey).broadcast();
 		return result;
 	}
 
