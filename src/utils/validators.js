@@ -358,7 +358,7 @@ const validateAmount = (v) => {
 
 	if (integer > (AMOUNT_MAX_NUMBER)) return false;
 
-    return (integer * 1e12 < ECHO_MAX_SHARE_SUPPLY);
+	return (integer * 1e12 < ECHO_MAX_SHARE_SUPPLY);
 };
 
-export const isValidAmount = (v) => amountRegex.test(v) && validateAmount(v);
+export const isValidAmount = (v) => validateAmount(v) && amountRegex.test(v);

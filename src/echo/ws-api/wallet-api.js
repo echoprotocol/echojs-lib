@@ -13,7 +13,7 @@ import {
 	isNotEmptyString,
 	isAssetName,
 	isContractCode,
-    isValidAmount,
+	isValidAmount,
 } from '../../utils/validators';
 
 const { ethAddress } = serializers.protocol;
@@ -360,7 +360,7 @@ class WalletAPI {
 	 * NOTE: These keys may or may not match with the owner keys of any account.
 	 * This function is merely intended to assist with account or key recovery.
 	 *
-	 * @see suggest_brain_key()
+	 * @see `suggest_brain_key()`
 	 *
 	 * @method deriveKeysFromBrainKey
 	 * @param {String} brainKey [brain key]
@@ -651,7 +651,7 @@ class WalletAPI {
 	 * @method contractFundFeePool
 	 * @param {String} accountNameOrId [name of the account which fund contract's feepool]
 	 * @param {String} idOfContract [the id of the contract's feepool]
-	 * @param {Number} amount [the amount of asset transferred to the contract in default asset_id_type()]
+	 * @param {Number} amount [the amount of asset transferred to the contract in default `asset_id_type()`]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [whether to broadcast the fund contract operation to the network]
 	 *
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
@@ -694,7 +694,7 @@ class WalletAPI {
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(fromAccountNameOrId);
 		isAccountIdOrName(toAccountNameOrId);
-		if (isValidAmount(amount)) throw new Error('Invalid number');
+		if (!isValidAmount(amount)) throw new Error('Invalid number');
 		isAssetIdOrName(assetIdOrName);
 
 		return this.wsRpc.call([0, 'transfer',
@@ -741,12 +741,14 @@ class WalletAPI {
 	 * them. This information is used in chain validation only to determine whether an account is authorized to transact
 	 * in an asset type which enforces a whitelist, but third parties can use this information for other uses as well,
 	 * as long as it does not conflict with the use of whitelisted assets.
+	 *
 	 * An asset which enforces a whitelist specifies a list of accounts to maintain its whitelist, and a list of
 	 * accounts to maintain its blacklist. In order for a given account A to hold and transact in a whitelisted asset S,
 	 * A must be whitelisted by at least one of S's whitelist_authorities and blacklisted by none of S's
 	 * blacklist_authorities. If A receives a balance of S, and is later removed from the whitelist(s) which allowed it
 	 * to hold S, or added to any blacklist S specifies as authoritative, A's balance of S will be frozen until A's
 	 * authorization is reinstated.
+	 *
 	 * @method whitelistAccount
 	 * @param {String} authorizingAccount [the account who is doing the whitelisting]
 	 * @param {String} accountToList [the account being whitelisted]
@@ -1002,7 +1004,7 @@ class WalletAPI {
 	}
 
 	/**
-	 * Creates a transaction to register erc20_token for sidechain.
+	 * Creates a transaction to register `erc20_token` for sidechain.
 	 * @method registerErc20Token
 	 * @param {String} accountIdOrName [the account who create erc20 token and become his owner]
 	 * @param {String} ethereumTokenAddress [the address of token erc20 token in ethereum network]
@@ -1081,7 +1083,7 @@ class WalletAPI {
 	}
 
 	/**
-	 * Creates a transaction to withdraw erc20_token.
+	 * Creates a transaction to withdraw `erc20_token`.
 	 * @method withdrawErc20Token
 	 * @param {String} accountIdOrName [the account who withdraw erc20 token]
 	 * @param {String} toEthereumAddress [the Ethereum address where withdraw erc20 token]
@@ -1369,7 +1371,7 @@ class WalletAPI {
 	 * Publishes a price feed for the named asset.
 	 * Price feed providers use this command to publish their price feeds for market-issued assets. A price feed is
 	 * used to tune the market for a particular market-issued asset. For each value in the feed,
-	 * the median across all committee_member feeds for that asset is calculated and the market
+	 * the median across all `committee_member` feeds for that asset is calculated and the market
 	 * for the asset is configured with the median of that value.
 	 *
 	 * The feed object in this command contains three prices: a call price limit, a short price limit,
@@ -1505,15 +1507,15 @@ class WalletAPI {
 	}
 
 	/**
-	 * Creates a committee_member object owned by the given account.
-	 * An account can have at most one committee_member object.
+	 * Creates a `committee_member` object owned by the given account.
+	 * An account can have at most one `committee_member` object.
 	 * @method createCommitteeMember
-	 * @param {String} accountIdOrName [the name or id of the account which is creating the committee_member]
-	 * @param {String} url [a URL to include in the committee_member record in the blockchain. Clients may
+	 * @param {String} accountIdOrName [the name or id of the account which is creating the `committee_member`]
+	 * @param {String} url [a URL to include in the `committee_member` record in the blockchain. Clients may
 	 * display this when showing a list of committee_members. May be blank]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true to broadcast the transaction on the network]
 	 *
-	 * @returns {Promise<SignedTransaction>} the signed transaction registering a committee_member
+	 * @returns {Promise<SignedTransaction>} the signed transaction registering a `committee_member`
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(accountIdOrName);
@@ -1549,10 +1551,10 @@ class WalletAPI {
 	/**
 	 * Returns information about the given `committee_member`.
 	 * @method getCommitteeMember
-	 * @param {String} accountIdOrName [the name or id of the committee_member account owner,
-	 * or the id of the committee_member]
+	 * @param {String} accountIdOrName [the name or id of the `committee_member` account owner,
+	 * or the id of the `committee_member`]
 	 *
-	 * @returns {Promise<Object>} the information about the committee_member stored in the block chain
+	 * @returns {Promise<Object>} the information about the `committee_member` stored in the block chain
 	 */
 	getCommitteeMember(accountIdOrName) {
 		isAccountIdOrName(accountIdOrName);
@@ -1561,18 +1563,19 @@ class WalletAPI {
 
 	/**
 	 * Lists all committee_members registered in the blockchain.
-	 * This returns a list of all account names that own committee_members, and the associated committee_member id,
+	 * This returns a list of all account names that own committee_members, and the associated `committee_member` id,
 	 * sorted by name. This lists committee_members whether they are currently voted in or not.
 	 * Use the `lowerbound` and limit parameters to page through the list. To retrieve all committee_members,
 	 * start by setting `lowerbound` to the empty string ``, and then each iteration, pass
-	 * the last committee_member name returned as the `lowerbound` for the next `list_committee_members()` call.
+	 * the last `committee_member` name returned as the `lowerbound` for the next `list_committee_members()` call.
 	 * @method listCommitteeMembers
-	 * @param {String} lowerBoundName [the name of the first committee_member to return. If the named committee_member
-	 * does not exist, the list will start at the committee_member that comes after `lowerbound`]
+	 * @param {String} lowerBoundName [the name of the first `committee_member` to return.
+	 * If the named `committee_member` does not exist, the list will start at the `committee_member`
+	 * that comes after `lowerbound`]
 	 * @param {Number} limit [limit the maximum number of committee_members to return (max: 1000)]
 	 *
-	 * @returns {Promise<[string, string][]>} a list of committee_members mapping committee_member names
-	 * to committee_member ids
+	 * @returns {Promise<[string, string][]>} a list of committee_members mapping `committee_member` names
+	 * to `committee_member` ids
 	 */
 	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
 		if (!limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
@@ -1585,22 +1588,22 @@ class WalletAPI {
 	}
 
 	/**
-	 * Vote for a given committee_member.
+	 * Vote for a given `committee_member`.
 	 * An account can publish a list of all committee_memberes they approve of. This command allows you to add or
 	 * remove committee_memberes from this list. Each account's vote is weighted according to the number of shares
 	 * of the core asset owned by that account at the time the votes are tallied.
 	 *
-	 * @note you cannot vote against a committee_member, you can only vote for the committee_member
-	 * or not vote for the committee_member.
+	 * @note you cannot vote against a `committee_member`, you can only vote for the `committee_member`
+	 * or not vote for the `committee_member`.
 	 *
 	 * @method voteForCommitteeMember
 	 * @param {String} votingAccountIdOrName [the name or id of the account who is voting with their shares]
-	 * @param {String} ownerOfCommitteeMember [the name or id of the committee_member' owner account]
-	 * @param {Boolean} approveYourVote [true if you wish to vote in favor of that committee_member,
-	 * false to remove your vote in favor of that committee_member]
+	 * @param {String} ownerOfCommitteeMember [the name or id of the `committee_member` owner account]
+	 * @param {Boolean} approveYourVote [true if you wish to vote in favor of that `committee_member`,
+	 * false to remove your vote in favor of that `committee_member`]
 	 * @param {Boolean} shouldDoBroadcastToNetwork [true if you wish to broadcast the transaction]
 	 *
-	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given committee_member
+	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given `committee_member`
 	 */
 	voteForCommitteeMember(votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork) {
 		isAccountIdOrName(votingAccountIdOrName);
@@ -1744,9 +1747,8 @@ class WalletAPI {
 
 	/**
 	 * Returns the block chain's slowly-changing settings.
-	 * This object contains all of the properties of the blockchain that are fixed
-	 * or that change only once per maintenance interval (daily) such as the
-	 * current list of committee_members, block interval, etc.
+	 * This object contains all of the properties of the blockchain that are fixed or that change only once
+	 * per maintenance interval (daily) such as the current list of committee_members, block interval, etc.
 	 *
 	 * @see `get_dynamic_global_properties()` for frequently changing properties
 	 *
@@ -1775,10 +1777,9 @@ class WalletAPI {
 
 	/**
 	 * Returns the blockchain object corresponding to the given id.
-	 * This generic function can be used to retrieve any object from the blockchain
-	 * that is assigned an ID. Certain types of objects have specialized convenience
-	 * functions to return their objects -- e.g., assets have `get_asset()`, accounts
-	 * have `get_account()`, but this function will work for any object.
+	 * This generic function can be used to retrieve any object from the blockchain that is assigned an ID.
+	 * Certain types of objects have specialized convenience functions to return their objects -- e.g.,
+	 * assets have `get_asset()`, accounts have `get_account()`, but this function will work for any object.
 	 * @method getObject
 	 * @param {String} objectId [the id of the object to return]
 	 *
@@ -1889,8 +1890,6 @@ class WalletAPI {
 	 * Create a proposal containing the operations in a transaction builder (create a new `proposal_create` operation,
 	 * then replace the transaction builder with the new operation), then sign the transaction and optionally broadcast
 	 * to the network.
-	 * Note: this command is buggy because unable to specify proposer. It will be deprecated in a future release.
-	 * Please use `propose_builder_transaction2()` instead.
 	 * @method proposeBuilderTransaction
 	 * @param {Number} transactionTypeHandle [handle of the transaction builder]
 	 * @param {String} expirationTime [when the proposal will expire]

@@ -594,7 +594,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe.only('#transfer()', () => {
+	describe('#transfer()', () => {
 		it('should do transfer an amount from one account to another', async () => {
 			const amount = '1';
 			const toAccountId = '1.2.1';
@@ -614,7 +614,7 @@ describe('WALLET API', () => {
 
 	describe('#transfer2()', () => {
 		it('should do transfer an amount from one account to another', async () => {
-			const amount = '1.00';
+			const amount = '1';
 			const toAccountId = '1.2.2';
 			const result = await echo.walletApi.transfer2(
 				accountId,
@@ -1711,7 +1711,7 @@ describe('WALLET API', () => {
 
 		describe('#getPrototypeOperation()', () => {
 			it('should returns an uninitialized object representing a given blockchain operation', async () => {
-				const operationType = 'sjg';
+				const operationType = 'transfer_operation';
 				const result = await echo.walletApi.getPrototypeOperation(operationType);
 				expect(result)
 					.to
