@@ -5,6 +5,10 @@ import { Contract } from '../../';
 import { ok, strictEqual } from 'assert';
 import { url, privateKey, accountId } from '../_test-data';
 import { abi, bytecode as code } from '../operations/_contract.test';
+
+
+import { inspect } from "util";
+
 /**
  * @param {string} id
  * @returns {boolean}
@@ -22,17 +26,18 @@ describe('deploy', () => {
 		await echo.connect(url)
 	});
 
-	it('successful (without abi)', async () => {
-		const res = await Contract.deploy(code, privateKey,  { echo, accountId });
-		strictEqual(typeof res, 'string', 'invalid result type');
-		ok(isContractId(res), 'invalid result format');
-	}).timeout(10e3);
-
-	it('successful (with abi)', async () => {
-		/** @type {Contract} */
-		const res = await Contract.deploy(code, privateKey, { echo, abi, accountId });
-		ok(res instanceof Contract, 'expected result to be Contract class instance');
-		ok(isContractId(res.address), 'invalid contract address format');
+	it('successful', async () => {
+		try {
+			const res = await new Contract(abi, { registrar: accountId, echo }).deploy(code).send(privateKey);
+			console.log(inspect(res, false, null, true));
+			// /** @type {Contract} */
+			// const res = await Contract.deploy(code, privateKey, { echo, abi, accountId });
+			ok(res instanceof Contract, 'expected result to be Contract class instance');
+			ok(isContractId(res.address), 'invalid contract address format');
+		} catch (err) {
+			console.error(inspect(err, false, null, true));
+			throw err;
+		}
 	}).timeout(10e3);
 
 	it('value is BigNumber', async () => {

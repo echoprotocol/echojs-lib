@@ -21,8 +21,8 @@ type OperationOptions<T extends MethodType> = {
 } : never);
 
 type RawOperation<T extends MethodType> =
-	T extends MethodType.CREATE ? typeof contract.create['__TOutput__'] :
-	T extends MethodType.CALL ? typeof contract.call['__TOutput__'] :
+	T extends MethodType.CREATE ? [OPERATIONS_IDS.CONTRACT_CREATE, typeof contract.create['__TOutput__']] :
+	T extends MethodType.CALL ? [OPERATIONS_IDS.CONTRACT_CALL, typeof contract.call['__TOutput__']] :
 	never;
 
 type OperationId<T extends MethodType> = {
@@ -43,7 +43,7 @@ declare abstract class Method<T extends MethodType> {
 }
 
 export class CallMethod extends Method<MethodType.CALL> {
-	call(options?: OperationOptions<MethodType.CALL> & OptionsWithEcho): Promise<unknown>;
+	call(options?: { contractId?: string, registrar?: string, assetId?: string }): Promise<unknown>;
 }
 
 export class DeployMethod extends Method<MethodType.CREATE> { }

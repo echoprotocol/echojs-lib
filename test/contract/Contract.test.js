@@ -45,18 +45,18 @@ describe('Contract', () => {
 		});
 		it('echo is not a instance of Echo', () => {
 			const func = () => new Contract([], { echo: 'not_a_Echo_instance' });
-			expect(func).to.throw(Error, 'value is not a instance of Echo');
+			expect(func).to.throw(Error, 'echo is not a instance of Echo');
 		});
 		// it('function without a name', () => {
 		// 	/** @type {Abi} */
 		// 	const abi = [{ ...defaultAbiMethod, name: undefined }];
 		// 	expect(() => new Contract(abi)).to.throw(Error, 'abi method name is not a string');
 		// });
-		it('type not equals to "function"', () => {
-			/** @type {Abi} */
-			const abi = [{ ...defaultAbiMethod, type: 'not_a_function' }];
-			deepStrictEqual(new Contract(abi).methods, {});
-		});
+		// it('type not equals to "function"', () => {
+		// 	/** @type {Abi} */
+		// 	const abi = [{ ...defaultAbiMethod, type: 'not_a_function' }];
+		// 	deepStrictEqual(new Contract(abi).methods, {});
+		// });
 		it('successful', () => {
 			/** @type {Abi} */
 			const abi = [{

@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js';
 
 import { ECHO_ASSET_ID, OPERATIONS_IDS } from '../constants';
 import { contract as contractOperations } from '../serializers/protocol';
+import { assetId, contractId as contractId, accountId } from '../serializers/chain/id/protocol';
+import { operation } from '../serializers';
 
 /** @typedef {import("../crypto/private-key").default} PrivateKey */
 /** @typedef {import("../echo").default} Echo */
@@ -37,8 +39,14 @@ import { contract as contractOperations } from '../serializers/protocol';
  */
 
 /**
+ * @typedef {Object} _RawOperation
+ * @property {[typeof OPERATIONS_IDS['CONTRACT_CREATE'], typeof contractOperations['create']['__TInput__']]} create
+ * @property {[typeof OPERATIONS_IDS['CONTRACT_CALL'], typeof contractOperations['call']['__TInput__']]} call
+ */
+
+/**
  * @template {MethodType} T
- * @typedef {typeof contractOperations[T]['__TInput__']} RawOperation
+ * @typedef {T extends any ? _RawOperation[T] : never} RawOperation
  */
 
 /** @typedef {{ echo?: Echo }} OptionsWithEcho */
@@ -94,37 +102,38 @@ class Method {
 	 * @returns {RawOperation<T>}
 	 */
 	toOperation(options = {}) {
-		const fee = options.fee === undefined ? { amount: 0, assetId: ECHO_ASSET_ID } : {
-			amount: options.fee.amount || 0,
-			assetId: options.fee.assetId === undefined ? ECHO_ASSET_ID : options.fee.assetId,
+		/** @type {{ amount: UInt64Serializer['__TInput__'], asset_id: string } | undefined} */
+		const fee = options.fee === undefined ? undefined : {
+			amount: options.fee.amount === undefined ? undefined : options.fee.amount,
+			asset_id: options.fee.assetId === undefined ? ECHO_ASSET_ID : options.fee.assetId,
 		};
 		const registrar = options.registrar !== undefined ? options.registrar : this.contract.registrarId;
-		let value = options.value === undefined ? { amount: 0, assetId: ECHO_ASSET_ID } : options.value;
+		let value = options.value === undefined ? { amount: 0, asset_id: ECHO_ASSET_ID } : options.value;
 		if (typeof value !== 'object' || value instanceof BigNumber) {
-			value = { amount: value, assetId: ECHO_ASSET_ID };
+			value = { amount: value, asset_id: ECHO_ASSET_ID };
 		}
-		return contractOperations[this._type].toRaw({
+		return operation.toRaw([this.operationId, {
 			...options,
 			fee,
 			registrar,
 			value,
-		});
+			code: this.code.toString('hex'),
+		}], true);
 	}
 
 	/**
 	 * @param {Transaction} tx
 	 * @param {OperationOptions<T>} [options]
 	 */
-	addToTransaction(tx, options) { tx.addOperation(this.operationId, this.toOperation(options)); }
+	addToTransaction(tx, options) { tx.addOperation(...this.toOperation(options)); }
 
 	/**
 	 * @param {OperationOptions<T> & OptionsWithEcho} [options]
 	 * @returns {Transaction}
 	 */
 	buildTransaction(options = {}) {
-		const echo = options.echo === undefined ? this.contract.echo : options.echo;
-		if (!echo) throw new Error('echo instance is not provided');
-		return echo.createTransaction().addOperation(this.toOperation(options));
+		const echo = options.echo === undefined ? this.contract.getEcho() : options.echo;
+		return echo.createTransaction().addOperation(...this.toOperation(options));
 	}
 
 	/**
@@ -134,6 +143,73 @@ class Method {
 	 */
 	async send(privateKey, options) {
 		const result = await this.buildTransaction(options).addSigner(privateKey).broadcast();
+		return result;
+	}
+
+}
+
+/** @extends {Method<'create'>} */
+export class DeployMethod extends Method {
+
+	/**
+	 * @param {Buffer} code
+	 * @param {Contract} contract
+	 */
+	constructor(code, contract) { super(code, contract, 'create'); }
+
+	/**
+	 * @param {OperationOptions<'create'>} [options]
+	 * @returns {RawOperation<'create>'}
+	 */
+	toOperation(options = {}) {
+		const ethAccuracy = options.ethAccuracy === undefined ? false : options.ethAccuracy;
+		if (typeof ethAccuracy !== 'boolean') throw new Error('field "ethAccuracy" is not a boolean');
+		/** @type {string | undefined} */
+		const supportedAssetId = options.supportedAssetId === undefined
+			? undefined : assetId.toRaw(options.supportedAssetId);
+		return super.toOperation({
+			...options,
+			eth_accuracy: ethAccuracy,
+			supported_asset_id: supportedAssetId,
+		});
+	}
+
+}
+
+/** @extends {Method<'call'>} */
+export class CallMethod extends Method {
+
+	/**
+	 * @param {Buffer} code
+	 * @param {Contract} contract
+	 */
+	constructor(code, contract) { super(code, contract, 'call'); }
+
+	/**
+	 * @param {OperationOptions<'call'>} [options]
+	 * @returns {RawOperation<'call'>}
+	 */
+	toOperation(options = {}) {
+		const callee = contractId.toRaw(options.callee === undefined ? this.contract.getId() : options.callee);
+		return super.toRaw({
+			...options,
+			callee,
+		});
+	}
+
+	/**
+	 * @param {{ contractId?: string, registrar?: string, assetId?: string }} [options]
+	 * @returns {Promise<unknown>}
+	 */
+	async call(options = {}) {
+		const echo = options.echo === undefined ? this.contract.getEcho() : options.echo;
+		const _contractId = contractId.toRaw(options.contractId === undefined
+			? this.contract.getId() : options.contractId);
+		const registrar = accountId.toRaw(options.registrar === undefined
+			? this.contract.getRegistrar() : options.registrar);
+		const _assetId = assetId.toRaw(options.assetId === undefined ? ECHO_ASSET_ID : options.assetId);
+		const codeHex = this.code.toString('hex');
+		const result = await echo.api.callContractNoChangingState(_contractId, registrar, _assetId, codeHex);
 		return result;
 	}
 
