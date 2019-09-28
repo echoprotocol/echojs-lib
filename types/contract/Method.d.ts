@@ -6,6 +6,7 @@ import { uint64 } from "../serializers/basic/integers";
 import { asset } from "../serializers/chain";
 import { contract } from "../serializers/protocol";
 import Contract from "./Contract";
+import ContractTransaction from "./ContractTransaction";
 
 declare enum MethodType { CREATE = 'create', CALL = 'call' }
 
@@ -37,8 +38,13 @@ declare abstract class Method<T extends MethodType> {
 	readonly contract: Contract;
 	readonly operationId: OperationId<T>;
 	toOperation(options?: OperationOptions<T>): RawOperation<T>;
-	addToTransaction(tx: Transaction, options?: OperationOptions<T>): Transaction;
-	buildTransaction(options?: OperationOptions<T> & OptionsWithEcho): Transaction;
+
+	addToTransaction<TRANSACTION_TYPE extends Transaction>(
+		tx: TRANSACTION_TYPE,
+		options?: OperationOptions<T>,
+	): TRANSACTION_TYPE;
+
+	buildTransaction(options?: OperationOptions<T> & OptionsWithEcho): ContractTransaction;
 	send(privateKey: PrivateKey, options?: OperationOptions<T> & OptionsWithEcho): unknown;
 }
 

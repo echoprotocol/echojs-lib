@@ -1,8 +1,3 @@
-import SolType from "./_SolType";
+interface IInput { value: any; type: string }
 
-interface IInput {
-	value: any;
-	type: SolType;
-}
-
-export default function encode(input: IInput | Array<IInput>): string;
+export default function encode(input: IInput | IInput[]): string;

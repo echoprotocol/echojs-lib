@@ -28,18 +28,18 @@ interface BroadcastingResult {
 	},
 }
 
-export default class Transaction {
+export default class Transaction<BROADCASTING_RESULT extends any = [BroadcastingResult]> {
 	readonly transactionObject: any;
 
 	addOperation<T extends OperationId>(
 		operationId: T,
 		props?: TOperationInput<T, true>[1],
-	): Transaction;
+	): Transaction<BROADCASTING_RESULT>;
 
-	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction;
+	addSigner(privateKey: PrivateKey | Buffer, publicKey?: PublicKey): Transaction<BROADCASTING_RESULT>;
 	getPotentialSignatures(): Promise<{publicKeys:Array<string>}>;
 	sign(privateKey?: PrivateKey): Promise<void>;
-	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
+	broadcast(wasBroadcastedCallback?: () => any): Promise<BROADCASTING_RESULT>;
 	setRequiredFees(assetId: string): Promise<void>;
 	serialize(): Buffer;
 }

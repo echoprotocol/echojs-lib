@@ -142,7 +142,6 @@ class Transaction {
 	async setRequiredFees(assetId = ECHO_ASSET_ID) {
 		this.checkNotFinalized();
 		const operationTypes = this._operations;
-		console.log(operationTypes);
 		if (operationTypes.length === 0) throw new Error('no operations');
 		/** @type Map<string,Array<_Operation>> */
 		const operationsByNotDefaultFee = new Map();
@@ -164,9 +163,7 @@ class Transaction {
 		await Promise.all([
 			(async () => {
 				if (defaultAssetOperations.length === 0) return;
-				console.log(defaultAssetOperations);
 				const fees = await this.api.getRequiredFees(defaultAssetOperations);
-				console.log(fees);
 				for (let opIndex = 0; opIndex < fees.length; opIndex += 1) {
 					let fee = fees[opIndex];
 					if (fee.fee) {

@@ -1,15 +1,16 @@
 import BigNumber from 'bignumber.js';
 
 import { ECHO_ASSET_ID, OPERATIONS_IDS } from '../constants';
-import { contract as contractOperations } from '../serializers/protocol';
-import { assetId, contractId as contractId, accountId } from '../serializers/chain/id/protocol';
+import { assetId, accountId, contractId } from '../serializers/chain/id/protocol';
 import { operation } from '../serializers';
+import ContractTransaction from './ContractTransaction';
 
 /** @typedef {import("../crypto/private-key").default} PrivateKey */
 /** @typedef {import("../echo").default} Echo */
 /** @typedef {import("../echo/transaction").default} Transaction */
 /** @typedef {import("../serializers/basic/integers").UInt64Serializer} UInt64Serializer */
 /** @typedef {import("./Contract").default} Contract */
+/** @typedef {import("./ContractResult").default} Result */
 
 /** @typedef {'create' | 'call'} MethodType */
 
@@ -112,13 +113,19 @@ class Method {
 		if (typeof value !== 'object' || value instanceof BigNumber) {
 			value = { amount: value, asset_id: ECHO_ASSET_ID };
 		}
-		return operation.toRaw([this.operationId, {
+		const result = operation.toRaw([this.operationId, {
 			...options,
 			fee,
 			registrar,
 			value,
 			code: this.code.toString('hex'),
 		}], true);
+		if (options.fee === undefined) delete result[1].fee;
+		else {
+			if (options.fee.amount === undefined) delete result[1].fee.amount;
+			if (options.fee.assetId === undefined) delete result[1].fee.asset_id;
+		}
+		return result;
 	}
 
 	/**
@@ -129,17 +136,18 @@ class Method {
 
 	/**
 	 * @param {OperationOptions<T> & OptionsWithEcho} [options]
-	 * @returns {Transaction}
+	 * @returns {ContractTransaction}
 	 */
 	buildTransaction(options = {}) {
 		const echo = options.echo === undefined ? this.contract.getEcho() : options.echo;
-		return echo.createTransaction().addOperation(...this.toOperation(options));
+		const result = new ContractTransaction(echo.api, this);
+		return result.addOperation(...this.toOperation(options));
 	}
 
 	/**
 	 * @param {PrivateKey} privateKey
 	 * @param {OperationOptions<T> & OptionsWithEcho} options
-	 * @returns {Promise<unknown>}
+	 * @returns {Promise<Result>}
 	 */
 	async send(privateKey, options) {
 		const result = await this.buildTransaction(options).addSigner(privateKey).broadcast();
