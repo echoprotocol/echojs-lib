@@ -25,7 +25,7 @@ services:
     image: echoprotocol/echo-wallet:0.11.0-rc.1
     command:
       -s ws://echo:6311/ws
-      --chain-id="d7cb7ba00f870aa0a2388548e82e88bae4be5494b6aff057b814e6db2590e8aa"
+      --chain-id="0b2736102239b3f83fd8a23d1d78265b3a7127ab01cb489b249ea0566f0b6005"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
       -r 0.0.0.0:8888

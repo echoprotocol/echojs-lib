@@ -47,7 +47,7 @@ describe('account create operation', () => {
 				extensions: [],
 			})
 			.addSigner(privateKey).broadcast();
-
+			
 		ok(result instanceof Array);
 		ok(!!result[0].id);
 
