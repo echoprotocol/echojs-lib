@@ -2421,6 +2421,17 @@ class API {
 		return this.wsApi.database.getBlockVirtualOperations(blockNum);
 	}
 
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getFrozenBalances(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this.wsApi.database.getFrozenBalances(accountId);
+	}
+
 	setOptions() { }
 
 }
