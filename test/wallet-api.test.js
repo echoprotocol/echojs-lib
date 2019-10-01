@@ -1231,8 +1231,8 @@ describe('WALLET API', () => {
 	// 		}
 	// 	}).timeout(5000);
 	// });
-
-	describe('#floodNetwork()', () => {
+	//TODO: rm floodNetwork method
+	describe.skip('#floodNetwork()', () => {
 		it('What Should this do?', async () => {
 			try {
 				const prefix = 'prefix';

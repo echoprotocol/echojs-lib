@@ -29,7 +29,7 @@ describe('create proposal', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'static variant with key 13',
+			'static variant with key 12',
 			'struct key "proposed_ops"',
 			'vector element with index 0',
 			'value is not an array',
@@ -66,7 +66,7 @@ describe('create proposal', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessagePrefix = [
-			'static variant with key 13',
+			'static variant with key 12',
 			'struct key "proposed_ops"',
 			'vector element with index 0',
 			'static variant with key 0',
