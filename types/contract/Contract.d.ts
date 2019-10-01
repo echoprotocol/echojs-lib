@@ -1,8 +1,10 @@
 import BigNumber from "bignumber.js";
+
 import PrivateKey from "../crypto/private-key";
 import Echo from "../echo";
 import { Abi } from "../interfaces/Abi";
 import ContractResult from "./ContractResult";
+import { Method } from "./Method";
 
 export default class Contract<TDeployArgs = Array<any>> {
 

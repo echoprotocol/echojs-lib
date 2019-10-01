@@ -16,7 +16,7 @@ import Config from '../interfaces/Config';
 import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
 import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
-import { ContractResult } from '../interfaces/ContractResult';
+import ContractResult from '../interfaces/ContractResult';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 
