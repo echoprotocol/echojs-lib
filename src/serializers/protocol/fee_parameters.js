@@ -11,7 +11,6 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: struct({ basic_fee: uint64, premium_fee: uint64, price_per_kbyte: uint32 }),
 	[OPERATIONS_IDS.ACCOUNT_UPDATE]: struct({ fee: int64, price_per_kbyte: uint32 }),
 	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: struct({ fee: int64 }),
-	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ASSET_CREATE]: struct({
 		symbol3: uint64,
 		symbol4: uint64,
@@ -34,6 +33,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: struct({}),
+	[OPERATIONS_IDS.BALANCE_FREEZE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,

@@ -8,7 +8,7 @@
 		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
-		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
+		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",		
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",

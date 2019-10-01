@@ -2,7 +2,7 @@ version: "2"
 
 services:
   echo:
-    image: echoprotocol/echo:v0.9.0-rc.1
+    image: echoprotocol/echo:0.11.0-rc.1
     command:
       --start-echorand
       --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
@@ -22,10 +22,10 @@ services:
       - ./access.json:/echo/access.json
 
   echo-wallet:
-    image: echoprotocol/echo-wallet:v0.9.0-rc.1
+    image: echoprotocol/echo-wallet:0.11.0-rc.1
     command:
       -s ws://echo:6311/ws
-      --chain-id="185b13385eeba45f7805738c476c0e8ca9b90b9d0dc92ce1c737a6ada53d006a"
+      --chain-id="d7cb7ba00f870aa0a2388548e82e88bae4be5494b6aff057b814e6db2590e8aa"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
       -r 0.0.0.0:8888

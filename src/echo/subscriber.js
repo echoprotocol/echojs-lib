@@ -437,7 +437,7 @@ class Subscriber extends EventEmitter {
 
 		if (isContractHistoryId(object.id)) {
 			this._notifyContractSubscribers(obj);
-			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
+			this._api.getFullContract(object.owner, true).catch(handleConnectionClosedError);
 		}
 
 		return null;
