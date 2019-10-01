@@ -131,6 +131,7 @@ import { PublicKey } from '../crypto';
 * 	 			accounts_per_fee_scale:Number,
 * 	 			account_fee_scale_bitshifts:Number,
 * 	 			max_authority_depth:Number,
+*				frozen_balances_multipliers:Array,
 * 	 			echorand_config:{
 * 	 				_time_net_1mb:Number,
 * 	 				_time_net_256b:Number,

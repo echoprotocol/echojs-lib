@@ -2,6 +2,7 @@ import feeScheduleSerializer from './fee_schedule';
 import { uint8, uint32, uint16, uint64 } from '../basic/integers';
 import { extensions } from '../chain';
 import { StructSerializer } from '../collections';
+import { MapSerializer } from '../collections';
 import { echorand, sidechain } from '../plugins';
 
 declare const chainParametersSerializer: StructSerializer<{
@@ -25,6 +26,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	accounts_per_fee_scale: typeof uint16,
 	account_fee_scale_bitshifts: typeof uint8,
 	max_authority_depth: typeof uint8,
+	frozen_balances_multipliers: MapSerializer<typeof uint16, typeof uint32>,
 	echorand_config: typeof echorand.config,
 	sidechain_config: typeof sidechain.config,
 	erc20_config: typeof sidechain.erc20Config,
