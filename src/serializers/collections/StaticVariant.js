@@ -42,7 +42,7 @@ export default class StaticVariantSerializer extends ISerializer {
 	get serializers() { return { ...this._serializers }; }
 
 	/** @param {Readonly<T>} serializers */
-	constructor(serializers) {		
+	constructor(serializers) {
 		super();
 		if (!serializers || typeof serializers !== 'object') throw new Error('types variable is not an object');
 		for (const key in serializers) {
