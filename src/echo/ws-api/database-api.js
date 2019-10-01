@@ -613,6 +613,16 @@ class DatabaseAPI {
 		return this.db.exec('get_block_virtual_ops', [blockNum]);
 	}
 
+	/**
+	 *  @method getFrozenBalances
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise}
+	 */
+	getFrozenBalances(accountId) {
+		return this.db.exec('get_frozen_balances', [accountId]);
+	}
+
 }
 
 export default DatabaseAPI;

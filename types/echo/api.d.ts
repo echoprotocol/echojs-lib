@@ -61,6 +61,7 @@ export default class Api {
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
+	getFrozenBalances(accountId: string): Promise<any>;
 	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
 	getFullContract(contractId: string, force?: boolean): Promise<Object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
