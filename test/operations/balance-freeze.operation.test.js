@@ -18,7 +18,7 @@ describe('balance freeze operation', () => {
 
 	describe('when the balance freeze operation is broadcast', () => {
 
-		it('should not rejects', async () => {
+		it('should not rejects and returns correct value', async () => {
 
 			const duration = 90;
 			const transaction = echo.createTransaction();			
