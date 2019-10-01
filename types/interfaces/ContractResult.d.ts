@@ -1,4 +1,5 @@
-export { ContractResult };
+export default ContractResult;
+
 type ContractResult = [number, {
 	exec_res: {
 		excepted: 'None' | unknown,
