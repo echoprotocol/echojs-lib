@@ -24,7 +24,7 @@ jobs:
         - docker
       before_install:
         - docker pull echoprotocol/echo:v0.8.2
-        - docker pull echoprotocol/echo-wallet:v0.9.0-rc.1
+        - docker pull echoprotocol/echo-wallet:0.11.0-rc.1
         - docker-compose -f ./.test/docker-compose.yml up -d
       script:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
