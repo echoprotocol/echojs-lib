@@ -2009,6 +2009,70 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
+	describe('#listFrozenBalances()', () => {
+		it('should return list of frozen balances', async () => {
+			try {
+				const result = await echo.walletApi.listFrozenBalances(accountId);
+				expect(result)
+					.to
+					.be
+					.an('array').that.is.not.empty;
+				expect(result[0])
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[0].id)
+					.to
+					.be
+					.an('string').that.is.not.empty;
+				expect(result[0].owner)
+					.to
+					.be
+					.an('string');
+				expect(result[0].balance)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				expect(result[0].multiplier)
+					.to
+					.be
+					.an('number').that.is.not.empty;
+				expect(result[0].unfreeze_time)
+					.to
+					.be
+					.an('date').that.is.not.empty;
+				expect(result[0].extensions)
+					.to
+					.be
+					.an('array');	
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
+	describe('#freezeBalance()', () => {
+		it('should freeze balance', async () => {
+			try {
+				const amount = 1000;
+				const asset = '1.3.0';
+				const duration = 10000;
+				const isBroadcast = false;
+
+				const result = await echo.walletApi.freezeBalance(accountId, amount, asset, duration, isBroadcast);
+
+				expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;	
+			} catch (e) {
+				console.log(e);
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
 	// describe('#exit()', () => {
 	// 	it('should exit from wallet', async () => {
 	// 		try {

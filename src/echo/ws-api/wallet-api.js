@@ -1609,6 +1609,43 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_prototype_operation', [operationType]]);
 	}
 
+	/**
+	 * @method listFrozenBalances
+	 * @param {String} accountNameOrId
+	 * @returns {Promise<Array>}
+	 */
+	listFrozenBalances(accountNameOrId) {
+		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
+			throw new Error('Account name or id is invalid');
+		}
+
+		return this.wsRpc.call([0, 'list_frozen_balances', [accountNameOrId]]);
+	}
+
+	/**
+	 * @method transfer
+	 * @param {String} fromAccountNameOrId
+	 * @param {Number} amount
+	 * @param {String} assetIdOrName
+	 * @param {number} duration
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	freezeBalance(fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork) {
+		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
+			throw new Error('Accounts id or name should be string and valid');
+		}
+
+		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
+		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
+		if (!isUInt64(duration)) return Promise.reject(new Error('duration should be a non negative integer'));
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'freeze_balance',
+			[fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork],
+		]);
+	}
+
 }
 
 export default WalletAPI;
