@@ -24,6 +24,7 @@ services:
 
   echo-wallet:
     image: echoprotocol/echo-wallet:0.11.0-rc.1
+    container_name: echo-wallet
     network_mode: host
     command:
       -s ws://127.0.0.1:6311
