@@ -117,6 +117,19 @@ export default class MapSerializer extends ISerializer {
 				throw new Error(`value of map at element with index ${i}: ${error}`);
 			}
 		}
+
+		raw.sort((mapItemOne, mapItemTwo) => {
+			const [keyA] = mapItemOne;
+			const [keyB] = mapItemTwo;
+
+			const keyAhex = this.keySerializer.serialize(keyA).toString('hex');
+			const keyBhex = this.keySerializer.serialize(keyB).toString('hex');
+
+			if (keyAhex < keyBhex) return -1;
+			if (keyAhex > keyBhex) return 1;
+			return 0;
+		});
+
 		return raw;
 	}
 
