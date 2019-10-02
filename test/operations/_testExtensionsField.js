@@ -29,7 +29,7 @@ export default function testExtensionsField(echo, operationId, getProps) {
 				deepStrictEqual(extensions, []);
 			});
 
-			it('broadcasting should succeed', async () => await transaction.broadcast()).timeout(7e3);
+			it('broadcasting should succeed', async () => await transaction.broadcast()).timeout(15e3);
 		});
 	}
 
