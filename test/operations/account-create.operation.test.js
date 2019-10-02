@@ -52,6 +52,6 @@ describe('account create operation', () => {
 		ok(result instanceof Array);
 		ok(!!result[0].id);
 
-	}).timeout(7e3);
+	}).timeout(15e3);
 
 });
