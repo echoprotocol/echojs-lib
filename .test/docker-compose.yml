@@ -25,12 +25,12 @@ services:
     image: echoprotocol/echo-wallet:0.11.0-rc.1
     command:
       -s ws://echo:6311/ws
-      --chain-id="09e0096fff38e186cf5364a595d98801df9736be20a95c67ededaadc1241a425"
+      --chain-id="de2c5563b93b6c45286b8380b617ea81669e2bc11036ac83a695be52834d2136"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
-      -r 0.0.0.0:8888
+      -r 0.0.0.0:6312
     ports:
-      - 8888:8888
+      - 6312:6312
     tty: true
     links:
       - echo
