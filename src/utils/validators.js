@@ -48,6 +48,7 @@ const proposalIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.P
 const operationHistoryIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY);
 const vestingBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.VESTING_BALANCE);
 const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BALANCE);
+const frozenBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE);
 const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
 
@@ -136,6 +137,7 @@ export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
 export const isOperationHistoryId = (v) => isString(v) && operationHistoryIdRegex.test(v);
 export const isVestingBalanceId = (v) => isString(v) && vestingBalanceIdRegex.test(v);
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
+export const isFrozenBalanceId = (v) => isString(v) && frozenBalanceIdRegex.test(v);
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 

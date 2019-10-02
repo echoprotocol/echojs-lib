@@ -502,13 +502,11 @@ class DatabaseAPI {
 	 *
 	 *  @param  {Function} callback
 	 *  @param  {String} contractId
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
 	 *
 	 *  @return {Promise}
 	 */
-	subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractId, fromBlock, toBlock]);
+	subscribeContractLogs(callback, contractId) {
+		return this.db.exec('subscribe_contract_logs', [callback, contractId]);
 	}
 
 	/**
