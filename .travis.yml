@@ -23,6 +23,7 @@ jobs:
       services:
         - docker
       before_install:
+        - cat ./.test/docker-compose.yml
         - docker-compose -f ./.test/docker-compose.yml up -d
         - docker ps
       script:
