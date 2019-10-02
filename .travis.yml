@@ -2,15 +2,6 @@ language: node_js
 node_js:
   - "10"
 
-env:
-  - DOCKER_COMPOSE_VERSION=1.4.2
-
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-
 stages:
   - audit
   - test
@@ -31,8 +22,8 @@ jobs:
       services:
         - docker
       before_install:
-        - cat ./.test/docker-compose.yml
-        - docker-compose -f ./.test/docker-compose.yml up -d
+        - docker-compose -f ./.test/docker-compose.yml up echo -d
+        - docker-compose -f ./.test/docker-compose.yml up echo-wallet -d
         - docker ps
       script:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
