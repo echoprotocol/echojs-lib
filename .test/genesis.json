@@ -51,7 +51,6 @@
 				[43, { "fee": 200 }]
 			]
 		},
-		"block_interval": 5,
 		"maintenance_interval": 86400,
 		"maintenance_duration_seconds": 10,
 		"committee_proposal_review_period": 3600,
