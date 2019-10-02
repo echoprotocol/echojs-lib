@@ -24,6 +24,7 @@ services:
 
   echo-wallet:
     image: echoprotocol/echo-wallet:0.11.0-rc.1
+    network_mode: host
     command:
       -s ws://127.0.0.1:6311
       --chain-id="de2c5563b93b6c45286b8380b617ea81669e2bc11036ac83a695be52834d2136"
