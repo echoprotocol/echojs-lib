@@ -16,7 +16,7 @@ describe('checkERC20Token', () => {
 		/** @type {string} */
 		let contractId;
 		before(async function () {
-			this.timeout(10e3);
+			this.timeout(15e3);
 			const tx = echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 				registrar: accountId,
 				value: { asset_id: constants.CORE_ASSET_ID, amount: 0 },
