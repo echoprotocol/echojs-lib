@@ -1,13 +1,10 @@
-import { strictEqual, ok } from 'assert';
+import { ok } from 'assert';
 
-import { Echo, constants, serializers } from '../../';
+import { Echo, constants } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
-import testExtensionsField from './_testExtensionsField';
 
-import { ACCOUNT, ASSET} from '../../src/constants/object-types';
-import { operation } from '../../src/serializers';
+import { ASSET} from '../../src/constants/object-types';
 
-const { OPERATIONS_IDS } = constants;
 const echo = new Echo();
 
 describe('balance freeze operation', () => {
