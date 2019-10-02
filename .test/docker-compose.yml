@@ -35,5 +35,3 @@ services:
     ports:
       - 6312:6312
     tty: true
-    links:
-      - echo
