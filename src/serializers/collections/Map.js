@@ -125,6 +125,10 @@ export default class MapSerializer extends ISerializer {
 			const keyAhex = this.keySerializer.serialize(keyA).toString('hex');
 			const keyBhex = this.keySerializer.serialize(keyB).toString('hex');
 
+			if (keyAhex.length < keyBhex.length || keyAhex.length > keyBhex.length) {
+				throw new Error('public keys are different in lengths');
+			}
+
 			if (keyAhex < keyBhex) return -1;
 			if (keyAhex > keyBhex) return 1;
 			return 0;
