@@ -12,7 +12,7 @@ describe('checkERC20Token', () => {
 			await echo.api.checkERC20Token('invalid contract id format');
 		}, 'invalid contract id format');
 	});
-	describe('when contract with provided id is not a ERC20 token', () => {
+	describe('when contract with provided id is not a ERC20 token.', () => {
 		/** @type {string} */
 		let contractId;
 		before(async function () {
