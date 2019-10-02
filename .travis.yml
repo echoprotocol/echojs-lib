@@ -10,12 +10,12 @@ stages:
 
 jobs:
   include:
-#    - stage: audit
-#      if: tag IS blank
-#      name: "Test lint and audit"
-#      script:
-#        - npm run lint
-#        - audit-ci --moderate
+    - stage: audit
+      if: tag IS blank
+      name: "Test lint and audit"
+      script:
+        - npm run lint
+        - audit-ci --moderate
     - stage: test
       if: type = pull_request
       name: "Run unit testing"
@@ -23,8 +23,6 @@ jobs:
         - docker
       before_install:
         - docker-compose -f ./.test/docker-compose.yml up -d
-        - docker logs echo-wallet
-        - docker ps
       script:
         - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm test; fi'
     - stage: deploy
