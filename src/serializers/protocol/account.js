@@ -10,6 +10,7 @@ export const accountOptionsSerializer = struct({
 	voting_account: accountId,
 	delegating_account: accountId,
 	num_committee: uint16,
+	delegate_share: uint16,
 	votes: set(new VoteIdSerializer()),
 	extensions,
 });

@@ -51,7 +51,7 @@ describe('create contract', () => {
 		// // 	await echo.api.callContractNoChangingState(contractId, accountId, ECHO_ASSET_ID, 'b6854a21'),
 		// // 	options.startValue,
 		// // );
-	}).timeout(7e3);
+	}).timeout(15e3);
 
 });
 

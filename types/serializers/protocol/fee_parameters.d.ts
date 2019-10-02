@@ -18,8 +18,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 		price_per_kbyte: typeof uint32,
 	}>,
 	[OperationId.ACCOUNT_UPDATE]: StructSerializer<{ fee: typeof int64, price_per_kbyte: typeof uint32 }>,
-	[OperationId.ACCOUNT_WHITELIST]: StructSerializer<{ fee: typeof int64 }>,
-	[OperationId.ACCOUNT_TRANSFER]: typeof defaultFeeParametersSerializer,
+	[OperationId.ACCOUNT_WHITELIST]: StructSerializer<{ fee: typeof int64 }>,	
 	[OperationId.ASSET_CREATE]: StructSerializer<{
 		symbol3: typeof uint64,
 		symbol4: typeof uint64,
@@ -42,6 +41,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.BALANCE_CLAIM]: StructSerializer<{}>,
+	[OperationId.BALANCE_FREEZE]: StructSerializer<{}>,
 	[OperationId.OVERRIDE_TRANSFER]: typeof defaultFeeParametersSerializer,
 	[OperationId.ASSET_CLAIM_FEES]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_CREATE]: typeof defaultFeeParametersSerializer,

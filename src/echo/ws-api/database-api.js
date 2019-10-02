@@ -502,13 +502,11 @@ class DatabaseAPI {
 	 *
 	 *  @param  {Function} callback
 	 *  @param  {String} contractId
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
 	 *
 	 *  @return {Promise}
 	 */
-	subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractId, fromBlock, toBlock]);
+	subscribeContractLogs(callback, contractId) {
+		return this.db.exec('subscribe_contract_logs', [callback, contractId]);
 	}
 
 	/**
@@ -611,6 +609,16 @@ class DatabaseAPI {
 	 */
 	getBlockVirtualOperations(blockNum) {
 		return this.db.exec('get_block_virtual_ops', [blockNum]);
+	}
+
+	/**
+	 *  @method getFrozenBalances
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise}
+	 */
+	getFrozenBalances(accountId) {
+		return this.db.exec('get_frozen_balances', [accountId]);
 	}
 
 }
