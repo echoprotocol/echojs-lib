@@ -2433,6 +2433,23 @@ class API {
 		return this.wsApi.database.getFrozenBalances(accountId);
 	}
 
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getBtcAddresses(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this.wsApi.database.getBtcAddresses(accountId);
+	}
+
+	getBtcDepositScript(btcAddress) {
+		if (!isBtcAddress(btcAddress)) return Promise.reject(new Error('Btc adddress is invalid'));
+
+		return this.wsApi.database.getBtcDepositScript(btcAddress);
+	}
+
 	setOptions() { }
 
 }

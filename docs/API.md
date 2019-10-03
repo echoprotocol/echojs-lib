@@ -175,6 +175,8 @@ try {
 <dd></dd>
 <dt><a href="#getFrozenBalances">getFrozenBalances(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getBtcAddresses">getBtcAddresses(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
 </dl>
 
 ## Typedefs
