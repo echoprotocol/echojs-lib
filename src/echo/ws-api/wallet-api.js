@@ -1609,6 +1609,21 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_prototype_operation', [operationType]]);
 	}
 
+	/**
+	 * @method registerAccountWithProof
+	 * @param {String} name
+	 * @param {String} activeKey
+	 * @param {String} echorandKey
+	 * @returns {Promise<void>}
+	 */
+	registerAccountWithProof(name, activeKey, echorandKey) {
+		if (!isAccountName(name)) throw new Error('new account name is invalid');
+		if (!isPublicKey(activeKey)) throw new Error('active key is invalid');
+		if (!isPublicKey(echorandKey)) throw new Error('echorand key is invalid');
+
+		return this.wsRpc.call([0, 'register_account_with_proof', [name, activeKey, echorandKey]]);
+	}
+
 }
 
 export default WalletAPI;
