@@ -1658,9 +1658,9 @@ class WalletAPI {
 			throw new Error('accounts id or name should be string and valid');
 		}
 
-		// if (!isBtcAddress(addressToWithdraw)) {
-		// 	throw new Error('btc address should be valid');
-		// }
+		if (!isBtcAddress(addressToWithdraw)) {
+			throw new Error('btc address should be valid');
+		}
 
 		if (!isUInt32(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
