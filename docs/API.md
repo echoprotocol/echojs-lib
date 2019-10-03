@@ -873,7 +873,7 @@ try {
 
 ## requestRegistrationTask() ⇒ <code>Promise.&lt;Object.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code>
 **Kind**: global function
-**Returns**: <code>Promise.&lt;Array.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code> - { block_id: '00047a74744e20bd587a341820daa699b82e2e00', rand_num: '1409327409238134346', difficulty: 20 }
+**Returns**: <code>Promise.&lt;Object.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code> - { block_id: '00047a74744e20bd587a341820daa699b82e2e00', rand_num: '1409327409238134346', difficulty: 20 }
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
