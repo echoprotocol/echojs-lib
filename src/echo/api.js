@@ -2433,6 +2433,15 @@ class API {
 		return this.wsApi.database.getFrozenBalances(accountId);
 	}
 
+	/**
+	 *  @method requestRegistrationTask
+	 *
+	 *  @return {Promise<Object>}
+	 */
+	requestRegistrationTask() {
+		return this.wsApi.registration.requestRegistrationTask();
+	}
+
 	setOptions() { }
 
 }

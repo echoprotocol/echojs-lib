@@ -24,6 +24,15 @@ class RegistrationAPI {
 		return this.db.exec('register_account', [callback, name, activeKey, echoRandKey]);
 	}
 
+	/**
+	 *  @method requestRegistrationTask
+	 *
+	 *  @return {Promise}
+	 */
+	requestRegistrationTask() {
+		return this.db.exec('request_registration_task', []);
+	}
+
 }
 
 export default RegistrationAPI;
