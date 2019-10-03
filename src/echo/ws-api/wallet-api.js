@@ -18,6 +18,7 @@ import {
 	isUInt64,
 	validateUrl,
 	isContractId,
+	isBtcAddress,
 	validatePositiveSafeInteger,
 } from '../../utils/validators';
 
@@ -1607,6 +1608,66 @@ class WalletAPI {
 	 */
 	getPrototypeOperation(operationType) {
 		return this.wsRpc.call([0, 'get_prototype_operation', [operationType]]);
+	}
+
+	/**
+	 * @method generateBtcDepositAddress
+	 * @param {String} accountNameOrId
+	 * @param {String} backupAddress
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	generateBtcDepositAddress(accountIdOrName, backupAddress, shouldDoBroadcastToNetwork) {
+		if (!(isAccountId(accountIdOrName) || isAccountName(accountIdOrName))) {
+			throw new Error('accounts id or name should be string and valid');
+		}
+
+		if (!isBtcAddress(backupAddress)) {
+			throw new Error('btc address should be valid');
+		}
+
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'generate_btc_deposit_address',
+			[accountIdOrName, backupAddress, shouldDoBroadcastToNetwork],
+		]);
+	}
+
+	/**
+	 * @method getBtcAddresses
+	 * @param {String} accountId
+	 * @returns {Promise<Array>}
+	 */
+	getBtcAddresses(accountId) {
+		if (!isAccountId(accountId)) throw new Error('account should be valid');
+
+		return this.wsRpc.call([0, 'get_btc_addresses', [accountId]]);
+	}
+
+	/**
+	 * @method getBtcDepositScript
+	 * @param {String} btcDepositAddress
+	 * @returns {Promise<String>}
+	 */
+	getBtcDepositScript(btcDepositAddress) {
+		return this.wsRpc.call([0, 'get_btc_deposit_script', [btcDepositAddress]]);
+	}
+
+	withdrawBtc(accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork) {
+		if (!(isAccountId(accountIdOrName) || isAccountName(accountIdOrName))) {
+			throw new Error('accounts id or name should be string and valid');
+		}
+
+		// if (!isBtcAddress(addressToWithdraw)) {
+		// 	throw new Error('btc address should be valid');
+		// }
+
+		if (!isUInt32(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'withdraw_btc',
+			[accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork],
+		]);
 	}
 
 }
