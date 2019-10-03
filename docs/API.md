@@ -173,6 +173,8 @@ try {
 <dd></dd>
 <dt><a href="#getBlockVirtualOperations">getBlockVirtualOperations(blockNum)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getFrozenBalances">getFrozenBalances(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
 </dl>
 
 ## Typedefs
@@ -974,6 +976,7 @@ try {
        accounts_per_fee_scale:Number,
        account_fee_scale_bitshifts:Number,
        max_authority_depth:Number,
+       frozen_balances_multipliers:Array,
        echorand_config:{
            _time_net_1mb:Number,
            _time_net_256b:Number,

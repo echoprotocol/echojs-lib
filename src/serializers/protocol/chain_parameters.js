@@ -1,4 +1,4 @@
-import { struct } from '../collections';
+import { struct, map } from '../collections';
 import feeScheduleSerializer from './fee_schedule';
 import { uint8, uint32, uint16, uint64 } from '../basic/integers';
 import { echorand, sidechain } from '../plugins';
@@ -25,6 +25,7 @@ const chainParametersSerializer = struct({
 	accounts_per_fee_scale: uint16,
 	account_fee_scale_bitshifts: uint8,
 	max_authority_depth: uint8,
+	frozen_balances_multipliers: map(uint16, uint32),
 	echorand_config: echorand.config,
 	sidechain_config: sidechain.config,
 	erc20_config: sidechain.erc20Config,
