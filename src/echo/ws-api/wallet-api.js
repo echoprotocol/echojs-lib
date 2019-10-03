@@ -27,7 +27,7 @@ const {
 
 const {
 	operation,
-	approvalDelta,
+	wallet,
 	signedTransaction,
 	transaction,
 } = serializers;
@@ -877,7 +877,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'approve_proposal', [
 			accountId.toRaw(feePayingAccountId),
 			proposalId.toRaw(idOfProposal),
-			approvalDelta.toRaw(delta),
+			wallet.toRaw(delta),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}
