@@ -331,8 +331,8 @@ Available protocol object id serializers:
 * `vestingBalanceId`
 * `balanceId`
 * `contractId`
-* `depositEthId`
-* `withdrawEthId`
+* `depositId`
+* `withdrawId`
 * `erc20TokenId`
 
 Example:

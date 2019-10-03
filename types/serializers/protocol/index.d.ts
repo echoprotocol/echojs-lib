@@ -124,6 +124,8 @@ export declare const proposal: {
 
 export declare const sidechain: {
 	changeConfig: typeof _sidechain.sidechainChangeConfigOperationPropsSerializer,
+	issue: typeof _sidechain.sidechainIssueOperationPropsSerializer,
+	burn: typeof _sidechain.sidechainBurnOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
 	erc20: typeof _sidechain.erc20,
 };
