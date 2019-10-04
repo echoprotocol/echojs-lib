@@ -127,6 +127,7 @@ export const sidechain = {
 	changeConfig: _sidechain.sidechainChangeConfigOperationPropsSerializer,
 	erc20: _sidechain.erc20,
 	eth: _sidechain.eth,
+	btc: _sidechain.btc,
 };
 
 export const transfer = {

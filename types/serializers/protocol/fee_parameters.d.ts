@@ -18,7 +18,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 		price_per_kbyte: typeof uint32,
 	}>,
 	[OperationId.ACCOUNT_UPDATE]: StructSerializer<{ fee: typeof int64, price_per_kbyte: typeof uint32 }>,
-	[OperationId.ACCOUNT_WHITELIST]: StructSerializer<{ fee: typeof int64 }>,	
+	[OperationId.ACCOUNT_WHITELIST]: StructSerializer<{ fee: typeof int64 }>,
 	[OperationId.ASSET_CREATE]: StructSerializer<{
 		symbol3: typeof uint64,
 		symbol4: typeof uint64,
@@ -47,7 +47,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.CONTRACT_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_CALL]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_TRANSFER]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_CHANGE_CONFIG]: typeof defaultFeeParametersSerializer,
+	[OperationId.CONTRACT_UPDATE]: StructSerializer<{ fee: typeof int64 }>,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof feeParametersWithPricePerKByte,
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: typeof defaultFeeParametersSerializer,
@@ -63,7 +63,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof defaultFeeParametersSerializer,
-	[OperationId.CONTRACT_UPDATE]: StructSerializer<{ fee: typeof int64 }>,
+	[OperationId.SIDECHAIN_BTC_CREATE_ADDRESS]: typeof defaultFeeParametersSerializer,
 }[T];
 
 declare const feeParametersSerializer: StaticVariantSerializer<{

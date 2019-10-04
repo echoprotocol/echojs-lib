@@ -127,6 +127,7 @@ export declare const sidechain: {
 	changeConfig: typeof _sidechain.sidechainChangeConfigOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
 	erc20: typeof _sidechain.erc20,
+	btc: typeof _sidechain.btc,
 };
 
 export declare const transfer: {

@@ -1,5 +1,6 @@
 import * as _erc20 from './erc20';
 import * as _eth from './eth';
+import * as _btc from './btc';
 import { struct } from '../../collections';
 import { asset, extensions } from '../../chain';
 import { accountId } from '../../chain/id/protocol';
@@ -27,4 +28,8 @@ export const eth = {
 	approveWithdraw: _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 	issue: _eth.sidechainEthIssueOperationPropsSerializer,
 	burn: _eth.sidechainEthBurnOperationPropsSerializer,
+};
+
+export const btc = {
+	createAddress: _btc.sidechainBtcCreateAddressOperationPropsSerializer,
 };
