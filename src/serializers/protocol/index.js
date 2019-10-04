@@ -3,7 +3,6 @@ import {
 	accountCreateOperationPropsSerializer,
 	accountUpdateOperationPropsSerializer,
 	accountWhitelistOperationPropsSerializer,
-	accountTransferOperationPropsSerializer,
 	accountAddressCreateOperationPropsSerializer,
 } from './account';
 
@@ -68,7 +67,6 @@ export const account = {
 	create: accountCreateOperationPropsSerializer,
 	update: accountUpdateOperationPropsSerializer,
 	whitelist: accountWhitelistOperationPropsSerializer,
-	transfer: accountTransferOperationPropsSerializer,
 	addressCreate: accountAddressCreateOperationPropsSerializer,
 };
 
@@ -123,7 +121,6 @@ export const proposal = {
 };
 
 export const sidechain = {
-	changeConfig: _sidechain.sidechainChangeConfigOperationPropsSerializer,
 	erc20: _sidechain.erc20,
 	eth: _sidechain.eth,
 };

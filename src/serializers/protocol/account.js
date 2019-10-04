@@ -43,13 +43,6 @@ export const accountWhitelistOperationPropsSerializer = struct({
 	extensions,
 });
 
-export const accountTransferOperationPropsSerializer = struct({
-	fee: asset,
-	account_id: accountId,
-	new_owner: accountId,
-	extensions,
-});
-
 export const accountAddressCreateOperationPropsSerializer = struct({
 	fee: asset,
 	owner: accountId,

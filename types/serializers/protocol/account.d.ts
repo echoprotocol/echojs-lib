@@ -44,13 +44,6 @@ export declare const accountWhitelistOperationPropsSerializer: StructSerializer<
 	extensions: typeof extensions,
 }>;
 
-export declare const accountTransferOperationPropsSerializer: StructSerializer<{
-	fee: typeof asset,
-	account_id: typeof accountId,
-	new_owner: typeof accountId,
-	extensions: typeof extensions,
-}>;
-
 export declare const accountAddressCreateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	owner: typeof accountId,

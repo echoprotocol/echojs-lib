@@ -1,16 +1,5 @@
 import * as _erc20 from './erc20';
 import * as _eth from './eth';
-import { struct } from '../../collections';
-import { asset, extensions } from '../../chain';
-import { accountId } from '../../chain/id/protocol';
-import { config } from '../../plugins/echorand';
-
-export const sidechainChangeConfigOperationPropsSerializer = struct({
-	fee: asset,
-	registrar: accountId,
-	new_config: config,
-	extensions,
-});
 
 export const erc20 = {
 	registerToken: _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,

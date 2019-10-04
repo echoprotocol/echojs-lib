@@ -11,7 +11,6 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: struct({ basic_fee: uint64, premium_fee: uint64, price_per_kbyte: uint32 }),
 	[OPERATIONS_IDS.ACCOUNT_UPDATE]: struct({ fee: int64, price_per_kbyte: uint32 }),
 	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: struct({ fee: int64 }),
-	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ASSET_CREATE]: struct({
 		symbol3: uint64,
 		symbol4: uint64,
@@ -39,7 +38,6 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CALL]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: feeParametersWithPricePerKByte,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: defaultFeeParametersSerializer,
