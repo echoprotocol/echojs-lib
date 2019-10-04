@@ -21,7 +21,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	maximum_authority_membership: typeof uint16,
 	reserve_percent_of_fee: typeof uint16,
 	network_percent_of_fee: typeof uint16,
-	commitee_pay_vesting_seconds: typeof uint32,
+	committee_pay_vesting_seconds: typeof uint32,
 	max_predicate_opcode: typeof uint16,
 	accounts_per_fee_scale: typeof uint16,
 	account_fee_scale_bitshifts: typeof uint8,

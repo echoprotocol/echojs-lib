@@ -28,8 +28,13 @@ export const sidechainConfigSerializer = struct({
 	erc20_deposit_topic: ethTopicSerializer,
 	erc20_withdraw_topic: ethTopicSerializer,
 	ETH_asset_id: assetId,
+	waiting_eth_blocks: uint32,
 	fines: sidechainFinesSerializer,
 	waiting_blocks: uint32,
+	BTC_asset_id: assetId,
+	waiting_btc_blocks: uint32,
+	satoshis_per_byte: uint32,
+	echo_blocks_per_aggregation: uint32,
 });
 
 export const sidechainERC20ConfigSerializer = struct({
