@@ -25,6 +25,7 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: protocol.vesting.balanceCreate,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: protocol.vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: protocol.balance.claim,
+	[OPERATIONS_IDS.BALANCE_FREEZE]: protocol.balance.freeze,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.transfer.override,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,

@@ -11,7 +11,6 @@ import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
-
 describe('API', () => {
 	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {

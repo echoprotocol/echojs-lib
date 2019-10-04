@@ -37,7 +37,7 @@ describe('error while disconnecting and updating cache', () => {
 			} catch (err) {
 				expect(err.message).to.equal('Websocket is closed');
 			}
-		}).timeout(7e3);
+		}).timeout(15e3);
 	});
 
 	describe('isAccountStatisticsId', () => {

@@ -36,7 +36,7 @@ describe('create asset', () => {
 		let result;
 		it('transaction broadcasting should not rejects', async () => {
 			result = await tx.broadcast();
-		}).timeout(7e3);
+		}).timeout(15e3);
 	});
 
 	testExtensionsField(echo, OPERATIONS_IDS.ASSET_CREATE, (extensions) => ({

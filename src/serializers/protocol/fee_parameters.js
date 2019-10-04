@@ -33,6 +33,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: struct({}),
+	[OPERATIONS_IDS.BALANCE_FREEZE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,
