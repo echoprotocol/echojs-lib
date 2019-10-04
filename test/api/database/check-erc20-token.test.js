@@ -13,7 +13,7 @@ describe('checkERC20Token', () => {
 		}, 'invalid contract id format');
 	});
 	// TODO::
-	describe.skip('when contract with provided id is not a ERC20 token.', () => {
+	describe('when contract with provided id is not a ERC20 token.', () => {
 		/** @type {string} */
 		let contractId;
 		before(async function () {
@@ -28,7 +28,7 @@ describe('checkERC20Token', () => {
 			const broadcastingRes = await tx.broadcast();
 
 			/** @type {string} */
-			const opResId = broadcastingRes[0].trx.operation_results[0][1];			
+			const opResId = broadcastingRes[0].trx.operation_results[0][1];
 			const opRes = await echo.api.getObject(opResId);
 
 			contractId = opRes.contracts_id[0];
