@@ -29,4 +29,7 @@ export const withdrawEthId = new ObjectIdSerializer(
 );
 export const erc20TokenId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.ERC20_TOKEN);
 export const btcAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
-export const btcDepositId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT);
+export const btcIntermeiateDepositId = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.BTC_INTERMEDIATE_DEPOSIT,
+);

@@ -31,13 +31,21 @@ describe('sidechain btc', () => {
 
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
             	account: accountId,
-            	backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
+				backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
+				committee_member_id: '1.2.10',
+				intermediate_deposit_id: '1.20.1',
+				tx_info: {
+					block_number: 598305,
+					tx_id: '7f0baac0a332fd783d252b977e2cd390c6f854cc',
+					value: 10,
+					vout: 32,
+				}
 			});
 
 			transaction.addSigner(privateKey);
 
             await transaction.broadcast();
-		});
+		}).timeout(50000);
 	})
 
 });
