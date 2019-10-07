@@ -35,6 +35,6 @@ export const sidechainBtcWithdrawOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
 	btc_addr: stringSerializer,
-	value: integers.UInt64Serializer,
+	value: integers.uint64,
 	extensions,
 });
