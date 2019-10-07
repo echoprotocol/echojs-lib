@@ -50,6 +50,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: protocol.sidechain.btc.createAddress,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: protocol.sidechain.btc.intermediateDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT]: protocol.sidechain.btc.deposit,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_WITHDRAW]: protocol.sidechain.btc.withdraw,
 };
 
 const operationSerializer = staticVariant(operationProps);
