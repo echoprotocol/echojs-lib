@@ -56,6 +56,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: defaultFeeParametersSerializer,
 });
 
 export default feeParametersSerializer;

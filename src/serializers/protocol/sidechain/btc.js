@@ -17,7 +17,7 @@ export const sidechainBtcIntermediateDepositOperationPropsSerializer = struct({
 	account: accountId,
 	btc_address_id: btcAddressId,
 	deposit_details: btcTransactionDetailsSerializer,
-	intermediate_address: '', // echo::sidechain::btc::p2sh_p2wsh
+	intermediate_address: struct({ address: stringSerializer }),
 	committee_member_ids_in_script: set(accountId),
 	signature: stringSerializer,
 	extensions,
