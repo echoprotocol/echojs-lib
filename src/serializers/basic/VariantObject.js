@@ -7,6 +7,10 @@ import { isString } from '../../utils/validators';
 /** @augments {ISerializer<TInput, TOutput>} */
 export default class VariantObjectSerializer extends ISerializer {
 
+	/**
+	 * @param {TInput} value
+	 * @returns {TOutput}
+	 */
 	toRaw(value) {
 		if (!Array.isArray(value)) throw new Error('value is not an array');
 		if (value.length !== 2) throw new Error('VariantObject should have 2 elements');
