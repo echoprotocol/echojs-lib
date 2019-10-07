@@ -5,7 +5,6 @@ type ContractResult = [number, {
 		new_address: string,
 		output: string,
 		code_deposit: 'Success' | unknown,
-		gas_refunded: number,
 		gas_for_deposit: number,
 		deposit_size: number,
 	},

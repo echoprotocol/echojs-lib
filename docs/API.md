@@ -1284,7 +1284,6 @@ try {
             new_address:String,
             output:String,
             code_deposit:String,
-            gas_refunded:String,
             deposit_size:Number,
             gas_for_deposit:String
         },
