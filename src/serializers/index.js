@@ -13,4 +13,4 @@ export const operation = new OperationSerializer();
 
 opWrapper.init(operation);
 
-export { basic, collections, chain, OperationSerializer, plugins, protocol, wallet };
+export { basic, collections, chain, OperationSerializer, plugins, protocol, opWrapper, wallet };
