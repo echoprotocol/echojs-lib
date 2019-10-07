@@ -25,4 +25,19 @@ describe('sidechain btc', () => {
 		}).timeout(50000);
 	});
 
+	describe('deposit', () => {
+		it('test', async () => {
+			const transaction = echo.createTransaction();
+
+			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
+            	account: accountId,
+            	backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
+			});
+
+			transaction.addSigner(privateKey);
+
+            await transaction.broadcast();
+		});
+	})
+
 });
