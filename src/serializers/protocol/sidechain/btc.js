@@ -1,5 +1,5 @@
 import { asset, extensions } from '../../chain';
-import { accountId, btcAddressId, depositBtcId } from '../../chain/id/protocol';
+import { accountId, btcAddressId, btcDepositId } from '../../chain/id/protocol';
 import { btcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import { struct, set } from '../../collections';
 import { string as stringSerializer } from '../../basic';
@@ -27,5 +27,6 @@ export const sidechainBtcDepositOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,
 	account: accountId,
+	intermediate_deposit_id: btcDepositId,
 });
 
