@@ -633,12 +633,12 @@ class DatabaseAPI {
 
 	/**
 	 *  @method getBtcDepositScript
-	 *  @param  {String} btcAddress
+	 *  @param  {String} btcDepositId
 	 *
 	 *  @return {Promise}
 	 */
-	getBtcDepositScript(btcAddress) {
-		return this.db.exec('get_btc_deposit_script', [btcAddress]);
+	getBtcDepositScript(btcDepositId) {
+		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
 	}
 
 }
