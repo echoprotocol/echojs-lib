@@ -12,4 +12,3 @@ export declare const operation: OperationSerializer;
 export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
 
 export { basic, collections, chain, OperationSerializer, plugins, protocol, opWrapper, wallet };
-
