@@ -1,7 +1,7 @@
 import { asset, extensions } from "../../chain";
 import { accountId, btcAddressId, btcIntermeiateDepositId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer } from "../../collections";
-import { StringSerializer } from "../../basic";
+import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 
 export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSerializer<{
@@ -30,3 +30,10 @@ export declare const sidechainBtcDepositOperationPropsSerializer: StructSerializ
 	tx_info: typeof BtcTransactionDetailsSerializer,
 }>;
 
+export declare const sidechainBtcWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	btc_addr: StringSerializer,
+	value: typeof integers.uint64,
+	extensions: typeof extensions,
+}>;
