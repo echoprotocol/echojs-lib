@@ -31,7 +31,6 @@ const urlRegex = new RegExp(
 	'(\\#[-a-z\\d_]*)?$' // fragment locater
 	, 'i',
 );
-const btcAddressRegex = new RegExp('^([13][a-km-zA-HJ-NP-Z1-9]{25,34}|bc1[ac-hj-np-zAC-HJ-NP-Z02-9]{11,71})$');
 export const idRegex = /^([1-9]\d*)(\.(0|([1-9]\d*))){2}$/;
 
 function generateProtocolObjectIdRegExp(protocolObjectId) {
@@ -232,8 +231,6 @@ export const isAccountName = (v) => {
 	}
 	return true;
 };
-
-export const isBtcAddress = (btcAddress) => btcAddressRegex.test(String(btcAddress));
 
 /**
  * @method checkAccountName

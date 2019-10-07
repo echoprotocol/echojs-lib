@@ -18,7 +18,6 @@ import {
 	isUInt64,
 	validateUrl,
 	isContractId,
-	isBtcAddress,
 	validatePositiveSafeInteger,
 } from '../../utils/validators';
 
@@ -1622,10 +1621,6 @@ class WalletAPI {
 			throw new Error('accounts id or name should be string and valid');
 		}
 
-		if (!isBtcAddress(backupAddress)) {
-			throw new Error('btc address should be valid');
-		}
-
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'generate_btc_deposit_address',
@@ -1658,11 +1653,7 @@ class WalletAPI {
 			throw new Error('accounts id or name should be string and valid');
 		}
 
-		if (!isBtcAddress(addressToWithdraw)) {
-			throw new Error('btc address should be valid');
-		}
-
-		if (!isUInt32(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
+		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
 
 		return this.wsRpc.call([0, 'withdraw_btc',
