@@ -26,6 +26,7 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
+	isBtcDepositId,
 } from '../utils/validators';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
@@ -2444,10 +2445,15 @@ class API {
 		return this.wsApi.database.getBtcAddresses(accountId);
 	}
 
-	getBtcDepositScript(btcAddress) {
-		if (!isBtcAddress(btcAddress)) return Promise.reject(new Error('Btc adddress is invalid'));
+	/**
+	 *
+	 * @param {String} btcDepositId
+	 * @return {*}
+	 */
+	getBtcDepositScript(btcDepositId) {
+		if (!isBtcDepositId(btcDepositId)) return Promise.reject(new Error('Btc deposite id is invalid'));
 
-		return this.wsApi.database.getBtcDepositScript(btcAddress);
+		return this.wsApi.database.getBtcDepositScript(btcDepositId);
 	}
 
 	setOptions() { }

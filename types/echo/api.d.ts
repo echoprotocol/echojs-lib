@@ -49,6 +49,7 @@ export default class Api {
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddresses(accountId: string): Promise<Array<string>>;
+	getBtcDepositScript(btcAddress: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;

@@ -51,6 +51,7 @@ const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BA
 const frozenBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE);
 const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
+const btcDepositIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT);
 
 const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
 const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ASSET_DYNAMIC_DATA);
@@ -131,6 +132,7 @@ export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
+export const isBtcDepositId = (v) => isString(v) && btcDepositIdRegex.test(v);
 
 export const isCommitteeMemberId = (v) => isString(v) && committeeMemberIdRegex.test(v);
 export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);

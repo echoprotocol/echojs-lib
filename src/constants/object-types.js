@@ -17,4 +17,5 @@ export const SIDECHAIN_ETH_WITHDRAW = 15;
 export const ERC20_TOKEN = 16;
 export const SIDECHAIN_ERC20_DEPOSIT_TOKEN = 17;
 export const SIDECHAIN_ERC20_WITHDRAW_TOKEN = 18;
-export const OBJECT_TYPE_COUNT = 19;
+export const BTC_DEPOSIT = 19;
+export const OBJECT_TYPE_COUNT = 20;
