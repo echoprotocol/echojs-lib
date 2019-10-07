@@ -2019,7 +2019,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#registerAccountWithProof()', () => {
+	describe('#registerAccountWithApi()', () => {
 		it('should create account without errors', async () => {
 			try {
 				const name = `cookiezi-${Date.now()}`;
