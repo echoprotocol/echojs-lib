@@ -877,7 +877,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'approve_proposal', [
 			accountId.toRaw(feePayingAccountId),
 			proposalId.toRaw(idOfProposal),
-			wallet.toRaw(delta),
+			wallet.approvalDelta.toRaw(delta),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}
