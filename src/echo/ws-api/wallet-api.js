@@ -1648,6 +1648,14 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_btc_deposit_script', [btcDepositAddress]]);
 	}
 
+	/**
+	 * @method withdrawBtc
+	 * @param {String} accountIdOrName
+	 * @param {String} addressToWithdraw
+	 * @param {Number} amount
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
 	withdrawBtc(accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork) {
 		if (!(isAccountId(accountIdOrName) || isAccountName(accountIdOrName))) {
 			throw new Error('accounts id or name should be string and valid');

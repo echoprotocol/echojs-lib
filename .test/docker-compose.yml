@@ -26,8 +26,8 @@ services:
     image: echoprotocol/echo-wallet:0.11.0-rc.1
     container_name: echo-wallet
     command:
-      -s wss://devnet.echo-dev.io/ws
-      --chain-id="1e68eb8828bd9053e14c9ee2ba89b0403be8e92be181782f797dd64c1b68dec6"
+      -s ws://echo:6311
+      --chain-id="c9b734031dfed36512d237364fdfd5631605c1594df35aca2a8feb98da1f08a7"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
       -r 0.0.0.0:6312
