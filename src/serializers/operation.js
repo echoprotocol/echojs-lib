@@ -47,6 +47,8 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: protocol.sidechain.erc20.depositToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: protocol.sidechain.erc20.withdrawToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: protocol.sidechain.erc20.approveTokenWithdraw,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_ISSUE]: protocol.sidechain.erc20.issue,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_BURN]: protocol.sidechain.erc20.burn,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: protocol.sidechain.btc.createAddress,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: protocol.sidechain.btc.intermediateDeposit,
 };
