@@ -961,7 +961,7 @@ describe('API', () => {
 				.timeout(5000);
 		});
 		describe('#getBtcDepositScript()', () => {
-			it('should get btc deposit script by deposit id', async () => {
+			it('should get null because script with this deposit id does not exist', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
@@ -974,7 +974,7 @@ describe('API', () => {
 					expect(script)
 						.to
 						.be
-						.an('string');;
+						.an('null');;
 				} catch (e) {
 					throw e;
 				}
