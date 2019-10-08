@@ -247,7 +247,8 @@ import { PublicKey } from '../crypto';
 *  		current_aslot:Number,
 *  		recent_slots_filled:String,
 *  		dynamic_flags:Number,
-*  		last_irreversible_block_num:Number
+*  		last_irreversible_block_num:Number,
+*		last_rand_quantity:String
 *  	}
 *  	} DynamicGlobalProperties */
 

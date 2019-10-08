@@ -11,5 +11,6 @@ export default interface DynamicGlobalProperties {
 	current_aslot: number,
 	recent_slots_filled: string,
 	dynamic_flags: number,
-	last_irreversible_block_num: number
+	last_irreversible_block_num: number,
+	last_rand_quantity: string,
 }
