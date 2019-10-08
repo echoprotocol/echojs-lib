@@ -57,6 +57,8 @@ To more examples and options look at section below
 
 [Serializers](docs/Serializers.md) - List of all serializers
 
+[Contract](docs/Contract.md) - Information about contract
+
 ## Run Tests
 
 Tests use a locally running Echo node. Therefore, before starting the tests, 
