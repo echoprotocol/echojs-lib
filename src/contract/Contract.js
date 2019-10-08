@@ -12,7 +12,7 @@ import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-ut
 import { checkContractId } from './utils/validators';
 import { decode } from './decoders';
 
-/** @typedef {import("../../types/interfaces/Abi").Abi} Abi */
+/** @typedef {import("../../types/contract/_Abi").Abi} Abi */
 /** @typedef {import("../../types/echo/transaction").OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
 
 class Contract {

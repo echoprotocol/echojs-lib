@@ -16,7 +16,8 @@ import Config from '../interfaces/Config';
 import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
 import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
-import { ContractResult } from '../interfaces/ContractResult';
+import ContractResult from '../interfaces/ContractResult';
+import FrozenBalance from '../interfaces/FrozenBalance';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 
@@ -61,6 +62,7 @@ export default class Api {
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
+	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
 	getFullContract(contractId: string, force?: boolean): Promise<Object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
