@@ -939,6 +939,48 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
+		describe('#getBtcAddresses()', () => {
+			it('should get btc addresses by account id', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
+
+					const btcAddresses = await api.getBtcAddresses(accountId);
+
+					expect(btcAddresses)
+						.to
+						.be
+						.an('array');;
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
+		describe('#getBtcDepositScript()', () => {
+			it('should get btc deposit script by deposit id', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const depositId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT}.1`;
+
+					const script = await api.getBtcDepositScript(depositId);
+
+					expect(script)
+						.to
+						.be
+						.an('string');;
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
 	});
 
 	describe('history', () => {
