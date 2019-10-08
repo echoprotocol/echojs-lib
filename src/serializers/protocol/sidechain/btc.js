@@ -1,7 +1,7 @@
-import { asset, extensions } from '../../chain';
-import { accountId, btcAddressId, btcIntermeiateDepositId } from '../../chain/id/protocol';
+import { asset, extensions, sha256 } from '../../chain';
+import { accountId, btcAddressId, btcIntermeiateDepositId, btcDepositId, btcWithdrawId } from '../../chain/id/protocol';
 import { btcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
-import { struct, set } from '../../collections';
+import { struct, set, map } from '../../collections';
 import { string as stringSerializer, integers } from '../../basic';
 
 export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
@@ -36,5 +36,18 @@ export const sidechainBtcWithdrawOperationPropsSerializer = struct({
 	account: accountId,
 	btc_addr: stringSerializer,
 	value: integers.uint64,
+	extensions,
+});
+
+export const sidechainBtcAggregateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	deposits: set(btcDepositId),
+	withdrawals: set(btcWithdrawId),
+	transaction_id: sha256,
+	sma_out_value: integers.uint64,
+	sma_address: struct({ address: stringSerializer }),
+	committee_member_ids_in_script: set(accountId),
+	signatures: map(integers.uint32, stringSerializer),
 	extensions,
 });

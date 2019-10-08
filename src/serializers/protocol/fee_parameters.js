@@ -59,6 +59,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_WITHDRAW]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: defaultFeeParametersSerializer,
 });
 
 export default feeParametersSerializer;
