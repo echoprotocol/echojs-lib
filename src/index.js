@@ -1,6 +1,6 @@
 /* Chain */
 import BigNumber from 'bignumber.js';
-import Echo from './echo';
+import Echo, { echo } from './echo';
 import * as constants from './constants';
 import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
 import Transaction from './echo/transaction';
@@ -9,6 +9,9 @@ import * as validators from './utils/validators';
 import * as converters from './utils/converters';
 import * as serializers from './serializers';
 import Signature from './crypto/signature';
+import Contract from './contract/Contract';
+import encode from './contract/encoders';
+import { decode } from './contract/decoders';
 
 require('buffer');
 
@@ -33,8 +36,11 @@ export {
 	PublicKeyECDSA,
 	OPERATIONS_IDS,
 	CACHE_MAPS,
+	Contract,
+	encode,
+	decode,
 };
 
 export { handleConnectionClosedError } from './utils/helpers';
 
-export default new Echo();
+export default echo;

@@ -131,6 +131,7 @@ import { PublicKey } from '../crypto';
 * 	 			accounts_per_fee_scale:Number,
 * 	 			account_fee_scale_bitshifts:Number,
 * 	 			max_authority_depth:Number,
+*				frozen_balances_multipliers:Array,
 * 	 			echorand_config:{
 * 	 				_time_net_1mb:Number,
 * 	 				_time_net_256b:Number,
@@ -1896,7 +1897,7 @@ class API {
 	/**
 	 *  @method verifyAccountAuthority
 	 *
-	 *  @param  {Object} accountNameOrId
+	 *  @param  {String} accountNameOrId
 	 *  @param  {Array<String>} signers [public keys]
 	 *
 	 *  @return {Promise.<*>}
@@ -2401,7 +2402,7 @@ class API {
 
 	/**
 	 *
-	 * @param {Object} keys
+	 * @param {Array<String>} keys
 	 * @return {*}
 	 */
 	getBalanceObjects(keys) {
@@ -2419,6 +2420,17 @@ class API {
 		if (!isUInt64(blockNum)) return Promise.reject(new Error('BlockNumber should be a non negative integer'));
 
 		return this.wsApi.database.getBlockVirtualOperations(blockNum);
+	}
+
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getFrozenBalances(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this.wsApi.database.getFrozenBalances(accountId);
 	}
 
 	setOptions() { }

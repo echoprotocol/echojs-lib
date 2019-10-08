@@ -1,4 +1,4 @@
-import { uint8 } from '../basic/integers';
+import { bool } from '../basic';
 import ISerializer from '../ISerializer';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
@@ -64,8 +64,19 @@ export default class OptionalSerializer extends ISerializer {
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		uint8.appendToByteBuffer(raw === undefined ? 0 : 1, bytebuffer);
+		bool.appendToByteBuffer(raw !== undefined, bytebuffer);
 		if (raw !== undefined) this.serializer.appendToByteBuffer(raw, bytebuffer);
+	}
+
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: TOutput<T>, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) {
+		const { res: isProvided, newOffset: from } = bool.readFromBuffer(buffer, offset);
+		if (!isProvided) return { res: undefined, newOffset: from };
+		return this.serializer.readFromBuffer(buffer, from);
 	}
 
 }

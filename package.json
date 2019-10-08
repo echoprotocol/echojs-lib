@@ -9,6 +9,7 @@
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
+		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",
@@ -23,13 +24,14 @@
 	"bugs": {
 		"url": "https://github.com/echoprotocol/echojs-lib/issues"
 	},
-	"author": "PixelPlex",
+	"author": {
+		"name": "PixelPlex, Inc.",
+		"email": "info@pixelplex.io",
+		"url": "https://pixelplex.io"
+	},
 	"license": "MIT",
 	"dependencies": {
-		"@babel/cli": "^7.2.3",
-		"@babel/core": "^7.2.2",
-		"@babel/polyfill": "^7.2.5",
-		"@babel/runtime": "^7.3.1",
+		"@babel/runtime-corejs3": "^7.6.0",
 		"@types/crypto-js": "^3.1.43",
 		"@types/node": "^12.0.10",
 		"assert": "^1.4.1",
@@ -38,6 +40,7 @@
 		"bs58": "^4.0.1",
 		"buffer": "^5.2.1",
 		"bytebuffer": "^5.0.1",
+		"comprehension": "^1.1.2",
 		"create-hash": "^1.2.0",
 		"create-hmac": "^1.1.7",
 		"crypto-js": "^3.1.9-1",
@@ -47,12 +50,15 @@
 		"events": "^3.0.0",
 		"immutable": "^3.8.1",
 		"isomorphic-ws": "^4.0.1",
+		"js-sha3": "^0.8.0",
 		"lodash": "^4.17.11",
 		"ws": "^7.1.1"
 	},
 	"devDependencies": {
+		"@babel/cli": "^7.2.3",
+		"@babel/core": "^7.2.2",
 		"@babel/node": "^7.5.5",
-		"@babel/plugin-transform-runtime": "^7.2.0",
+		"@babel/plugin-transform-runtime": "^7.6.0",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
 		"@types/bytebuffer": "^5.0.40",
@@ -66,6 +72,7 @@
 		"eslint-plugin-react": "7.13.0",
 		"mocha": "^5.2.0",
 		"redux": "^4.0.1",
-		"typescript": "^3.5.3"
+		"typescript": "^3.5.3",
+		"fs-extra": "^7.0.1"
 	}
 }
