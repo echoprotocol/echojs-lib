@@ -109,4 +109,4 @@ export { default as BigNumber } from "bignumber.js";
 export { default as echo } from "../index";
 export { default as encode } from "./encode";
 export { default as decode } from "./decode";
-export { Abi, Method, generateInterface, PrivateKey, Echo };
+export { Abi, Method, generateInterface };
