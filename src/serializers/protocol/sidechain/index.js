@@ -36,4 +36,5 @@ export const btc = {
 	deposit: _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: _btc.sidechainBtcWithdrawOperationPropsSerializer,
 	aggregate: _btc.sidechainBtcAggregateOperationPropsSerializer,
+	approveWithdraw: _btc.sidechainBtcApproveWithdrawOperationPropsSerializer,
 };

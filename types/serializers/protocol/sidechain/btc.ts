@@ -50,3 +50,10 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	signatures: MapSerializer<typeof integers.uint32, StringSerializer>,
 	extensions: typeof extensions,	
 }>;
+
+export declare const sidechainBtcApproveWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	withdraw_id: typeof btcWithdrawId,
+	extensions: typeof extensions,	
+}>;

@@ -51,3 +51,10 @@ export const sidechainBtcAggregateOperationPropsSerializer = struct({
 	signatures: map(integers.uint32, stringSerializer),
 	extensions,
 });
+
+export const sidechainBtcApproveWithdrawOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	withdraw_id: btcWithdrawId,
+	extensions,
+});
