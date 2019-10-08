@@ -46,6 +46,34 @@ describe('sidechain btc', () => {
 
             await transaction.broadcast();
 		}).timeout(50000);
-	})
+	});
+
+	describe('aggregate', () => {
+		it('test', async () => {
+			const deposits = new Set();
+			const withdrawals = new Set();
+			const committeeMemberIdsInScript = new Set();
+			const signatures = new Map();
+
+			const transaction = echo.createTransaction();
+
+			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE, {
+				committee_member_id: '1.2.10',
+				deposits,
+				withdrawals,
+				transaction_id: '2d94683fa2f8aaae4a6f377d93b875f680adf96b9c3e9577554b742f412fa9ad', //TODO
+				sma_out_value: 1000,
+				sma_address: {
+					address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k'
+				},
+				committee_member_ids_in_script: committeeMemberIdsInScript,
+				signatures
+			});
+
+			transaction.addSigner(privateKey);
+
+            await transaction.broadcast();
+		}).timeout(50000);
+	});
 
 });
