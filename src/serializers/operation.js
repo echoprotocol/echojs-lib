@@ -8,7 +8,6 @@ const operationProps = {
 	[OPERATIONS_IDS.ACCOUNT_CREATE]: protocol.account.create,
 	[OPERATIONS_IDS.ACCOUNT_UPDATE]: protocol.account.update,
 	[OPERATIONS_IDS.ACCOUNT_WHITELIST]: protocol.account.whitelist,
-	[OPERATIONS_IDS.ACCOUNT_TRANSFER]: protocol.account.transfer,
 	[OPERATIONS_IDS.ASSET_CREATE]: protocol.asset.create,
 	[OPERATIONS_IDS.ASSET_UPDATE]: protocol.asset.update,
 	[OPERATIONS_IDS.ASSET_UPDATE_BITASSET]: protocol.asset.updateBitasset,
@@ -26,6 +25,7 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: protocol.vesting.balanceCreate,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: protocol.vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: protocol.balance.claim,
+	[OPERATIONS_IDS.BALANCE_FREEZE]: protocol.balance.freeze,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.transfer.override,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
@@ -77,5 +77,12 @@ export default class OperationSerializer extends ISerializer {
 	appendToByteBuffer(value, bytebuffer) {
 		return operationSerializer.appendToByteBuffer(value, bytebuffer);
 	}
+
+	/**
+	 * @param {Buffer} buffer
+	 * @param {number} [offset]
+	 * @returns {{ res: any, newOffset: number }}
+	 */
+	readFromBuffer(buffer, offset = 0) { return operationSerializer.readFromBuffer(buffer, offset); }
 
 }

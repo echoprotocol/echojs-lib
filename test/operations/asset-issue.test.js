@@ -10,7 +10,7 @@ describe('asset issue', () => {
 	/** @type {string} */
 	let assetId;
 	before(async function () {
-		this.timeout(7e3);
+		this.timeout(15e3);
 		await echo.connect(url);
 		/** @type {string} */
 		assetId = await echo.createTransaction().addOperation(OPERATIONS_IDS.ASSET_CREATE, {
@@ -22,8 +22,8 @@ describe('asset issue', () => {
 				issuer_permissions: 79,
 				flags: 0,
 				core_exchange_rate: {
-					base: { amount: 10, asset_id: `1.${constants.OBJECT_TYPES.ASSET}.0` },
-					quote: { amount: 1, asset_id: `1.${constants.OBJECT_TYPES.ASSET}.1` },
+					base: { amount: 10, asset_id: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0` },
+					quote: { amount: 1, asset_id: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.1` },
 				},
 				whitelist_authorities: [],
 				blacklist_authorities: [],
@@ -50,7 +50,7 @@ describe('asset issue', () => {
 		it('tx broadcasting should succeed', async function () {
 			if (!tx) this.skip();
 			await tx.broadcast();
-		}).timeout(7e3);
+		}).timeout(15e3);
 		it('balance should change', async () => {
 			const balance = await echo.api.getAccountBalances(accountId, [assetId]);
 			strictEqual(balance[0].amount, value);

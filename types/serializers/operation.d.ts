@@ -7,8 +7,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.TRANSFER]: typeof protocol.transfer.default,
 	[OperationId.ACCOUNT_CREATE]: typeof protocol.account.create,
 	[OperationId.ACCOUNT_UPDATE]: typeof protocol.account.update,
-	[OperationId.ACCOUNT_WHITELIST]: typeof protocol.account.whitelist,
-	[OperationId.ACCOUNT_TRANSFER]: typeof protocol.account.transfer,
+	[OperationId.ACCOUNT_WHITELIST]: typeof protocol.account.whitelist,	
 	[OperationId.ASSET_CREATE]: typeof protocol.asset.create,
 	[OperationId.ASSET_UPDATE]: typeof protocol.asset.update,
 	[OperationId.ASSET_UPDATE_BITASSET]: typeof protocol.asset.updateBitasset,
@@ -26,6 +25,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_CREATE]: typeof protocol.vesting.balanceCreate,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof protocol.vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof protocol.balance.claim,
+	[OperationId.BALANCE_FREEZE]: typeof protocol.balance.freeze,
 	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.transfer.override,
 	[OperationId.ASSET_CLAIM_FEES]: typeof protocol.asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
@@ -68,4 +68,9 @@ export default class OperationSerializer extends ISerializer<
 	toRaw<T extends OperationId>(value: TOperationInput<T, false>): TOperationOutput<T>;
 	toRaw<T extends OperationId>(value: TOperationInput<T, true>, withUnrequiredFee: true): TOperationOutput<T>;
 	appendToByteBuffer<T extends OperationId>(value: TOperationInput<T, false>, bytebuffer: ByteBuffer): void;
+
+	readFromBuffer<T extends OperationId>(
+		buffer: Buffer,
+		offset?: number,
+	): { res: TOperationOutput<T>, newOffset: number };
 }
