@@ -17,7 +17,6 @@ describe('update committee member global parameters', () => {
 							parameters: [[OPERATIONS_IDS.TRANSFER, null]],
 							scale: 0,
 						},
-						block_interval: 0,
 						maintenance_interval: 0,
 						maintenance_skip_slots: 0,
 						committee_proposal_review_period: 0,
