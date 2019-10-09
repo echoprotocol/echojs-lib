@@ -3,14 +3,6 @@ import * as _eth from './eth';
 import { struct } from '../../collections';
 import { asset, extensions } from '../../chain';
 import { accountId, depositId, withdrawId } from '../../chain/id/protocol';
-import { config } from '../../plugins/echorand';
-
-export const sidechainChangeConfigOperationPropsSerializer = struct({
-	fee: asset,
-	registrar: accountId,
-	new_config: config,
-	extensions,
-});
 
 export const sidechainIssueOperationPropsSerializer = struct({
 	fee: asset,

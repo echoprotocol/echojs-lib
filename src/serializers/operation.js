@@ -31,7 +31,6 @@ const operationProps = {
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
 	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: protocol.contract.transfer,
-	[OPERATIONS_IDS.SIDECHAIN_CHANGE_CONFIG]: protocol.sidechain.changeConfig,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: protocol.account.addressCreate,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: protocol.transfer.toAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: protocol.sidechain.eth.createAddress,
