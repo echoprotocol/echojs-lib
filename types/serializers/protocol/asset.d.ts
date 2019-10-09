@@ -40,7 +40,7 @@ export declare const assetUpdateOperationPropsSerializer: StructSerializer<{
 	issuer: typeof accountId,
 	asset_to_update: typeof assetId,
 	new_issuer: OptionalSerializer<typeof accountId>,
-	new_options: typeof assetOptionsSerializer,
+	new_options: OptionalSerializer<typeof assetOptionsSerializer>,
 	extensions: typeof extensions,
 }>;
 
