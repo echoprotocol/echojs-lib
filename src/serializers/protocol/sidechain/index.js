@@ -27,6 +27,8 @@ export const erc20 = {
 	depositToken: _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	withdrawToken: _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
 	approveTokenWithdraw: _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
+	issue: _erc20.sidechainERC20IssueOperationPropsSerializer,
+	burn: _erc20.sidechainERC20BurnOperationPropsSerializer,
 };
 
 export const eth = {
