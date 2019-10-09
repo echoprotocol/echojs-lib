@@ -19,11 +19,11 @@ export const frozenBalanceId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE,
 );
 export const contractId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
-export const depositEthId = new ObjectIdSerializer(
+export const depositId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_DEPOSIT,
 );
-export const withdrawEthId = new ObjectIdSerializer(
+export const withdrawId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_WITHDRAW,
 );
@@ -37,3 +37,7 @@ export const withdrawErc20TokenId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ERC20_WITHDRAW_TOKEN,
 );
 export const btcAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
+export const btcIntermediateDepositId = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.BTC_INTERMEDIATE_DEPOSIT,
+);

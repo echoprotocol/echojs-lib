@@ -39,7 +39,7 @@ export const assetUpdateOperationPropsSerializer = struct({
 	issuer: accountId,
 	asset_to_update: assetId,
 	new_issuer: optional(accountId),
-	new_options: assetOptionsSerializer,
+	new_options: optional(assetOptionsSerializer),
 	extensions,
 });
 
