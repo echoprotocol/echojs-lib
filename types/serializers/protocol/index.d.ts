@@ -126,6 +126,7 @@ export declare const sidechain: {
 	burn: typeof _sidechain.sidechainBurnOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
 	erc20: typeof _sidechain.erc20,
+	btc: typeof _sidechain.btc,
 };
 
 export declare const transfer: {

@@ -31,6 +31,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
 	[OperationId.CONTRACT_CALL]: typeof protocol.contract.call,
 	[OperationId.CONTRACT_TRANSFER]: typeof protocol.contract.transfer,
+	[OperationId.CONTRACT_UPDATE]: typeof protocol.contract.update,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof protocol.account.addressCreate,
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof protocol.transfer.toAddress,
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: typeof protocol.sidechain.eth.createAddress,
@@ -46,7 +47,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof protocol.sidechain.erc20.depositToken,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof protocol.sidechain.erc20.withdrawToken,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof protocol.sidechain.erc20.approveTokenWithdraw,
-	[OperationId.CONTRACT_UPDATE]: typeof protocol.contract.update,
+	[OperationId.SIDECHAIN_BTC_CREATE_ADDRESS]: typeof protocol.sidechain.btc.createAddress,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;

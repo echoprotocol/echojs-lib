@@ -39,6 +39,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.CONTRACT_CREATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_CALL]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.CONTRACT_UPDATE]: struct({ fee: int64 }),
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: feeParametersWithPricePerKByte,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: defaultFeeParametersSerializer,
@@ -54,7 +55,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: defaultFeeParametersSerializer,
-	[OPERATIONS_IDS.CONTRACT_UPDATE]: struct({ fee: int64 }),
+	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: defaultFeeParametersSerializer,
 });
 
 export default feeParametersSerializer;

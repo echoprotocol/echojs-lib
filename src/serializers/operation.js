@@ -31,6 +31,7 @@ const operationProps = {
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
 	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_TRANSFER]: protocol.contract.transfer,
+	[OPERATIONS_IDS.CONTRACT_UPDATE]: protocol.contract.update,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: protocol.account.addressCreate,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: protocol.transfer.toAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: protocol.sidechain.eth.createAddress,
@@ -46,7 +47,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: protocol.sidechain.erc20.depositToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: protocol.sidechain.erc20.withdrawToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: protocol.sidechain.erc20.approveTokenWithdraw,
-	[OPERATIONS_IDS.CONTRACT_UPDATE]: protocol.contract.update,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: protocol.sidechain.btc.createAddress,
 };
 
 const operationSerializer = staticVariant(operationProps);
