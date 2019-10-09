@@ -1,5 +1,25 @@
 import * as _erc20 from './erc20';
 import * as _eth from './eth';
+import { struct } from '../../collections';
+import { asset, extensions } from '../../chain';
+import { accountId, depositId, withdrawId } from '../../chain/id/protocol';
+
+export const sidechainIssueOperationPropsSerializer = struct({
+	fee: asset,
+	value: asset,
+	account: accountId,
+	deposit_id: depositId,
+	extensions,
+});
+
+
+export const sidechainBurnOperationPropsSerializer = struct({
+	fee: asset,
+	value: asset,
+	account: accountId,
+	withdraw_id: withdrawId,
+	extensions,
+});
 
 export const erc20 = {
 	registerToken: _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
@@ -14,6 +34,4 @@ export const eth = {
 	deposit: _eth.sidechainEthDepositOperationPropsSerializer,
 	withdraw: _eth.sidechainEthWithdrawOperationPropsSerializer,
 	approveWithdraw: _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
-	issue: _eth.sidechainEthIssueOperationPropsSerializer,
-	burn: _eth.sidechainEthBurnOperationPropsSerializer,
 };

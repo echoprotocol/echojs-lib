@@ -30,6 +30,7 @@ export declare const sidechainConfigSerializer: StructSerializer<{
 	ETH_asset_id: typeof assetId,
 	fines: typeof sidechainFinesSerializer,
 	waiting_blocks: typeof uint32,
+	waiting_eth_blocks: typeof uint32,
 }>;
 
 export declare const sidechainERC20ConfigSerializer: StructSerializer<{
