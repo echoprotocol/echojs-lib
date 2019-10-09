@@ -308,12 +308,12 @@ const s = objectId(
     constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 );
 
-console.log(s.toRaw('1.9.123'));
+console.log(s.toRaw('1.10.123'));
 console.log(s.toRaw(123));
 console.log(s.toRaw(new BigNumber(123)));
-// "1.9.123"
+// "1.10.123"
 
-console.log(s.serialize('1.9.123'));
+console.log(s.serialize('1.10.123'));
 console.log(s.serialize(123));
 console.log(s.serialize(new BigNumber(123)));
 // <Buffer 7b>
@@ -331,8 +331,8 @@ Available protocol object id serializers:
 * `vestingBalanceId`
 * `balanceId`
 * `contractId`
-* `depositEthId`
-* `withdrawEthId`
+* `depositId`
+* `withdrawId`
 * `erc20TokenId`
 
 Example:

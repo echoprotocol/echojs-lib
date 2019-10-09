@@ -7,7 +7,6 @@ import { echorand, sidechain } from '../plugins';
 
 declare const chainParametersSerializer: StructSerializer<{
 	current_fees: typeof feeScheduleSerializer,
-	block_interval: typeof uint8,
 	maintenance_interval: typeof uint32,
 	maintenance_duration_seconds: typeof uint8,
 	committee_proposal_review_period: typeof uint32,
@@ -31,6 +30,8 @@ declare const chainParametersSerializer: StructSerializer<{
 	sidechain_config: typeof sidechain.config,
 	erc20_config: typeof sidechain.erc20Config,
 	gas_price: StructSerializer<{ price: typeof uint64, gas_amount: typeof uint64 }>,
+	block_emission_amount: typeof uint64,
+	block_producer_reward_ratio: typeof uint16,
 	extensions: typeof extensions,
 }>;
 

@@ -66,13 +66,14 @@ import { PublicKey } from '../crypto';
 *  			_signatures:Array.<{
 *  				_step:Number,
 *  				_value:Number,
-*  				_signer:Number,
+*  				_producer:Number,
 *  				_bba_sign:String
 *  			}>
 *  		},
 *  		transactions:Array.<{
 *  			ref_block_num:Number,
 *  			ref_block_prefix:Number,
+*  			fees_collected:Number,
 *  			expiration:String,
 *  			operations:Array,
 *  			extensions:Array,
@@ -86,6 +87,7 @@ import { PublicKey } from '../crypto';
 *		{
 *  			ref_block_num:Number,
 *  			ref_block_prefix:Number,
+*  			fees_collected:Number,
 *  			expiration:String,
 *  			operations:Array.<*>,
 *  			extensions:Array,
@@ -112,7 +114,6 @@ import { PublicKey } from '../crypto';
 * 	 				parameters:Array.<*>,
 * 	 				scale:Number
 * 	 			},
-* 	 			block_interval:Number,
 * 	 			maintenance_interval:Number,
 * 	 			maintenance_skip_slots:Number,
 * 	 			committee_proposal_review_period:Number,
@@ -435,7 +436,6 @@ import { PublicKey } from '../crypto';
 *  				new_address:String,
 *  				output:String,
 *  				code_deposit:String,
-*  				gas_refunded:String,
 *  				deposit_size:Number,
 *  				gas_for_deposit:String
 *  			},
