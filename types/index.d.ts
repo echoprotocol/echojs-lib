@@ -12,11 +12,13 @@ export { default as AES } from './crypto/aes';
 export { default as hash } from './crypto/hash';
 export { default as echoReducer } from './redux/reducer';
 import * as serializers from './serializers';
+import Contract, { encode, decode } from "./contract";
 export { handleConnectionClosedError } from './utils/helpers';
+
 
 declare const echo: Echo;
 export default echo;
 
 export declare const { OPERATIONS_IDS, CACHE_MAPS }: typeof constants;
 
-export { BigNumber, Echo, constants, validators, converters, serializers };
+export { BigNumber, Echo, constants, validators, converters, serializers, Contract, encode, decode };

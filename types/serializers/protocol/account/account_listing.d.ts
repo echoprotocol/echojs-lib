@@ -8,5 +8,5 @@ export enum ACCOUNT_LISTING {
 }
 
 export default class AccountListingSerializer extends UInt8Serializer {
-    toRaw(value: number): number;
+    toRaw(value: ACCOUNT_LISTING): ACCOUNT_LISTING;
 }
