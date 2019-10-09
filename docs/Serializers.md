@@ -443,8 +443,13 @@ console.log(s.serialize(input).toString('hex'));
 |erc20_deposit_topic|[`eth topic`](#eth-topic)|
 |erc20_withdraw_topic|[`eth topic`](#eth-topic)|
 |ETH_asset_id|[`assetId`](#protocol-object-id)|
+|waiting_eth_blocks|[`uint32`](#integers)|
 |fines|[`fines`](#fines)|
 |waiting_blocks|[`uint32`](#integers)|
+|BTC_asset_id|[`assetId`](#protocol-object-id)|
+|waiting_btc_blocks|[`uint32`](#integers)|
+|satoshis_per_byte|[`uint32`](#integers)|
+|echo_blocks_per_aggregation|[`uint32`](#integers)|
 
 #### ERC20 config
 

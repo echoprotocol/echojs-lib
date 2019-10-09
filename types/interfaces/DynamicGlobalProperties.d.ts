@@ -9,5 +9,6 @@ export default interface DynamicGlobalProperties {
 	accounts_registered_this_interval: number,
 	recent_slots_filled: string,
 	dynamic_flags: number,
-	last_irreversible_block_num: number
+	last_irreversible_block_num: number,
+	last_rand_quantity: string
 }
