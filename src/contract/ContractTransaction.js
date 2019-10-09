@@ -1,7 +1,7 @@
 import Transaction from '../echo/transaction';
 import Result from './ContractResult';
 
-/** @typedef {import("../../types/interfaces/_Abi").AbiArgument} AbiArgument */
+/** @typedef {import("../../types/interfaces/Abi").AbiArgument} AbiArgument */
 /** @typedef {import("../../types/echo/transaction").OPERATION_RESULT} OPERATION_RESULT */
 /** @typedef {import('../../types/echo/transaction').OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
 

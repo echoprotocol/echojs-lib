@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import { Contract } from '../../';
 
-/** @typedef {import("../types/_Abi").AbiMethod} AbiMethod */
+/** @typedef {import("../types/interfaces/Abi").AbiMethod} AbiMethod */
 
 /** @typedef {Array<AbiMethod>} Abi */
 

@@ -84,7 +84,7 @@ export function decodeStaticBytes(bytesCount, value) {
  * @param {Array<string>} code
  * @param {number} from
  * @param {number} length
- * @param {import('../types/contract/_Abi').SolType} type
+ * @param {import('../types/interfaces/Abi').SolType} type
  * @returns {{shift:number,res:Array<string>}}
  */
 function decodeArray(code, from, length, type) {

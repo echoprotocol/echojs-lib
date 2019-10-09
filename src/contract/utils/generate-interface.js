@@ -43,7 +43,7 @@ function parseType(type, isInput = true) {
 }
 
 /**
- * @param {Array<import("../../types/_Abi").AbiArgument>} inputs
+ * @param {Array<import("../../../types/interfaces/Abi").AbiArgument>} inputs
  * @returns {{ res: string, tupleIsUsed: boolean }}
  */
 function getArgs(inputs) {
@@ -59,7 +59,7 @@ function getArgs(inputs) {
 
 /**
  * @param {string} contractName
- * @param {import("../../types/_Abi").Abi} abi
+ * @param {import("../../../types/interfaces/Abi").Abi} abi
  * @param {Object} [props]
  * @param {string} [props.indent]
  * @param {number} [props.maxStringLength]
@@ -135,10 +135,10 @@ export default function generateInterface(contractName, abi, props = {}) {
 		}
 	}
 	events += '};';
-	let result = `import Contract${inputIsUsed ? ', { Method }' : ''} from "echojs-contract";\n`;
-	if (inputIsUsed || constructorArgs) result += 'import INPUT from "echojs-contract/types/_inputs";\n';
-	if (outputIsUsed) result += 'import OUTPUT from "echojs-contract/types/_outputs";\n';
-	if (tupleIsUsed) result += 'import Tuple from "echojs-contract/types/_tuple";\n';
+	let result = `import Contract${inputIsUsed ? ', { Method }' : ''} from "echojs-lib";\n`;
+	if (inputIsUsed || constructorArgs) result += 'import INPUT from "echojs-lib/types/contract/_inputs";\n';
+	if (outputIsUsed) result += 'import OUTPUT from "echojs-lib/types/contract/_outputs";\n';
+	if (tupleIsUsed) result += 'import Tuple from "echojs-lib/types/contract/_tuple";\n';
 	result += '\n';
 	result += Object.keys(methods).map((signature) => {
 		const { str } = methods[signature];
@@ -146,8 +146,6 @@ export default function generateInterface(contractName, abi, props = {}) {
 	}).join('');
 	result += '\n';
 	result += events;
-	result += '\n';
-	// result += methods.map(({ str }) => `${str}\n`).join('');
 	result += '\n';
 	let genericType = constructorArgs === undefined
 		? '' : `<[${constructorArgs.map(({ type }) => parseType(type).res).join(', ')}]>`;
@@ -160,19 +158,21 @@ export default function generateInterface(contractName, abi, props = {}) {
 		genericType += ']>';
 	}
 	result += `${getInitStr()}\n`;
-	// if (constructorArgs !== undefined) {
-	// 	result += `${indent}static async deploy(\n`;
-	// 	result += `${indent}${indent}code: string | Buffer,\n`;
-	// 	result += `${indent}${indent}echo: Echo,\n`;
-	// 	result += `${indent}${indent}privateKey: PrivateKey,\n`;
-	// 	result += `${indent}${indent}options: {\n`;
-	// 	result += `${indent}${indent}${indent}abi: Abi,\n`;
-	// 	result += `${indent}${indent}${indent}ethAccuracy?: boolean,\n`;
-	// 	result += `${indent}${indent}${indent}supportedAssetId?: string,\n`;
-	// 	result += `${indent}${indent}${indent}value?: { amount?: number | string | BigNumber, asset_id?: string },\n`;
-	// 	result += `${indent}${indent}${indent}args: [${constructorArgs.},\n`;
-	// 	result += `${indent}${indent}},\n`;
-	// }
+	if (constructorArgs !== undefined) {
+		result += `${indent}static async deploy(\n`;
+		result += `${indent}${indent}code: string | Buffer,\n`;
+		result += `${indent}${indent}privateKey: PrivateKey,\n`;
+		result += `${indent}${indent}options: {\n`;
+		result += `${indent}${indent}${indent}abi: Abi,\n`;
+		result += `${indent}${indent}${indent}ethAccuracy?: boolean,\n`;
+		result += `${indent}${indent}${indent}supportedAssetId?: string,\n`;
+		result += `${indent}${indent}${indent}accountId?: string,\n`;
+		result += `${indent}${indent}${indent}echo?: Echo,\n`;
+		result += `${indent}${indent}${indent}value?: { amount?: number | string | BigNumber, asset_id?: string },\n`;
+		result += `${indent}${indent}${indent}args: [${constructorArgs[0].type}]\n`;
+		result += `${indent}${indent}},\n`;
+		result += `${indent});\n`;
+	}
 	result += `${indent}readonly methods: {\n`;
 	result += Object.keys(methods).map((type) => {
 		const { name, signature, hash } = methods[type];
