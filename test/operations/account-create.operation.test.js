@@ -40,17 +40,18 @@ describe('account create operation', () => {
 				echorand_key: publicKey,
 				options: {
 					voting_account: `1.${ACCOUNT}.3`,
-					delegating_account: `1.${ACCOUNT}.3`,
+					delegating_account: `1.${ACCOUNT}.3`,					
 					num_committee: 0,
+					delegate_share: 0,
 					votes: [],
 				},
 				extensions: [],
 			})
 			.addSigner(privateKey).broadcast();
-
+			
 		ok(result instanceof Array);
 		ok(!!result[0].id);
 
-	}).timeout(7e3);
+	}).timeout(15e3);
 
 });

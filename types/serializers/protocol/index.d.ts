@@ -21,7 +21,7 @@ import {
 	assetClaimFeesOperationPropsSerializer,
 } from './asset';
 
-import { balanceClaimOperationPropsSerializer } from './balance';
+import { balanceClaimOperationPropsSerializer, balanceFreezeOperationPropsSerializer } from './balance';
 
 import {
 	committeeMemberCreateOperationPropsSerializer,
@@ -92,6 +92,7 @@ export { default as authority } from './authority';
 
 export declare const balance: {
 	claim: typeof balanceClaimOperationPropsSerializer,
+	freeze: typeof balanceFreezeOperationPropsSerializer,
 };
 
 export { default as chainParameters } from './chain_parameters';

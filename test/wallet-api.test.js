@@ -3,7 +3,17 @@ import { expect } from 'chai';
 import echo, { constants } from '../src';
 import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
 
-import { url, accountId, accountName, contractId, ED_PRIVATE, WIF, transaction, transaction2 } from './_test-data';
+import {
+	url,
+	accountId,
+	accountName,
+	contractId,
+	ED_PRIVATE,
+	WIF,
+	transaction,
+	transaction2,
+	walletURL
+} from './_test-data';
 import { deepStrictEqual, ok } from 'assert';
 import { shouldReject } from './_test-utils';
 import { API_CONFIG, DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
@@ -19,7 +29,7 @@ describe('WALLET API', () => {
 	const operation = ['get_object'];
 
 	before(async () => {
-		await echo.connect(null, { wallet: 'ws://0.0.0.0:8888' });
+		await echo.connect(null, { wallet: walletURL });
 		await echo.walletApi.setPassword('qwe');
 		await echo.walletApi.unlock('qwe');
 	});
@@ -1231,8 +1241,8 @@ describe('WALLET API', () => {
 	// 		}
 	// 	}).timeout(5000);
 	// });
-
-	describe('#floodNetwork()', () => {
+	//TODO: rm floodNetwork method
+	describe.skip('#floodNetwork()', () => {
 		it('What Should this do?', async () => {
 			try {
 				const prefix = 'prefix';
