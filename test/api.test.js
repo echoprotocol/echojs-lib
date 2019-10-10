@@ -967,9 +967,9 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const depositId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT}.1`;
+					const btcAddressId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS}.1`;
 
-					const script = await api.getBtcDepositScript(depositId);
+					const script = await api.getBtcDepositScript(btcAddressId);
 
 					expect(script)
 						.to
