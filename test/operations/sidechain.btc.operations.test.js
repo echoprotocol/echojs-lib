@@ -27,6 +27,13 @@ describe('sidechain btc', () => {
 
 	describe('deposit', () => {
 		it('test', async () => {
+			const txInfo = {
+				block_number: 598305,
+				tx_id: '7f0baac0a332fd783d252b977e2cd390c6f854cc',
+				value: 10,
+				vout: 32,
+			};
+
 			const transaction = echo.createTransaction();
 
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
@@ -34,12 +41,7 @@ describe('sidechain btc', () => {
 				backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
 				committee_member_id: '1.2.10',
 				intermediate_deposit_id: '1.20.3',
-				tx_info: {
-					block_number: 598305,
-					tx_id: '7f0baac0a332fd783d252b977e2cd390c6f854cc',
-					value: 10,
-					vout: 32,
-				}
+				tx_info: txInfo
 			});
 
 			transaction.addSigner(privateKey);
