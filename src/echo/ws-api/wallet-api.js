@@ -1610,6 +1610,25 @@ class WalletAPI {
 	}
 
 	/**
+	 * @method registerAccountWithApi
+	 *
+	 * @param  {String} name
+	 * @param  {String} activeKey
+	 * @param  {String} echorandKey
+	 *
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	registerAccountWithApi(name, activeKey, echorandKey) {
+		if (!isAccountName(name)) throw new Error('new account name is invalid');
+		if (!isPublicKey(activeKey)) throw new Error('active key is invalid');
+		if (!isPublicKey(echorandKey)) throw new Error('echorand key is invalid');
+
+		return this.wsRpc.call([0, 'register_account_with_api',
+			[name, activeKey, echorandKey],
+		]);
+	}
+
+	/*
 	 * @method generateBtcDepositAddress
 	 * @param {String} accountNameOrId
 	 * @param {String} backupAddress
