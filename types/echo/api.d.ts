@@ -19,6 +19,7 @@ import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
 import FrozenBalance from '../interfaces/FrozenBalance';
 import BtcAddress from '../interfaces/BtcAddress';
+import RegistrationTask from '../interfaces/RegistrationTask';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 
@@ -94,6 +95,7 @@ export default class Api {
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
 	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
 	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
+	requestRegistrationTask(): Promise<RegistrationTask>
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
