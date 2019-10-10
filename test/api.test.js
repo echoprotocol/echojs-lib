@@ -820,7 +820,7 @@ describe('API', () => {
 					throw e;
 				}
 			})
-				.timeout(5000);
+				.timeout(5001);
 		});
 		describe('#lookupVoteIds()', () => {
 			it('should get vote by id and save to cache', async () => {
