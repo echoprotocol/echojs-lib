@@ -28,10 +28,6 @@ export const withdrawId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_WITHDRAW,
 );
 export const erc20TokenId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.ERC20_TOKEN);
-<<<<<<< HEAD
-export const btcAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
-export const btcIntermeiateDepositId = new ObjectIdSerializer(
-=======
 export const depositErc20TokenId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ERC20_DEPOSIT_TOKEN,
@@ -42,7 +38,6 @@ export const withdrawErc20TokenId = new ObjectIdSerializer(
 );
 export const btcAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
 export const btcIntermediateDepositId = new ObjectIdSerializer(
->>>>>>> develop
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.BTC_INTERMEDIATE_DEPOSIT,
 );
