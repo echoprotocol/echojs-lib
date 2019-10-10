@@ -308,12 +308,12 @@ const s = objectId(
     constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
 );
 
-console.log(s.toRaw('1.9.123'));
+console.log(s.toRaw('1.10.123'));
 console.log(s.toRaw(123));
 console.log(s.toRaw(new BigNumber(123)));
-// "1.9.123"
+// "1.10.123"
 
-console.log(s.serialize('1.9.123'));
+console.log(s.serialize('1.10.123'));
 console.log(s.serialize(123));
 console.log(s.serialize(new BigNumber(123)));
 // <Buffer 7b>
@@ -331,8 +331,8 @@ Available protocol object id serializers:
 * `vestingBalanceId`
 * `balanceId`
 * `contractId`
-* `depositEthId`
-* `withdrawEthId`
+* `depositId`
+* `withdrawId`
 * `erc20TokenId`
 
 Example:
@@ -443,8 +443,13 @@ console.log(s.serialize(input).toString('hex'));
 |erc20_deposit_topic|[`eth topic`](#eth-topic)|
 |erc20_withdraw_topic|[`eth topic`](#eth-topic)|
 |ETH_asset_id|[`assetId`](#protocol-object-id)|
+|waiting_eth_blocks|[`uint32`](#integers)|
 |fines|[`fines`](#fines)|
 |waiting_blocks|[`uint32`](#integers)|
+|BTC_asset_id|[`assetId`](#protocol-object-id)|
+|waiting_btc_blocks|[`uint32`](#integers)|
+|satoshis_per_byte|[`uint32`](#integers)|
+|echo_blocks_per_aggregation|[`uint32`](#integers)|
 
 #### ERC20 config
 

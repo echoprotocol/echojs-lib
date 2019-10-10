@@ -1,4 +1,5 @@
 import ethAddress from './ethAddress';
+import btcPublicKey from './btcPublicKey';
 import { StringSerializer } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, committeeMemberId } from '../chain/id/protocol';
@@ -10,6 +11,7 @@ export const committeeMemberCreateOperationPropsSerializer: StructSerializer<{
 	committee_member_account: typeof accountId,
 	url: StringSerializer,
 	eth_address: typeof ethAddress,
+	btc_public_key: typeof btcPublicKey,
 	extensions: typeof extensions,
 }>;
 
@@ -19,6 +21,7 @@ export const committeeMemberUpdateOperationPropsSerializer: StructSerializer<{
 	committee_member_account: typeof accountId,
 	new_url: OptionalSerializer<StringSerializer>,
 	new_eth_address: OptionalSerializer<typeof ethAddress>,
+	new_btc_public_key: OptionalSerializer<typeof btcPublicKey>,
 	extensions: typeof extensions,
 }>;
 

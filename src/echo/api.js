@@ -26,6 +26,7 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
+	isBtcAddressId,
 } from '../utils/validators';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
@@ -66,13 +67,14 @@ import { PublicKey } from '../crypto';
 *  			_signatures:Array.<{
 *  				_step:Number,
 *  				_value:Number,
-*  				_signer:Number,
+*  				_producer:Number,
 *  				_bba_sign:String
 *  			}>
 *  		},
 *  		transactions:Array.<{
 *  			ref_block_num:Number,
 *  			ref_block_prefix:Number,
+*  			fees_collected:Number,
 *  			expiration:String,
 *  			operations:Array,
 *  			extensions:Array,
@@ -86,6 +88,7 @@ import { PublicKey } from '../crypto';
 *		{
 *  			ref_block_num:Number,
 *  			ref_block_prefix:Number,
+*  			fees_collected:Number,
 *  			expiration:String,
 *  			operations:Array.<*>,
 *  			extensions:Array,
@@ -112,7 +115,6 @@ import { PublicKey } from '../crypto';
 * 	 				parameters:Array.<*>,
 * 	 				scale:Number
 * 	 			},
-* 	 			block_interval:Number,
 * 	 			maintenance_interval:Number,
 * 	 			maintenance_skip_slots:Number,
 * 	 			committee_proposal_review_period:Number,
@@ -142,14 +144,28 @@ import { PublicKey } from '../crypto';
 * 	 				_gc1_delay:Number
 * 	 			},
 * 	 			sidechain_config:{
-* 	 				echo_contract_id:String,
-* 	 				echo_vote_method:String,
-* 	 				echo_sign_method:String,
-* 	 				echo_transfer_topic:String,
-* 	 				echo_transfer_ready_topic:String,
 * 	 				eth_contract_address:String,
-* 	 				eth_committee_method:String,
-* 	 				eth_transfer_topic:String,
+* 	 				eth_committee_update_method:{method:String,gas:Number},
+* 	 				eth_gen_address_method:{method:String,gas:Number},
+* 	 				eth_withdraw_method:{method:String,gas:Number},
+* 	 				eth_update_addr_method:{method:String,gas:Number},
+* 	 				eth_withdraw_token_method:{method:String,gas:Number},
+* 	 				eth_collect_tokens_method:{method:String,gas:Number},
+* 	 				eth_committee_updated_topic:String,
+* 	 				eth_gen_address_topic:String,
+* 	 				eth_deposit_topic:String,
+* 	 				eth_withdraw_topic:String,
+* 	 				erc20_deposit_topic:String,
+* 	 				erc20_withdraw_topic:String,
+* 	 				ETH_asset_id:String,
+* 	 				waiting_eth_blocks:Number,
+* 	 				fines:{generate_eth_address:Number},
+* 	 				waiting_blocks:Number,
+* 	 				BTC_asset_id:String,
+* 	 				waiting_btc_blocks:Number,
+* 	 				satoshis_per_byte:Number,
+* 	 				echo_blocks_per_aggregation:Number,
+* 	 				gas_price:String,
 * 	 			},
 * 	 			gas_price:{
 * 	 				price:Number|String,
@@ -247,7 +263,8 @@ import { PublicKey } from '../crypto';
 *  		current_aslot:Number,
 *  		recent_slots_filled:String,
 *  		dynamic_flags:Number,
-*  		last_irreversible_block_num:Number
+*  		last_irreversible_block_num:Number,
+*  		last_rand_quantity:String
 *  	}
 *  	} DynamicGlobalProperties */
 
@@ -257,7 +274,9 @@ import { PublicKey } from '../crypto';
 *  		committee_member_account:String,
 *  		vote_id:String,
 *  		total_votes:Number,
-*  		url:String
+*  		url:String,
+*  		eth_address:String,
+*  		btc_public_key:String
 *  	}
 *  	} Committee */
 
@@ -418,7 +437,6 @@ import { PublicKey } from '../crypto';
 *  				new_address:String,
 *  				output:String,
 *  				code_deposit:String,
-*  				gas_refunded:String,
 *  				deposit_size:Number,
 *  				gas_for_deposit:String
 *  			},
@@ -2431,6 +2449,62 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		return this.wsApi.database.getFrozenBalances(accountId);
+	}
+
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getBtcAddresses(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this.wsApi.database.getBtcAddresses(accountId);
+	}
+
+	/**
+	 *
+	 * @param {String} btcAddressId
+	 * @return {*}
+	 */
+	getBtcDepositScript(btcAddressId) {
+		if (!isBtcAddressId(btcAddressId)) return Promise.reject(new Error('Btc address id is invalid'));
+
+		return this.wsApi.database.getBtcDepositScript(btcAddressId);
+	}
+
+	/*
+	 *  @method requestRegistrationTask
+	 *
+	 *  @return {Promise<Object>}
+	 */
+	requestRegistrationTask() {
+		return this.wsApi.registration.requestRegistrationTask();
+	}
+
+	/**
+	 *  @method submitRegistrationSolution
+	 *
+	 * 	@param {String} name
+	 * 	@param {String} activeKey
+	 * 	@param {String} echorandKey
+	 * 	@param {Number} nounce
+	 * 	@param {Number} randNum
+	 * 	@param {Function} wasBroadcastedCallback
+	 *
+ 	 *  @return {Promise<Boolean>}
+	 */
+	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.registration.submitRegistrationSolution((res) =>
+					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+			} catch (error) {
+				reject(error);
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
+
 	}
 
 	setOptions() { }
