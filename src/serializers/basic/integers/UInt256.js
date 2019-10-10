@@ -16,11 +16,10 @@ export default class UInt256Serializer extends IUIntSerializer {
 
 	/**
 	 * @param {SerializerInput<UInt64Serializer>} value
-	 * @param {ByteBuffer} bytebuffer
 	 */
-	appendToByteBuffer(value, bytebuffer) {
+	appendToByteBuffer(value) {
 		const raw = this.toRaw(value);
-		bytebuffer.writeUint64(ByteBuffer.Long.fromString(raw));
+		super.writeUint64(ByteBuffer.Long.fromString(raw));
 	}
 
 }

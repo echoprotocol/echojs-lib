@@ -320,21 +320,13 @@ export const isTimePointSec = (v) => {
 	}
 };
 
-export const isAccountIdOrName = (v) => {
-	if (!isAccountId(v) && !isAccountName(v)) throw new Error('Accounts id or name should be string and valid');
-};
+export const isAccountIdOrName = (v) => !isAccountId(v) && !isAccountName(v);
 
-export const isAssetIdOrName = (v) => {
-	if (!isAssetId(v) && !isAssetName(v)) throw new Error('Assets id or name should be string and valid');
-};
+export const isAssetIdOrName = (v) => !isAssetId(v) && !isAssetName(v);
 
-export const isMethodExists = (v) => {
-	if (!walletAPIMethodsArray.includes(v)) throw new Error('This method does not exists');
-};
+export const isMethodExists = (v) => !walletAPIMethodsArray.includes(v);
 
-export const isOperationPrototypeExists = (v) => {
-	if (!operationPrototypeArray.includes(v)) throw new Error('This operation does not exists');
-};
+export const isOperationPrototypeExists = (v) => !operationPrototypeArray.includes(v);
 
 export const isNotEmptyString = (v) => isString(v) && !!v.trim();
 
@@ -344,11 +336,7 @@ export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0
 export const isOldPrivateKey = (v) => {
 	if (!isString(v)) return false;
 
-	if (bs58.decode(v).length !== LENGTH_DECODE_PRIVATE_KEY) {
-		throw new Error('Invalid private key');
-	}
-
-	return true;
+	return bs58.decode(v).length !== LENGTH_DECODE_PRIVATE_KEY;
 };
 
 const validateAmount = (v) => {
