@@ -40,7 +40,7 @@ describe('sidechain btc', () => {
             	account: accountId,
 				backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
 				committee_member_id: '1.2.10',
-				intermediate_deposit_id: '1.20.0',
+				intermediate_deposit_id: '1.20.3',
 				tx_info: txInfo
 			});
 
