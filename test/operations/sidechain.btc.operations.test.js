@@ -74,6 +74,10 @@ describe('sidechain btc', () => {
 
             await transaction.broadcast();
 		}).timeout(50000);
+<<<<<<< HEAD
 	});
+=======
+	})
+>>>>>>> develop
 
 });
