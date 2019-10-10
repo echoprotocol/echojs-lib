@@ -1,14 +1,23 @@
 import * as _erc20 from './erc20';
 import * as _eth from './eth';
+import * as _btc from './btc';
 import { asset, extensions } from '../../chain';
-import { accountId } from '../../chain/id/protocol';
+import { accountId, depositId, withdrawId } from '../../chain/id/protocol';
 import { StructSerializer } from '../../collections';
-import { config } from '../../plugins/sidechain';
 
-export declare const sidechainChangeConfigOperationPropsSerializer: StructSerializer<{
+export declare const sidechainIssueOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
-	registrar: typeof accountId,
-	new_config: typeof config,
+	value: typeof asset,
+	account: typeof accountId,
+	deposit_id: typeof depositId,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	value: typeof asset,
+	account: typeof accountId,
+	withdraw_id: typeof withdrawId,
 	extensions: typeof extensions,
 }>;
 
@@ -17,6 +26,8 @@ export declare const erc20: {
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	withdrawToken: typeof _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
+	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
+	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,
 };
 
 export declare const eth: {
@@ -25,6 +36,9 @@ export declare const eth: {
 	deposit: typeof _eth.sidechainEthDepositOperationPropsSerializer,
 	withdraw: typeof _eth.sidechainEthWithdrawOperationPropsSerializer,
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
-	issue: typeof _eth.sidechainEthIssueOperationPropsSerializer,
-	burn: typeof _eth.sidechainEthBurnOperationPropsSerializer,
+};
+
+export declare const btc: {
+	createAddress: typeof _btc.sidechainBtcCreateAddressOperationPropsSerializer,
+	intermediateDeposit: typeof _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
 };
