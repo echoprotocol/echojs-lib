@@ -2027,6 +2027,12 @@ describe('WALLET API', () => {
 
 				await echo.walletApi.registerAccountWithProof(name, pubKey, pubKey);
 			} catch(e) {
+				console.log(e);
+				throw e;
+			}
+		})
+	});
+
 	describe('#freezeBalance()', () => {
 		it('should freeze balance', async () => {
 			try {
