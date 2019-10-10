@@ -1,9 +1,5 @@
 import { asset, extensions } from "../../chain";
-<<<<<<< HEAD
-import { accountId, btcAddressId, btcIntermeiateDepositId } from "../../chain/id/protocol";
-=======
-import { accountId, btcAddressId } from "../../chain/id/protocol";
->>>>>>> develop
+import { accountId, btcAddressId, btcIntermediateDepositId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer } from "../../collections";
 import { StringSerializer } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
@@ -25,15 +21,12 @@ export declare const sidechainBtcIntermediateDepositOperationPropsSerializer: St
 	signature: StringSerializer,
 	extensions: typeof extensions,
 }>;
-<<<<<<< HEAD
 
 export declare const sidechainBtcDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
 	account: typeof accountId,
-	intermediate_deposit_id: typeof btcIntermeiateDepositId,
+	intermediate_deposit_id: typeof btcIntermediateDepositId,
 	tx_info: typeof BtcTransactionDetailsSerializer,
 }>;
 
-=======
->>>>>>> develop
