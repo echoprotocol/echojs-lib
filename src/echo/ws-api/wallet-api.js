@@ -1610,7 +1610,6 @@ class WalletAPI {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * @method registerAccountWithProof
 	 * @param {String} name
 	 * @param {String} activeKey
@@ -1623,7 +1622,9 @@ class WalletAPI {
 		if (!isPublicKey(echorandKey)) return Promise.reject(new Error('echorand key is invalid'));
 
 		return this.wsRpc.call([0, 'register_account_with_proof', [name, activeKey, echorandKey]]);
-=======
+	}
+
+	/**
 	 * @method listFrozenBalances
 	 * @param {String} accountNameOrId
 	 * @returns {Promise<Array>}
@@ -1662,7 +1663,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'freeze_balance',
 			[fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork],
 		]);
->>>>>>> develop
 	}
 
 }
