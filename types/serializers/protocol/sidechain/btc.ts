@@ -1,5 +1,5 @@
 import { asset, extensions, sha256 } from "../../chain";
-import { accountId, btcAddressId, btcIntermeiateDepositId, btcDepositId, btcWithdrawId } from "../../chain/id/protocol";
+import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
 import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
@@ -26,7 +26,7 @@ export declare const sidechainBtcDepositOperationPropsSerializer: StructSerializ
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
 	account: typeof accountId,
-	intermediate_deposit_id: typeof btcIntermeiateDepositId,
+	intermediate_deposit_id: typeof btcIntermediateDepositId,
 	tx_info: typeof BtcTransactionDetailsSerializer,
 }>;
 

@@ -13,8 +13,8 @@ export const contractBaseOperationPropsSerializer = struct({
 
 export const contractCreateOperationPropsSerializer = struct({
 	...contractBaseOperationPropsSerializer.serializers,
-	eth_accuracy: bool,
 	supported_asset_id: optional(assetId),
+	eth_accuracy: bool,
 	extensions,
 });
 
