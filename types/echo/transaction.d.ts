@@ -20,6 +20,7 @@ interface BroadcastingResult {
 	trx: {
 		ref_block_num: number,
 		ref_block_prefix: number,
+		fees_collected: number,
 		expiration: string,
 		operations: SerializerOutput<OperationSerializer>[],
 		extensions: never[],
