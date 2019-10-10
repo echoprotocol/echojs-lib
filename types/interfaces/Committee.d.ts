@@ -3,5 +3,7 @@ export default interface Committee {
 	committee_member_account: string,
 	vote_id: string,
 	total_votes: number,
-	url: string
+	url: string,
+	eth_address: string,
+	btc_public_key: string
 }
