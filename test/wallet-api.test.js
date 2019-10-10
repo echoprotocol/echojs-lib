@@ -2030,7 +2030,7 @@ describe('WALLET API', () => {
 				console.log(e);
 				throw e;
 			}
-		})
+		}).timeout(5000);
 	});
 
 	describe('#freezeBalance()', () => {
