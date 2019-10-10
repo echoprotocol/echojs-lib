@@ -1609,6 +1609,141 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_prototype_operation', [operationType]]);
 	}
 
+	/**
+	 * @method registerAccountWithApi
+	 *
+	 * @param  {String} name
+	 * @param  {String} activeKey
+	 * @param  {String} echorandKey
+	 *
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	registerAccountWithApi(name, activeKey, echorandKey) {
+		if (!isAccountName(name)) throw new Error('new account name is invalid');
+		if (!isPublicKey(activeKey)) throw new Error('active key is invalid');
+		if (!isPublicKey(echorandKey)) throw new Error('echorand key is invalid');
+
+		return this.wsRpc.call([0, 'register_account_with_api',
+			[name, activeKey, echorandKey],
+		]);
+	}
+
+	/*
+	 * @method generateBtcDepositAddress
+	 * @param {String} accountNameOrId
+	 * @param {String} backupAddress
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	generateBtcDepositAddress(accountIdOrName, backupAddress, shouldDoBroadcastToNetwork) {
+		if (!(isAccountId(accountIdOrName) || isAccountName(accountIdOrName))) {
+			throw new Error('accounts id or name should be string and valid');
+		}
+
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'generate_btc_deposit_address',
+			[accountIdOrName, backupAddress, shouldDoBroadcastToNetwork],
+		]);
+	}
+
+	/**
+	 * @method getBtcAddresses
+	 * @param {String} accountId
+	 * @returns {Promise<Array>}
+	 */
+	getBtcAddresses(accountId) {
+		if (!isAccountId(accountId)) throw new Error('account should be valid');
+
+		return this.wsRpc.call([0, 'get_btc_addresses', [accountId]]);
+	}
+
+	/**
+	 * @method getBtcDepositScript
+	 * @param {String} btcDepositAddress
+	 * @returns {Promise<String>}
+	 */
+	getBtcDepositScript(btcDepositAddress) {
+		return this.wsRpc.call([0, 'get_btc_deposit_script', [btcDepositAddress]]);
+	}
+
+	/**
+	 * @method withdrawBtc
+	 * @param {String} accountIdOrName
+	 * @param {String} addressToWithdraw
+	 * @param {Number} amount
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	withdrawBtc(accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork) {
+		if (!(isAccountId(accountIdOrName) || isAccountName(accountIdOrName))) {
+			throw new Error('accounts id or name should be string and valid');
+		}
+
+		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'withdraw_btc',
+			[accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork],
+		]);
+	}
+
+	/*
+	 * @method registerAccountWithProof
+	 * @param {String} name
+	 * @param {String} activeKey
+	 * @param {String} echorandKey
+	 * @returns {Promise<void>}
+	 */
+	registerAccountWithProof(name, activeKey, echorandKey) {
+		if (!isAccountName(name)) return Promise.reject(new Error('new account name is invalid'));
+		if (!isPublicKey(activeKey)) return Promise.reject(new Error('active key is invalid'));
+		if (!isPublicKey(echorandKey)) return Promise.reject(new Error('echorand key is invalid'));
+
+		return this.wsRpc.call([0, 'register_account_with_proof', [name, activeKey, echorandKey]]);
+	}
+
+	/**
+	 * @method listFrozenBalances
+	 * @param {String} accountNameOrId
+	 * @returns {Promise<Array>}
+	 */
+	listFrozenBalances(accountNameOrId) {
+		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
+			return Promise.reject(new Error('Account name or id is invalid'));
+		}
+
+		return this.wsRpc.call([0, 'list_frozen_balances', [accountNameOrId]]);
+	}
+
+	/**
+	 * @method transfer
+	 * @param {String} fromAccountNameOrId
+	 * @param {Number} amount
+	 * @param {String} assetIdOrName
+	 * @param {number} duration
+	 * @param {Boolean} shouldDoBroadcastToNetwork
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	freezeBalance(fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork) {
+		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
+			return Promise.reject(new Error('Account name or id is invalid'));
+		}
+
+		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
+
+		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) {
+			return Promise.reject(new Error('Account name or id is invalid'));
+		}
+
+		if (!isUInt64(duration)) return Promise.reject(new Error('duration should be a non negative integer'));
+		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
+
+		return this.wsRpc.call([0, 'freeze_balance',
+			[fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork],
+		]);
+	}
+
 }
 
 export default WalletAPI;

@@ -10,6 +10,7 @@ services:
       --account-info="[\"1.2.8\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.9\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.10\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
+      --registrar-account=\"1.2.10\"
       --rpc-endpoint=0.0.0.0:6311
       --plugins=registration
       --api-access=/echo/access.json

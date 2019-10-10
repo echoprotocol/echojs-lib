@@ -26,6 +26,7 @@ import {
 	isEchoRandKey,
 	isOperationId,
 	isDynamicGlobalObjectId,
+	isBtcAddressId,
 } from '../utils/validators';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
@@ -2448,6 +2449,62 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		return this.wsApi.database.getFrozenBalances(accountId);
+	}
+
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getBtcAddresses(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this.wsApi.database.getBtcAddresses(accountId);
+	}
+
+	/**
+	 *
+	 * @param {String} btcAddressId
+	 * @return {*}
+	 */
+	getBtcDepositScript(btcAddressId) {
+		if (!isBtcAddressId(btcAddressId)) return Promise.reject(new Error('Btc address id is invalid'));
+
+		return this.wsApi.database.getBtcDepositScript(btcAddressId);
+	}
+
+	/*
+	 *  @method requestRegistrationTask
+	 *
+	 *  @return {Promise<Object>}
+	 */
+	requestRegistrationTask() {
+		return this.wsApi.registration.requestRegistrationTask();
+	}
+
+	/**
+	 *  @method submitRegistrationSolution
+	 *
+	 * 	@param {String} name
+	 * 	@param {String} activeKey
+	 * 	@param {String} echorandKey
+	 * 	@param {Number} nounce
+	 * 	@param {Number} randNum
+	 * 	@param {Function} wasBroadcastedCallback
+	 *
+ 	 *  @return {Promise<Boolean>}
+	 */
+	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.registration.submitRegistrationSolution((res) =>
+					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+			} catch (error) {
+				reject(error);
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
+
 	}
 
 	setOptions() { }
