@@ -2442,6 +2442,31 @@ class API {
 		return this.wsApi.registration.requestRegistrationTask();
 	}
 
+	/**
+	 *  @method submitRegistrationSolution
+	 *
+	 * 	@param {String} name
+	 * 	@param {String} activeKey
+	 * 	@param {String} echorandKey
+	 * 	@param {Number} nounce
+	 * 	@param {Number} randNum
+	 * 	@param {Function} wasBroadcastedCallback
+	 *
+ 	 *  @return {Promise<Boolean>}
+	 */
+	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.wsApi.registration.submitRegistrationSolution((res) =>
+					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+			} catch (error) {
+				reject(error);
+			}
+			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
+		});
+
+	}
+
 	setOptions() { }
 
 }

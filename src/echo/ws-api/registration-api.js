@@ -33,6 +33,22 @@ class RegistrationAPI {
 		return this.db.exec('request_registration_task', []);
 	}
 
+	/**
+	 *  @method submitRegistrationSolution
+	 *
+	 * 	@param {Function} callback
+	 * 	@param {String} name
+	 * 	@param {String} activeKey
+	 * 	@param {String} echorandKey
+	 * 	@param {Number} nounce
+	 * 	@param {Number} randNum
+	 *
+ 	 *  @return {Promise}
+	 */
+	submitRegistrationSolution(callback, name, activeKey, echorandKey, nounce, randNum) {
+		return this.db.exec('submit_registration_solution', [callback, name, activeKey, echorandKey, nounce, randNum]);
+	}
+
 }
 
 export default RegistrationAPI;
