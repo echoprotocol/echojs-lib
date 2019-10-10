@@ -18,6 +18,7 @@ import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
 import FrozenBalance from '../interfaces/FrozenBalance';
+import BtcAddress from '../interfaces/BtcAddress';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
@@ -49,6 +50,8 @@ export default class Api {
 	getBlock(blockNum: number): Promise<Block>;
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
 	getBlockVirtualOperations(blockNum: number): any;
+	getBtcAddresses(accountId: string): Promise<Array<BtcAddress>>;
+	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;

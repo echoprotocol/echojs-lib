@@ -175,6 +175,10 @@ try {
 <dd></dd>
 <dt><a href="#getFrozenBalances">getFrozenBalances(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getBtcAddresses">getBtcAddresses(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBtcDepositScript">getBtcDepositScript(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
 <dt><a href="#requestRegistrationTask">requestRegistrationTask()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 </dl>
@@ -868,6 +872,24 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | keys | <code>Number</code> | [Number of the block to retrieve (non negative integer)] |
+
+<a name="getBtcAddresses"></a>
+
+## getBtcAddresses(accountId) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountId | <code>String</code> | [Id of the account to retrieve] |
+
+<a name="getBtcDepositScript"></a>
+
+## getBtcDepositScript(btcDepositId) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| btcDepositId | <code>String</code> | [Id of the btc deposit] |
 
 <a name="requestRegistrationTask"></a>
 
