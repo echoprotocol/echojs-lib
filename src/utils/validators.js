@@ -320,24 +320,20 @@ export const isTimePointSec = (v) => {
 	}
 };
 
-export const isAccountIdOrName = (v) => !isAccountId(v) && !isAccountName(v);
+export const isAccountIdOrName = (v) => isAccountId(v) || isAccountName(v);
 
-export const isAssetIdOrName = (v) => !isAssetId(v) && !isAssetName(v);
+export const isAssetIdOrName = (v) => isAssetId(v) || isAssetName(v);
 
-export const isMethodExists = (v) => !walletAPIMethodsArray.includes(v);
+export const isMethodExists = (v) => walletAPIMethodsArray.includes(v);
 
-export const isOperationPrototypeExists = (v) => !operationPrototypeArray.includes(v);
+export const isOperationPrototypeExists = (v) => operationPrototypeArray.includes(v);
 
 export const isNotEmptyString = (v) => isString(v) && !!v.trim();
 
 export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0);
 
 
-export const isOldPrivateKey = (v) => {
-	if (!isString(v)) return false;
-
-	return bs58.decode(v).length !== LENGTH_DECODE_PRIVATE_KEY;
-};
+export const isOldPrivateKey = (v) => isString(v) && bs58.decode(v).length === LENGTH_DECODE_PRIVATE_KEY;
 
 const validateAmount = (v) => {
 	if (!isString(v)) return false;

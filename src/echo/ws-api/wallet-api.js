@@ -98,7 +98,7 @@ class WalletAPI {
 	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
 	 */
 	helpMethod(method) {
-		if (isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
+		if (!isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
 		return this.wsRpc.call([0, 'help_method', [string.toRaw(method)]]);
 	}
 
@@ -185,7 +185,7 @@ class WalletAPI {
 	 * @returns {Promise<string>} string new in WIF eddsa private key
 	 */
 	oldKeyToWif(accountPrivateKey) {
-		if (isOldPrivateKey(accountPrivateKey)) return Promise.reject(new Error('Invalid private key'));
+		if (!isOldPrivateKey(accountPrivateKey)) return Promise.reject(new Error('Invalid private key'));
 		return this.wsRpc.call([0, 'old_key_to_wif', [string.toRaw(accountPrivateKey)]]);
 	}
 
@@ -198,7 +198,7 @@ class WalletAPI {
 	 * @returns {Promise<boolean>} true if the key was imported
 	 */
 	importKey(accountNameOrId, privateKeyWif) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
@@ -249,7 +249,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	importBalance(accountNameOrId, shouldDoBroadcastToNetwork, wifKeys) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'import_balance', [
@@ -375,7 +375,7 @@ class WalletAPI {
 	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
 	listAccountBalances(accountNameOrId) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'list_account_balances', [string.toRaw(accountNameOrId)]]);
@@ -404,7 +404,7 @@ class WalletAPI {
 	 */
 	registerAccount(name, activeKey, accountNameOrId, shouldDoBroadcastToNetwork) {
 		if (!isAccountName(name)) return Promise.reject(new Error('Name should be string and valid'));
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'register_account', [
@@ -429,7 +429,7 @@ class WalletAPI {
 	 */
 	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, shouldDoBroadcastToNetwork) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Name should be string and valid'));
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'create_account_with_brain_key', [
@@ -462,7 +462,7 @@ class WalletAPI {
 		useEthereumAssetAccuracy,
 		shouldSaveToWallet,
 	) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
@@ -495,7 +495,7 @@ class WalletAPI {
 		assetType,
 		shouldSaveToWallet,
 	) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
@@ -518,7 +518,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	contractFundFeePool(accountNameOrId, idOfContract, amount, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'contract_fund_fee_pool', [
@@ -551,14 +551,14 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction transferring funds
 	 */
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(fromAccountNameOrId)) {
+		if (!isAccountIdOrName(fromAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(toAccountNameOrId)) {
+		if (!isAccountIdOrName(toAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'transfer', [
@@ -580,14 +580,14 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} the transaction ID along with the signed transaction
 	 */
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
-		if (isAccountIdOrName(fromAccountNameOrId)) {
+		if (!isAccountIdOrName(fromAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(toAccountNameOrId)) {
+		if (!isAccountIdOrName(toAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'transfer2', [
@@ -618,10 +618,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing the whitelisting status
 	 */
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(authorizingAccount)) {
+		if (!isAccountIdOrName(authorizingAccount)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(accountToList)) {
+		if (!isAccountIdOrName(accountToList)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'whitelist_account', [
@@ -638,7 +638,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} vesting balance object with info
 	 */
 	getVestingBalances(accountNameOrId) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_vesting_balances', [string.toRaw(accountNameOrId)]]);
@@ -654,7 +654,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(witnessAccountNameOrId)) {
+		if (!isAccountIdOrName(witnessAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'withdraw_vesting', [
@@ -671,7 +671,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} the public account data stored in the blockchain
 	 */
 	getAccount(accountNameOrId) {
-		if (isAccountIdOrName(accountNameOrId)) {
+		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_account', [string.toRaw(accountNameOrId)]]);
@@ -695,7 +695,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} a list of operation history objects
 	 */
 	getAccountHistory(accountIdOrName, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
@@ -718,7 +718,7 @@ class WalletAPI {
 		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
@@ -769,7 +769,7 @@ class WalletAPI {
 		removeFromBlacklist,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'whitelist_contract_pool', [
@@ -792,7 +792,7 @@ class WalletAPI {
 	 * @returns {Promise<string>}
 	 */
 	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isContractCode(codeOfTheContract)) {
@@ -858,7 +858,7 @@ class WalletAPI {
 		decimals,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isNotEmptyString(tokenName)) return Promise.reject(new Error('Name should be string and valid'));
@@ -919,7 +919,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawErc20Token(accountIdOrName, toEthereumAddress, idOferc20Token, withdrawAmount, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'withdraw_erc20_token', [
@@ -939,7 +939,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	generateAccountAddress(accountIdOrName, label, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isNotEmptyString(label)) return Promise.reject(new Error('Label should be string and valid'));
@@ -1006,7 +1006,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'generate_eth_address', [
@@ -1024,7 +1024,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawEth(accountIdOrName, ethOfAddress, value, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'withdraw_eth', [
@@ -1082,7 +1082,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction creating a new asset
 	 */
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isAssetName(symbol)) return Promise.reject(new Error('Assets symbol should be string and valid'));
@@ -1111,10 +1111,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the asset
 	 */
 	updateAsset(assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork) {
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(newIssuerIdOrName)) {
+		if (!isAccountIdOrName(newIssuerIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'update_asset', [
@@ -1136,7 +1136,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'update_bitasset', [
@@ -1157,10 +1157,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset's feed producers
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		if (!newFeedProducers.every((idOrName) => !isAccountIdOrName(idOrName))) {
+		if (!newFeedProducers.every((idOrName) => !!isAccountIdOrName(idOrName))) {
 			return Promise.reject(new Error('Accounts should contain valid account names or ids'));
 		}
 		return this.wsRpc.call([0, 'update_asset_feed_producers', [
@@ -1191,10 +1191,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the price feed for the given asset
 	 */
 	publishAssetFeed(accountIdOrName, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'publish_asset_feed', [
@@ -1214,7 +1214,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction issuing the new shares
 	 */
 	issueAsset(accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'issue_asset', [
@@ -1231,7 +1231,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} the information about the asset stored in the block chain
 	 */
 	getAsset(assetIdOrName) {
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_asset', [string.toRaw(assetIdOrName)]]);
@@ -1245,7 +1245,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} the BitAsset-specific data for this asset
 	 */
 	getBitassetData(bitassetIdOrName) {
-		if (isAssetIdOrName(bitassetIdOrName)) {
+		if (!isAssetIdOrName(bitassetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_bitasset_data', [string.toRaw(bitassetIdOrName)]]);
@@ -1263,10 +1263,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction funding the fee pool
 	 */
 	fundAssetFeePool(fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(fromAccountIdOrName)) {
+		if (!isAccountIdOrName(fromAccountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'fund_asset_fee_pool', [
@@ -1290,10 +1290,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction burning the asset
 	 */
 	reserveAsset(accountIdOrName, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAssetIdOrName(assetIdOrName)) {
+		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'reserve_asset', [
@@ -1314,7 +1314,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering a `committee_member`
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!validateUrl(url) && url !== '') return Promise.reject(new Error('Url should be string and valid'));
@@ -1335,7 +1335,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'set_desired_committee_member_count', [
@@ -1352,7 +1352,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} the information about the committee member stored in the block chain
 	 */
 	getCommitteeMember(accountIdOrName) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_committee_member', [string.toRaw(accountIdOrName)]]);
@@ -1396,10 +1396,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given `committee_member`
 	 */
 	voteForCommitteeMember(votingAccountIdOrName, committeeMemberOwner, approveYourVote, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(votingAccountIdOrName)) {
+		if (!isAccountIdOrName(votingAccountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(committeeMemberOwner)) {
+		if (!isAccountIdOrName(committeeMemberOwner)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'vote_for_committee_member', [
@@ -1424,10 +1424,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrNameToUpdate)) {
+		if (!isAccountIdOrName(accountIdOrNameToUpdate)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (isAccountIdOrName(votingAccountIdOrName)) {
+		if (!isAccountIdOrName(votingAccountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'set_voting_proxy', [
@@ -1447,7 +1447,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	proposeParameterChange(accountIdOrName, expirationTime, changeValues, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'propose_parameter_change', [
@@ -1468,7 +1468,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	proposeFeeChange(accountIdOrName, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'propose_fee_change', [
@@ -1487,7 +1487,7 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	changeSidechainConfig(accountIdOrName, changedValues, shouldDoBroadcastToNetwork) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'change_sidechain_config', [
@@ -1584,7 +1584,9 @@ class WalletAPI {
 	 * @returns {Promise<Asset>} total fees
 	 */
 	setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset) {
-		if (isAssetIdOrName(feeAsset)) return Promise.reject(new Error('Assets id or name should be string and valid'));
+		if (!isAssetIdOrName(feeAsset)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
 		return this.wsRpc.call([0, 'set_fees_on_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			string.toRaw(feeAsset),
@@ -1650,7 +1652,7 @@ class WalletAPI {
 		reviewPeriod,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (isAccountIdOrName(accountIdOrName)) {
+		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'propose_builder_transaction2', [
@@ -1705,7 +1707,7 @@ class WalletAPI {
 	 * @returns {Promise<Operation>} a default-constructed operation of the given type
 	 */
 	getPrototypeOperation(operationType) {
-		if (isOperationPrototypeExists(operationType)) {
+		if (!isOperationPrototypeExists(operationType)) {
 			return Promise.reject(new Error('This operation does not exists'));
 		}
 		return this.wsRpc.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
