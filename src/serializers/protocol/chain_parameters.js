@@ -6,7 +6,6 @@ import { extensions } from '../chain';
 
 const chainParametersSerializer = struct({
 	current_fees: feeScheduleSerializer,
-	block_interval: uint8,
 	maintenance_interval: uint32,
 	maintenance_duration_seconds: uint8,
 	committee_proposal_review_period: uint32,
