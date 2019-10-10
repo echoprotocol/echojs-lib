@@ -7,9 +7,8 @@ export default interface DynamicGlobalProperties {
 	last_budget_time: string,
 	committee_budget: number,
 	accounts_registered_this_interval: number,
-	recently_missed_count: number,
-	current_aslot: number,
 	recent_slots_filled: string,
 	dynamic_flags: number,
-	last_irreversible_block_num: number
+	last_irreversible_block_num: number,
+	last_rand_quantity: string
 }
