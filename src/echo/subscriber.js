@@ -122,7 +122,6 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.callCbOnDisconnect();
 		this.cancelAllSubscribers();
 	}
 
