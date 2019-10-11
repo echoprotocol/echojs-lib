@@ -44,5 +44,5 @@ export {
 	protocol,
 };
 
-export const AMOUNT_MAX_NUMBER = new BigNumber((2 ** 63) - 1);
+export const AMOUNT_MAX_NUMBER = new BigNumber(2).pow(63).minus(1);
 export const ECHO_MAX_SHARE_SUPPLY = 1000000000000000;

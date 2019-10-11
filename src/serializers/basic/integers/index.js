@@ -25,4 +25,5 @@ export {
 	UInt32Serializer,
 	UInt64Serializer,
 	VarInt32Serializer,
+	UInt256Serializer,
 };

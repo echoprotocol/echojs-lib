@@ -648,7 +648,7 @@ class WalletAPI {
 	 * Withdraw a vesting balance.
 	 * @param {string} witnessAccountNameOrId the account name of the witness, also accepts account ID or
 	 * vesting balance ID type
-	 * @param {string} amount the amount to withdraw
+	 * @param {number} amount the amount to withdraw
 	 * @param {string} assetSymbol the symbol of the asset to withdraw
 	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
@@ -660,7 +660,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'withdraw_vesting', [
 			string.toRaw(witnessAccountNameOrId),
 			uint256.toRaw(amount),
-			assetId.toRaw(assetSymbol),
+			string.toRaw(assetSymbol),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}
@@ -914,7 +914,7 @@ class WalletAPI {
 	 * @param {string} accountIdOrName the account who withdraw erc20 token
 	 * @param {string} toEthereumAddress the Ethereum address where withdraw erc20 token
 	 * @param {string} idOferc20Token the erc20 token id in ECHO
-	 * @param {string} withdrawAmount the amount withdraw
+	 * @param {number} withdrawAmount the amount withdraw
 	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
@@ -1219,7 +1219,7 @@ class WalletAPI {
 		}
 		return this.wsRpc.call([0, 'issue_asset', [
 			string.toRaw(accountIdOrName),
-			uint256.toRaw(amount),
+			string.toRaw(amount),
 			string.toRaw(assetTicker),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
@@ -1272,7 +1272,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'fund_asset_fee_pool', [
 			string.toRaw(fromAccountIdOrName),
 			string.toRaw(assetIdOrName),
-			uint256.toRaw(amount),
+			string.toRaw(amount),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}

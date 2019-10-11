@@ -199,7 +199,6 @@ describe('WALLET API', () => {
 	describe('#oldKeyToWif()', () => {
 		it('Should dumps private key from old b58 format to new WIF', async () => {
 			const result = await echo.walletApi.oldKeyToWif(ED_PRIVATE);
-			console.log(result);
 			expect(result)
 				.to
 				.be
@@ -666,7 +665,7 @@ describe('WALLET API', () => {
 	describe.skip('#withdrawVesting()', () => {
 		it('Should make withdraw a vesting balance', async () => {
 			try {
-				const amount = '1';
+				const amount = 1;
 				const result = await echo.walletApi.withdrawVesting(
 					accountId,
 					amount,
@@ -902,7 +901,7 @@ describe('WALLET API', () => {
 		it('Should creates a transaction to withdraw erc20_token', async () => {
 			const toEthereumAddress = 'F7D2658685B4eFa75976645374F2bc27f714ED03';
 			const erc20TokenId = '1.15.0';
-			const withdrawAmount = '1';
+			const withdrawAmount = 1;
 			const result = await echo.walletApi.withdrawErc20Token(
 				accountId,
 				toEthereumAddress,
