@@ -335,14 +335,13 @@ export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0
 
 export const isOldPrivateKey = (v) => isString(v) && bs58.decode(v).length === LENGTH_DECODE_PRIVATE_KEY;
 
-const validateAmount = (v) => {
+export const isValidAmount = (v) => {
 	if (!isString(v)) return false;
 
-	const integer = Math.abs(Number(v.split('.')[0]));
+	const integer = new BN(v.split('.')[0]).absoluteValue();
 
-	if (integer > (AMOUNT_MAX_NUMBER)) return false;
+	if (integer.comparedTo(AMOUNT_MAX_NUMBER) !== -1) return false;
 
-	return (integer * 1e12 < ECHO_MAX_SHARE_SUPPLY);
+	return (integer.times(1e12).comparedTo(ECHO_MAX_SHARE_SUPPLY) !== 1) && amountRegex.test(v);
 };
 
-export const isValidAmount = (v) => validateAmount(v) && amountRegex.test(v);

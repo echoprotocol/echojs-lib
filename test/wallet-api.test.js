@@ -595,7 +595,7 @@ describe('WALLET API', () => {
 
 	describe('#transfer()', () => {
 		it('should do transfer an amount from one account to another', async () => {
-			const amount = '1';
+			const amount = '12.01';
 			const toAccountId = '1.2.1';
 			const result = await echo.walletApi.transfer(
 				accountId,
@@ -665,7 +665,7 @@ describe('WALLET API', () => {
 	describe.skip('#withdrawVesting()', () => {
 		it('Should make withdraw a vesting balance', async () => {
 			try {
-				const amount = 1;
+				const amount = '1';
 				const result = await echo.walletApi.withdrawVesting(
 					accountId,
 					amount,
