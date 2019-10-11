@@ -122,7 +122,18 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.cancelAllSubscribers();
+		this.subscribers = {
+			global: [], // "global" means all updates from setSubscribeCallback
+			account: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
+			echorand: [],
+			block: [],
+			transaction: [],
+			logs: {},	// [contractId]: []
+			contract: [],
+			connect: [],
+			disconnect: [],
+		};
 	}
 
 	/**
@@ -153,18 +164,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {undefined}
 	 */
 	cancelAllSubscribers() {
-		this.subscribers = {
-			global: [], // "global" means all updates from setSubscribeCallback
-			account: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
-			echorand: [],
-			block: [],
-			transaction: [],
-			logs: {},	// [contractId]: []
-			contract: [],
-			connect: [],
-			disconnect: [],
-		};
+		this.reset();
 	}
 
 	/**
