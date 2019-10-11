@@ -51,7 +51,7 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
-		this.cancelAllSubscribers();
+		this._clearSubscribers();
 		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 	}
 
@@ -122,6 +122,10 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
+		this._clearSubscribers();
+	}
+
+	_clearSubscribers() {
 		this.subscribers = {
 			global: [], // "global" means all updates from setSubscribeCallback
 			account: [], // { ids: [], callback: () => {} }
