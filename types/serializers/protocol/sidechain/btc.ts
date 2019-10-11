@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import { asset, extensions, sha256 } from "../../chain";
 import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
-=======
-import { asset, extensions } from "../../chain";
-import { accountId, btcAddressId, btcIntermediateDepositId } from "../../chain/id/protocol";
-import { StructSerializer, SetSerializer } from "../../collections";
->>>>>>> 2402244c311ea55c2d0131fd0b67a9e38488ba2a
 import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 
@@ -43,7 +37,6 @@ export declare const sidechainBtcWithdrawOperationPropsSerializer: StructSeriali
 	value: typeof integers.uint64,
 	extensions: typeof extensions,
 }>;
-<<<<<<< HEAD
 
 export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
@@ -64,5 +57,3 @@ export declare const sidechainBtcApproveWithdrawOperationPropsSerializer: Struct
 	withdraw_id: typeof btcWithdrawId,
 	extensions: typeof extensions,	
 }>;
-=======
->>>>>>> 2402244c311ea55c2d0131fd0b67a9e38488ba2a
