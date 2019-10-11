@@ -15,3 +15,5 @@ export declare const depositErc20TokenId: ObjectIdSerializer<RESERVED_SPACE_ID.P
 export declare const withdrawErc20TokenId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const btcAddressId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const btcIntermediateDepositId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
+export declare const btcDepositId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
+export declare const btcWithdrawId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;

@@ -43,4 +43,5 @@ export declare const btc: {
 	intermediateDeposit: typeof _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
 	deposit: typeof _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: typeof _btc.sidechainBtcWithdrawOperationPropsSerializer
+	aggregate: typeof _btc.sidechainBtcAggregateOperationPropsSerializer,
 };
