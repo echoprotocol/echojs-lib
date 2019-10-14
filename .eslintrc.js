@@ -8,7 +8,6 @@ module.exports = {
 		"import"
 	],
 	"rules": {
-		"linebreak-style": 0,
 		"arrow-parens": [
 			"error",
 			"always"
