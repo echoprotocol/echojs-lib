@@ -57,7 +57,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof protocol.sidechain.btc.withdraw,
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof protocol.sidechain.btc.aggregate,
 	[OperationId.SIDECHAIN_BTC_APPROVE_WITHDRAW]: typeof protocol.sidechain.btc.approveWithdraw,
-	[OperationId.BLOCK_REWARD]: typeof protocol.balance.unfreeze,
+	[OperationId.BLOCK_REWARD]: typeof protocol.blockReward,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;
