@@ -64,7 +64,6 @@ const {
 /** @typedef {typeof import("../../serializers/transaction")['default']} TransactionSerializer */
 /** @typedef {TransactionSerializer['__TOutput__']} Transaction */
 /** @typedef {typeof import("../../serializers")['operation']['__TOutput__']} Operation */
-/** @typedef {typeof uint256['__TInput__']} withdrawAmount */
 
 
 class WalletAPI {
@@ -658,6 +657,9 @@ class WalletAPI {
 		if (!isAccountIdOrName(witnessAccountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
+		if (!isValidAmount(amount)) {
+			return Promise.reject(new Error('Invalid amount'));
+		}
 		return this.wsRpc.call([0, 'withdraw_vesting', [
 			string.toRaw(witnessAccountNameOrId),
 			string.toRaw(amount),
@@ -915,7 +917,7 @@ class WalletAPI {
 	 * @param {string} accountIdOrName the account who withdraw erc20 token
 	 * @param {string} toEthereumAddress the Ethereum address where withdraw erc20 token
 	 * @param {string} idOferc20Token the erc20 token id in ECHO
-	 * @param {withdrawAmount} withdrawAmount the amount withdraw
+	 * @param {typeof uint256['__TInput__']} withdrawAmount the amount withdraw
 	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */

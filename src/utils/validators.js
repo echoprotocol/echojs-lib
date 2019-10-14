@@ -340,8 +340,8 @@ export const isValidAmount = (v) => {
 
 	const integer = new BN(v.split('.')[0]).absoluteValue();
 
-	if (integer.comparedTo(AMOUNT_MAX_NUMBER) !== -1) return false;
+	if (integer.gt(AMOUNT_MAX_NUMBER)) return false;
 
-	return (integer.times(1e12).comparedTo(ECHO_MAX_SHARE_SUPPLY) !== 1) && amountRegex.test(v);
+	return integer.times(1e12).lt(ECHO_MAX_SHARE_SUPPLY) && amountRegex.test(v);
 };
 
