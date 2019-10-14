@@ -2,9 +2,10 @@
 import BN from 'bignumber.js';
 import bs58 from 'bs58';
 
-import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
+import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES } from '../constants';
+import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY } from '../constants';
+import { walletAPIMethodsArray, operationPrototypeArray } from './methods-operations-data';
 
 export function validateSafeInteger(value, fieldName) {
 	if (typeof value !== 'number') throw new Error(`${fieldName} is not a number`);
@@ -64,6 +65,7 @@ const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IM
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
 const voteIdTypeRegex = /^[0]{1}:[0-9]+/;
+const amountRegex = /^(-?)([1-9](\d)*|0)(\.\d{0,11}[1-9])?$/;
 
 const MAX_UINTX_VALUES = {
 	64: new BN(2).pow(64).minus(1),
@@ -317,3 +319,29 @@ export const isTimePointSec = (v) => {
 		return false;
 	}
 };
+
+export const isAccountIdOrName = (v) => isAccountId(v) || isAccountName(v);
+
+export const isAssetIdOrName = (v) => isAssetId(v) || isAssetName(v);
+
+export const isMethodExists = (v) => walletAPIMethodsArray.includes(v);
+
+export const isOperationPrototypeExists = (v) => operationPrototypeArray.includes(v);
+
+export const isNotEmptyString = (v) => isString(v) && !!v.trim();
+
+export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0);
+
+
+export const isOldPrivateKey = (v) => isString(v) && bs58.decode(v).length === LENGTH_DECODE_PRIVATE_KEY;
+
+export const isValidAmount = (v) => {
+	if (!isString(v)) return false;
+
+	const integer = new BN(v.split('.')[0]).absoluteValue();
+
+	if (integer.gt(AMOUNT_MAX_NUMBER)) return false;
+
+	return integer.times(1e12).lt(ECHO_MAX_SHARE_SUPPLY) && amountRegex.test(v);
+};
+

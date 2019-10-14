@@ -595,7 +595,7 @@ describe('WALLET API', () => {
 
 	describe('#transfer()', () => {
 		it('should do transfer an amount from one account to another', async () => {
-			const amount = '1';
+			const amount = '12.01';
 			const toAccountId = '1.2.1';
 			const result = await echo.walletApi.transfer(
 				accountId,
@@ -641,7 +641,7 @@ describe('WALLET API', () => {
 			const newListingStatus = 1;
 			const result = await echo.walletApi.whitelistAccount(
 				accountId,
-				accountId,
+				accountName,
 				newListingStatus,
 				shouldDoBroadcastToNetwork,
 			);
@@ -901,7 +901,7 @@ describe('WALLET API', () => {
 		it('Should creates a transaction to withdraw erc20_token', async () => {
 			const toEthereumAddress = 'F7D2658685B4eFa75976645374F2bc27f714ED03';
 			const erc20TokenId = '1.15.0';
-			const withdrawAmount = '1';
+			const withdrawAmount = 1;
 			const result = await echo.walletApi.withdrawErc20Token(
 				accountId,
 				toEthereumAddress,
@@ -1035,15 +1035,18 @@ describe('WALLET API', () => {
 
 	describe('#listAssets()', () => {
 		it('Should get lists of all assets registered', async () => {
-			const lowerBoundSymbol = 'TFYS';
 			const result = await echo.walletApi.listAssets(
-				lowerBoundSymbol,
+				constants.ECHO_ASSET_ID,
 				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT
 			);
 			expect(result)
 				.to
 				.be
-				.an('array');
+				.an('array').that.is.not.empty;
+			expect(result[0])
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1582,7 +1585,7 @@ describe('WALLET API', () => {
 		describe('#setFeesOnBuilderTransaction()', () => {
 			it('should set fees on builder transaction', async () => {
 				const transactionTypeHandle = 3;
-				const feeAsset = 'ECHO';
+				const feeAsset = '1.3.0';
 				const result = await echo.walletApi.setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset);
 				expect(result)
 					.to
