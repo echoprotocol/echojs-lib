@@ -621,6 +621,26 @@ class DatabaseAPI {
 		return this.db.exec('get_frozen_balances', [accountId]);
 	}
 
+	/**
+	 *  @method getBtcAddresses
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise}
+	 */
+	getBtcAddresses(accountId) {
+		return this.db.exec('get_btc_addresses', [accountId]);
+	}
+
+	/**
+	 *  @method getBtcDepositScript
+	 *  @param  {String} btcDepositId
+	 *
+	 *  @return {Promise}
+	 */
+	getBtcDepositScript(btcDepositId) {
+		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
+	}
+
 }
 
 export default DatabaseAPI;
