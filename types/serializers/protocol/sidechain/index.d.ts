@@ -26,6 +26,8 @@ export declare const erc20: {
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	withdrawToken: typeof _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
+	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
+	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,
 };
 
 export declare const eth: {
