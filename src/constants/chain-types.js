@@ -26,14 +26,13 @@ export const RESERVED_SPACE_ID = {
  * @property {7} BLOCK_SUMMARY
  * @property {8} ACCOUNT_TRANSACTION_HISTORY
  * @property {9} CHAIN_PROPERTY
- * @property {10} BUDGET_RECORD
- * @property {11} SPECIAL_AUTHORITY
- * @property {12} CONTRACT_BALANCE
- * @property {13} CONTRACT_HISTORY
- * @property {14} CONTRACT_STATISTICS
- * @property {15} ACCOUNT_ADDRESS
- * @property {16} CONTRACT_POOL
- * @property {17} MALICIOUS_COMMITTEEMEN
+ * @property {10} SPECIAL_AUTHORITY
+ * @property {11} CONTRACT_BALANCE
+ * @property {12} CONTRACT_HISTORY
+ * @property {13} CONTRACT_STATISTICS
+ * @property {14} ACCOUNT_ADDRESS
+ * @property {15} CONTRACT_POOL
+ * @property {16} MALICIOUS_COMMITTEEMEN
  */
 
 /** @typedef {IMPLEMENTATION_OBJECT_TYPE_t[keyof IMPLEMENTATION_OBJECT_TYPE_t]} ImplementationObjectTypeId */

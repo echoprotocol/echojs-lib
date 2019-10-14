@@ -10,6 +10,7 @@ import OptionalSerializer from "../collections/Optional";
 export declare const accountOptionsSerializer: StructSerializer<{
 	voting_account: typeof accountId,
 	delegating_account: typeof accountId,
+	delegate_share: typeof uint16,
 	num_committee: typeof uint16,
 	votes: SetSerializer<VoteIdSerializer>,
 	extensions: typeof extensions,
