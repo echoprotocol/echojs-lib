@@ -1,6 +1,6 @@
-import { asset, extensions } from "../../chain";
-import { accountId, btcAddressId, btcIntermediateDepositId } from "../../chain/id/protocol";
-import { StructSerializer, SetSerializer } from "../../collections";
+import { asset, extensions, sha256 } from "../../chain";
+import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId } from "../../chain/id/protocol";
+import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
 import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 
@@ -36,4 +36,17 @@ export declare const sidechainBtcWithdrawOperationPropsSerializer: StructSeriali
 	btc_addr: StringSerializer,
 	value: typeof integers.uint64,
 	extensions: typeof extensions,
+}>;
+
+export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	deposits: SetSerializer<typeof btcDepositId>,
+	withdrawals: SetSerializer<typeof btcWithdrawId>,
+	transaction_id: typeof sha256,
+	sma_out_value: typeof integers.uint64,
+	sma_address: StructSerializer<{ address: StringSerializer }>,
+	committee_member_ids_in_script: SetSerializer<typeof accountId>,
+	signatures: MapSerializer<typeof integers.uint32, StringSerializer>,
+	extensions: typeof extensions,	
 }>;
