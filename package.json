@@ -1,6 +1,6 @@
 {
 	"name": "echojs-lib",
-	"version": "1.8.0-rc.2",
+	"version": "1.8.1-rc.2",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
@@ -74,7 +74,7 @@
 	},
 	"husky": {
 		"hooks": {
-		  "pre-commit": "npm run lint"
+			"pre-commit": "npm run lint"
 		}
 	}
 }

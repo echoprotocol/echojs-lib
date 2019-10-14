@@ -1,6 +1,7 @@
 import { asset, publicKey, extensions } from '../chain';
 import { accountId, balanceId } from '../chain/id/protocol';
 import { uint16 } from '../basic/integers';
+import { StructSerializer } from '../collections';
 
 export declare const balanceClaimOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
