@@ -20,3 +20,10 @@ export const balanceFreezeOperationPropsSerializer = struct({
 	duration: uint16,
 	extensions,
 });
+
+export const balanceUnfreezeOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	amount: asset,
+	extensions,
+});
