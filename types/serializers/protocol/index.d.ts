@@ -20,7 +20,11 @@ import {
 	assetClaimFeesOperationPropsSerializer,
 } from './asset';
 
-import { balanceClaimOperationPropsSerializer, balanceFreezeOperationPropsSerializer } from './balance';
+import {
+	balanceClaimOperationPropsSerializer,
+	balanceFreezeOperationPropsSerializer,
+	balanceUnfreezeOperationPropsSerializer,
+} from './balance';
 
 import {
 	committeeMemberCreateOperationPropsSerializer,
@@ -62,6 +66,8 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
+import blockRewardOperationPropsSerializer from './block_reward';
+
 export declare const account: {
 	options: typeof accountOptionsSerializer,
 	create: typeof accountCreateOperationPropsSerializer,
@@ -91,6 +97,7 @@ export { default as authority } from './authority';
 export declare const balance: {
 	claim: typeof balanceClaimOperationPropsSerializer,
 	freeze: typeof balanceFreezeOperationPropsSerializer,
+	unfreeze: typeof balanceUnfreezeOperationPropsSerializer,
 };
 
 export { default as chainParameters } from './chain_parameters';
@@ -146,3 +153,5 @@ export declare const vesting: {
 export declare const voteId: VoteIdSerializer;
 
 export { VoteIdSerializer };
+
+export declare const blockReward: typeof blockRewardOperationPropsSerializer;

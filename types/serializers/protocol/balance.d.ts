@@ -19,3 +19,10 @@ export declare const balanceFreezeOperationPropsSerializer: StructSerializer<{
 	duration: typeof uint16,
 	extensions: typeof extensions,
 }>;
+
+export declare const balanceUnfreezeOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	amount: typeof asset,
+	extensions: typeof extensions,
+}>;

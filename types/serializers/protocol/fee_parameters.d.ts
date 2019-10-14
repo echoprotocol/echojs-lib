@@ -42,6 +42,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.BALANCE_CLAIM]: StructSerializer<{}>,
 	[OperationId.BALANCE_FREEZE]: StructSerializer<{}>,
+	[OperationId.BALANCE_UNFREEZE]: typeof defaultFeeParametersSerializer,
 	[OperationId.OVERRIDE_TRANSFER]: typeof defaultFeeParametersSerializer,
 	[OperationId.ASSET_CLAIM_FEES]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_CREATE]: typeof defaultFeeParametersSerializer,
@@ -71,6 +72,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BTC_APPROVE_WITHDRAW]: typeof defaultFeeParametersSerializer,
+	[OperationId.BLOCK_REWARD]: typeof defaultFeeParametersSerializer,
 }[T];
 
 declare const feeParametersSerializer: StaticVariantSerializer<{
