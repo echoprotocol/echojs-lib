@@ -26,6 +26,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof protocol.vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof protocol.balance.claim,
 	[OperationId.BALANCE_FREEZE]: typeof protocol.balance.freeze,
+	[OperationId.BALANCE_UNFREEZE]: typeof protocol.balance.unfreeze,
 	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.transfer.override,
 	[OperationId.ASSET_CLAIM_FEES]: typeof protocol.asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
@@ -56,6 +57,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof protocol.sidechain.btc.withdraw,
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof protocol.sidechain.btc.aggregate,
 	[OperationId.SIDECHAIN_BTC_APPROVE_WITHDRAW]: typeof protocol.sidechain.btc.approveWithdraw,
+	[OperationId.BLOCK_REWARD]: typeof protocol.balance.unfreeze,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;

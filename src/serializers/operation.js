@@ -26,6 +26,7 @@ const operationProps = {
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: protocol.vesting.balanceWithdraw,
 	[OPERATIONS_IDS.BALANCE_CLAIM]: protocol.balance.claim,
 	[OPERATIONS_IDS.BALANCE_FREEZE]: protocol.balance.freeze,
+	[OPERATIONS_IDS.BALANCE_UNFREEZE]: protocol.balance.unfreeze,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.transfer.override,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,
@@ -55,6 +56,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_WITHDRAW]: protocol.sidechain.btc.withdraw,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: protocol.sidechain.btc.aggregate,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_WITHDRAW]: protocol.sidechain.btc.approveWithdraw,
+	[OPERATIONS_IDS.BLOCK_REWARD]: protocol.blockReward,
 };
 
 const operationSerializer = staticVariant(operationProps);
