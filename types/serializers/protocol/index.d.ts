@@ -3,7 +3,6 @@ import {
 	accountCreateOperationPropsSerializer,
 	accountUpdateOperationPropsSerializer,
 	accountWhitelistOperationPropsSerializer,
-	accountTransferOperationPropsSerializer,
 	accountAddressCreateOperationPropsSerializer,
 } from './account';
 
@@ -68,7 +67,6 @@ export declare const account: {
 	create: typeof accountCreateOperationPropsSerializer,
 	update: typeof accountUpdateOperationPropsSerializer,
 	whitelist: typeof accountWhitelistOperationPropsSerializer,
-	transfer: typeof accountTransferOperationPropsSerializer,
 	addressCreate: typeof accountAddressCreateOperationPropsSerializer,
 };
 
@@ -124,7 +122,6 @@ export declare const proposal: {
 };
 
 export declare const sidechain: {
-	changeConfig: typeof _sidechain.sidechainChangeConfigOperationPropsSerializer,
 	issue: typeof _sidechain.sidechainIssueOperationPropsSerializer,
 	burn: typeof _sidechain.sidechainBurnOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
