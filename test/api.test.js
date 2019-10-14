@@ -803,6 +803,25 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
+		describe('#requestRegistrationTask', () => {
+			it('should get registration task', async() => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const task = await api.requestRegistrationTask();
+
+					expect(task)
+						.to
+						.be
+						.an('object');
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
 		describe('#lookupVoteIds()', () => {
 			it('should get vote by id and save to cache', async () => {
 				try {
