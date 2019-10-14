@@ -126,6 +126,7 @@ export const sidechain = {
 	burn: _sidechain.sidechainBurnOperationPropsSerializer,
 	erc20: _sidechain.erc20,
 	eth: _sidechain.eth,
+	btc: _sidechain.btc,
 };
 
 export const transfer = {
