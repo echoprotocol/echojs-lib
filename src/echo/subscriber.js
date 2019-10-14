@@ -51,7 +51,7 @@ class Subscriber extends EventEmitter {
 			transaction: false,
 		};
 
-		this.cancelAllSubscribers();
+		this._clearSubscribers();
 		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 	}
 
@@ -122,8 +122,22 @@ class Subscriber extends EventEmitter {
 			this._ws.removeListener(STATUS.CLOSE, cb);
 		});
 
-		this.callCbOnDisconnect();
-		this.cancelAllSubscribers();
+		this._clearSubscribers();
+	}
+
+	_clearSubscribers() {
+		this.subscribers = {
+			global: [], // "global" means all updates from setSubscribeCallback
+			account: [], // { ids: [], callback: () => {} }
+			committeeMember: [], // { ids: [], callback: () => {} }
+			echorand: [],
+			block: [],
+			transaction: [],
+			logs: {},	// [contractId]: []
+			contract: [],
+			connect: [],
+			disconnect: [],
+		};
 	}
 
 	/**
@@ -154,18 +168,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {undefined}
 	 */
 	cancelAllSubscribers() {
-		this.subscribers = {
-			global: [], // "global" means all updates from setSubscribeCallback
-			account: [], // { ids: [], callback: () => {} }
-			committeeMember: [], // { ids: [], callback: () => {} }
-			echorand: [],
-			block: [],
-			transaction: [],
-			logs: {},	// [contractId]: []
-			contract: [],
-			connect: [],
-			disconnect: [],
-		};
+		this.reset();
 	}
 
 	/**
