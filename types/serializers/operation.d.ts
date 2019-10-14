@@ -51,7 +51,9 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ERC20_BURN]: typeof protocol.sidechain.erc20.burn,
 	[OperationId.SIDECHAIN_BTC_CREATE_ADDRESS]: typeof protocol.sidechain.btc.createAddress,
 	[OperationId.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: typeof protocol.sidechain.btc.intermediateDeposit,
+	[OperationId.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: typeof protocol.sidechain.btc.intermediateDeposit,
 	[OperationId.SIDECHAIN_BTC_DEPOSIT]: typeof protocol.sidechain.btc.deposit,
+	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof protocol.sidechain.btc.withdraw,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;
