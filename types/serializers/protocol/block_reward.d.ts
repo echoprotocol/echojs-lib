@@ -5,8 +5,7 @@ import { accountId } from "../chain/id/protocol";
 
 export declare const blockRewardOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
-	rewards: MapSerializer<typeof accountId, typeof int64>,
+	reciever: typeof int64,
+	amount: typeof int64,
 	extensions: typeof extensions,
 }>;
-
-export default blockRewardOperationPropsSerializer;
