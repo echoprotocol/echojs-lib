@@ -152,4 +152,4 @@ export const voteId = new VoteIdSerializer();
 
 export { VoteIdSerializer };
 
-export { default as blockReward } from './block_reward';
+export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
