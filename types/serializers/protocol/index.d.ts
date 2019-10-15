@@ -66,7 +66,7 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
-import blockRewardOperationPropsSerializer from './block_reward';
+export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
 
 export declare const account: {
 	options: typeof accountOptionsSerializer,
@@ -153,5 +153,3 @@ export declare const vesting: {
 export declare const voteId: VoteIdSerializer;
 
 export { VoteIdSerializer };
-
-export declare const blockReward: typeof blockRewardOperationPropsSerializer;
