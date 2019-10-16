@@ -1,11 +1,16 @@
-import authoritySerializer from "./authority";
-import VoteIdSerializer from "./VoteId";
-import { string as stringSerializer, StringSerializer } from "../basic";
-import { uint16, uint8 } from "../basic/integers";
-import { asset, publicKey, extensions } from "../chain";
-import { accountId } from "../chain/id/protocol";
-import { StructSerializer, SetSerializer } from "../collections";
-import OptionalSerializer from "../collections/Optional";
+import AccountListingSerializer from './account_listing';
+import authoritySerializer from "../authority";
+import VoteIdSerializer from "../VoteId";
+import { string as stringSerializer, StringSerializer } from "../../basic";
+import { uint16, uint8 } from "../../basic/integers";
+import { asset, publicKey, extensions } from "../../chain";
+import { accountId } from "../../chain/id/protocol";
+import { StructSerializer, SetSerializer } from "../../collections";
+import OptionalSerializer from "../../collections/Optional";
+
+export { default as AccountListingSerializer, ACCOUNT_LISTING } from './account_listing';
+
+export declare const accountListing: AccountListingSerializer;
 
 export declare const accountOptionsSerializer: StructSerializer<{
 	voting_account: typeof accountId,

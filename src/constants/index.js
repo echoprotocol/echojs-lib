@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 import * as API_CONFIG from './api-config';
 import * as CACHE_MAPS from './cache-maps';
 import * as CHAIN_CONFIG from './chain-config';
@@ -41,3 +43,6 @@ export {
 	WS_CONSTANTS,
 	protocol,
 };
+
+export const AMOUNT_MAX_NUMBER = new BigNumber(2).pow(63).minus(1);
+export const ECHO_MAX_SHARE_SUPPLY = 1000000000000000;

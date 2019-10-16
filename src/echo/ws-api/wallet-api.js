@@ -1,33 +1,68 @@
-import {
-	isArray,
-	isObjectId,
-	isBoolean,
-	isAssetName,
-	isAccountId,
-	isAccountName,
-	isString,
-	isAssetId,
-	isObject,
-	isPublicKey,
-	isCommitteeMemberId,
-	isBitAssetId,
-	isRipemd160,
-	isUInt8,
-	isUInt16,
-	isUInt32,
-	isUInt64,
-	validateUrl,
-	isContractId,
-	validatePositiveSafeInteger,
-} from '../../utils/validators';
-
+import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
 import ReconnectionWebSocket from '../ws/reconnection-websocket';
+import {
+	isAccountId,
+	isAccountIdOrName,
+	isAssetIdOrName,
+	isMethodExists,
+	isAccountName,
+	isContractResultId,
+	validateUrl,
+	isOldPrivateKey,
+	isOperationPrototypeExists,
+	isNotEmptyString,
+	isAssetName,
+	isContractCode,
+	isValidAmount,
+	isBoolean,
+	isAssetId,
+	isPublicKey,
+	isUInt64,
+} from '../../utils/validators';
+
+const { ethAddress, accountListing } = serializers.protocol;
+const { vector, optional } = serializers.collections;
+const { privateKey, publicKey, ripemd160 } = serializers.chain;
+const { options, bitassetOptions } = serializers.protocol.asset;
+const { priceFeed } = serializers.protocol;
+const { config } = serializers.plugins.echorand;
+const { anyObjectId } = serializers.chain.ids;
+
+const {
+	uint64,
+	uint32,
+	int64,
+	uint16,
+	uint8,
+	uint256,
+} = serializers.basic.integers;
+
+const {
+	timePointSec,
+	variantObject,
+	string,
+	bool,
+} = serializers.basic;
+
+const {
+	operation,
+	wallet,
+	signedTransaction,
+	transaction,
+} = serializers;
+
+const {
+	accountId,
+	contractId,
+	erc20TokenId,
+	proposalId,
+	assetId,
+} = serializers.chain.ids.protocol;
 
 /**
  * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
  */
-
 /** @typedef {SignedTransactionSerializer['__TOutput__']} SignedTransaction */
 /** @typedef {typeof import("../../serializers/chain")['ripemd160']['__TOutput__']} TransactionIdType */
 /** @typedef {typeof import("../../serializers/chain")['asset']['__TOutput__']} Asset */
@@ -38,434 +73,393 @@ import ReconnectionWebSocket from '../ws/reconnection-websocket';
 
 class WalletAPI {
 
-	/**
-	 * @constructor
-	 */
-	constructor() {
-		this.wsRpc = new ReconnectionWebSocket();
-	}
+	constructor() { this.wsRpc = new ReconnectionWebSocket(); }
 
 	/**
-	 * @method connect
-	 * @param {String} url - remote node address
-	 * @param {Parameters<ReconnectionWebSocket['connect']>[1]} options - connection params.
+	 * Init params and connect to chain.
+	 * @param {string} url remote node address
+	 * @param {Parameters<ReconnectionWebSocket['connect']>1} connectionOptions connection params.
 	 * @returns {Promise<void>}
 	 */
-	async connect(url, options) {
-		await this.wsRpc.connect(url, options);
-	}
+	async connect(url, connectionOptions) { await this.wsRpc.connect(url, connectionOptions); }
 
 	/**
-	 * @method exit
-	 *
-	 * @returns {Promise<void>}
+	 * Exit from current wallet.
+	 * @returns {Promise<never>}
 	 */
-	exit() {
-		return this.wsRpc.call([0, 'exit', []]);
-	}
+	exit() { return this.wsRpc.call([0, 'exit', []]); }
 
 	/**
-	 * @method help
-	 *
-	 * @returns {Promise<String>}
+	 * Returns a list of all commands supported by the wallet API.
+	 * This lists each command, along with its arguments and return types.
+	 * For more detailed help on a single command, use `get_help()`
+	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
 	 */
-	help() {
-		return this.wsRpc.call([0, 'help', []]);
-	}
+	help() { return this.wsRpc.call([0, 'help', []]); }
 
 	/**
-	 * @method helpMethod
-	 * @param {Array<String>} method
-	 * @returns {Promise<String>}
+	 * Returns detailed help on a single API command.
+	 * @param {string} method the name of the API command you want help with
+	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
 	 */
 	helpMethod(method) {
-		if (!isString(method)) throw new Error('method should be a string');
-
-		return this.wsRpc.call([0, 'help_method', [method]]);
+		if (!isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
+		return this.wsRpc.call([0, 'help_method', [string.toRaw(method)]]);
 	}
 
 	/**
-	 * @method info
-	 *
-	 * @returns {Promise<string>}
+	 * Returns info about head block, chain_id, maintenance, participation,
+	 * current active witnesses and committee members.
+	 * @returns {Promise<any>} runtime info about the blockchain
 	 */
-	info() {
-		return this.wsRpc.call([0, 'info', []]);
-	}
+	info() { return this.wsRpc.call([0, 'info', []]); }
 
 	/**
-	 * @method about
-	 *
-	 * @returns {Promise<Object>}
+	 * Returns info such as client version, git version of graphene/fc, version of boost, openssl.
+	 * @returns {Promise<any>} compile time info and client and dependencies versions
 	 */
-	about() {
-		return this.wsRpc.call([0, 'about', []]);
-	}
+	about() { return this.wsRpc.call([0, 'about', []]); }
 
 	/**
-	 * @method networkAddNodes
-	 * @param {Array<String>} nodes
+	 * Add nodes to the network
+	 * @param {string} nodes nodes for adding
 	 * @returns {Promise<void>}
 	 */
-	networkAddNodes(nodes) {
-		if (!isArray(nodes)) return Promise.reject(new Error('nodes should be a array'));
-		if (!nodes.every((node) => isString(node))) {
-			return Promise.reject(new Error('nodes should be a string'));
-		}
-
-		return this.wsRpc.call([0, 'network_add_nodes', [nodes]]);
-	}
+	networkAddNodes(nodes) { return this.wsRpc.call([0, 'network_add_nodes', [vector(string).toRaw(nodes)]]); }
 
 	/**
-	 * @method networkGetConnectedPeers
-	 *
-	 * @returns {Promise<any[]>}
+	 * Get peers connected to network.
+	 * @returns {Promise<any[]>} peers connected to network
 	 */
-	networkGetConnectedPeers() {
-		return this.wsRpc.call([0, 'network_get_connected_peers', []]);
-	}
+	networkGetConnectedPeers() { return this.wsRpc.call([0, 'network_get_connected_peers', []]); }
 
 	/**
-	 * @method isNew
-	 *
-	 * @returns {Promise<Boolean>}
+	 * Checks whether the wallet has just been created and has not yet had a password set.
+	 * Calling `set_password` will transition the wallet to the locked state.
+	 * @returns {Promise<boolean>} true if the wallet is new
 	 */
-	isNew() {
-		return this.wsRpc.call([0, 'is_new', []]);
-	}
+	isNew() { return this.wsRpc.call([0, 'is_new', []]); }
 
 	/**
-	 * @method isLocked
-	 *
-	 * @returns {Promise<Boolean>}
+	 * Checks whether the wallet is locked (is unable to use its private keys).
+	 * This state can be changed by calling `lock()` or `unlock()`.
+	 * @returns {Promise<boolean>} true if the wallet is locked
 	 */
-	isLocked() {
-		return this.wsRpc.call([0, 'is_locked', []]);
-	}
+	isLocked() { return this.wsRpc.call([0, 'is_locked', []]); }
 
 	/**
-	 * @method lock
-	 *
+	 * Locks the wallet immediately.
 	 * @returns {Promise<void>}
 	 */
-	lock() {
-		return this.wsRpc.call([0, 'lock', []]);
-	}
+	lock() { return this.wsRpc.call([0, 'lock', []]); }
 
 	/**
-	 * @method unlock
-	 * @param {String} password
+	 * Unlocks the wallet.
+	 * The wallet remain unlocked until the `lock` is called or the program exits.
+	 * @param {string} password the password previously set with `set_password()`,
+	 * in the wallet it should be input interactively
 	 * @returns {Promise<void>}
 	 */
-	unlock(password) {
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'unlock', [password]]);
-	}
+	unlock(password) { return this.wsRpc.call([0, 'unlock', [string.toRaw(password)]]); }
 
 	/**
-	 * @method setPassword
-	 * @param {String} password
+	 * Sets a new password on the wallet.
+	 * The wallet must be either 'new' or 'unlocked' to execute this command.
+	 * @param {string} password the password, should be input automatically in the wallet
 	 * @returns {Promise<void>}
 	 */
-	setPassword(password) {
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'set_password', [password]]);
-	}
+	setPassword(password) { return this.wsRpc.call([0, 'set_password', [string.toRaw(password)]]); }
 
 	/**
-	 * @method createEddsaKeypair
-	 *
-	 * @returns {Promise<[string, string]>}
+	 * Create new EdDSA keypair encoded in base58.
+	 * @returns {Promise<[string, string]>} new private and public key
 	 */
-	createEddsaKeypair() {
-		return this.wsRpc.call([0, 'create_eddsa_keypair', []]);
-	}
+	createEddsaKeypair() { return this.wsRpc.call([0, 'create_eddsa_keypair', []]); }
 
 	/**
-	 * @method dumpPrivateKeys
-	 *
-	 * @returns {Promise<[string, string][]>}
+	 * Dumps all private keys owned by the wallet.
+	 * The keys are printed in WIF format. You can import these keys into another wallet using `import_key()`
+	 * @returns {Promise<[string, string][]>} a map containing the private keys, indexed by their public key
 	 */
-	dumpPrivateKeys() {
-		return this.wsRpc.call([0, 'dump_private_keys', []]);
-	}
+	dumpPrivateKeys() { return this.wsRpc.call([0, 'dump_private_keys', []]); }
 
 	/**
-	 * @method oldKeyToWif
-	 * @param {String} privateKey
-	 * @returns {Promise<String>}
+	 * Dumps private key from old b58 format to new WIF.
+	 * The keys are printed in WIF format. You can import these key into another wallet using `import_key()`.
+	 * @param {string} accountPrivateKey old b58 format eddsa private_key
+	 * @returns {Promise<string>} string new in WIF eddsa private key
 	 */
-	oldKeyToWif(privateKey) {
-		if (!isString(privateKey)) throw new Error('private key should be a string');
-
-		return this.wsRpc.call([0, 'old_key_to_wif', [privateKey]]);
+	oldKeyToWif(accountPrivateKey) {
+		if (!isOldPrivateKey(accountPrivateKey)) return Promise.reject(new Error('Invalid private key'));
+		return this.wsRpc.call([0, 'old_key_to_wif', [string.toRaw(accountPrivateKey)]]);
 	}
 
 	/**
-	 * @method importKey
-	 * @param {String} accountNameOrId
-	 * @param {String} privateKeyWif
-	 * @returns {Promise<Boolean>}
+	 * Imports the private key for an existing account.
+	 * The private key must match either an owner key or an active key for the named account.
+	 * @see {@link WalletAPI['dumpPrivateKeys']}
+	 * @param {string} accountNameOrId the account owning the key
+	 * @param {string} privateKeyWif the private key, should be input interactively
+	 * @returns {Promise<boolean>} true if the key was imported
 	 */
 	importKey(accountNameOrId, privateKeyWif) {
-		if (!isAccountId(accountNameOrId) || isAccountName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isString(privateKeyWif)) throw new Error('private key should be a string');
-
-		return this.wsRpc.call([0, 'import_key', [accountNameOrId, privateKeyWif]]);
+		return this.wsRpc.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
 	}
 
 	/**
-	 * @method importAccounts
-	 * @param {String} filename
-	 * @param {String} password
-	 * @returns {Promise<[string, boolean][]>}
+	 * Imports accounts from a blockchain wallet file. Current wallet file must be unlocked to perform the import.
+	 * @param {string} filename the blockchain wallet file to import
+	 * @param {string} password the password to encrypt the blockchain wallet file
+	 * @returns {[string, boolean][]} a map containing the accounts found and whether imported
 	 */
 	importAccounts(filename, password) {
-		if (!isString(filename)) throw new Error('filename should be a string');
-		if (!isString(password)) throw new Error('password should be a string');
-
-		return this.wsRpc.call([0, 'import_accounts', [filename, password]]);
+		return this.wsRpc.call([0, 'import_accounts', [string.toRaw(filename), string.toRaw(password)]]);
 	}
 
 	/**
-	 * @method importAccountKeys
-	 * @param {String} filename
-	 * @param {String} password
-	 * @param {String} srcAccountName
-	 * @param {String} destAccountName
-	 * @returns {Promise<Boolean>}
+	 * Imports from a blockchain wallet file, find keys that were bound to a given account name on
+	 * the blockchain, rebind them to an account name on the chain.
+	 * Current wallet file must be unlocked to perform the import.
+	 * @param {string} filename the blockchain wallet file to import
+	 * @param {string} password the password to encrypt the blockchain wallet file
+	 * @param {string} srcAccountName name of the account on blockchain
+	 * @param {string} destAccountName name of the account on blockchain, can be same or different
+	 * to `src_account_name`
+	 * @returns {Promise<boolean>} whether the import has succeeded
 	 */
 	importAccountKeys(filename, password, srcAccountName, destAccountName) {
-		if (!isString(filename)) throw new Error('filename should be a string');
-		if (!isString(password)) throw new Error('password should be a string');
 		if (!isAccountName(srcAccountName)) {
-			throw new Error('Accounts id or name should be string and valid');
+			return Promise.reject(new Error('srcAccount name should be string and valid'));
 		}
 		if (!isAccountName(destAccountName)) {
-			throw new Error('Accounts id or name should be string and valid');
+			return Promise.reject(new Error('destAccount name should be string and valid'));
 		}
-
-		return this.wsRpc.call([0, 'import_account_keys', [filename, password, srcAccountName, destAccountName]]);
+		return this.wsRpc.call([0, 'import_account_keys', [
+			string.toRaw(filename),
+			string.toRaw(password),
+			string.toRaw(srcAccountName),
+			string.toRaw(destAccountName),
+		]]);
 	}
 
 	/**
-	 * @method importBalance
-	 * @param {String} accountNameOrId
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @param {Array<String>} wifKeys
-	 * @returns {Promise<Boolean>}
+	 * This call will construct transaction(s) that will claim all balances controlled
+	 * by 'wif_keys' and deposit them into the given account. 'wif_key' should be input interactively
+	 * @param {string} accountNameOrId name or ID of an account that to claim balances to
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @param {string} wifKeys private WIF keys of balance objects to claim balances from
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	importBalance(accountNameOrId, shouldDoBroadcastToNetwork, wifKeys) {
-		if (!isAccountId(accountNameOrId) || isAccountName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-		if (!isArray(wifKeys)) return Promise.reject(new Error('wifKeys should be an array'));
-		if (!wifKeys.every((key) => isString(key))) {
-			return Promise.reject(new Error('wif key should be a string'));
-		}
-
-		return this.wsRpc.call([0, 'import_balance', [accountNameOrId, shouldDoBroadcastToNetwork, wifKeys]]);
+		return this.wsRpc.call([0, 'import_balance', [
+			string.toRaw(accountNameOrId),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+			vector(privateKey).toRaw(wifKeys),
+		]]);
 	}
 
 	/**
-	 * @method suggestBrainKey
-	 *
-	 * @returns {Promise<Object>}
+	 * Suggests a safe brain key to use for creating your account. `create_account_with_brain_key()` requires you
+	 * to specify a 'brain key', a long passphrase that provides enough entropy to generate cyrptographic keys.
+	 * This function will suggest a suitably random string that should be easy to write down
+	 * (and, with effort, memorize).
+	 * @returns {Promise<any>} a suggested brain_key
 	 */
-	suggestBrainKey() {
-		return this.wsRpc.call([0, 'suggest_brain_key', []]);
-	}
+	suggestBrainKey() { return this.wsRpc.call([0, 'suggest_brain_key', []]); }
 
 	/**
-	 * @method deriveKeysFromBrainKey
-	 * @param {String} brainKey
-	 * @param {Number} numberOfDesiredKeys
-	 * @returns {Promise<Object[]>}
+	 * Derive any number of *possible* owner keys from a given brain key.
+	 * NOTE: These keys may or may not match with the owner keys of any account.
+	 * This function is merely intended to assist with account or key recovery.
+	 * @see {@link WalletAPI['suggestBrainKey']}
+	 * @param {string} brainKey brain key
+	 * @param {number} numberOfDesiredKeys number of desired keys
+	 * @returns {Promise<any[]>} A list of keys that are deterministically derived from the brainkey
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
-		if (!isString(brainKey)) throw new Error('password should be a string');
-		validatePositiveSafeInteger(numberOfDesiredKeys);
-
-		return this.wsRpc.call([0, 'derive_keys_from_brain_key', [brainKey, numberOfDesiredKeys]]);
+		if (numberOfDesiredKeys < 1) return Promise.reject(new Error('Number should be positive integer'));
+		return this.wsRpc.call([0, 'derive_keys_from_brain_key', [
+			string.toRaw(brainKey),
+			int64.toRaw(numberOfDesiredKeys),
+		]]);
 	}
 
 	/**
-	 * @method isPublicKeyRegistered
-	 * @param {String} publicKey
-	 * @returns {Promise<Boolean>}
+	 * Determine whether a textual representation of a public key (in Base-58 format) is *currently* linked
+	 * to any *registered* (i.e. non-stealth) account on the blockchain.
+	 * @param {string} accountPublicKey public key
+	 * @returns {Promise<boolean>} Whether a public key is known
 	 */
-	isPublicKeyRegistered(publicKey) {
-		if (!isPublicKey(publicKey)) throw new Error('Public key is invalid');
-
-		return this.wsRpc.call([0, 'is_public_key_registered', [publicKey]]);
+	isPublicKeyRegistered(accountPublicKey) {
+		return this.wsRpc.call([0, 'is_public_key_registered', [publicKey.toRaw(accountPublicKey)]]);
 	}
 
 	/**
-	 * @method getTransactionId
-	 * @param {String} tr
-	 * @returns {Promise<String>}
+	 * This method is used to convert a JSON transaction to it's transaction ID.
+	 * @param {any} tr the singed transaction
+	 * @returns {Promise<TransactionIdType>} transaction id string
 	 */
-	getTransactionId(tr) {
-		if (!tr) {
-			return Promise.reject(new Error('Transaction is required'));
-		}
-
-		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
-			return Promise.reject(new Error('Invalid transaction'));
-		}
-
-		return this.wsRpc.call([0, 'get_transaction_id', [tr]]);
-	}
+	getTransactionId(tr) { return this.wsRpc.call([0, 'get_transaction_id', [signedTransaction.toRaw(tr)]]); }
 
 	/**
-	 * @method getPrivateKey
-	 * @param {String} publicKey
-	 * @returns {Promise<String>}
+	 * Get the WIF private key corresponding to a public key. The private key must already be in the wallet.
+	 * @param {string} accountPublicKey public key of an account
+	 * @returns {Promise<string>} private key of this account
 	 */
-	getPrivateKey(publicKey) {
-		if (!isPublicKey(publicKey)) throw new Error('Active public key is invalid');
-
-		return this.wsRpc.call([0, 'get_private_key', [publicKey]]);
+	getPrivateKey(accountPublicKey) {
+		return this.wsRpc.call([0, 'get_private_key', [publicKey.toRaw(accountPublicKey)]]);
 	}
 
 	/**
-	 * @method loadWalletFile
-	 * @param {String} walletFilename
-	 * @returns {Promise<Boolean>}
+	 * Loads a specified Graphene wallet. The current wallet is closed before the new wallet is loaded.
+	 *
+	 * **WARNING:** This does not change the filename that will be used for future wallet writes,
+	 * so this may cause you to overwrite your original wallet unless you also call `setWalletFilename` method
+	 * @param {string} walletFilename the filename of the wallet JSON file to load.
+	 * If `wallet_filename` is empty, it reloads the existing wallet file
+	 * @returns {Promise<boolean>} true if the specified wallet is loaded
 	 */
-	loadWalletFile(walletFilename) {
-		if (!isString(walletFilename)) throw new Error('wallet filename should be a string');
-
-		return this.wsRpc.call([0, 'load_wallet_file', [walletFilename]]);
-	}
+	loadWalletFile(walletFilename) { return this.wsRpc.call([0, 'load_wallet_file', [string.toRaw(walletFilename)]]); }
 
 	/**
-	 * @method normalizeBrainKey
-	 * @param {String} brainKey
-	 * @returns {Promise<String>}
+	 * Transforms a brain key to reduce the chance of errors when re-entering the key from memory.
+	 * This takes a user-supplied brain key and normalizes it into the form used for generating private keys.
+	 * In particular, this upper-cases all ASCII characters and collapses multiple spaces into one.
+	 * @param {string} brainKey the brain key as supplied by the user
+	 * @returns {Promise<string>} the brain key in its normalized form
 	 */
-	normalizeBrainKey(brainKey) {
-		if (!isString(brainKey)) throw new Error('brain key should be a string');
-
-		return this.wsRpc.call([0, 'normalize_brain_key', [brainKey]]);
-	}
+	normalizeBrainKey(brainKey) { return this.wsRpc.call([0, 'normalize_brain_key', [string.toRaw(brainKey)]]); }
 
 	/**
-	 * @method saveWalletFile
-	 * @param {String} walletFilename
+	 * Saves the current wallet to the given filename.
+	 *
+	 * **WARNING:** This does not change the wallet filename that will be used for future writes,
+	 * so think of this function as 'Save a Copy As...' instead of 'Save As...'.
+	 * Use `setWalletFilename` method to make the filename persist.
+	 * @param {string} walletFilename the filename of the new wallet JSON file to create or overwrite.
+	 * If `wallet_filename` is empty, save to the current filename
 	 * @returns {Promise<void>}
 	 */
-	saveWalletFile(walletFilename) {
-		if (!isString(walletFilename)) throw new Error('brain key should be a string');
-
-		return this.wsRpc.call([0, 'save_wallet_file', [walletFilename]]);
-	}
+	saveWalletFile(walletFilename) { return this.wsRpc.call([0, 'save_wallet_file', [string.toRaw(walletFilename)]]); }
 
 	/**
-	 * @method listMyAccounts
-	 *
-	 * @returns {Promise<Object[]>}
+	 * Lists all accounts controlled by this wallet.
+	 * This returns a list of the full account objects for all accounts whose private keys we possess.
+	 * @returns {Promise<any[]>} a list of account objects
 	 */
-	listMyAccounts() {
-		return this.wsRpc.call([0, 'list_my_accounts', []]);
-	}
+	listMyAccounts() { return this.wsRpc.call([0, 'list_my_accounts', []]); }
 
 	/**
-	 * @method listAccounts
-	 * @param {String} accountName
-	 * @param {Number} limit
-	 * @returns {Promise<[string, string][]>}
+	 * Lists all accounts registered in the blockchain.
+	 * This returns a list of all account names and their account ids, sorted by account name.
+	 * Use the `lowerbound` and limit parameters to page through the list. To retrieve all accounts,
+	 * start by setting `lowerbound` to the empty string `""`, and then each iteration, pass
+	 * the last account name returned as the `lowerbound` for the next `listAccounts` call.
+	 * @param {string} lowerbound the name of the first account to return. If the named account does not exist,
+	 * the list will start at the account that comes after `lowerbound`
+	 * @param {number} limit limit the maximum number of accounts to return (max: 1000)
+	 * @returns {Promise<[string, string][]>} a list of accounts mapping account names to account ids
 	 */
-	listAccounts(accountName, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
-		if (!isString(accountName)) throw new Error('account name should be a string');
-		if (!isUInt32(limit) || limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LOOKUP_ACCOUNTS_MAX_LIMIT}`);
+	listAccounts(lowerbound, limit = API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT) {
+		if (!isAccountName(lowerbound)) return Promise.reject(new Error('Account name should be string and valid'));
+		if (!limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
+			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`));
 		}
-
-		return this.wsRpc.call([0, 'list_accounts', [accountName, limit]]);
+		return this.wsRpc.call([0, 'list_accounts', [string.toRaw(lowerbound), uint32.toRaw(limit)]]);
 	}
 
 	/**
-	 * @method listAccountBalances
-	 * @param {String} accountId
-	 * @returns {Promise<Asset[]>}
+	 * List the balances of an account or a contract.
+	 * @param {string} accountNameOrId id the id of either an account or a contract
+	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
-	listAccountBalances(accountId) {
-		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
-
-		return this.wsRpc.call([0, 'list_account_balances', [accountId]]);
-	}
-
-	/**
-	 * @method listIdBalances
-	 * @param {String} accountId
-	 * @returns {Promise<Asset[]>}
-	 */
-	listIdBalances(accountId) {
-		if (!isAccountId(accountId)) throw new Error('account Id is invalid');
-
-		return this.wsRpc.call([0, 'list_id_balances', [accountId]]);
-	}
-
-	/**
-	 * @method registerAccount
-	 *
-	 * @param  {String} name
-	 * @param  {String} activeKey
-	 * @param  {String} registrarAccountId
-	 * @param  {Boolean} shouldDoBroadcastToNetwork
-	 *
-	 * @returns {Promise<SignedTransaction>}
-	 */
-	registerAccount(name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork) {
-		if (!isString(name)) throw new Error('Name should be a string');
-		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
-		if (!isAccountId(registrarAccountId)) throw new Error('Registrar accountId Id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'register_account',
-			[name, activeKey, registrarAccountId, shouldDoBroadcastToNetwork],
-		]);
-	}
-
-	/**
-	 * @method createAccountWithBrainKey
-	 * @param {String} brainKey
-	 * @param {String} accountName
-	 * @param {String} registrarAccountId
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
-	 */
-	createAccountWithBrainKey(brainKey, accountName, registrarAccountId, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(registrarAccountId)) {
-			throw new Error('Accounts id should be string and valid');
+	listAccountBalances(accountNameOrId) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([
-			0, 'create_account_with_brain_key', [
-				brainKey, accountName, registrarAccountId, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'list_account_balances', [string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
-	 * @method createContract
-	 * @param {String} registrarAccountName
-	 * @param {String} contractCode
-	 * @param {Number} amount
-	 * @param {String} assetType
-	 * @param {String} supportedAssetId
-	 * @param {Boolean} useEthereumAssetAccuracy
-	 * @param {Boolean} shouldSaveToWallet
-	 * @returns {Promise<Object>}
+	 * List the balances of an account or a contract.
+	 * @param {string} idOfAccount id the id of either an account or a contract
+	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
+	 */
+	listIdBalances(idOfAccount) { return this.wsRpc.call([0, 'list_id_balances', [accountId.toRaw(idOfAccount)]]); }
+
+	/**
+	 * Registers a third party's account on the blockckain.
+	 * This function is used to register an account for which you do not own the private keys.
+	 * When acting as a registrar, an end user will generate their own private keys and send you the public keys.
+	 * The registrar will use this function to register the account on behalf of the end user.
+	 * @see {@link WalletAPI['createAccountWithBrainKey']}
+	 * @param {string} name the name of the account, must be unique on the blockchain.
+	 * Shorter names are more expensive to register; the rules are still in flux,
+	 * but in general names of more than 8 characters with at least one digit will be cheap
+	 * @param {string} activeKey the active key for the new account
+	 * @param {string} accountNameOrId the account which will pay the fee to register the user
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
+	 */
+	registerAccount(name, activeKey, accountNameOrId, shouldDoBroadcastToNetwork) {
+		if (!isAccountName(name)) return Promise.reject(new Error('Name should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'register_account', [
+			string.toRaw(name),
+			publicKey.toRaw(activeKey),
+			string.toRaw(accountNameOrId),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Creates a new account and registers it on the blockchain.
+	 * @see {@link WalletAPI['suggestBrainKey']}
+	 * @see {@link WalletAPI['registerAccount']}
+	 * @param {string} brainKey the brain key used for generating the account's private keys
+	 * @param {string} accountName the name of the account, must be unique on the blockchain.
+	 * Shorter names are more expensive to register; the rules are still in flux,
+	 * but in general names of more than 8 characters with at least one digit will be cheap
+	 * @param {string} accountNameOrId the account which will pay the fee to register the user
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
+	 */
+	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, shouldDoBroadcastToNetwork) {
+		if (!isAccountName(accountName)) return Promise.reject(new Error('Name should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'create_account_with_brain_key', [
+			string.toRaw(brainKey),
+			string.toRaw(accountName),
+			string.toRaw(accountNameOrId),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Upload/Create a contract.
+	 * @param {string} accountNameOrId name of the account creating the contract
+	 * @param {string} contractCode code of the contract
+	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {string} assetType the type of the asset transferred to the contract
+	 * @param {string} supportedAssetId the asset that can be used to create/call the contract
+	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-supported-asset)
+	 * @param {boolean} useEthereumAssetAccuracy whether to use the ethereum asset accuracy
+	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-using-ethereum-accuracy)
+	 * @param {boolean} shouldSaveToWallet whether to save the contract to the wallet
+	 * @returns {Promise<any>} the signed transaction creating the contract
 	 */
 	createContract(
-		registrarAccountName,
+		accountNameOrId,
 		contractCode,
 		amount,
 		assetType,
@@ -473,1069 +467,1193 @@ class WalletAPI {
 		useEthereumAssetAccuracy,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountName(registrarAccountName)) {
-			throw new Error('Accounts name should be string and valid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isAssetId(supportedAssetId)) throw new Error('Asset id is invalid');
-		if (!isBoolean(useEthereumAssetAccuracy)) {
-			return Promise.reject(new Error('useEthereumAssetAccuracy should be a boolean'));
-		}
-		if (!isBoolean(shouldSaveToWallet)) return Promise.reject(new Error('shouldSaveToWallet should be a boolean'));
-
-		return this.wsRpc.call([
-			0, 'create_contract', [
-				registrarAccountName,
-				contractCode,
-				amount,
-				assetType,
-				supportedAssetId,
-				useEthereumAssetAccuracy,
-				shouldSaveToWallet],
-		]);
+		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		return this.wsRpc.call([0, 'create_contract', [
+			string.toRaw(accountNameOrId),
+			string.toRaw(contractCode),
+			uint64.toRaw(amount),
+			assetId.toRaw(assetType),
+			assetId.toRaw(supportedAssetId),
+			bool.toRaw(useEthereumAssetAccuracy),
+			bool.toRaw(shouldSaveToWallet),
+		]]);
 	}
 
 	/**
-	 * @method callContract
-	 * @param {String} registrarAccountName
-	 * @param {String} contractId
-	 * @param {String} contractCode
-	 * @param {Number} amount
-	 * @param {String} assetType
-	 * @param {Boolean} shouldSaveToWallet
-	 * @returns {Promise<Object>}
+	 * Call a contract.
+	 * @param {string} accountNameOrId name of the account calling the contract
+	 * @param {string} idOfContract the id of the contract to call
+	 * @param {string} contractCode the hash of the method to call
+	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {string} assetType the type of the asset transferred to the contract
+	 * @param {boolean} shouldSaveToWallet whether to save the contract call to the wallet
+	 * @returns {Promise<any>} the signed transaction calling the contract
 	 */
 	callContract(
-		registrarAccountName,
-		contractId,
+		accountNameOrId,
+		idOfContract,
 		contractCode,
 		amount,
 		assetType,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountName(registrarAccountName)) {
-			throw new Error('Accounts name should be string and valid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isBoolean(shouldSaveToWallet)) return Promise.reject(new Error('shouldSaveToWallet should be a boolean'));
-
-		return this.wsRpc.call([
-			0, 'call_contract', [
-				registrarAccountName,
-				contractCode,
-				amount,
-				assetType,
-				shouldSaveToWallet],
-		]);
+		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		return this.wsRpc.call([0, 'call_contract', [
+			string.toRaw(accountNameOrId),
+			contractId.toRaw(idOfContract),
+			string.toRaw(contractCode),
+			uint64.toRaw(amount),
+			assetId.toRaw(assetType),
+			bool.toRaw(shouldSaveToWallet),
+		]]);
 	}
 
 	/**
-	 * @method contractFundFeePool
-	 * @param {String} registrarAccountName
-	 * @param {String} contractId
-	 * @param {Number} amount
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Fund feepool of contract.
+	 * @param {string} accountNameOrId name of the account which fund contract's feepool
+	 * @param {string} idOfContract the id of the contract's feepool
+	 * @param {number} amount the amount of asset transferred to the contract in default `asset_id_type()`
+	 * @param {boolean} shouldDoBroadcastToNetwork whether to broadcast the fund contract operation to the network
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	contractFundFeePool(registrarAccountName, contractId, amount, shouldDoBroadcastToNetwork) {
-		if (!isAccountName(registrarAccountName)) {
-			throw new Error('Accounts id or name should be string and valid');
+	contractFundFeePool(accountNameOrId, idOfContract, amount, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'contract_fund_fee_pool',
-			[registrarAccountName, contractId, amount, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'contract_fund_fee_pool', [
+			string.toRaw(accountNameOrId),
+			contractId.toRaw(idOfContract),
+			uint64.toRaw(amount),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getContractResult
-	 * @param {String} contractId
-	 * @returns {Promise<Object>}
+	 * Get the result of contract execution.
+	 * @param {string} contractResultId the id of the contract result
+	 * @returns {Promise<any>} the result of the contract
 	 */
-	getContractResult(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_result',
-			[contractId],
-		]);
+	getContractResult(contractResultId) {
+		if (!isContractResultId(contractResultId)) {
+			return Promise.reject(new Error('Contract resultId should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'get_contract_result', [string.toRaw(contractResultId)]]);
 	}
 
 	/**
-	 * @method transfer
-	 * @param {String} fromAccountNameOrId
-	 * @param {String} toAccountNameOrId
-	 * @param {String} amount
-	 * @param {String} assetIdOrName
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Transfer an amount from one account to another.
+	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
+	 * @param {string} toAccountNameOrId the name or id of the account receiving the funds
+	 * @param {string} amount the amount to send (in nominal units -- to send half of a BTS, specify 0.5)
+	 * @param {string} assetIdOrName the symbol or id of the asset to send
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction transferring funds
 	 */
 	transfer(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(fromAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(toAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'transfer',
-			[fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName, shouldDoBroadcastToNetwork],
-		]);
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'transfer', [
+			string.toRaw(fromAccountNameOrId),
+			string.toRaw(toAccountNameOrId),
+			string.toRaw(amount),
+			string.toRaw(assetIdOrName),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method transfer2
-	 * @param {String} fromAccountNameOrId
-	 * @param {String} toAccountNameOrId
-	 * @param {String} amount
-	 * @param {String} assetIdOrName
-	 * @returns {Promise<Object>}
+	 * This method works just like transfer, except it always broadcasts and
+	 * returns the transaction ID along with the signed transaction.
+	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
+	 * @param {string} toAccountNameOrId the name or id of the account receiving the funds
+	 * @param {string} amount the amount to send (in nominal units -- to send half of a BTS, specify 0.5)
+	 * @param {string} assetIdOrName the symbol or id of the asset to send
+	 * @returns {Promise<any[]>} the transaction ID along with the signed transaction
 	 */
 	transfer2(fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName) {
-		if (!isAccountId(fromAccountNameOrId) || isAccountName(fromAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(fromAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAccountId(toAccountNameOrId) || isAccountName(toAccountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(toAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-
-		return this.wsRpc.call([0, 'transfer2', [fromAccountNameOrId, toAccountNameOrId, amount, assetIdOrName]]);
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'transfer2', [
+			string.toRaw(fromAccountNameOrId),
+			string.toRaw(toAccountNameOrId),
+			string.toRaw(amount),
+			string.toRaw(assetIdOrName),
+		]]);
 	}
 
 	/**
-	 * @method whitelistAccount
-	 * @param {String} authorizingAccount
-	 * @param {String} accountToList
-	 * @param {String} newListingStatus
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Whitelist and blacklist accounts, primarily for transacting in whitelisted assets.
+	 * Accounts can freely specify opinions about other accounts, in the form of either whitelisting or blacklisting
+	 * them. This information is used in chain validation only to determine whether an account is authorized to transact
+	 * in an asset type which enforces a whitelist, but third parties can use this information for other uses as well,
+	 * as long as it does not conflict with the use of whitelisted assets.
+	 *
+	 * An asset which enforces a whitelist specifies a list of accounts to maintain its whitelist, and a list of
+	 * accounts to maintain its blacklist. In order for a given account A to hold and transact in a whitelisted asset S,
+	 * A must be whitelisted by at least one of S's whitelist_authorities and blacklisted by none of S's
+	 * blacklist_authorities. If A receives a balance of S, and is later removed from the whitelist(s) which allowed it
+	 * to hold S, or added to any blacklist S specifies as authoritative, A's balance of S will be frozen until A's
+	 * authorization is reinstated.
+	 * @param {string} authorizingAccount the account who is doing the whitelisting
+	 * @param {string} accountToList the account being whitelisted
+	 * @param {number} newListingStatus the new whitelisting status
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction changing the whitelisting status
 	 */
 	whitelistAccount(authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(authorizingAccount)) return Promise.reject(new Error('Account id is invalid'));
-		if (!isAccountId(accountToList)) return Promise.reject(new Error('Account id is invalid'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'whitelist_account',
-			[authorizingAccount, accountToList, newListingStatus, shouldDoBroadcastToNetwork],
-		]);
+		if (!isAccountIdOrName(authorizingAccount)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isAccountIdOrName(accountToList)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'whitelist_account', [
+			string.toRaw(authorizingAccount),
+			string.toRaw(accountToList),
+			accountListing.toRaw(newListingStatus),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getVestingBalances
-	 * @param {String} accountNameOrId
-	 * @returns {Promise<Object[]>}
+	 * Get information about a vesting balance object.
+	 * @param {string} accountNameOrId an account name, account ID, or vesting balance object ID
+	 * @returns {Promise<any[]>} vesting balance object with info
 	 */
 	getVestingBalances(accountNameOrId) {
-		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
-			throw new Error('Account name or id is invalid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-
-		return this.wsRpc.call([0, 'get_vesting_balances', [accountNameOrId]]);
+		return this.wsRpc.call([0, 'get_vesting_balances', [string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
-	 * @method withdrawVesting
-	 * @param {String} witnessAccountNameOrId
-	 * @param {String} amount
-	 * @param {String} assetSymbol
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Withdraw a vesting balance.
+	 * @param {string} witnessAccountNameOrId the account name of the witness, also accepts account ID or
+	 * vesting balance ID type
+	 * @param {string} amount the amount to withdraw
+	 * @param {string} assetSymbol the symbol of the asset to withdraw
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	withdrawVesting(witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork) {
-		if (!(isAccountName(witnessAccountNameOrId) || isAccountId(witnessAccountNameOrId))) {
-			throw new Error('Account name or id is invalid');
+		if (!isAccountIdOrName(witnessAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'withdraw_vesting',
-			[witnessAccountNameOrId, amount, assetSymbol, shouldDoBroadcastToNetwork],
-		]);
+		if (!isValidAmount(amount)) {
+			return Promise.reject(new Error('Invalid amount'));
+		}
+		return this.wsRpc.call([0, 'withdraw_vesting', [
+			string.toRaw(witnessAccountNameOrId),
+			string.toRaw(amount),
+			string.toRaw(assetSymbol),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getAccount
-	 * @param {String} accountNameOrId
-	 * @returns {Promise<Object>}
+	 * Returns information about the given account.
+	 * @param {string} accountNameOrId returns information about the given account
+	 * @returns {Promise<any>} the public account data stored in the blockchain
 	 */
 	getAccount(accountNameOrId) {
-		if (!(isAccountName(accountNameOrId) || isAccountId(accountNameOrId))) {
-			throw new Error('Account name or id is invalid');
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-
-		return this.wsRpc.call([0, 'get_account', [accountNameOrId]]);
+		return this.wsRpc.call([0, 'get_account', [string.toRaw(accountNameOrId)]]);
 	}
 
 	/**
-	 * @method getAccountId
-	 * @param {String} accountName
-	 * @returns {Promise<String>}
+	 * Lookup the id of a named account.
+	 * @param {string} accountName the name of the account to look up
+	 * @returns {Promise<string>} the id of the named account
 	 */
 	getAccountId(accountName) {
-		if (!(isAccountName(accountName))) {
-			throw new Error('Account name or id is invalid');
-		}
-		return this.wsRpc.call([0, 'get_account_id', [accountName]]);
+		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name should be string and valid'));
+		return this.wsRpc.call([0, 'get_account_id', [string.toRaw(accountName)]]);
 	}
 
 	/**
-	 * @method getAccountHistory
-	 * @param {String} accountIdOrName
-	 * @param {Number} limit
-	 * @returns {Promise<Object[]>}
+	 * Returns the most recent operations on the named account.
+	 * This returns a list of operation history objects, which describe activity on the account.
+	 * @param {string} accountIdOrName the name or id of the account
+	 * @param {number} limit the number of entries to return (starting from the most recent)
+	 * @returns {Promise<any[]>} a list of operation history objects
 	 */
-	getAccountHistory(accountIdOrName, limit) {
-		if (!(isAccountName(accountIdOrName) || isAccountId(accountIdOrName))) {
-			throw new Error('Account name or id is invalid');
+	getAccountHistory(accountIdOrName, limit = API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
+			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`));
 		}
-
-		return this.wsRpc.call([0, 'get_account_history', [accountIdOrName, limit]]);
+		return this.wsRpc.call([0, 'get_account_history', [string.toRaw(accountIdOrName),	int64.toRaw(limit)]]);
 	}
 
 	/**
-	 * @method getRelativeAccountHistory
-	 *  Get operations relevant to the specified account referenced
-	 *  by an event numbering specific to the account.
-	 *
-	 * @param {String} accountId
-	 * @param {Number} stop [Sequence number of earliest operation]
-	 * @param {Number} limit     [count operations (max 100)]
-	 * @param {Number} start [Sequence number of the most recent operation to retrieve]
-	 *
-	 * @return {Promise<Object[]>}
+	 * Returns the relative operations on the named account from start number.
+	 * @param {string} accountIdOrName the name or id of the account
+	 * @param {number} stop sequence number of earliest operation
+	 * @param {number} limit the number of entries to return (max 100)
+	 * @param {number} start the sequence number where to start looping back throw the history
+	 * @returns {Promise<any[]>} a list of operation history objects
 	 */
 	async getRelativeAccountHistory(
-		accountId,
+		accountIdOrName,
 		stop = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_STOP,
 		limit = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_DEFAULT_LIMIT,
 		start = API_CONFIG.RELATIVE_ACCOUNT_HISTORY_START,
 	) {
-		if (!isAccountId(accountId)) throw new Error('Account is invalid');
-		if (!isUInt64(stop)) throw new Error('Stop parameter should be non negative number');
-		if (!isUInt64(limit) || limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`);
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isUInt64(start)) throw new Error('Start parameter should be non negative number');
-
-		return this.wsRpc.call([0, 'get_relative_account_history', [accountId, stop, limit, start]]);
+		if (!limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
+			return Promise.reject(new Error(`Limit should be less ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`));
+		}
+		return this.wsRpc.call([0, 'get_relative_account_history', [
+			string.toRaw(accountIdOrName),
+			uint64.toRaw(stop),
+			int64.toRaw(limit),	uint64.toRaw(start),
+		]]);
 	}
 
 	/**
-	 * @method getContractObject
-	 * @param {String} contractId
-	 * @returns {Promise<Object>}
+	 * Get the contract object from the database by it's id.
+	 * @param {string} idOfContract the id of the contract
+	 * @returns {Promise<any>} the contract object
 	 */
-	getContractObject(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_object', [contractId]]);
+	getContractObject(idOfContract) {
+		return this.wsRpc.call([0, 'get_contract_object', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
-	 * @method getContract
-	 * @param {String} contractId
-	 * @returns {Promise<Object>}
+	 * Get the contract information by the contract's id.
+	 * @param {string} idOfContract id of the contract
+	 * @returns {Promise<any>} the contract information
 	 */
-	getContract(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract', [contractId]]);
-	}
+	getContract(idOfContract) { return this.wsRpc.call([0, 'get_contract', [contractId.toRaw(idOfContract)]]); }
 
 	/**
-	 * @method whitelistContractPool
-	 * @param {String} registrarAccountId
-	 * @param {String} contractId
-	 * @param {Array<String>} addToWhitelist
-	 * @param {Array<String>} addToBlacklist
-	 * @param {Array<String>} removeFromWhitelist
-	 * @param {Array<String>} removeFromBlacklist
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Whitelist or blacklist contract pool.
+	 * @param {string} accountIdOrName is an owner of contract which perform whitelisting or blacklisting
+	 * @param {string} idOfContract whitelisting or blacklisting applying for this contract
+	 * @param {string} addToWhitelist leave it empty if you don't want to add some account to whitelist
+	 * @param {string} addToBlacklist leave it empty if you don't want to add some account to blacklist
+	 * @param {string} removeFromWhitelist leave it empty if you don't want to remove some account
+	 * from whitelist
+	 * @param {string} removeFromBlacklist leave it empty if you don't want to remove some account
+	 * from blacklist
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the contract whitelist operation
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	whitelistContractPool(
-		registrarAccountId,
-		contractId,
+		accountIdOrName,
+		idOfContract,
 		addToWhitelist,
 		addToBlacklist,
 		removeFromWhitelist,
 		removeFromBlacklist,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (!isAccountId(registrarAccountId)) throw new Error('Account id is invalid');
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'whitelist_contract_pool',
-			[
-				registrarAccountId,
-				contractId,
-				addToWhitelist,
-				addToBlacklist,
-				removeFromWhitelist,
-				removeFromBlacklist,
-				shouldDoBroadcastToNetwork,
-			],
-		]);
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'whitelist_contract_pool', [
+			string.toRaw(accountIdOrName),
+			contractId.toRaw(idOfContract),
+			vector(accountId).toRaw(addToWhitelist),
+			vector(accountId).toRaw(addToBlacklist),
+			vector(accountId).toRaw(removeFromWhitelist),
+			vector(accountId).toRaw(removeFromBlacklist),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method callContractNoChangingState
-	 * @param {String} contractId
-	 * @param {String} registrarAccountId
-	 * @param {String} assetType
-	 * @param {String} codeOfTheContract
-	 * @returns {Promise<String>}
+	 * Call a contract. Same as `callContract` method but doesn't change the state.
+	 * @param {string} idOfContract the id of the contract to call
+	 * @param {string} accountIdOrName name of the account calling the contract
+	 * @param {string} assetType the type of the asset transferred to the contract
+	 * @param {string} codeOfTheContract the hash of the method to call
+	 * @returns {Promise<string>}
 	 */
-	callContractNoChangingState(contractId, registrarAccountId, assetType, codeOfTheContract) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-		if (!isAccountId(registrarAccountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'call_contract_no_changing_state',
-			[contractId, registrarAccountId, assetType, codeOfTheContract],
-		]);
+	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isContractCode(codeOfTheContract)) {
+			return Promise.reject(new Error('Byte code should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'call_contract_no_changing_state', [
+			contractId.toRaw(idOfContract),
+			string.toRaw(accountIdOrName),
+			assetId.toRaw(assetType),
+			string.toRaw(codeOfTheContract),
+		]]);
 	}
 
 	/**
-	 * @method getContractPoolBalance
-	 * @param {String} contractId
-	 * @returns {Promise<Asset>}
+	 * Get contract's feepool balance.
+	 * @param {string} idOfContract id for getting feepool balance
+	 * @returns {Promise<Asset>} contract's feepool balance
 	 */
-	getContractPoolBalance(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_pool_balance', [contractId]]);
+	getContractPoolBalance(idOfContract) {
+		return this.wsRpc.call([0, 'get_contract_pool_balance', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
-	 * @method getContractPoolWhitelist
-	 * @param {String} contractId
-	 * @returns {Promise<Object>}
+	 * Get contract's whitelist and blacklist.
+	 * @param {string} idOfContract id for getting whitelist and blacklist of feepool object
+	 * @returns {Promise<any>} whitelist and blacklist of contract pool object
 	 */
-	getContractPoolWhitelist(contractId) {
-		if (!isContractId(contractId)) throw new Error('Contract id is invalid');
-
-		return this.wsRpc.call([0, 'get_contract_pool_whitelist', [contractId]]);
+	getContractPoolWhitelist(idOfContract) {
+		return this.wsRpc.call([0, 'get_contract_pool_whitelist', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
-	 * @method getEthAddress
-	 * @param {String} accountId
-	 * @returns {Promise<string | undefined>}
+	 * Returns information about generated eth address, if then exist and approved, for the given account id.
+	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @returns {Promise<string | undefined>} the public eth address data stored in the blockchain
 	 */
-	getEthAddress(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_eth_address', [accountId]]);
-	}
+	getEthAddress(idOfAccount) { return this.wsRpc.call([0, 'get_eth_address', [accountId.toRaw(idOfAccount)]]); }
 
 	/**
-	 * @method getAccountDeposits
-	 * @param {String} accountId
-	 * @returns {Promise<Object[]>}
+	 * Returns all approved deposits, for the given account id.
+	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @returns {Promise<any[]>} the all public deposits data stored in the blockchain
 	 */
-	getAccountDeposits(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_account_deposits', [accountId]]);
+	getAccountDeposits(idOfAccount) {
+		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
-	 * @method registerErc20Token
-	 * @param {String} accountId
-	 * @param {String} ethereumTokenAddress
-	 * @param {String} tokenName
-	 * @param {String} tokenSymbol
-	 * @param {Number} decimals
-	 * @param {String} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Creates a transaction to register `erc20_token` for sidechain.
+	 * @param {string} accountIdOrName the account who create erc20 token and become his owner
+	 * @param {string} ethereumTokenAddress the address of token erc20 token in ethereum network
+	 * @param {string} tokenName name of the token in echo network
+	 * @param {string} tokenSymbol symbol of the token in echo network
+	 * @param {number} decimals number of the digits after the comma of the token in echo network
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	registerErc20Token(accountId, ethereumTokenAddress, tokenName, tokenSymbol, decimals, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt8(decimals)) throw new Error('Precision should be a non negative integer');
-
-		return this.wsRpc.call([0, 'register_erc20_token',
-			[accountId, ethereumTokenAddress, tokenName, tokenSymbol, decimals, shouldDoBroadcastToNetwork],
-		]);
+	registerErc20Token(
+		accountIdOrName,
+		ethereumTokenAddress,
+		tokenName,
+		tokenSymbol,
+		decimals,
+		shouldDoBroadcastToNetwork,
+	) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isNotEmptyString(tokenName)) return Promise.reject(new Error('Name should be string and valid'));
+		if (!isNotEmptyString(tokenSymbol)) return Promise.reject(new Error('Name should be string and valid'));
+		return this.wsRpc.call([0, 'register_erc20_token', [
+			string.toRaw(accountIdOrName),
+			ethAddress.toRaw(ethereumTokenAddress),
+			string.toRaw(tokenName),
+			string.toRaw(tokenSymbol),
+			uint8.toRaw(decimals),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getErc20Token
-	 * @param {String} ethereumTokenAddress
-	 * @returns {Promise<Object | undefined>}
+	 * Returns information about erc20 token, if then exist.
+	 * @param {string} ethereumTokenAddress the ethereum address of token in Ethereum network
+	 * @returns {Promise<any | undefined>} the public erc20 token data stored in the blockchain
 	 */
 	getErc20Token(ethereumTokenAddress) {
-		if (!isRipemd160(ethereumTokenAddress)) throw new Error('Token address id should be a 20 bytes hex string');
-
-		return this.wsRpc.call([0, 'get_erc20_token', [ethereumTokenAddress]]);
+		return this.wsRpc.call([0, 'get_erc20_token', [ethAddress.toRaw(ethereumTokenAddress)]]);
 	}
 
 	/**
-	 * @method getErc20AccountDeposits
-	 * @param {String} accountId
-	 * @returns {Promise<Object[]>}
+	 * Check on exist erc20 token.
+	 * @param {string} idOfContract ID of the contract to get erc20 token
+	 * @returns {Promise<boolean>} true if erc20 token data stored in the blockchain, else false
 	 */
-	getErc20AccountDeposits(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_erc20_account_deposits', [accountId]]);
+	checkErc20Token(idOfContract) {
+		return this.wsRpc.call([0, 'check_erc20_token', [contractId.toRaw(idOfContract)]]);
 	}
 
 	/**
-	 * @method getErc20AccountWithdrawals
-	 * @param {String} accountId
-	 * @returns {Promise<Object[]>}
+	 * Returns all approved deposits, for the given account id.
+	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @returns {Promise<any[]>} the all public erc20 deposits data stored in the blockchain
 	 */
-	getErc20AccountWithdrawals(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId]]);
+	getErc20AccountDeposits(idOfAccount) {
+		return this.wsRpc.call([0, 'get_erc20_account_deposits', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
-	 * @method withdrawErc20Token
-	 * @param {String} accountId
-	 * @param {String} toEthereumAddress
-	 * @param {String} erc20TokenId
-	 * @param {String} withdrawAmount
-	 * @param {String} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Returns all approved withdrawals, for the given account id.
+	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @returns {Promise<any[]>} the all public erc20 withdrawals data stored in the blockchain
 	 */
-	withdrawErc20Token(accountId, toEthereumAddress, erc20TokenId, withdrawAmount, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'withdraw_erc20_token',
-			[accountId, toEthereumAddress, erc20TokenId, withdrawAmount, shouldDoBroadcastToNetwork],
-		]);
+	getErc20AccountWithdrawals(idOfAccount) {
+		return this.wsRpc.call([0, 'get_erc20_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
-	 * @method generateAccountAddress
-	 * @param {String} accountId
-	 * @param {String} label
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Creates a transaction to withdraw `erc20_token`.
+	 * @param {string} accountIdOrName the account who withdraw erc20 token
+	 * @param {string} toEthereumAddress the Ethereum address where withdraw erc20 token
+	 * @param {string} idOferc20Token the erc20 token id in ECHO
+	 * @param {typeof uint256['__TInput__']} withdrawAmount the amount withdraw
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	generateAccountAddress(accountId, label, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'generate_account_address', [accountId, label, shouldDoBroadcastToNetwork]]);
-	}
-
-	/**
-	 * @method getAccountAddresses
-	 * @param {String} accountId
-	 * @param {Number} startFrom
-	 * @param {Number} limit
-	 * @returns {Promise<Object[]>}
-	 */
-	getAccountAddresses(accountId, startFrom, limit) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt64(startFrom)) throw new Error('Start from parameter should be non negative number');
-		if (!isUInt64(limit) || limit > API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${API_CONFIG.CONTRACT_HISTORY_MAX_LIMIT}`);
+	withdrawErc20Token(accountIdOrName, toEthereumAddress, idOferc20Token, withdrawAmount, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-
-		return this.wsRpc.call([0, 'get_account_addresses', [accountId, startFrom, limit]]);
+		return this.wsRpc.call([0, 'withdraw_erc20_token', [
+			string.toRaw(accountIdOrName),
+			ethAddress.toRaw(toEthereumAddress),
+			erc20TokenId.toRaw(idOferc20Token),
+			uint256.toRaw(withdrawAmount),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getAccountByAddress
-	 * @param {String} address
-	 * @returns {Promise<string | undefined>}
+	 * Generate address of specified account
+	 * @param {string} accountIdOrName ID or name of the account
+	 * @param {string} label label for new account address
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	getAccountByAddress(address) {
-		if (!isRipemd160(address)) throw new Error('Address id should be a 20 bytes hex string');
-
-		return this.wsRpc.call([0, 'get_account_by_address', [address]]);
-	}
-
-	/**
-	 * @method getAccountWithdrawals
-	 * @param {String} accountId
-	 * @returns {Promise<Object[]>}
-	 */
-	getAccountWithdrawals(accountId) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-
-		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId]]);
-	}
-
-	/**
-	 * @method approveProposal
-	 * @param {String} feePayingAccountId
-	 * @param {String} proposalId
-	 * @param {Object} delta
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
-	 */
-	approveProposal(feePayingAccountId, proposalId, delta, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(feePayingAccountId)) {
-			throw new Error('Account id is invalid');
+	generateAccountAddress(accountIdOrName, label, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isString(proposalId)) throw new Error('proposal Id should be a string');
-		if (!isObject(delta)) throw new Error('delta should be a object');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'approve_proposal',
-			[feePayingAccountId, proposalId, delta, shouldDoBroadcastToNetwork],
-		]);
+		if (!isNotEmptyString(label)) return Promise.reject(new Error('Label should be string and valid'));
+		return this.wsRpc.call([0, 'generate_account_address', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(label),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method generateEthAddress
-	 * @param {String} accountId
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Get addresses of specified account
+	 * @param {string} idOfAccount ID of the account
+	 * @param {number} startFrom number of block to start retrieve from
+	 * @param {number} limit maximum number of addresses to return
+	 * @returns {Promise<any[]>} Addresses owned by account in specified ids interval
 	 */
-	generateEthAddress(accountId, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'generate_eth_address', [accountId, shouldDoBroadcastToNetwork]]);
+	getAccountAddresses(idOfAccount, startFrom, limit) {
+		return this.wsRpc.call([0, 'get_account_addresses', [
+			accountId.toRaw(idOfAccount),
+			uint64.toRaw(startFrom),
+			uint64.toRaw(limit),
+		]]);
 	}
 
 	/**
-	 * @method withdrawEth
-	 * @param {String} accountId
-	 * @param {String} ethAddress
-	 * @param {String} value
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Get owner of specified address.
+	 * @param {string} address address in form of ripemd160 hash
+	 * @returns {Promise<string | undefined>} Account id of owner
 	 */
-	withdrawEth(accountId, ethAddress, value, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) throw new Error('Account id is invalid');
-		if (!isUInt64(value)) return Promise.reject(new Error('Value should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
+	getAccountByAddress(address) { return this.wsRpc.call([0, 'get_account_by_address', [ripemd160.toRaw(address)]]); }
 
-		return this.wsRpc.call([0, 'withdraw_eth', [accountId, ethAddress, value, shouldDoBroadcastToNetwork]]);
+	/**
+	 * Returns all approved withdrawals, for the given account id.
+	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @returns {Promise<any[]>} the all public withdrawals data stored in the blockchain
+	 */
+	getAccountWithdrawals(idOfAccount) {
+		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
 	}
 
 	/**
-	 * @method floodNetwork
-	 * @param {String} prefix
-	 * @param {String} numberOfTransactions
+	 * Approve or disapprove a proposal.
+	 * @param {string} feePayingAccountId the account paying the fee for the op
+	 * @param {string} idOfProposal the proposal to modify
+	 * @param {any} delta[members contain approvals to create or remove.
+	 * In JSON you can leave empty members undefined]
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
+	 */
+	approveProposal(feePayingAccountId, idOfProposal, delta, shouldDoBroadcastToNetwork) {
+		return this.wsRpc.call([0, 'approve_proposal', [
+			accountId.toRaw(feePayingAccountId),
+			proposalId.toRaw(idOfProposal),
+			wallet.approvalDelta.toRaw(delta),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Generate ethereum address.
+	 * @param {string} accountIdOrName the name or id of the account
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
+	 */
+	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'generate_eth_address', [
+			string.toRaw(accountIdOrName),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Withdraw ethereum.
+	 * @param {string} accountIdOrName the name or id of the account
+	 * @param {string} ethOfAddress the address of token erc20 token in ethereum network
+	 * @param {number} value amount for withdraw
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
+	 */
+	withdrawEth(accountIdOrName, ethOfAddress, value, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'withdraw_eth', [
+			string.toRaw(accountIdOrName),
+			ethAddress.toRaw(ethOfAddress),
+			uint64.toRaw(value),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Flood the network.
+	 * @param {string} prefix prefix
+	 * @param {string} numberOfTransactions number of transactions to flood
 	 * @returns {Promise<void>}
 	 */
 	floodNetwork(prefix, numberOfTransactions) {
-		if (!isString(prefix)) throw new Error('Prefix should be a string');
-		if (!isUInt32(numberOfTransactions)) return Promise.reject(new Error('Value should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'flood_network', [prefix, numberOfTransactions]]);
+		return this.wsRpc.call([0, 'flood_network', [
+			string.toRaw(prefix),
+			uint32.toRaw(numberOfTransactions),
+		]]);
 	}
 
 	/**
-	 * @method listAssets
-	 * @param  {String} lowerBoundSymbol
-	 * @param  {Number} limit
-	 *
-	 * @return {Promise.<Asset[]>}
+	 * Lists all assets registered on the blockchain.
+	 * To list all assets, pass the empty string `` for the lowerbound to start
+	 * at the beginning of the list, and iterate as necessary.
+	 * @param {string} lowerBoundSymbol the symbol of the first asset to include in the list
+	 * @param {number} limit the maximum number of assets to return (max: 100)
+	 * @return {Promise<Asset[]>} the list of asset objects, ordered by symbol
 	 */
 	listAssets(lowerBoundSymbol, limit = API_CONFIG.LIST_ASSETS_DEFAULT_LIMIT) {
-		if (!isString(lowerBoundSymbol)) throw new Error('Lower bound symbol is invalid');
-		if (!isUInt64(limit) || limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
-			throw new Error(`Limit should be a integer and must not exceed ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`);
+		if (!limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
+			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`));
 		}
-
-		return this.wsRpc.call([0, 'list_assets', [lowerBoundSymbol, limit]]);
+		return this.wsRpc.call([0, 'list_assets', [assetId.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
 	}
 
 	/**
-	 * @method createAsset
-	 * @param {String} accountIdOrName
-	 * @param {String} symbol
-	 * @param {Number} precision
-	 * @param {Object} assetOption
-	 * @param {Object} bitassetOpts
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Creates a new user-issued or market-issued asset. Many options can be changed later using `update_asset()`.
+	 * Right now this function is difficult to use because you must provide raw JSON data
+	 * structures for the options objects, and those include prices and asset ids.
+	 * @param {string} accountIdOrName the name or id of the account who will pay the fee and become the
+	 * issuer of the new asset. This can be updated later
+	 * @param {string} symbol the ticker symbol of the new asset
+	 * @param {number} precision the number of digits of precision to the right of the decimal point,
+	 * must be less than or equal to 12
+	 * @param {any} assetOption asset options required for all new assets.
+	 * Note that `core_exchange_rate` technically needs to store the asset ID of this new asset.
+	 * Since this ID is not known at the time this operation is created, create this price as though the new asset has
+	 * instance ID 1, and the chain will overwrite it with the new asset's ID.
+	 * @param {any} bitassetOpts options specific to BitAssets.
+	 * This may be null unless the `market_issued` flag is set in common.flags
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction creating a new asset
 	 */
 	createAsset(accountIdOrName, symbol, precision, assetOption, bitassetOpts, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isUInt8(precision)) throw new Error('Precision should be a non negative integer');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'create_asset',
-			[accountIdOrName, symbol, precision, bitassetOpts, shouldDoBroadcastToNetwork],
-		]);
+		if (!isAssetName(symbol)) return Promise.reject(new Error('Assets symbol should be string and valid'));
+		return this.wsRpc.call([0, 'create_asset', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(symbol),
+			uint8.toRaw(precision),
+			options.toRaw(assetOption),
+			optional(bitassetOptions).toRaw(bitassetOpts),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method updateAsset
-	 * @param {String} assetIdOrName
-	 * @param {String} newIssuerIdOrName
-	 * @param {Object} newOptions
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Update the core options on an asset.
+	 * There are a number of options which all assets in the network use.
+	 * This command is used to update these options for an existing asset.
+	 * This operation cannot be used to update BitAsset-specific options.
+	 * For these options, `updateBitasset` instead.
+	 * @param {string} assetIdOrName the name or id of the asset to update
+	 * @param {string} newIssuerIdOrName if changing the asset's issuer, the name or id of the new issuer.
+	 * null if you wish to remain the issuer of the asset
+	 * @param {any} newOptions the new asset_options object, which will entirely replace the existing
+	 * options
+	 * @param {boolean} shouldDoBroadcastToNetwork broadcast true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction updating the asset
 	 */
 	updateAsset(assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork) {
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isAccountId(newIssuerIdOrName) || isAccountName(newIssuerIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'update_asset',
-			[assetIdOrName, newIssuerIdOrName, newOptions, shouldDoBroadcastToNetwork],
-		]);
+		if (!isAccountIdOrName(newIssuerIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'update_asset', [
+			string.toRaw(assetIdOrName),
+			string.toRaw(newIssuerIdOrName),
+			options.toRaw(newOptions),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method updateBitasset
-	 * @param {String} assetIdOrName
-	 * @param {Object} newBitasset
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Update the options specific to a BitAsset.
+	 * BitAssets have some options which are not relevant to other asset types.
+	 * This operation is used to update those options an existing BitAsset
+	 * @see {@link WalletAPI['updateAsset']}
+	 * @param {string} assetIdOrName the name or id of the asset to update, which must be a market-issued asset
+	 * @param {any} newBitasset the new bitasset_options object, which will entirely replace the existing options
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset
 	 */
 	updateBitasset(assetIdOrName, newBitasset, shouldDoBroadcastToNetwork) {
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'update_bitasset', [assetIdOrName, newBitasset, shouldDoBroadcastToNetwork]]);
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'update_bitasset', [
+			string.toRaw(assetIdOrName),
+			bitassetOptions.toRaw(newBitasset),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method updateAssetFeedProducers
-	 * @param {String} assetIdOrName
-	 * @param {Array<String>} newFeedProducers
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Update the set of feed-producing accounts for a BitAsset.
+	 * BitAssets have price feeds selected by taking the median values of recommendations from a set of feed producers.
+	 * This command is used to specify which accounts may produce feeds for a given BitAsset.
+	 * @param {string} assetIdOrName the name or id of the asset to update
+	 * @param {string[]} newFeedProducers a list of account names or ids which are authorized to produce feeds
+	 * for the asset. This list will completely replace the existing list
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction updating the bitasset's feed producers
 	 */
 	updateAssetFeedProducers(assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork) {
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'update_asset_feed_producers',
-			[assetIdOrName, newFeedProducers, shouldDoBroadcastToNetwork],
-		]);
-	}
-
-	/**
-	 * @method publishAssetFeed
-	 * @param {String} accountId
-	 * @param {String} assetIdOrName
-	 * @param {Object} priceFeed
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
-	 */
-	publishAssetFeed(accountId, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'publish_asset_feed',
-			[accountId, assetIdOrName, priceFeed, shouldDoBroadcastToNetwork],
-		]);
+		if (!newFeedProducers.every((idOrName) => !!isAccountIdOrName(idOrName))) {
+			return Promise.reject(new Error('Accounts should contain valid account names or ids'));
+		}
+		return this.wsRpc.call([0, 'update_asset_feed_producers', [
+			string.toRaw(assetIdOrName),
+			vector(string).toRaw(newFeedProducers),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method issueAsset
-	 * @param {String} accountIdOrName
-	 * @param {String} amount
-	 * @param {String} assetTicker
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Publishes a price feed for the named asset.
+	 * Price feed providers use this command to publish their price feeds for market-issued assets. A price feed is
+	 * used to tune the market for a particular market-issued asset. For each value in the feed,
+	 * the median across all `committee_member` feeds for that asset is calculated and the market
+	 * for the asset is configured with the median of that value.
+	 *
+	 * The feed object in this command contains three prices: a call price limit, a short price limit,
+	 * and a settlement price. The call limit price is structured as (collateral asset) / (debt asset)
+	 * and the short limit price is structured as (asset for sale) / (collateral asset).
+	 * Note that the asset IDs are opposite to each other, so if we're publishing a feed for USD,
+	 * the call limit price will be ECHO/USD and the short limit price will be USD/ECHO. The settlement price may be
+	 * flipped either direction, as long as it is a ratio between the market-issued asset and its collateral.
+	 *
+	 * @param {string} accountIdOrName the account publishing the price feed
+	 * @param {string} assetIdOrName the name or id of the asset whose feed we're publishing
+	 * @param {any} priceOfFeed object containing the three prices making up the feed
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction updating the price feed for the given asset
+	 */
+	publishAssetFeed(accountIdOrName, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'publish_asset_feed', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(assetIdOrName),
+			priceFeed.toRaw(priceOfFeed),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * Issue new shares of an asset.
+	 * @param {string} accountIdOrName the name or id of the account to receive the new shares
+	 * @param {string} amount the amount to issue, in nominal units
+	 * @param {string} assetTicker the ticker symbol of the asset to issue
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction issuing the new shares
 	 */
 	issueAsset(accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'issue_asset',
-			[accountIdOrName, amount, assetTicker, shouldDoBroadcastToNetwork],
-		]);
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+		return this.wsRpc.call([0, 'issue_asset', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(amount),
+			string.toRaw(assetTicker),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getAsset
-	 * @param {String} assetIdOrName
-	 * @returns {Promise<Object>}
+	 * Returns information about the given asset.
+	 * @param {string} assetIdOrName the symbol or id of the asset in question
+	 * @returns {Promise<any>} the information about the asset stored in the block chain
 	 */
 	getAsset(assetIdOrName) {
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-
-		return this.wsRpc.call([0, 'get_asset', [assetIdOrName]]);
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'get_asset', [string.toRaw(assetIdOrName)]]);
 	}
 
 	/**
-	 * @method getBitassetData
-	 * @param {String} bitAssetId
-	 * @returns {Promise<Object>}
+	 * Returns the BitAsset-specific data for a given asset.
+	 * Market-issued assets's behavior are determined both by their "BitAsset Data" and
+	 * their basic asset data, as returned by `get_asset()`.
+	 * @param {string} bitassetIdOrName the symbol or id of the BitAsset in question
+	 * @returns {Promise<any>} the BitAsset-specific data for this asset
 	 */
-	getBitassetData(bitAssetId) {
-		if (!isBitAssetId(bitAssetId)) return Promise.reject(new Error('Bit asset id is invalid'));
-
-		return this.wsRpc.call([0, 'get_bitasset_data', [bitAssetId]]);
+	getBitassetData(bitassetIdOrName) {
+		if (!isAssetIdOrName(bitassetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'get_bitasset_data', [string.toRaw(bitassetIdOrName)]]);
 	}
 
 	/**
-	 * @method fundAssetFeePool
-	 * @param {String} fromAccountIdOrName
-	 * @param {String} assetIdOrName
-	 * @param {String} amount
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Pay into the fee pool for the given asset.
+	 * User-issued assets can optionally have a pool of the core asset which is automatically used to pay transaction
+	 * fees for any transaction using that asset (using the asset's core exchange rate).
+	 * This command allows anyone to deposit the core asset into this fee pool.
+	 * @param {string} fromAccountIdOrName the name or id of the account sending the core asset
+	 * @param {string} assetIdOrName the name or id of the asset whose fee pool you wish to fund
+	 * @param {string} amount the amount of the core asset to deposit
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction funding the fee pool
 	 */
 	fundAssetFeePool(fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(fromAccountIdOrName) || isAccountName(fromAccountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(fromAccountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'fund_asset_fee_pool',
-			[fromAccountIdOrName, assetIdOrName, amount, shouldDoBroadcastToNetwork],
-		]);
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'fund_asset_fee_pool', [
+			string.toRaw(fromAccountIdOrName),
+			string.toRaw(assetIdOrName),
+			string.toRaw(amount),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method reserveAsset
-	 * @param {String} accountId
-	 * @param {String} amount
-	 * @param {String} assetIdOrName
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Burns the given user-issued asset.
+	 * This command burns the user-issued asset to reduce the amount in circulation.
+
+	 * You cannot burn market-issued assets.
+
+	 * @param {string} accountIdOrName the account containing the asset you wish to burn
+	 * @param {string} amount the amount to burn, in nominal units
+	 * @param {string} assetIdOrName the name or id of the asset to burn
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction burning the asset
 	 */
-	reserveAsset(accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
+	reserveAsset(accountIdOrName, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAssetId(assetIdOrName) || isAssetName(assetIdOrName)) throw new Error('Asset id or name is invalid');
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'reserve_asset', [accountId, amount, assetIdOrName, shouldDoBroadcastToNetwork]]);
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'reserve_asset', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(amount),
+			string.toRaw(assetIdOrName),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method createCommitteeMember
-	 * @param {String} accountIdOrName
-	 * @param {String} url
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Creates a `committee_member` object owned by the given account.
+	 * An account can have at most one `committee_member` object.
+	 * @param {string} accountIdOrName the name or id of the account which is creating the `committee_member`
+	 * @param {string} url [a URL to include in the `committee_member` record in the blockchain. Clients may
+	 * display this when showing a list of committee_members. May be blank]
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction registering a `committee_member`
 	 */
 	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'create_committee_member', [accountIdOrName, url, shouldDoBroadcastToNetwork]]);
+		if (!validateUrl(url) && url !== '') return Promise.reject(new Error('Url should be string and valid'));
+		return this.wsRpc.call([0, 'create_committee_member', [
+			string.toRaw(accountIdOrName),
+			string.toRaw(url),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method setDesiredCommitteeMemberCount
-	 * @param {String} accountIdOrName
-	 * @param {Number} desiredNumberOfCommitteeMembers
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Set your vote for the number of committee_members in the system.
+	 * There are maximum values for each set in the blockchain parameters (currently defaulting to 1001).
+	 * This setting can be changed at any time. If your account has a voting proxy set, your preferences will be ignored
+	 * @param {string} accountIdOrName the name or id of the account to update
+	 * @param {number} desiredNumberOfCommitteeMembers the number
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isUInt16(desiredNumberOfCommitteeMembers)) {
-			throw new Error('Desired number of committee members should be positive integer');
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'set_desired_committee_member_count',
-			[accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'set_desired_committee_member_count', [
+			string.toRaw(accountIdOrName),
+			uint16.toRaw(desiredNumberOfCommitteeMembers),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getCommitteeMember
-	 * @param {String} accountIdOrName
-	 * @returns {Promise<Object>}
+	 * Returns information about the given committee member.
+	 * @param {string} accountIdOrName the name or id of the committee member account owner,
+	 * or the id of the committee member
+	 * @returns {Promise<any>} the information about the committee member stored in the block chain
 	 */
 	getCommitteeMember(accountIdOrName) {
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName) || isCommitteeMemberId(accountIdOrName)) {
-			throw new Error('Accounts id, name or committee member Id should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-
-		return this.wsRpc.call([0, 'get_committee_member', [accountIdOrName]]);
+		return this.wsRpc.call([0, 'get_committee_member', [string.toRaw(accountIdOrName)]]);
 	}
 
 	/**
-	 * @method listCommitteeMembers
-	 * @param {String} lowerBoundName
-	 * @param {Number} limit
-	 * @returns {Promise<[string, string][]>}
+	 * Lists all committee_members registered in the blockchain.
+	 * This returns a list of all account names that own committee_members, and the associated committee member id,
+	 * sorted by name. This lists committee_members whether they are currently voted in or not.
+	 * Use the `lowerbound` and limit parameters to page through the list. To retrieve all committee members,
+	 * start by setting `lowerbound` to the empty string `""`, and then each iteration, pass
+	 * the last committee member name returned as the `lowerbound` for the next `listCommitteeMembers` call.
+	 * @param {string} lowerBoundName the name of the first `committee_member` to return.
+	 * If the named `committee_member` does not exist, the list will start at the `committee_member`
+	 * that comes after `lowerbound`
+	 * @param {number} limit limit the maximum number of committee_members to return (max: 1000)
+	 * @returns {Promise<[string, string][]>} a list of committee_members mapping committee member names
+	 * to committee members' id
 	 */
 	listCommitteeMembers(lowerBoundName, limit = API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT) {
-		if (!isString(lowerBoundName)) throw new Error('LowerBoundName should be string');
-		if (!isUInt64(limit) || limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
-			throw new Error(`Limit should be capped at ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`);
+		if (!limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
+			return Promise.reject(new Error(`Limit should be less ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`));
 		}
-
-		return this.wsRpc.call([0, 'list_committee_members', [lowerBoundName, limit]]);
+		return this.wsRpc.call([0, 'list_committee_members', [string.toRaw(lowerBoundName), uint64.toRaw(limit)]]);
 	}
 
 	/**
-	 * @method voteForCommitteeMember
-	 * @param {String} votingAccountIdOrName
-	 * @param {String} ownerOfCommitteeMember
-	 * @param {Boolean} approveYourVote
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Vote for a given `committee_member`.
+	 * An account can publish a list of all committee_memberes they approve of. This command allows you to add or
+	 * remove committee_memberes from this list. Each account's vote is weighted according to the number of shares
+	 * of the core asset owned by that account at the time the votes are tallied.
+	 *
+	 * You cannot vote against a `committee_member`, you can only vote for the `committee_member`
+	 * or not vote for the `committee_member`.
+	 *
+	 * @param {string} votingAccountIdOrName the name or id of the account who is voting with their shares
+	 * @param {string} committeeMemberOwner the name or id of the `committee_member` owner account
+	 * @param {boolean} approveYourVote true if you wish to vote in favor of that `committee_member`,
+	 * false to remove your vote in favor of that `committee_member`
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given `committee_member`
 	 */
-	voteForCommitteeMember(votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
-			throw new Error('Voting accounts id or name should be string and valid');
+	voteForCommitteeMember(votingAccountIdOrName, committeeMemberOwner, approveYourVote, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(votingAccountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAccountId(ownerOfCommitteeMember) || isAccountName(ownerOfCommitteeMember)) {
-			throw new Error('Owner of committee member accounts id or name should be string and valid');
+		if (!isAccountIdOrName(committeeMemberOwner)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(approveYourVote)) return Promise.reject(new Error('approveYourVote should be a boolean'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'vote_for_committee_member',
-			[votingAccountIdOrName, ownerOfCommitteeMember, approveYourVote, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'vote_for_committee_member', [
+			string.toRaw(votingAccountIdOrName),
+			string.toRaw(committeeMemberOwner),
+			bool.toRaw(approveYourVote),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method setVotingProxy
-	 * @param {String} accountIdOrNameToUpdate
-	 * @param {String} votingAccountIdOrName
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Set the voting proxy for an account.
+	 * If a user does not wish to take an active part in voting, they can choose
+	 * to allow another account to vote their stake.
+	 * Setting a vote proxy does not remove your previous votes from the blockchain, they remain there but are ignored.
+	 * If you later null out your vote proxy, your previous votes will take effect again.
+	 * This setting can be changed at any time.
+	 * @param {string} accountIdOrNameToUpdate the name or id of the account to update
+	 * @param {string} votingAccountIdOrName the name or id of an account authorized
+	 * to vote account_to_modify's shares, or null to vote your own shares
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
 	 */
 	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountIdOrNameToUpdate) || isAccountName(accountIdOrNameToUpdate)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrNameToUpdate)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isAccountId(votingAccountIdOrName) || isAccountName(votingAccountIdOrName)) {
-			throw new Error('Voting accounts id or name should be string and valid');
+		if (!isAccountIdOrName(votingAccountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'set_voting_proxy',
-			[accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'set_voting_proxy', [
+			string.toRaw(accountIdOrNameToUpdate),
+			string.toRaw(votingAccountIdOrName),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method proposeParameterChange
-	 * @param {String} accountId
-	 * @param {Number} expirationTime
-	 * @param {Object} changedValues
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Creates a transaction to propose a parameter change.
+	 * Multiple parameters can be specified if an atomic change is desired.
+	 * @param {string} accountIdOrName the account paying the fee to propose the tx
+	 * @param {number} expirationTime timestamp specifying when the proposal will either take effect or expire
+	 * @param {any} changeValues the values to change; all other chain parameters are filled in with default values
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	proposeParameterChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
+	proposeParameterChange(accountIdOrName, expirationTime, changeValues, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'propose_parameter_change',
-			[accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'propose_parameter_change', [
+			string.toRaw(accountIdOrName),
+			timePointSec.toRaw(expirationTime),
+			variantObject.toRaw(changeValues),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method proposeFeeChange
-	 * @param {String} accountId
-	 * @param {Number} expirationTime
-	 * @param {Object} changedValues
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Propose a fee change.
+	 * @param {string} accountIdOrName the account paying the fee to propose the tx
+	 * @param {number} expirationTime timestamp specifying when the proposal will either take effect or expire
+	 * @param {any} changedValues [map of operation type to new fee. Operations may be specified by name or ID.
+	 * The "scale" key changes the scale. All other operations will maintain current values]
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	proposeFeeChange(accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(accountId)) {
-			throw new Error('Accounts id should be string and valid');
+	proposeFeeChange(accountIdOrName, expirationTime, changedValues, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'propose_fee_change',
-			[accountId, expirationTime, changedValues, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'propose_fee_change', [
+			string.toRaw(accountIdOrName),
+			timePointSec.toRaw(expirationTime),
+			variantObject.toRaw(changedValues),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method changeSidechainConfig
-	 * @param {String} registrarAccountId
-	 * @param {Object} changedValues
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Change sidechain config.
+	 * @param {string} accountIdOrName the account id who changing side chain config
+	 * @param {any} changedValues the values to change
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	changeSidechainConfig(registrarAccountId, changedValues, shouldDoBroadcastToNetwork) {
-		if (!isAccountId(registrarAccountId)) {
-			throw new Error('Accounts id should be string and valid');
+	changeSidechainConfig(accountIdOrName, changedValues, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'change_sidechain_config',
-			[registrarAccountId, changedValues, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'change_sidechain_config', [
+			string.toRaw(accountIdOrName),
+			config.toRaw(changedValues),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getBlock
-	 * @param  {Number} blockNum
-	 *
-	 * @return {Promise<Object | undefined>}
+	 * Returns info about a specified block.
+	 * @param {number} blockNum height of the block to retrieve
+	 * @return {Promise<any | undefined>} info about the block, or undefined if not found
 	 */
-	getBlock(blockNum) {
-		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'get_block', [blockNum]]);
-	}
+	getBlock(blockNum) { return this.wsRpc.call([0, 'get_block', [uint32.toRaw(blockNum)]]); }
 
 	/**
-	 * @method getBlockVirtualOps
-	 * @param  {Number} blockNum
-	 *
-	 * @return {Promise<Object[]>}
+	 * Returns block virtual ops by number
+	 * @param {number} blockNum height of the block to retrieve
+	 * @return {Promise<any[]>} info about operation history object
 	 */
-	getBlockVirtualOps(blockNum) {
-		if (!isUInt32(blockNum)) return Promise.reject(new Error('Block number should be a non negative integer'));
-
-		return this.wsRpc.call([0, 'get_block_virtual_ops', [blockNum]]);
-	}
+	getBlockVirtualOps(blockNum) { return this.wsRpc.call([0, 'get_block_virtual_ops', [uint32.toRaw(blockNum)]]); }
 
 	/**
-	 * @method getAccountCount
-	 *
-	 * @return {Promise<number | string>}
+	 * Returns the number of accounts registered on the blockchain.
+	 * @return {Promise<number | string>} the number of registered accounts
 	 */
-	getAccountCount() {
-		return this.wsRpc.call([0, 'get_account_count', []]);
-	}
+	getAccountCount() { return this.wsRpc.call([0, 'get_account_count', []]); }
 
 	/**
-	 * @method getGlobalProperties
-	 *
-	 * @return {Promise<Object>}
+	 * Returns the block chain's slowly-changing settings.
+	 * This object contains all of the properties of the blockchain that are fixed or that change only once
+	 * per maintenance interval (daily) such as the current list of committee_members, block interval, etc.
+	 * @see {@link WalletAPI['getDynamicGlobalProperties']} for frequently changing properties
+	 * @return {Promise<any>} the global properties
 	 */
-	getGlobalProperties() {
-		return this.wsRpc.call([0, 'get_global_properties', []]);
-	}
+	getGlobalProperties() { return this.wsRpc.call([0, 'get_global_properties', []]); }
 
 	/**
-	 * @method getDynamicGlobalProperties
-	 *
-	 * @return {Promise<Object>}
+	 * Returns the block chain's rapidly-changing properties.
+	 * The returned object contains information that changes every block interval
+	 * such as the head block number, etc.
+	 * @see {@link WalletAPI['getGlobalProperties']} for less-frequently changing properties
+	 * @return {Promise<any>} the dynamic global properties
 	 */
-	getDynamicGlobalProperties() {
-		return this.wsRpc.call([0, 'get_dynamic_global_properties', []]);
-	}
+	getDynamicGlobalProperties() { return this.wsRpc.call([0, 'get_dynamic_global_properties', []]); }
 
 	/**
-	 * @method getObject
-	 * @param {String} objectId
-	 * @returns {Promise<any>}
+	 * Returns the blockchain object corresponding to the given id.
+	 * This generic function can be used to retrieve any object from the blockchain that is assigned an ID.
+	 * @param {string} objectId the id of the object to return
+	 * @returns {Promise<any>} the requested object
 	 */
-	getObject(objectId) {
-		if (!isObjectId(objectId)) return Promise.reject(new Error('ObjectId should be an object id'));
-
-		return this.wsRpc.call([0, 'get_object', [objectId]]);
-	}
+	getObject(objectId) { return this.wsRpc.call([0, 'get_object', [anyObjectId.toRaw(objectId)]]); }
 
 	/**
-	 * @method beginBuilderTransaction
-	 *
-	 * @returns {Promise<Number>}
+	 * Create a new transaction builder.
+	 * @returns {Promise<number>} handle of the new transaction builder
 	 */
-	beginBuilderTransaction() {
-		return this.wsRpc.call([0, 'begin_builder_transaction', []]);
-	}
+	beginBuilderTransaction() { return this.wsRpc.call([0, 'begin_builder_transaction', []]); }
 
 	/**
-	 * @method addOperationToBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {Array<String>} operation
+	 * Append a new operation to a transaction builder.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {string[]} newOperation the operation in JSON format
 	 * @returns {Promise<void>}
 	 */
-	addOperationToBuilderTransaction(transactionTypeHandle, operation) {
-		return this.wsRpc.call([0, 'add_operation_to_builder_transaction', [transactionTypeHandle, operation]]);
+	addOperationToBuilderTransaction(transactionTypeHandle, newOperation) {
+		return this.wsRpc.call([0, 'add_operation_to_builder_transaction', [
+			uint16.toRaw(transactionTypeHandle),
+			operation.toRaw(newOperation),
+		]]);
 	}
 
 	/**
-	 * @method replaceOperationInBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {String|Number} unsignedOperation
-	 * @param {Array<String>} operation
+	 * Replace an operation in a transaction builder with a new operation.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {number} unsignedOperation the index of the old operation in the builder to be replaced
+	 * @param {string[]} newOperation the new operation in JSON format
 	 * @returns {Promise<void>}
 	 */
-	replaceOperationInBuilderTransaction(transactionTypeHandle, unsignedOperation, operation) {
-		return this.wsRpc.call([0, 'replace_operation_in_builder_transaction',
-			[transactionTypeHandle, unsignedOperation, operation],
-		]);
+	replaceOperationInBuilderTransaction(transactionTypeHandle, unsignedOperation, newOperation) {
+		return this.wsRpc.call([0, 'replace_operation_in_builder_transaction', [
+			uint16.toRaw(transactionTypeHandle),
+			uint64.toRaw(unsignedOperation),
+			operation.toRaw(newOperation),
+		]]);
 	}
 
 	/**
-	 * @method setFeesOnBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {String} feeAsset
-	 * @returns {Promise<Asset>}
+	 * Calculate and update fees for the operations in a transaction builder.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {string} feeAsset name or ID of an asset that to be used to pay fees
+	 * @returns {Promise<Asset>} total fees
 	 */
 	setFeesOnBuilderTransaction(transactionTypeHandle, feeAsset) {
-		return this.wsRpc.call([0, 'set_fees_on_builder_transaction', [transactionTypeHandle, feeAsset]]);
+		if (!isAssetIdOrName(feeAsset)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsRpc.call([0, 'set_fees_on_builder_transaction', [
+			uint16.toRaw(transactionTypeHandle),
+			string.toRaw(feeAsset),
+		]]);
 	}
 
 	/**
-	 * @method previewBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @returns {Promise<Object>}
+	 * Show content of a transaction builder.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @returns {Promise<any>} a transaction
 	 */
 	previewBuilderTransaction(transactionTypeHandle) {
-		return this.wsRpc.call([0, 'preview_builder_transaction', [transactionTypeHandle]]);
+		return this.wsRpc.call([0, 'preview_builder_transaction', [uint64.toRaw(transactionTypeHandle)]]);
 	}
 
 	/**
-	 * @method signBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Sign the transaction in a transaction builder and optionally broadcast to the network.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {boolean} shouldDoBroadcastToNetwork whether to broadcast the signed transaction to the network
+	 * @returns {Promise<SignedTransaction>} a signed transaction
 	 */
 	signBuilderTransaction(transactionTypeHandle, shouldDoBroadcastToNetwork) {
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'sign_builder_transaction', [transactionTypeHandle, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'sign_builder_transaction', [
+			uint16.toRaw(transactionTypeHandle),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method proposeBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {String} expirationTime
-	 * @param {Number} reviewPeriod
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Create a proposal containing the operations in a transaction builder (create a new `PROPOSAL_CREATE` operation,
+	 * then replace the transaction builder with the new operation), then sign the transaction and optionally broadcast
+	 * to the network.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {string} expirationTime when the proposal will expire
+	 * @param {number} reviewPeriod review period of the proposal in seconds
+	 * @param {boolean} shouldDoBroadcastToNetwork whether to broadcast the signed transaction to the network
+	 * @returns {Promise<SignedTransaction>} a signed transaction
 	 */
 	proposeBuilderTransaction(transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
-		if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'propose_builder_transaction',
-			[transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'propose_builder_transaction', [
+			uint16.toRaw(transactionTypeHandle),
+			timePointSec.toRaw(expirationTime),
+			uint32.toRaw(reviewPeriod),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method proposeBuilderTransaction2
-	 * @param {String|Number} transactionTypeHandle
-	 * @param {String} accountIdOrName
-	 * @param {String} expirationTime
-	 * @param {Number} reviewPeriod
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Create a proposal containing the operations in a transaction builder (create a new `PROPOSAL_CREATE` operation,
+	 * then replace the transaction builder with the new operation),
+	 * then sign the transaction and optionally broadcast to the network.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
+	 * @param {string} accountIdOrName name or ID of the account who would pay fees for creating the proposal
+	 * @param {string} expirationTime when the proposal will expire
+	 * @param {number} reviewPeriod review period of the proposal in seconds
+	 * @param {boolean} shouldDoBroadcastToNetwork whether to broadcast the signed transaction to the network
+	 * @returns {Promise<any>} a signed transaction
 	 */
 	proposeBuilderTransaction2(
 		transactionTypeHandle,
@@ -1544,69 +1662,65 @@ class WalletAPI {
 		reviewPeriod,
 		shouldDoBroadcastToNetwork,
 	) {
-		if (!isUInt32(reviewPeriod)) return Promise.reject(new Error('Review period should be a non negative integer'));
-		if (!isAccountId(accountIdOrName) || isAccountName(accountIdOrName)) {
-			throw new Error('Accounts id or name should be string and valid');
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'propose_builder_transaction2',
-			[transactionTypeHandle, accountIdOrName, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork],
-		]);
+		return this.wsRpc.call([0, 'propose_builder_transaction2', [
+			uint16.toRaw(transactionTypeHandle),
+			string.toRaw(accountIdOrName),
+			timePointSec.toRaw(expirationTime),
+			uint32.toRaw(reviewPeriod),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method removeBuilderTransaction
-	 * @param {String|Number} transactionTypeHandle
+	 * Destroy a transaction builder.
+	 * @param {number} transactionTypeHandle handle of the transaction builder
 	 * @returns {Promise<void>}
 	 */
 	removeBuilderTransaction(transactionTypeHandle) {
-		return this.wsRpc.call([0, 'remove_builder_transaction', [transactionTypeHandle]]);
+		return this.wsRpc.call([0, 'remove_builder_transaction', [uint16.toRaw(transactionTypeHandle)]]);
 	}
 
 	/**
-	 * @method serializeTransaction
-	 * @param {Object} tr
-	 * @returns {Promise<String>}
+	 * Converts a signed_transaction in JSON form to its binary representation.
+	 * @param {any} tr the transaction to serialize
+	 * @returns {Promise<String>} the binary form of the transaction. It will not be hex encoded,
+	 * this returns a raw string that may have null characters embedded in it
 	 */
-	serializeTransaction(tr) {
-		if (!tr) {
-			return Promise.reject(new Error('Transaction is required'));
-		}
-
-		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations || !tr.signatures) {
-			return Promise.reject(new Error('Invalid transaction'));
-		}
-
-		return this.wsRpc.call([0, 'serialize_transaction', [tr]]);
-	}
+	serializeTransaction(tr) { return this.wsRpc.call([0, 'serialize_transaction', [signedTransaction.toRaw(tr)]]); }
 
 	/**
-	 * @method signTransaction
-	 * @param {Object} tr
-	 * @param {Boolean} shouldDoBroadcastToNetwork
-	 * @returns {Promise<SignedTransaction>}
+	 * Signs a transaction.
+	 * Given a fully-formed transaction that is only lacking signatures, this signs
+	 * the transaction with the necessary keys and optionally broadcasts the transaction.
+	 * @param {any} tr the unsigned transaction
+	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	signTransaction(tr, shouldDoBroadcastToNetwork) {
-		if (!tr) {
-			return Promise.reject(new Error('Transaction is required'));
-		}
-
-		if (!tr.ref_block_num || !tr.ref_block_prefix || !tr.operations) {
-			return Promise.reject(new Error('Invalid transaction'));
-		}
-		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
-
-		return this.wsRpc.call([0, 'sign_transaction', [tr, shouldDoBroadcastToNetwork]]);
+		return this.wsRpc.call([0, 'sign_transaction', [
+			transaction.toRaw(tr),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
 	}
 
 	/**
-	 * @method getPrototypeOperation
-	 * @param {String} operationType
-	 * @returns {Promise<String>}
+	 * Returns an uninitialized object representing a given blockchain operation.
+	 * This returns a default-initialized object of the given type; it can be used during early development of the
+	 * wallet when we don't yet have custom commands for creating all of the operations the blockchain supports.
+	 * Any operation the blockchain supports can be created using the transaction builder's
+	 * `addOperationToBuilderTransaction`, but to do that from the CLI you need to know what the JSON form of the
+	 * operation looks like. This will give you a template you can fill in. It's better than nothing.
+	 * @param {string} operationType the type of operation to return
+	 * @returns {Promise<Operation>} a default-constructed operation of the given type
 	 */
 	getPrototypeOperation(operationType) {
-		return this.wsRpc.call([0, 'get_prototype_operation', [operationType]]);
+		if (!isOperationPrototypeExists(operationType)) {
+			return Promise.reject(new Error('This operation does not exists'));
+		}
+		return this.wsRpc.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
 	}
 
 	/**
@@ -1652,10 +1766,10 @@ class WalletAPI {
 	 * @param {String} accountId
 	 * @returns {Promise<Array>}
 	 */
-	getBtcAddresses(accountId) {
-		if (!isAccountId(accountId)) throw new Error('account should be valid');
+	getBtcAddresses(accountIdValue) {
+		if (!isAccountId(accountIdValue)) throw new Error('account should be valid');
 
-		return this.wsRpc.call([0, 'get_btc_addresses', [accountId]]);
+		return this.wsRpc.call([0, 'get_btc_addresses', [accountIdValue]]);
 	}
 
 	/**

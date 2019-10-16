@@ -1,14 +1,15 @@
 {
 	"name": "echojs-lib",
-	"version": "1.8.1-rc.5",
+	"version": "1.8.1",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
 	"scripts": {
 		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
-		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
+		"test": "mocha --require @babel/register -w test/wallet-api.test.js --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
+		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",
@@ -39,6 +40,7 @@
 		"bs58": "^4.0.1",
 		"buffer": "^5.2.1",
 		"bytebuffer": "^5.0.1",
+		"comprehension": "^1.1.2",
 		"create-hash": "^1.2.0",
 		"create-hmac": "^1.1.7",
 		"crypto-js": "^3.1.9-1",
@@ -48,6 +50,7 @@
 		"events": "^3.0.0",
 		"immutable": "^3.8.1",
 		"isomorphic-ws": "^4.0.1",
+		"js-sha3": "^0.8.0",
 		"lodash": "^4.17.11",
 		"ws": "^7.1.1"
 	},
@@ -71,10 +74,5 @@
 		"mocha": "^5.2.0",
 		"redux": "^4.0.1",
 		"typescript": "^3.5.3"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run lint"
-		}
 	}
 }

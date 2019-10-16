@@ -66,6 +66,8 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
+export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
+
 export const account = {
 	options: accountOptionsSerializer,
 	create: accountCreateOperationPropsSerializer,
