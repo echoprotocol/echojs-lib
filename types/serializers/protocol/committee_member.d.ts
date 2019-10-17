@@ -30,3 +30,10 @@ export const committeeMemberUpdateGlobalParametersOperationPropsSerializer: Stru
 	new_parameters: typeof chainParametersSerializer,
 	extensions: typeof extensions,
 }>;
+
+
+export const committeeMemberActivateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_to_activate: typeof committeeMemberId,
+	extensions: typeof extensions,
+}>;

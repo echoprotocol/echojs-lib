@@ -27,6 +27,7 @@ import {
 } from './balance';
 
 import {
+	committeeMemberActivateOperationPropsSerializer,
 	committeeMemberCreateOperationPropsSerializer,
 	committeeMemberUpdateOperationPropsSerializer,
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
@@ -106,6 +107,7 @@ export declare const balance: {
 export { default as chainParameters } from './chain_parameters';
 
 export declare const committeeMember: {
+	active: typeof committeeMemberActivateOperationPropsSerializer,
 	create: typeof committeeMemberCreateOperationPropsSerializer,
 	update: typeof committeeMemberUpdateOperationPropsSerializer,
 	updateGlobalParameters: typeof committeeMemberUpdateGlobalParametersOperationPropsSerializer,

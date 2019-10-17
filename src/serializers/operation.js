@@ -22,6 +22,7 @@ const operationProps = {
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_CREATE]: protocol.committeeMember.create,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE]: protocol.committeeMember.update,
 	[OPERATIONS_IDS.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: protocol.committeeMember.updateGlobalParameters,
+	[OPERATIONS_IDS.COMMITTEE_MEMBER_ACTIVATE]: protocol.committeeMember.activate,
 	[OPERATIONS_IDS.COMMITTEE_FROZEN_BALANCE_DEPOSIT]: protocol.committeeFrozenBalance.deposit,
 	[OPERATIONS_IDS.VESTING_BALANCE_CREATE]: protocol.vesting.balanceCreate,
 	[OPERATIONS_IDS.VESTING_BALANCE_WITHDRAW]: protocol.vesting.balanceWithdraw,

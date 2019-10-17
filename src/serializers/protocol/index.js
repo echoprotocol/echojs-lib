@@ -30,6 +30,7 @@ import {
 	committeeMemberCreateOperationPropsSerializer,
 	committeeMemberUpdateOperationPropsSerializer,
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
+	committeeMemberActivateOperationPropsSerializer,
 } from './committee_member';
 
 import { committeeFrozenBalanceDepositOperationPropSerializer } from './committee_frozen_balance';
@@ -104,6 +105,7 @@ export const balance = {
 export { default as chainParameters } from './chain_parameters';
 
 export const committeeMember = {
+	activate: committeeMemberActivateOperationPropsSerializer,
 	create: committeeMemberCreateOperationPropsSerializer,
 	update: committeeMemberUpdateOperationPropsSerializer,
 	updateGlobalParameters: committeeMemberUpdateGlobalParametersOperationPropsSerializer,
