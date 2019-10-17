@@ -49,3 +49,13 @@ export const contractUpdateOperationPropsSerializer = struct({
 	new_owner: optional(accountId),
 	extensions,
 });
+
+export const contractInternalCreateOperationPropsSerializer = struct({
+	fee: asset,
+	caller: contractId,
+	new_contract: contractId,
+	value: asset,
+	eth_accuracy: bool,
+	supported_asset_id: optional(assetId),
+	extensions,
+});

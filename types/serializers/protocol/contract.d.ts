@@ -54,3 +54,14 @@ export declare const contractUpdateOperationPropsSerializer: StructSerializer<{
 	new_owner: OptionalSerializer<typeof accountId>,
 	extensions: typeof extensions,
 }>;
+
+export declare const contractInternalCreateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	caller: typeof contractId,
+	new_contract: typeof contractId,
+	value: typeof asset,
+	eth_accuracy: typeof bool,
+	supported_asset_id: OptionalSerializer<typeof assetId>,
+	extensions: typeof extensions,
+}>;
+

@@ -46,6 +46,7 @@ import {
 	contractFundPoolOperationPropsSerializer,
 	contractWhitelistOperationPropsSerializer,
 	contractUpdateOperationPropsSerializer,
+	contractInternalCreateOperationPropsSerializer
 } from './contract';
 
 import {
@@ -127,6 +128,7 @@ export declare const contract: {
 	base: typeof contractBaseOperationPropsSerializer,
 	create: typeof contractCreateOperationPropsSerializer,
 	call: typeof contractCallOperationPropsSerializer,
+	internalCreate: typeof contractInternalCreateOperationPropsSerializer,
 	fundPool: typeof contractFundPoolOperationPropsSerializer,
 	whitelist: typeof contractWhitelistOperationPropsSerializer,
 	update: typeof contractUpdateOperationPropsSerializer,
