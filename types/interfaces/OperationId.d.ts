@@ -61,3 +61,5 @@ declare enum OperationId {
 	SIDECHAIN_BTC_AGGREGATE = 58,
 	BLOCK_REWARD = 59,// VIRTUAL
 }
+
+

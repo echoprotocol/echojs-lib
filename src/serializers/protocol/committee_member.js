@@ -30,3 +30,9 @@ export const committeeMemberUpdateGlobalParametersOperationPropsSerializer = str
 	new_parameters: chainParametersSerializer,
 	extensions,
 });
+
+export const committeeMemberActivateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_to_activate: committeeMemberId,
+	extensions,
+});
