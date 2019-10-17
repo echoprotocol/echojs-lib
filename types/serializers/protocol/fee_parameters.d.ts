@@ -47,7 +47,6 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.ASSET_CLAIM_FEES]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_CALL]: typeof defaultFeeParametersSerializer,
-	[OperationId.CONTRACT_TRANSFER]: typeof defaultFeeParametersSerializer,
 	[OperationId.CONTRACT_UPDATE]: StructSerializer<{ fee: typeof int64 }>,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof feeParametersWithPricePerKByte,
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof defaultFeeParametersSerializer,
