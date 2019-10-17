@@ -9,3 +9,10 @@ export const committeeFrozenBalanceDepositOperationPropsSerializer: StructSerial
     amount: typeof asset,
 	extensions: typeof extensions,
 }>;
+
+export const committeeFrozenBalanceWithdrawOperationPropsSerializer: StructSerializer<{
+    fee: typeof asset,
+    committee_member_account: typeof accountId,
+    amount: typeof asset,
+	extensions: typeof extensions,
+}>;

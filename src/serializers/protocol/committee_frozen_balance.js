@@ -10,4 +10,9 @@ export const committeeFrozenBalanceDepositOperationPropSerializer = struct({
 	extensions,
 });
 
-export const committeeFrozenBalanceWithdrawOperationPropSerializer = {};
+export const committeeFrozenBalanceWithdrawOperationPropSerializer = struct({
+	fee: asset,
+	committee_member_account: accountId,
+	amount: asset,
+	extensions,
+});

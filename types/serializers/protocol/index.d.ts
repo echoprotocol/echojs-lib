@@ -32,7 +32,10 @@ import {
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 } from './committee_member';
 
-import { committeeFrozenBalanceDepositOperationPropsSerializer } from './committee_frozen_balance';
+import {
+	committeeFrozenBalanceDepositOperationPropsSerializer,
+	committeeFrozenBalanceWithdrawOperationPropsSerializer,
+} from './committee_frozen_balance';
 
 import {
 	contractBaseOperationPropsSerializer,
@@ -113,6 +116,7 @@ export declare const committeeMember: {
 
 export declare const committeeFrozenBalance: {
 	deposit: typeof committeeFrozenBalanceDepositOperationPropsSerializer,
+	withdraw: typeof committeeFrozenBalanceWithdrawOperationPropsSerializer,
 }
 
 export declare const contract: {

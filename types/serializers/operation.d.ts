@@ -23,6 +23,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.COMMITTEE_MEMBER_UPDATE]: typeof protocol.committeeMember.update,
 	[OperationId.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: typeof protocol.committeeMember.updateGlobalParameters,
 	[OperationId.COMMITTEE_FROZEN_BALANCE_DEPOSIT]: typeof protocol.committeeFrozenBalance.deposit,
+	[OperationId.COMMITTEE_FROZEN_BALANCE_WITHDRAW]: typeof protocol.committeeFrozenBalance.withdraw,
 	[OperationId.VESTING_BALANCE_CREATE]: typeof protocol.vesting.balanceCreate,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof protocol.vesting.balanceWithdraw,
 	[OperationId.BALANCE_CLAIM]: typeof protocol.balance.claim,
