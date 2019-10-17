@@ -28,7 +28,7 @@ describe('update asset feed producers', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'static variant with key 8',
+			'static variant with key 7',
 			'struct key "new_feed_producers"',
 			'set',
 			'vector element with index 0',

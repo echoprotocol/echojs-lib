@@ -15,6 +15,7 @@ export declare const accountListing: AccountListingSerializer;
 export declare const accountOptionsSerializer: StructSerializer<{
 	voting_account: typeof accountId,
 	delegating_account: typeof accountId,
+	delegate_share: typeof uint16,
 	num_committee: typeof uint16,
 	votes: SetSerializer<VoteIdSerializer>,
 	extensions: typeof extensions,
@@ -46,13 +47,6 @@ export declare const accountWhitelistOperationPropsSerializer: StructSerializer<
 	authorizing_account: typeof accountId,
 	account_to_list: typeof accountId,
 	new_listing: typeof uint8,
-	extensions: typeof extensions,
-}>;
-
-export declare const accountTransferOperationPropsSerializer: StructSerializer<{
-	fee: typeof asset,
-	account_id: typeof accountId,
-	new_owner: typeof accountId,
 	extensions: typeof extensions,
 }>;
 

@@ -1,6 +1,6 @@
 {
 	"name": "echojs-lib",
-	"version": "1.6.3",
+	"version": "1.8.1",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
@@ -70,6 +70,7 @@
 		"eslint-plugin-import": "^2.9.0",
 		"eslint-plugin-jsx-a11y": "^6.1.2",
 		"eslint-plugin-react": "7.13.0",
+		"husky": "^2.7.0",
 		"mocha": "^5.2.0",
 		"redux": "^4.0.1",
 		"typescript": "^3.5.3",

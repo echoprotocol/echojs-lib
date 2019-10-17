@@ -2,7 +2,7 @@ version: "2"
 
 services:
   echo:
-    image: echoprotocol/echo:v0.9.0-rc.1
+    image: echoprotocol/echo:0.11.1
     command:
       --start-echorand
       --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
@@ -10,6 +10,7 @@ services:
       --account-info="[\"1.2.8\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.9\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
       --account-info="[\"1.2.10\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
+      --registrar-account=\"1.2.10\"
       --rpc-endpoint=0.0.0.0:6311
       --plugins=registration
       --api-access=/echo/access.json
@@ -20,17 +21,19 @@ services:
     volumes:
       - ./genesis.json:/echo/genesis.json
       - ./access.json:/echo/access.json
+    container_name: echo
 
   echo-wallet:
-    image: echoprotocol/echo-wallet:v0.9.0-rc.1
+    image: echoprotocol/echo-wallet:0.11.1
+    container_name: echo-wallet
     command:
-      -s ws://echo:6311/ws
-      --chain-id="185b13385eeba45f7805738c476c0e8ca9b90b9d0dc92ce1c737a6ada53d006a"
+      -s ws://echo:6311
+      --chain-id="9e500608392416719b6aa206d02e75d12e479e92dd7c4ccba7dec9b63b9517ec"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
-      -r 0.0.0.0:8888
+      -r 0.0.0.0:6312
     ports:
-      - 8888:8888
+      - 6312:6312
     tty: true
     links:
       - echo

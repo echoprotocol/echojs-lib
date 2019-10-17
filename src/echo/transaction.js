@@ -257,7 +257,7 @@ class Transaction {
 	 * @returns {Promise<{ publicKeys:Array<string> }>}
 	 */
 	async getPotentialSignatures() {
-		const transactionObject = this.finalized ? this.transactionObject : transaction.toObject({
+		const transactionObject = this.finalized ? this.transactionObject : transaction.toRaw({
 			ref_block_num: 0,
 			ref_block_prefix: 0,
 			expiration: this.expiration === undefined ? 0 : this.expiration,

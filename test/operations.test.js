@@ -10,4 +10,6 @@ describe('operations', () => {
 	require('./operations/disconnect-and-cache-renewing.operation.test');
 	require('./operations/create-proposal.operation.test');
 	require('./operations/update-asset-feed-producers.test');
+	require('./operations/balance-freeze.operation.test');
+	require('./operations/sidechain.btc.operations.test');
 });

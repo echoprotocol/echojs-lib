@@ -11,7 +11,6 @@ import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
-
 describe('API', () => {
 	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
@@ -804,6 +803,25 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
+		describe('#requestRegistrationTask', () => {
+			it('should get registration task', async() => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const task = await api.requestRegistrationTask();
+
+					expect(task)
+						.to
+						.be
+						.an('object');
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
 		describe('#lookupVoteIds()', () => {
 			it('should get vote by id and save to cache', async () => {
 				try {
@@ -934,6 +952,53 @@ describe('API', () => {
 						.deep
 						.equal(cache.objectsByVoteId.get(voteId)
 							.toJS());
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
+		describe('#getBtcAddresses()', () => {
+			it('should get btc addresses by account id', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
+
+					const btcAddresses = await api.getBtcAddresses(accountId);
+
+					expect(btcAddresses)
+						.to
+						.be
+						.an('array');;
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
+
+		// TODO:: return 76a9148768abc89249471f990fdf33029ac6c733603a258763ac6775532102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e74
+		// 2ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e4
+		// 96e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efe
+		// b07e496e742ac84512e21026b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b56ae68
+		describe.skip('#getBtcDepositScript()', () => {
+			it('should get null because script with this deposit id does not exist', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const btcAddressId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS}.1`;
+
+					const script = await api.getBtcDepositScript(btcAddressId);
+
+					expect(script)
+						.to
+						.be
+						.an('null');;
 				} catch (e) {
 					throw e;
 				}

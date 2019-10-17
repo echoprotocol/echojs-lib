@@ -502,13 +502,11 @@ class DatabaseAPI {
 	 *
 	 *  @param  {Function} callback
 	 *  @param  {String} contractId
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
 	 *
 	 *  @return {Promise}
 	 */
-	subscribeContractLogs(callback, contractId, fromBlock, toBlock) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractId, fromBlock, toBlock]);
+	subscribeContractLogs(callback, contractId) {
+		return this.db.exec('subscribe_contract_logs', [callback, contractId]);
 	}
 
 	/**
@@ -621,6 +619,26 @@ class DatabaseAPI {
 	 */
 	getFrozenBalances(accountId) {
 		return this.db.exec('get_frozen_balances', [accountId]);
+	}
+
+	/**
+	 *  @method getBtcAddresses
+	 *  @param  {String} accountId
+	 *
+	 *  @return {Promise}
+	 */
+	getBtcAddresses(accountId) {
+		return this.db.exec('get_btc_addresses', [accountId]);
+	}
+
+	/**
+	 *  @method getBtcDepositScript
+	 *  @param  {String} btcDepositId
+	 *
+	 *  @return {Promise}
+	 */
+	getBtcDepositScript(btcDepositId) {
+		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
 	}
 
 }

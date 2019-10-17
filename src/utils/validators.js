@@ -49,8 +49,10 @@ const proposalIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.P
 const operationHistoryIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY);
 const vestingBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.VESTING_BALANCE);
 const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BALANCE);
+const frozenBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE);
 const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
+const btcAddressIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
 
 const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
 const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ASSET_DYNAMIC_DATA);
@@ -132,12 +134,14 @@ export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
+export const isBtcAddressId = (v) => isString(v) && btcAddressIdRegex.test(v);
 
 export const isCommitteeMemberId = (v) => isString(v) && committeeMemberIdRegex.test(v);
 export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);
 export const isOperationHistoryId = (v) => isString(v) && operationHistoryIdRegex.test(v);
 export const isVestingBalanceId = (v) => isString(v) && vestingBalanceIdRegex.test(v);
 export const isBalanceId = (v) => isString(v) && balanceIdRegex.test(v);
+export const isFrozenBalanceId = (v) => isString(v) && frozenBalanceIdRegex.test(v);
 export const isContractId = (v) => isString(v) && contractIdRegex.test(v);
 export const isContractResultId = (v) => isString(v) && contractResultIdRegex.test(v);
 

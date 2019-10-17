@@ -3,7 +3,6 @@ import {
 	accountCreateOperationPropsSerializer,
 	accountUpdateOperationPropsSerializer,
 	accountWhitelistOperationPropsSerializer,
-	accountTransferOperationPropsSerializer,
 	accountAddressCreateOperationPropsSerializer,
 } from './account';
 
@@ -21,7 +20,11 @@ import {
 	assetClaimFeesOperationPropsSerializer,
 } from './asset';
 
-import { balanceClaimOperationPropsSerializer } from './balance';
+import {
+	balanceClaimOperationPropsSerializer,
+	balanceFreezeOperationPropsSerializer,
+	balanceUnfreezeOperationPropsSerializer,
+} from './balance';
 
 import {
 	committeeMemberCreateOperationPropsSerializer,
@@ -65,12 +68,13 @@ import VoteIdSerializer from './VoteId';
 
 export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
 
+export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
+
 export declare const account: {
 	options: typeof accountOptionsSerializer,
 	create: typeof accountCreateOperationPropsSerializer,
 	update: typeof accountUpdateOperationPropsSerializer,
 	whitelist: typeof accountWhitelistOperationPropsSerializer,
-	transfer: typeof accountTransferOperationPropsSerializer,
 	addressCreate: typeof accountAddressCreateOperationPropsSerializer,
 };
 
@@ -94,6 +98,8 @@ export { default as authority } from './authority';
 
 export declare const balance: {
 	claim: typeof balanceClaimOperationPropsSerializer,
+	freeze: typeof balanceFreezeOperationPropsSerializer,
+	unfreeze: typeof balanceUnfreezeOperationPropsSerializer,
 };
 
 export { default as chainParameters } from './chain_parameters';
@@ -125,9 +131,11 @@ export declare const proposal: {
 };
 
 export declare const sidechain: {
-	changeConfig: typeof _sidechain.sidechainChangeConfigOperationPropsSerializer,
+	issue: typeof _sidechain.sidechainIssueOperationPropsSerializer,
+	burn: typeof _sidechain.sidechainBurnOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
 	erc20: typeof _sidechain.erc20,
+	btc: typeof _sidechain.btc,
 };
 
 export declare const transfer: {

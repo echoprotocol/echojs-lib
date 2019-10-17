@@ -6,17 +6,18 @@ import { Echo, OPERATIONS_IDS, constants } from '../../../';
 describe('checkERC20Token', () => {
 	/** @type {import("../../../types").Echo} */
 	const echo = new Echo();
-	before(async () => await echo.connect(url));
+	before(async () => await echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS, }));
 	describe('when contract id with invalid format provided', () => {
 		shouldReject(async () => {
 			await echo.api.checkERC20Token('invalid contract id format');
 		}, 'invalid contract id format');
 	});
-	describe('when contract with provided id is not a ERC20 token', () => {
+	// TODO::
+	describe.skip('when contract with provided id is not a ERC20 token.', () => {
 		/** @type {string} */
 		let contractId;
 		before(async function () {
-			this.timeout(7e3);
+			this.timeout(25e3);
 			const tx = echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 				registrar: accountId,
 				value: { asset_id: constants.CORE_ASSET_ID, amount: 0 },
@@ -25,9 +26,11 @@ describe('checkERC20Token', () => {
 			}).addSigner(privateKey);
 			await tx.sign();
 			const broadcastingRes = await tx.broadcast();
+
 			/** @type {string} */
 			const opResId = broadcastingRes[0].trx.operation_results[0][1];
 			const opRes = await echo.api.getObject(opResId);
+
 			contractId = opRes.contracts_id[0];
 		});
 		/** @type {boolean} */
@@ -42,6 +45,7 @@ describe('checkERC20Token', () => {
 			else strictEqual(res, false);
 		});
 	});
+	// TODO::
 	describe.skip('when nonexistent contract id provided', () => {
 		/** @type {string} */
 		let nonexistentContractId;

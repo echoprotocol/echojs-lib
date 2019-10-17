@@ -1,4 +1,5 @@
-import ISerializer, { SerializerInput, SerializerOutput } from '../ISerializer';
+import * as ByteBuffer from 'bytebuffer';
+import ISerializer from '../ISerializer';
 import OperationSerializer, { TOperationInput, TOperationOutput } from '../operation';
 import OperationId from '../../interfaces/OperationId';
 

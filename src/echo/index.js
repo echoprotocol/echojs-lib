@@ -104,6 +104,7 @@ class Echo {
 	}
 
 	async disconnect() {
+		this.subscriber.callCbOnDisconnect();
 		this.subscriber.reset();
 		this.cache.reset();
 		await this._ws.close();
