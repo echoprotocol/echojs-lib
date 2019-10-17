@@ -31,6 +31,7 @@ import {
 	committeeMemberUpdateOperationPropsSerializer,
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 	committeeMemberActivateOperationPropsSerializer,
+	committeeMemberDeactivateOperationPropsSerializer,
 } from './committee_member';
 
 import {
@@ -109,6 +110,7 @@ export { default as chainParameters } from './chain_parameters';
 
 export const committeeMember = {
 	activate: committeeMemberActivateOperationPropsSerializer,
+	deactivate: committeeMemberDeactivateOperationPropsSerializer,
 	create: committeeMemberCreateOperationPropsSerializer,
 	update: committeeMemberUpdateOperationPropsSerializer,
 	updateGlobalParameters: committeeMemberUpdateGlobalParametersOperationPropsSerializer,

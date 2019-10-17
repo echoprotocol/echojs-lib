@@ -37,3 +37,10 @@ export const committeeMemberActivateOperationPropsSerializer: StructSerializer<{
 	committee_to_activate: typeof committeeMemberId,
 	extensions: typeof extensions,
 }>;
+
+export const committeeMemberDeactivateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_to_deactivate: typeof committeeMemberId,
+	extensions: typeof extensions,
+}>;
+
