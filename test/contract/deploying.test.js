@@ -10,7 +10,7 @@ import { abi, bytecode as code } from '../operations/_contract.test';
  * @returns {boolean}
  */
 function isContractId(id) {
-	return new RegExp(`^1\\.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}\\.[1-9]\\d*$`).test(id);
+	return new RegExp(`^1\\.${PROTOCOL_OBJECT_TYPE_ID.CONTRACT}\\.(0|[1-9]\\d*)$`).test(id);
 }
 
 describe('deploy', () => {
