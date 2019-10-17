@@ -2,6 +2,7 @@ import { string as stringSerializer, bool } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, assetId, contractId } from '../chain/id/protocol';
 import { struct, optional, set } from '../collections';
+import { objectId } from '../chain/id';
 
 export const contractBaseOperationPropsSerializer = struct({
 	fee: asset,
@@ -57,5 +58,14 @@ export const contractInternalCreateOperationPropsSerializer = struct({
 	value: asset,
 	eth_accuracy: bool,
 	supported_asset_id: optional(assetId),
+	extensions,
+});
+
+export const contractInternalCallOperationPropsSerializer = struct({
+	fee: asset,
+	caller: contractId,
+	callee: objectId,
+	method: stringSerializer,
+	value: asset,
 	extensions,
 });

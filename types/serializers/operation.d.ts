@@ -36,6 +36,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,
 	[OperationId.CONTRACT_CALL]: typeof protocol.contract.call,
 	[OperationId.CONTRACT_INTERNAL_CREATE]: typeof protocol.contract.internalCreate,
+	[OperationId.CONTRACT_INTERNAL_CALL]: typeof protocol.contract.internalCall,
 	[OperationId.CONTRACT_UPDATE]: typeof protocol.contract.update,
 	[OperationId.ACCOUNT_ADDRESS_CREATE]: typeof protocol.account.addressCreate,
 	[OperationId.TRANSFER_TO_ADDRESS]: typeof protocol.transfer.toAddress,
