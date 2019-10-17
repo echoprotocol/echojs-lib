@@ -24,6 +24,7 @@ describe('deploy', () => {
 
 	it('successful (without abi)', async () => {
 		const res = await Contract.deploy(code, privateKey,  { echo, accountId });
+        console.log('TCL: res', res);
 		strictEqual(typeof res, 'string', 'invalid result type');
 		ok(isContractId(res), 'invalid result format');
 	}).timeout(10e3);
