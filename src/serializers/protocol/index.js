@@ -33,11 +33,12 @@ import {
 	committeeMemberActivateOperationPropsSerializer,
 } from './committee_member';
 
+import { committeeFrozenBalanceDepositOperationPropSerializer } from './committee_frozen_balance';
+
 import {
 	contractBaseOperationPropsSerializer,
 	contractCreateOperationPropsSerializer,
 	contractCallOperationPropsSerializer,
-	contractTransferOperationPropsSerializer,
 	contractFundPoolOperationPropsSerializer,
 	contractWhitelistOperationPropsSerializer,
 	contractUpdateOperationPropsSerializer,
@@ -110,11 +111,14 @@ export const committeeMember = {
 	updateGlobalParameters: committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 };
 
+export const committeeFrozenBalance = {
+	deposit: committeeFrozenBalanceDepositOperationPropSerializer,
+};
+
 export const contract = {
 	base: contractBaseOperationPropsSerializer,
 	create: contractCreateOperationPropsSerializer,
 	call: contractCallOperationPropsSerializer,
-	transfer: contractTransferOperationPropsSerializer,
 	fundPool: contractFundPoolOperationPropsSerializer,
 	whitelist: contractWhitelistOperationPropsSerializer,
 	update: contractUpdateOperationPropsSerializer,

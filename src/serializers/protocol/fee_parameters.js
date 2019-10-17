@@ -3,9 +3,7 @@ import { OPERATIONS_IDS } from '../../constants';
 import { staticVariant, struct } from '../collections';
 
 export const defaultFeeParametersSerializer = struct({ fee: uint64 });
-
 export const feeParametersWithPricePerKByte = struct({ fee: uint64, price_per_kbyte: uint32 });
-
 const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.TRANSFER]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: defaultFeeParametersSerializer,
@@ -73,5 +71,4 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.BLOCK_REWARD]: defaultFeeParametersSerializer,
 });
-
 export default feeParametersSerializer;

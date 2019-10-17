@@ -28,14 +28,6 @@ export declare const contractCallOperationPropsSerializer: StructSerializer<
 	}
 >;
 
-export declare const contractTransferOperationPropsSerializer: StructSerializer<{
-	fee: typeof asset,
-	from: typeof contractId,
-	to: typeof anyObjectId,
-	amount: typeof asset,
-	extensions: typeof extensions,
-}>;
-
 export declare const contractFundPoolOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	sender: typeof accountId,
