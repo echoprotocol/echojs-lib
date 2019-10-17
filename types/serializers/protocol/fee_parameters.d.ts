@@ -38,6 +38,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.COMMITTEE_MEMBER_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.COMMITTEE_MEMBER_UPDATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.COMMITTEE_MEMBER_UPDATE_GLOBAL_PARAMETERS]: typeof defaultFeeParametersSerializer,
+	[OperationId.COMMITTEE_FROZEN_BALANCE_DEPOSIT]: typeof defaultFeeParametersSerializer,
 	[OperationId.VESTING_BALANCE_CREATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.VESTING_BALANCE_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.BALANCE_CLAIM]: StructSerializer<{}>,
