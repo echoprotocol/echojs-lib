@@ -36,3 +36,9 @@ export const committeeMemberActivateOperationPropsSerializer = struct({
 	committee_to_activate: committeeMemberId,
 	extensions,
 });
+
+export const committeeMemberDeactivateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_to_deactivate: committeeMemberId,
+	extensions,
+});
