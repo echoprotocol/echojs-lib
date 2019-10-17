@@ -32,6 +32,8 @@ import {
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 } from './committee_member';
 
+import { committeeFrozenBalanceDepositOperationPropsSerializer } from './committee_frozen_balance';
+
 import {
 	committeeFrozenBalanceDepositOperationPropsSerializer,
 	committeeFrozenBalanceWithdrawOperationPropsSerializer,
