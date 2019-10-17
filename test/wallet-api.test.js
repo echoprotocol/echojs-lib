@@ -2018,7 +2018,7 @@ describe('WALLET API', () => {
 			}).timeout(5000);
 		});
 
-		describe('#setFeesOnBuilderTransaction()', () => {
+		describe.skip('#setFeesOnBuilderTransaction()', () => {
 			it('should set fees on builder transaction', async () => {
 				const transactionTypeHandle = 3;
 				const feeAsset = '1.3.0';
@@ -2030,7 +2030,7 @@ describe('WALLET API', () => {
 			}).timeout(5000);
 		});
 
-		describe('#previewBuilderTransaction()', () => {
+		describe.skip('#previewBuilderTransaction()', () => {
 			it('should get preview of builder transaction', async () => {
 				const transactionTypeHandle = 4;
 				const result = await echo.walletApi.previewBuilderTransaction(transactionTypeHandle);
@@ -2041,7 +2041,7 @@ describe('WALLET API', () => {
 			}).timeout(5000);
 		});
 
-		describe('#signBuilderTransaction()', () => {
+		describe.skip('#signBuilderTransaction()', () => {
 			it('should get sing transaction', async () => {
 				const transactionTypeHandle = 5;
 				const result = await echo.walletApi.signBuilderTransaction(
@@ -2055,7 +2055,7 @@ describe('WALLET API', () => {
 			}).timeout(5000);
 		});
 
-		describe('#proposeBuilderTransaction()', () => {
+		describe.skip('#proposeBuilderTransaction()', () => {
 			it('should get sing transaction', async () => {
 				const transactionTypeHandle = 6;
 				const date = new Date(2020,9,5);
