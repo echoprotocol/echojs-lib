@@ -422,7 +422,7 @@ describe('SUBSCRIBER', () => {
 
 	describe('setContractLogsSubscribe', () => {
 		it('test', async () => {
-			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, () => {});
+			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, [], () => {});
 			expect(echo.subscriber.subscribers.logs[`1.${CONTRACT}.0`].length).to.equal(1);
 		});
 	});
@@ -430,7 +430,7 @@ describe('SUBSCRIBER', () => {
 	describe('removeContractLogsSubscribe', () => {
 		it('test', async () => {
 			const callback = () => {};
-			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, callback);
+			await echo.subscriber.setContractLogsSubscribe(`1.${CONTRACT}.0`, [], callback);
 
 			const { length } = echo.subscriber.subscribers.logs[`1.${CONTRACT}.0`];
 			await echo.subscriber.removeContractLogsSubscribe(`1.${CONTRACT}.0`, callback);

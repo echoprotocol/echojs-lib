@@ -488,13 +488,14 @@ class DatabaseAPI {
 	 *  @method getContractLogs
 	 *
 	 *  @param  {String} contractId
+	 * 	@param 	{Array<String>} topics
 	 *  @param  {Number} fromBlock
 	 *  @param  {Number} toBlock
 	 *
 	 *  @return {Promise}
 	 */
-	getContractLogs(contractId, fromBlock, toBlock) {
-		return this.db.exec('get_contract_logs', [contractId, fromBlock, toBlock]);
+	getContractLogs(contractId, topics, fromBlock, toBlock) {
+		return this.db.exec('get_contract_logs', [contractId, topics, fromBlock, toBlock]);
 	}
 
 	/**

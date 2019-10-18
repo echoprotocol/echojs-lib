@@ -1980,6 +1980,7 @@ class API {
 	 *  @method getContractLogs
 	 *
 	 *  @param  {String} contractId
+	 * 	@param 	{Array<String>} topics
 	 *  @param  {Number} fromBlock
 	 *  @param  {Number} toBlock
 	 *
@@ -1987,13 +1988,14 @@ class API {
 	 *  	Promise.<Array.<ContractLogs>>
 	 *  }
 	 */
-	async getContractLogs(contractId, fromBlock, toBlock) {
+	async getContractLogs(contractId, topics, fromBlock, toBlock) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+		if (!isArray(topics)) throw new Error('topics should be a array');
 		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
 		if (!isUInt64(toBlock)) throw new Error('ToBlock should be a non negative integer');
 		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
 
-		return this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
+		return this.wsApi.database.getContractLogs(contractId, topics, fromBlock, toBlock);
 	}
 
 	/**

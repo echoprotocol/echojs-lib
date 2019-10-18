@@ -892,19 +892,21 @@ class Subscriber extends EventEmitter {
 	 *  @method setContractLogsSubscribe
 	 *
 	 *  @param  {String} contractId
+	 *  @param  {Array<String>} topics
 	 *  @param  {Function} callback
 	 *  @param  {Number} [fromBlock]
 	 *  @param  {Number} [toBlock]
 	 *
 	 *  @return {undefined}
 	 */
-	async setContractLogsSubscribe(contractId, callback, fromBlock, toBlock) {
+	async setContractLogsSubscribe(contractId, topics, callback, fromBlock, toBlock) {
 		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
 
 		// get blocks in interval
 		if (fromBlock) {
 			const logs = await this._wsApi.database.getContractLogs(
 				contractId,
+				topics,
 				fromBlock,
 				toBlock || globalInfo.head_block_number,
 			);
