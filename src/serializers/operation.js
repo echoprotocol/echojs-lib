@@ -37,7 +37,7 @@ const operationProps = {
 	[OPERATIONS_IDS.CONTRACT_CALL]: protocol.contract.call,
 	[OPERATIONS_IDS.CONTRACT_INTERNAL_CREATE]: protocol.contract.internalCreate,
 	[OPERATIONS_IDS.CONTRACT_INTERNAL_CALL]: protocol.contract.internalCall,
-	// [OPERATIONS_IDS.CONTRACT_SELFDESTRUCT]: protocol.contract.call,
+	[OPERATIONS_IDS.CONTRACT_SELFDESTRUCT]: protocol.contract.selfdestruct,
 	[OPERATIONS_IDS.CONTRACT_UPDATE]: protocol.contract.update,
 	[OPERATIONS_IDS.ACCOUNT_ADDRESS_CREATE]: protocol.account.addressCreate,
 	[OPERATIONS_IDS.TRANSFER_TO_ADDRESS]: protocol.transfer.toAddress,
