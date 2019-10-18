@@ -1,22 +1,18 @@
 import AccountListingSerializer from './account_listing';
 import authoritySerializer from '../authority';
-import VoteIdSerializer from '../VoteId';
 import { string as stringSerializer } from '../../basic';
 import { uint16, uint8 } from '../../basic/integers';
 import { asset, publicKey, extensions } from '../../chain';
 import { accountId } from '../../chain/id/protocol';
-import { struct, set, optional } from '../../collections';
+import { struct, optional } from '../../collections';
 
 export { default as AccountListingSerializer, ACCOUNT_LISTING } from './account_listing';
 
 export const accountListing = new AccountListingSerializer();
 
 export const accountOptionsSerializer = struct({
-	voting_account: accountId,
 	delegating_account: accountId,
-	num_committee: uint16,
 	delegate_share: uint16,
-	votes: set(new VoteIdSerializer()),
 	extensions,
 });
 

@@ -64,7 +64,7 @@ describe('sidechain btc', () => {
 				deposits,
 				withdrawals,
 				transaction_id: '2d94683fa2f8aaae4a6f377d93b875f680adf96b9c3e9577554b742f412fa9ad', //TODO
-				sma_out_value: 1000,
+				aggregation_out_value: 1000,
 				sma_address: {
 					address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k'
 				},
