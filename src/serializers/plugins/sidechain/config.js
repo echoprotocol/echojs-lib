@@ -35,6 +35,7 @@ export const sidechainConfigSerializer = struct({
 	waiting_btc_blocks: uint32,
 	satoshis_per_byte: uint32,
 	echo_blocks_per_aggregation: uint32,
+	echo_blocks_per_deposit: uint32,
 });
 
 export const sidechainERC20ConfigSerializer = struct({

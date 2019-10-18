@@ -32,6 +32,9 @@ declare const chainParametersSerializer: StructSerializer<{
 	gas_price: StructSerializer<{ price: typeof uint64, gas_amount: typeof uint64 }>,
 	block_emission_amount: typeof uint64,
 	block_producer_reward_ratio: typeof uint16,
+	committee_frozen_balance_to_activate: typeof uint64,
+	committee_maintenance_intervals_to_deposit: typeof uint64,
+	committee_freeze_duration_seconds: typeof uint32,
 	extensions: typeof extensions,
 }>;
 
