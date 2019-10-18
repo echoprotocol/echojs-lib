@@ -89,8 +89,6 @@ try {
 <dd></dd>
 <dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#lookupVoteIds">lookupVoteIds(votes, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getTransactionHex">getTransactionHex(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getRequiredSignatures">getRequiredSignatures(transaction, availableKeys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
@@ -550,16 +548,6 @@ try {
 | lowerBoundName | <code>String</code> |  [Name of the earliest committee member to retrieve] |
 | limit | <code>Number</code> | [count operations (max 1000)] |
 
-<a name="lookupVoteIds"></a>
-
-## lookupVoteIds(votes, force) ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code>
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| votes | <code>Array.&lt;String&gt;</code> | [Ids of the vote to retrieve] |
-| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
-
 <a name="getTransactionHex"></a>
 
 ## getTransactionHex(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -902,9 +890,12 @@ try {
 
 <a name="getCommitteeFrozenBalance"></a>
 
-## getCommitteeFrozenBalance() ⇒ <code>Promise.&lt;Object.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code>
+## getCommitteeFrozenBalance(committeeMemberId) ⇒ <code>Promise.&lt;*&gt;</code>
 **Kind**: global function
-**Returns**: <code>Promise.&lt;Object.&lt;{asset\_id: String, amount: Number}&gt;&gt;</code> - { asset_id: '1.3.0', amount: 0}
+
+| Param | Type | Description |
+| --- | --- | --- |
+| committeeMemberId | <code>String</code> | [Id of the committee member] |
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>

@@ -94,7 +94,6 @@ export default class Api {
 	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
 	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
-	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
 	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
 	requestRegistrationTask(): Promise<RegistrationTask>
 	validateTransaction(tr: Object): Promise<any>;

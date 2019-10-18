@@ -380,17 +380,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method lookupVoteIds
-	 *
-	 *  @param  {Array<Strings>} votes
-	 *
-	 *  @return {Promise}
-	 */
-	lookupVoteIds(votes) {
-		return this.db.exec('lookup_vote_ids', [votes]);
-	}
-
-	/**
 	 *  @method getTransactionHex
 	 *
 	 *  @param  {Object} transaction
