@@ -41,6 +41,7 @@ export declare const eth: {
 export declare const btc: {
 	createAddress: typeof _btc.sidechainBtcCreateAddressOperationPropsSerializer,
 	intermediateDeposit: typeof _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
+	createIntermediateDeposit: typeof _btc.sidechainBtcCreateIntermediateDepositOperationPropsSerializer,
 	deposit: typeof _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: typeof _btc.sidechainBtcWithdrawOperationPropsSerializer
 	aggregate: typeof _btc.sidechainBtcAggregateOperationPropsSerializer,

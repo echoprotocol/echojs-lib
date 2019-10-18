@@ -17,6 +17,15 @@ export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
 });
 
 
+export const sidechainBtcCreateIntermediateDepositOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	account: accountId,
+	btc_address_id: btcAddressId,
+	tx_info: btcTransactionDetailsSerializer,
+	extensions,
+});
+
 export const sidechainBtcIntermediateDepositOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,

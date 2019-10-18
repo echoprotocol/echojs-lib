@@ -57,6 +57,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_ISSUE]: protocol.sidechain.erc20.issue,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_BURN]: protocol.sidechain.erc20.burn,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS]: protocol.sidechain.btc.createAddress,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT]: protocol.sidechain.btc.createIntermediateDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT]: protocol.sidechain.btc.intermediateDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT]: protocol.sidechain.btc.deposit,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_WITHDRAW]: protocol.sidechain.btc.withdraw,

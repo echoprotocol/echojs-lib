@@ -10,6 +10,15 @@ export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSe
 	backup_address: StringSerializer,
 }>;
 
+export declare const sidechainBtcCreateIntermediateDepositOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	account: typeof accountId,
+	btc_address_id: typeof btcAddressId,
+	tx_info: typeof BtcTransactionDetailsSerializer,
+	extensions: typeof extensions,
+}>;
+
 export declare const sidechainBtcIntermediateDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
