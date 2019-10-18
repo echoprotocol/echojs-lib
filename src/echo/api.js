@@ -2507,6 +2507,21 @@ class API {
 
 	}
 
+	/**
+	 *  @method getCommitteeFrozenBalance
+	 *
+	 * 	@param {String} committeeMemberIds
+	 *
+ 	 *  @return {*}
+	 */
+	getCommitteeFrozenBalance(committeeMemberId) {
+		if (!isCommitteeMemberId(committeeMemberId)) {
+			return Promise.reject(new Error('CommitteeMemberId should be valid committee id'));
+		}
+
+		return this.wsApi.database.getCommitteeFrozenBalance(committeeMemberId);
+	}
+
 	setOptions() { }
 
 }

@@ -54,6 +54,7 @@ export default class Api {
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
+	getCommitteeFrozenBalance(committeeMemberId: string): Promise<Object>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;

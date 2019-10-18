@@ -641,6 +641,16 @@ class DatabaseAPI {
 		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
 	}
 
+	/**
+	 *  @method getCommitteeFrozenBalance
+	 *  @param  {String} committeeMemberId
+	 *
+	 *  @return {Promise}
+	 */
+	getCommitteeFrozenBalance(committeeMemberId) {
+		return this.db.exec('get_committee_frozen_balance', [committeeMemberId]);
+	}
+
 }
 
 export default DatabaseAPI;

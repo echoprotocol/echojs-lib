@@ -958,6 +958,27 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
+		describe('#getCommitteeFrozenBalance()', () =>{
+			it('should get committee frozen balance by committee member id', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const committeeMemberId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER}.1`;
+
+					const object = await api.getCommitteeFrozenBalance(committeeMemberId);
+
+					expect(object)
+						.to
+						.be
+						.an('object');
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
 		describe('#getBtcAddresses()', () => {
 			it('should get btc addresses by account id', async () => {
 				try {
