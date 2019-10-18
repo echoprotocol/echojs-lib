@@ -12,6 +12,7 @@ export const committeeMemberCreateOperationPropsSerializer = struct({
 	url: stringSerializer,
 	eth_address: ethAddress,
 	btc_public_key: btcPublicKey,
+	deposit: asset,
 	extensions,
 });
 
