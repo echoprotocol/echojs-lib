@@ -1858,6 +1858,21 @@ class WalletAPI {
 		]);
 	}
 
+	getCommitteeFrozenBalance() {
+		return this.wsRpc.call([0, 'get_committee_frozen_balance ', []]);
+	}
+
+	committeeFreezeBalance() {
+		return this.wsRpc.call([0, 'committee_freeze_balance', []]);
+	}
+
+	createDeactivateCommitteeMemberProposal() {
+		return this.wsRpc.call([0, 'create_deactivate_committee_member_proposal ', []]);
+	}
+
+	committeeWithdrawBalance() {
+		return this.wsRpc.call([0, 'committee_withdraw_balance', []]);
+	}
 }
 
 export default WalletAPI;
