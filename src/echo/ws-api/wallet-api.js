@@ -1336,26 +1336,6 @@ class WalletAPI {
 	}
 
 	/**
-	 * Set your vote for the number of committee_members in the system.
-	 * There are maximum values for each set in the blockchain parameters (currently defaulting to 1001).
-	 * This setting can be changed at any time. If your account has a voting proxy set, your preferences will be ignored
-	 * @param {string} accountIdOrName the name or id of the account to update
-	 * @param {number} desiredNumberOfCommitteeMembers the number
-	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
-	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
-	 */
-	setDesiredCommitteeMemberCount(accountIdOrName, desiredNumberOfCommitteeMembers, shouldDoBroadcastToNetwork) {
-		if (!isAccountIdOrName(accountIdOrName)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		return this.wsRpc.call([0, 'set_desired_committee_member_count', [
-			string.toRaw(accountIdOrName),
-			uint16.toRaw(desiredNumberOfCommitteeMembers),
-			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
-	}
-
-	/**
 	 * Returns information about the given committee member.
 	 * @param {string} accountIdOrName the name or id of the committee member account owner,
 	 * or the id of the committee member
@@ -1387,64 +1367,6 @@ class WalletAPI {
 			return Promise.reject(new Error(`Limit should be less ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`));
 		}
 		return this.wsRpc.call([0, 'list_committee_members', [string.toRaw(lowerBoundName), uint64.toRaw(limit)]]);
-	}
-
-	/**
-	 * Vote for a given `committee_member`.
-	 * An account can publish a list of all committee_memberes they approve of. This command allows you to add or
-	 * remove committee_memberes from this list. Each account's vote is weighted according to the number of shares
-	 * of the core asset owned by that account at the time the votes are tallied.
-	 *
-	 * You cannot vote against a `committee_member`, you can only vote for the `committee_member`
-	 * or not vote for the `committee_member`.
-	 *
-	 * @param {string} votingAccountIdOrName the name or id of the account who is voting with their shares
-	 * @param {string} committeeMemberOwner the name or id of the `committee_member` owner account
-	 * @param {boolean} approveYourVote true if you wish to vote in favor of that `committee_member`,
-	 * false to remove your vote in favor of that `committee_member`
-	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
-	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote for the given `committee_member`
-	 */
-	voteForCommitteeMember(votingAccountIdOrName, committeeMemberOwner, approveYourVote, shouldDoBroadcastToNetwork) {
-		if (!isAccountIdOrName(votingAccountIdOrName)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isAccountIdOrName(committeeMemberOwner)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		return this.wsRpc.call([0, 'vote_for_committee_member', [
-			string.toRaw(votingAccountIdOrName),
-			string.toRaw(committeeMemberOwner),
-			bool.toRaw(approveYourVote),
-			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
-	}
-
-	/**
-	 * Set the voting proxy for an account.
-	 * If a user does not wish to take an active part in voting, they can choose
-	 * to allow another account to vote their stake.
-	 * Setting a vote proxy does not remove your previous votes from the blockchain, they remain there but are ignored.
-	 * If you later null out your vote proxy, your previous votes will take effect again.
-	 * This setting can be changed at any time.
-	 * @param {string} accountIdOrNameToUpdate the name or id of the account to update
-	 * @param {string} votingAccountIdOrName the name or id of an account authorized
-	 * to vote account_to_modify's shares, or null to vote your own shares
-	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
-	 * @returns {Promise<SignedTransaction>} the signed transaction changing your vote proxy settings
-	 */
-	setVotingProxy(accountIdOrNameToUpdate, votingAccountIdOrName, shouldDoBroadcastToNetwork) {
-		if (!isAccountIdOrName(accountIdOrNameToUpdate)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isAccountIdOrName(votingAccountIdOrName)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		return this.wsRpc.call([0, 'set_voting_proxy', [
-			string.toRaw(accountIdOrNameToUpdate),
-			string.toRaw(votingAccountIdOrName),
-			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
 	}
 
 	/**
