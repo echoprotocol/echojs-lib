@@ -1152,8 +1152,6 @@ try {
 {
     id:String,
     committee_member_account:String,
-    vote_id:String,
-    total_votes:Number,
     url:String,
     eth_address:String,
     btc_public_key:String
@@ -1186,10 +1184,7 @@ try {
     ed_key:String,
     options:{
         memo_key:String,
-        voting_account:String,
         delegating_account:String,
-        num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
@@ -1246,7 +1241,6 @@ try {
         voting_account:String,
         delegating_account:String,
         num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
