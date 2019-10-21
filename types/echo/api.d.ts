@@ -22,6 +22,8 @@ import BtcAddress from '../interfaces/BtcAddress';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
+import { signedTransaction } from '../serializers';
+import { committeeMemberId } from '../serializers/chain/id/protocol';
 
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
@@ -99,4 +101,9 @@ export default class Api {
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
+	getCommitteeFrozenBalance(ownerAccount: string, ): Promise<typeof asset['__TOutput__']>
+	committeeFreezeBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
+	committeeWithdrawBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
+	createActivateCommitteeMemberProposal(sender: string, committeeToActivate: typeof committeeMemberId, expirationTime: number, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
+	createDeactivateCommitteeMemberProposal(sender: string, committeeTodeactivate: typeof committeeMemberId, expirationTime: number, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
 }

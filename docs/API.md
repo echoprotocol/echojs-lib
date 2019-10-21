@@ -89,8 +89,6 @@ try {
 <dd></dd>
 <dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#lookupVoteIds">lookupVoteIds(votes, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getTransactionHex">getTransactionHex(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getRequiredSignatures">getRequiredSignatures(transaction, availableKeys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>

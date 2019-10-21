@@ -54,9 +54,6 @@ const walletAPIMethodsArray = [
 	'create_eddsa_keypair',
 	'get_vesting_balances',
 	'withdraw_vesting',
-	'vote_for_committee_member',
-	'set_voting_proxy',
-	'set_desired_committee_member_count',
 	'get_account',
 	'get_contract',
 	'get_contract_object',
@@ -103,6 +100,11 @@ const walletAPIMethodsArray = [
 	'get_contract_pool_balance',
 	'register_erc20_token',
 	'withdraw_erc20_token',
+	'get_committee_frozen_balance',
+	'committee_freeze_balance',
+	'create_activate_committee_member_proposal',
+	'create_deactivate_committee_member_proposal',
+	'committee_withdraw_balance',
 ];
 
 const operationPrototypeArray = [
