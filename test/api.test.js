@@ -927,6 +927,17 @@ describe('API', () => {
 						.to
 						.be
 						.an('object');
+
+					const { asset_id, amount } = object;
+
+					expect(asset_id)
+						.to
+						.be
+						.an('string').that.is.not.empty;
+					expect(amount)
+						.to
+						.be
+						.an('number');
 				} catch (e) {
 					throw e;
 				}
