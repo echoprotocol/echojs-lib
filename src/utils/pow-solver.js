@@ -41,4 +41,6 @@ export const solveRegistrationTask = async (blockId, randNum, difficulty) => {
 		}
 
 	}
+
+	throw new Error(`registration solution hasn't been reached on nonce range: [0, ${Number.MAX_SAFE_INTEGER}].`);
 };

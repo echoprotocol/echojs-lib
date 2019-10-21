@@ -539,7 +539,7 @@ describe('WALLET API', () => {
 				useEthereumAssetAccuracy,
 				shouldSaveToWallet,
 			);
-            console.log('TCL: result', JSON.stringify(result, null, '\t'));
+			
 			contractResultId = result.operation_results[0][1];
 			expect(result)
 				.to
