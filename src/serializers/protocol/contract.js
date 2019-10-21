@@ -2,7 +2,6 @@ import { string as stringSerializer, bool } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, assetId, contractId } from '../chain/id/protocol';
 import { struct, optional, set, vector } from '../collections';
-import { objectId } from '../chain/id';
 
 export const contractBaseOperationPropsSerializer = struct({
 	fee: asset,
@@ -64,7 +63,7 @@ export const contractInternalCreateOperationPropsSerializer = struct({
 export const contractInternalCallOperationPropsSerializer = struct({
 	fee: asset,
 	caller: contractId,
-	callee: objectId,
+	callee: accountId,
 	method: stringSerializer,
 	value: asset,
 	extensions,
@@ -73,7 +72,7 @@ export const contractInternalCallOperationPropsSerializer = struct({
 export const contractSelfdestructOperationPropsSerializer = struct({
 	fee: asset,
 	contract: contractId,
-	recipient: objectId,
+	recipient: accountId,
 	amounts: vector(asset),
 	extensions,
 });
