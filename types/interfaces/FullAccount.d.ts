@@ -1,8 +1,10 @@
 import AccountHistory from './AccountHistory';
 import { SerializerOutput } from '../serializers/ISerializer';
 import { authority } from '../serializers/protocol';
+import { int64 } from '../serializers/basic/integers';
 
 export default interface FullAccount {
+	accumulated_reward: typeof int64, //   typedef safe<int64_t>    
 	id: string,
 	membership_expiration_date: string,
 	registrar: string,
