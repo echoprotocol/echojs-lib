@@ -1742,6 +1742,17 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
+	describe('#committeeFreezeBalance()', () => {
+		it('should freeze commitee balance', async () => {
+
+			const result = await echo.walletApi.committeeFreezeBalance('1.2.10', '1', true);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(5000);
+	});
+
 	describe('#setVotingProxy()', () => {
 		it('Should set the voting proxy for an account', async () => {
 			const result = await echo.walletApi.setVotingProxy(

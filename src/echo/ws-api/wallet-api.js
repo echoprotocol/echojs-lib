@@ -1786,15 +1786,27 @@ class WalletAPI {
 	 * @returns {Promise<Asset>}
 	 */
 	getCommitteeFrozenBalance(ownerAccount) {
-		if (!isAccountId(ownerAccount)) {
+		if (!isAccountIdOrName(ownerAccount)) {
 			return Promise.reject(new Error('Account name or id is invalid'));
 		}
 
-		return this.wsRpc.call([0, 'get_committee_frozen_balance', [ownerAccount]]);
+		return this.wsRpc.call([0, 'get_committee_frozen_balance', [string.toRaw(ownerAccount)]]);
 	}
 
-	committeeFreezeBalance() {
-		return this.wsRpc.call([0, 'committee_freeze_balance', []]);
+
+	// string owner_account, uint64_t amount, bool broadcast = false
+	/**
+	 *
+	 */
+	committeeFreezeBalance(ownerAccount, amount, broadcast) {
+		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+
+		return this.wsRpc.call([0, 'committee_freeze_balance', [
+			string.toRaw(ownerAccount),
+			string.toRaw(amount),
+			bool.toRaw(broadcast),
+		]]);
 	}
 
 	createActivateCommitteeMemberProposal() {
