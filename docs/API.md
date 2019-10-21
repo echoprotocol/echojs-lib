@@ -546,16 +546,6 @@ try {
 | lowerBoundName | <code>String</code> |  [Name of the earliest committee member to retrieve] |
 | limit | <code>Number</code> | [count operations (max 1000)] |
 
-<a name="lookupVoteIds"></a>
-
-## lookupVoteIds(votes, force) ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code>
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| votes | <code>Array.&lt;String&gt;</code> | [Ids of the vote to retrieve] |
-| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
-
 <a name="getTransactionHex"></a>
 
 ## getTransactionHex(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -1140,7 +1130,6 @@ try {
     recent_slots_filled:String,
     dynamic_flags:Number,
     last_irreversible_block_num:Number,
-    last_rand_quantity:String
 }
 ```
 
