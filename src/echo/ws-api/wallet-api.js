@@ -19,6 +19,7 @@ import {
 	isAssetId,
 	isPublicKey,
 	isUInt64,
+	isCommitteeMemberId,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -58,6 +59,7 @@ const {
 	erc20TokenId,
 	proposalId,
 	assetId,
+	committeeMemberId,
 } = serializers.chain.ids.protocol;
 
 /**
@@ -1794,9 +1796,12 @@ class WalletAPI {
 	}
 
 
-	// string owner_account, uint64_t amount, bool broadcast = false
 	/**
-	 *
+	 * @method committeeFreezeBalance
+	 * @param {String} ownerAccount
+	 * @param {String} amount
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
 	 */
 	committeeFreezeBalance(ownerAccount, amount, broadcast) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
@@ -1809,12 +1814,44 @@ class WalletAPI {
 		]]);
 	}
 
-	createActivateCommitteeMemberProposal() {
-		return this.wsRpc.call([0, 'create_activate_committee_member_proposal', []]);
+	/**
+	 * @method createActivateCommitteeMemberProposal
+	 * @param {String} sender
+	 * @param {String} committeeToActivate
+	 * @param {Number} expirationTime
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	createActivateCommitteeMemberProposal(sender, committeeToActivate, expirationTime, broadcast) {
+		if (!isAccountIdOrName(sender)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isCommitteeMemberId(committeeToActivate)) return Promise.reject(new Error('Invalid committee member id'));
+
+		return this.wsRpc.call([0, 'create_activate_committee_member_proposal', [
+			accountId.toRaw(sender),
+			committeeMemberId.toRaw(committeeToActivate),
+			timePointSec.toRaw(expirationTime),
+			bool.toRaw(broadcast),
+		]]);
 	}
 
-	createDeactivateCommitteeMemberProposal() {
-		return this.wsRpc.call([0, 'create_deactivate_committee_member_proposal ', []]);
+	/**
+	 * @method createDeactivateCommitteeMemberProposal
+	 * @param {String} sender
+	 * @param {String} committeeToActivate
+	 * @param {Number} expirationTime
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	createDeactivateCommitteeMemberProposal(sender, committeeToActivate, expirationTime, broadcast) {
+		if (!isAccountIdOrName(sender)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isCommitteeMemberId(committeeToActivate)) return Promise.reject(new Error('Invalid committee member id'));
+
+		return this.wsRpc.call([0, 'create_deactivate_committee_member_proposal', [
+			accountId.toRaw(sender),
+			committeeMemberId.toRaw(committeeToActivate),
+			timePointSec.toRaw(expirationTime),
+			bool.toRaw(broadcast),
+		]]);
 	}
 
 	committeeWithdrawBalance() {
