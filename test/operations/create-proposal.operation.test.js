@@ -66,7 +66,7 @@ describe('create proposal', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessagePrefix = [
-			'static variant with key 12',
+			'static variant with key 16',
 			'struct key "proposed_ops"',
 			'vector element with index 0',
 			'static variant with key 0',
