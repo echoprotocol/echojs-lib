@@ -1803,11 +1803,29 @@ class WalletAPI {
 	 * @param {Boolean} broadcast
 	 * @returns {Promise<SignedTransaction>}
 	 */
-	committeeFreezeBalance(ownerAccount, amount, broadcast) {
+	committeeFreezeBalance(ownerAccount, amount, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
 
 		return this.wsRpc.call([0, 'committee_freeze_balance', [
+			string.toRaw(ownerAccount),
+			string.toRaw(amount),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * @method committeeWithdrawBalance
+	 * @param {String} ownerAccount
+	 * @param {String} amount
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	committeeWithdrawBalance(ownerAccount, amount, broadcast = false) {
+		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+
+		return this.wsRpc.call([0, 'committee_withdraw_balance', [
 			string.toRaw(ownerAccount),
 			string.toRaw(amount),
 			bool.toRaw(broadcast),
@@ -1822,7 +1840,7 @@ class WalletAPI {
 	 * @param {Boolean} broadcast
 	 * @returns {Promise<SignedTransaction>}
 	 */
-	createActivateCommitteeMemberProposal(sender, committeeToActivate, expirationTime, broadcast) {
+	createActivateCommitteeMemberProposal(sender, committeeToActivate, expirationTime, broadcast = false) {
 		if (!isAccountIdOrName(sender)) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isCommitteeMemberId(committeeToActivate)) return Promise.reject(new Error('Invalid committee member id'));
 
@@ -1837,25 +1855,23 @@ class WalletAPI {
 	/**
 	 * @method createDeactivateCommitteeMemberProposal
 	 * @param {String} sender
-	 * @param {String} committeeToActivate
+	 * @param {String} committeeTodeactivate
 	 * @param {Number} expirationTime
 	 * @param {Boolean} broadcast
 	 * @returns {Promise<SignedTransaction>}
 	 */
-	createDeactivateCommitteeMemberProposal(sender, committeeToActivate, expirationTime, broadcast) {
+	createDeactivateCommitteeMemberProposal(sender, committeeTodeactivate, expirationTime, broadcast = false) {
 		if (!isAccountIdOrName(sender)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isCommitteeMemberId(committeeToActivate)) return Promise.reject(new Error('Invalid committee member id'));
+		if (!isCommitteeMemberId(committeeTodeactivate)) {
+			return Promise.reject(new Error('Invalid committee member id'));
+		}
 
 		return this.wsRpc.call([0, 'create_deactivate_committee_member_proposal', [
 			accountId.toRaw(sender),
-			committeeMemberId.toRaw(committeeToActivate),
+			committeeMemberId.toRaw(committeeTodeactivate),
 			timePointSec.toRaw(expirationTime),
 			bool.toRaw(broadcast),
 		]]);
-	}
-
-	committeeWithdrawBalance() {
-		return this.wsRpc.call([0, 'committee_withdraw_balance', []]);
 	}
 
 }

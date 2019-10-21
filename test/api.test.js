@@ -822,52 +822,7 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe('#lookupVoteIds()', () => {
-			it('should get vote by id and save to cache', async () => {
-				try {
-					const wsApi = new WSAPI(ws);
-					const cache = new Cache();
-					const api = new API(cache, wsApi);
-
-					const committeeVoteId = '0:1';
-
-					const objects = await api.lookupVoteIds([committeeVoteId]);
-
-					expect(objects)
-						.to
-						.be
-						.an('array');
-
-					const committeeAccountId = objects[0].committee_member_account;
-					const committeeId = objects[0].id;
-
-					expect(objects[0])
-						.to
-						.deep
-						.equal(cache.objectsById.get(committeeId)
-							.toJS());
-					expect(objects[0])
-						.to
-						.deep
-						.equal(cache.committeeMembersByCommitteeMemberId.get(committeeId)
-							.toJS());
-					expect(objects[0])
-						.to
-						.deep
-						.equal(cache.committeeMembersByAccountId.get(committeeAccountId)
-							.toJS());
-					expect(objects[0])
-						.to
-						.deep
-						.equal(cache.objectsByVoteId.get(committeeVoteId)
-							.toJS());
-
-				} catch (e) {
-					throw e;
-				}
-			})
-				.timeout(5000);
-		});
+		
 		describe('#getCommitteeMembers()', () => {
 			it('should get committee by id and save to cache', async () => {
 				try {
