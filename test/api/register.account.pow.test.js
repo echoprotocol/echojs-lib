@@ -18,6 +18,8 @@ describe('API register account POW', () => {
 
 	});
 
+	after(async () => await echo.disconnect());
+
 	describe('register account pow', () => {
 		it('register account', async () => {
 
