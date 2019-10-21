@@ -1502,6 +1502,34 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
+	describe.skip('#setDesiredCommitteeMemberCount()', () => {
+		it('Should set your vote for the number of committee_members', async () => {
+			try {
+			const accountName = 'bruno';
+			const newAccount = await echo.walletApi.createAccountWithBrainKey(
+				brainKey,
+				accountName,
+				accountId,
+				shouldDoBroadcastToNetwork
+			);
+				// console.log('---------voting_account---------', newAccount.operations[0][1].options.voting_account);
+				const desiredNumberOfCommitteeMembers = 0;
+				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
+					newAccount.operations[0][1].options.voting_account,
+					desiredNumberOfCommitteeMembers,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+				console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
 	describe('#fundAssetFeePool()', () => {
 		it('Should pay into the fee pool for the given asset', async () => {
 			const amount = '1';
@@ -1552,6 +1580,22 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
+	describe('#voteForCommitteeMember()', () => {
+		it('Should vote for a given committee_member', async () => {
+			const approveYourVote = true;
+			const result = await echo.walletApi.voteForCommitteeMember(
+				accountName,
+				accountId,
+				approveYourVote,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(5000);
+	});
+
 	describe('#reserveAsset()', () => {
 		it('Should burns the given user-issued asset', async () => {
 			const amount = '1';
@@ -1582,6 +1626,48 @@ describe('WALLET API', () => {
 					.be
 					.an('object').that.is.not.empty;
 			}).timeout(5000);
+	});
+
+	describe('#setVotingProxy()', () => {
+		it('Should set the voting proxy for an account', async () => {
+			const result = await echo.walletApi.setVotingProxy(
+				accountName,
+				accountId,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+			}).timeout(5000);
+	});
+
+	describe.skip('#setDesiredCommitteeMemberCount()', () => {
+		it('Should set your vote for the number of committee_members', async () => {
+			try {
+			const accountName = 'bruno';
+			const newAccount = await echo.walletApi.createAccountWithBrainKey(
+				brainKey,
+				accountName,
+				accountId,
+				shouldDoBroadcastToNetwork
+			);
+				// console.log('---------voting_account---------', newAccount.operations[0][1].options.voting_account);
+				const desiredNumberOfCommitteeMembers = 0;
+				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
+					newAccount.operations[0][1].options.voting_account,
+					desiredNumberOfCommitteeMembers,
+					shouldDoBroadcastToNetwork,
+				);
+				expect(result)
+				.to
+				.be
+				.an('object');
+			console.log('result', result);
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
 	});
 			
 	describe.skip('#proposeParameterChange()', () => {
@@ -1637,6 +1723,36 @@ describe('WALLET API', () => {
 				.to
 				.be
 				.an('string');
+		}).timeout(5000);
+	});
+
+	describe('#voteForCommitteeMember()', () => {
+		it('Should vote for a given committee_member', async () => {
+			const approveYourVote = true;
+			const result = await echo.walletApi.voteForCommitteeMember(
+				accountName,
+				accountId,
+				approveYourVote,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(5000);
+	});
+
+	describe('#setVotingProxy()', () => {
+		it('Should set the voting proxy for an account', async () => {
+			const result = await echo.walletApi.setVotingProxy(
+				accountName,
+				accountId,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1834,6 +1950,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
+	
 	describe('TRANSACTION BUILDER', () => {
 
 		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
@@ -2177,6 +2294,26 @@ describe('WALLET API', () => {
 
 	});
 
+
+	describe('#getCommitteeFrozenBalance()', () => {
+		it('should returns the 0 for ECHO asset', async () => {
+			const result = await echo.walletApi.getCommitteeFrozenBalance(accountId);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+			expect(result.amount)
+				.to
+				.be
+				.equal(0);
+			expect(result.asset_id)
+				.to
+				.be
+				.equal('1.3.0');
+		}).timeout(5000);
+
+	});
+	
 	// describe('#exit()', () => {
 	// 	it('should exit from wallet', async () => {
 	// 		const expectedError = 'timeout';

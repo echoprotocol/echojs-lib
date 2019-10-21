@@ -1780,12 +1780,25 @@ class WalletAPI {
 		]);
 	}
 
-	getCommitteeFrozenBalance() {
-		return this.wsRpc.call([0, 'get_committee_frozen_balance ', []]);
+	/**
+	 * @method getCommitteeFrozenBalance
+	 * @param {String} ownerAccount
+	 * @returns {Promise<Asset>}
+	 */
+	getCommitteeFrozenBalance(ownerAccount) {
+		if (!isAccountId(ownerAccount)) {
+			return Promise.reject(new Error('Account name or id is invalid'));
+		}
+
+		return this.wsRpc.call([0, 'get_committee_frozen_balance', [ownerAccount]]);
 	}
 
 	committeeFreezeBalance() {
 		return this.wsRpc.call([0, 'committee_freeze_balance', []]);
+	}
+
+	createActivateCommitteeMemberProposal() {
+		return this.wsRpc.call([0, 'create_activate_committee_member_proposal', []]);
 	}
 
 	createDeactivateCommitteeMemberProposal() {
@@ -1795,6 +1808,7 @@ class WalletAPI {
 	committeeWithdrawBalance() {
 		return this.wsRpc.call([0, 'committee_withdraw_balance', []]);
 	}
+
 }
 
 export default WalletAPI;
