@@ -89,8 +89,6 @@ try {
 <dd></dd>
 <dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#lookupVoteIds">lookupVoteIds(votes, force)</a> ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code></dt>
-<dd></dd>
 <dt><a href="#getTransactionHex">getTransactionHex(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getRequiredSignatures">getRequiredSignatures(transaction, availableKeys)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
@@ -107,7 +105,7 @@ try {
 <dd></dd>
 <dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getContractLogs">getContractLogs(contractId, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
+<dt><a href="#getContractLogs">getContractLogs(contractId, topics, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
 <dd></dd>
@@ -123,7 +121,9 @@ try {
 <dd></dd>
 <dt><a href="#getFeePool">getFeePool(assetId)</a> ⇒ <code>Promise.&lt;BigNumber&gt;</code></dt>
 <dd></dd>
-<dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>1
+<dd></dd>
+<dt><a href="#registerAccountPow">registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
 <dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
@@ -180,6 +180,8 @@ try {
 <dt><a href="#getBtcDepositScript">getBtcDepositScript(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#requestRegistrationTask">requestRegistrationTask()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getCommitteeFrozenBalance">getCommitteeFrozenBalance()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 </dl>
 
@@ -548,16 +550,6 @@ try {
 | lowerBoundName | <code>String</code> |  [Name of the earliest committee member to retrieve] |
 | limit | <code>Number</code> | [count operations (max 1000)] |
 
-<a name="lookupVoteIds"></a>
-
-## lookupVoteIds(votes, force) ⇒ <code>Promise.&lt;Array.&lt;Vote&gt;&gt;</code>
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| votes | <code>Array.&lt;String&gt;</code> | [Ids of the vote to retrieve] |
-| force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
-
 <a name="getTransactionHex"></a>
 
 ## getTransactionHex(transaction) ⇒ <code>Promise.&lt;\*&gt;</code>
@@ -635,12 +627,13 @@ try {
 
 <a name="getContractLogs"></a>
 
-## getContractLogs(contractId, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
+## getContractLogs(contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | contractId | <code>String</code> | [Id of the contract to retrieve] |
+| topics | <code>Array.&lt;String&gt;</code> | [Array of topics] |
 | fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
 | toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
 
@@ -735,6 +728,19 @@ try {
 | activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
 | echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
 | wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
+
+<a name="registerAccountPow"></a>
+
+## registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
+| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
+
 
 <a name="getAccountHistory"></a>
 
@@ -897,6 +903,15 @@ try {
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Object.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code> - { block_id: '00047a74744e20bd587a341820daa699b82e2e00', rand_num: '1409327409238134346', difficulty: 20 }
 
+<a name="getCommitteeFrozenBalance"></a>
+
+## getCommitteeFrozenBalance(committeeMemberId) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| committeeMemberId | <code>String</code> | [Id of the committee member] |
+
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
 
@@ -1048,7 +1063,7 @@ try {
        extensions:Array
    },
    next_available_vote_id:Number,
-   active_committee_members:Array.<String>,
+   active_committee_members:Array.<Array<String>>,
 }
 ```
 ## Config : <code>Object</code>
@@ -1142,7 +1157,6 @@ try {
     recent_slots_filled:String,
     dynamic_flags:Number,
     last_irreversible_block_num:Number,
-    last_rand_quantity:String
 }
 ```
 
@@ -1153,8 +1167,6 @@ try {
 {
     id:String,
     committee_member_account:String,
-    vote_id:String,
-    total_votes:Number,
     url:String,
     eth_address:String,
     btc_public_key:String
@@ -1187,10 +1199,7 @@ try {
     ed_key:String,
     options:{
         memo_key:String,
-        voting_account:String,
         delegating_account:String,
-        num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
@@ -1200,7 +1209,7 @@ try {
     blacklisted_accounts:Array,
     owner_special_authority:Array,
     active_special_authority:Array,
-    top_n_control_flags:Number
+    top_n_control_flags:NumberT
 }
 ```
 ## AccountHistory : <code>Object</code>
@@ -1244,10 +1253,7 @@ try {
     ed_key:String,
     options:{
         memo_key:String,
-        voting_account:String,
         delegating_account:String,
-        num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
@@ -1303,7 +1309,7 @@ try {
     vote_id:String,
     total_votes:Number,
     url:String,
-    last_aslot:(Number|undefined),
+    last_avoting_accountslot:(Number|undefined),
     signing_key:(String|undefined),
     pay_vb:(String|undefined),
     total_missed:(Number|undefined),
@@ -1359,6 +1365,16 @@ or
     amount: Number,
     signatures: String,
     withdraw_code: String
+}
+```
+
+## CommitteeFrozenBalance : <code>Object</code>
+<a name="CommitteeFrozenBalance"></a>
+
+```javascript
+{
+    owner: String,
+    balance: Number
 }
 ```
 

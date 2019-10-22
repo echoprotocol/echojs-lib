@@ -15,16 +15,15 @@ describe('API register account', () => {
 			debug: false,
 			apis: ['database', 'registration'],//constants.WS_CONSTANTS.CHAIN_APIS,
 		});
+
 	});
 
-	describe('- register account', () => {
+	describe('- register account old', () => {
 		it('register account', async () => {
 
 			const result = await echo.api.registerAccount(
 				'test-1-' + Date.now(),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				'ECHO1111111111111111111111111111111114T1Anm',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				() => {
 					console.log('was broadcasted');

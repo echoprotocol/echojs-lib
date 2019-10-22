@@ -57,7 +57,7 @@ describe('account update', () => {
 			ok(serializationError instanceof Error);
 		});
 		const expectedErrorMessage = [
-			'static variant with key 2',
+			'static variant with key 4',
 			'struct key "active"',
 			'optional type',
 			'serializable struct is not a object',

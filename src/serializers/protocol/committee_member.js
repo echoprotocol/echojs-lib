@@ -12,6 +12,7 @@ export const committeeMemberCreateOperationPropsSerializer = struct({
 	url: stringSerializer,
 	eth_address: ethAddress,
 	btc_public_key: btcPublicKey,
+	deposit: asset,
 	extensions,
 });
 
@@ -28,5 +29,17 @@ export const committeeMemberUpdateOperationPropsSerializer = struct({
 export const committeeMemberUpdateGlobalParametersOperationPropsSerializer = struct({
 	fee: asset,
 	new_parameters: chainParametersSerializer,
+	extensions,
+});
+
+export const committeeMemberActivateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_to_activate: committeeMemberId,
+	extensions,
+});
+
+export const committeeMemberDeactivateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_to_deactivate: committeeMemberId,
 	extensions,
 });

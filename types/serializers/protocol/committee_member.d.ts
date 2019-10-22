@@ -12,6 +12,7 @@ export const committeeMemberCreateOperationPropsSerializer: StructSerializer<{
 	url: StringSerializer,
 	eth_address: typeof ethAddress,
 	btc_public_key: typeof btcPublicKey,
+	deposit: typeof asset,
 	extensions: typeof extensions,
 }>;
 
@@ -30,3 +31,17 @@ export const committeeMemberUpdateGlobalParametersOperationPropsSerializer: Stru
 	new_parameters: typeof chainParametersSerializer,
 	extensions: typeof extensions,
 }>;
+
+
+export const committeeMemberActivateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_to_activate: typeof committeeMemberId,
+	extensions: typeof extensions,
+}>;
+
+export const committeeMemberDeactivateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_to_deactivate: typeof committeeMemberId,
+	extensions: typeof extensions,
+}>;
+

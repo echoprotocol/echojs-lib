@@ -29,6 +29,9 @@ const chainParametersSerializer = struct({
 	sidechain_config: sidechain.config,
 	erc20_config: sidechain.erc20Config,
 	gas_price: struct({ price: uint64, gas_amount: uint64 }),
+	committee_frozen_balance_to_activate: uint64,
+	committee_maintenance_intervals_to_deposit: uint64,
+	committee_freeze_duration_seconds: uint32,
 	extensions,
 });
 
