@@ -2484,6 +2484,15 @@ class API {
 		return this.wsApi.database.getCommitteeFrozenBalance(committeeMemberId);
 	}
 
+	/**
+	 *  @method getRegistrar
+	 *
+ 	 *  @return {*}
+	 */
+	getRegistrar() {
+		return this.wsApi.registration.getRegistrar();
+	}
+
 	setOptions() { }
 
 }

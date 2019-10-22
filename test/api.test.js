@@ -1091,6 +1091,24 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
+		describe('#getRegistrar()', () => {
+			it('should get registrarId', async () => {
+				try {
+					const wsApi = new WSAPI(ws);
+					const cache = new Cache();
+					const api = new API(cache, wsApi);
+
+					const registrar = await api.getRegistrar();
+					expect(registrar)
+						.to
+						.be
+						.an('string');
+				} catch (e) {
+					throw e;
+				}
+			})
+				.timeout(5000);
+		});
 	});
 
 	require('./api/index.api.test');
