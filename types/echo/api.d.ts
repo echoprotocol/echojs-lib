@@ -7,6 +7,7 @@ import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
 import Committee from '../interfaces/Committee';
 import Vote from '../interfaces/Vote';
+import CommitteeFrozenBalance from '../interfaces/CommitteeFrozenBalance'
 import ContractLogs from '../interfaces/ContractLogs';
 import AccountHistory from '../interfaces/AccountHistory';
 import FullAccount from '../interfaces/FullAccount';
@@ -101,7 +102,7 @@ export default class Api {
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
-	getCommitteeFrozenBalance(ownerAccount: string, ): Promise<typeof asset['__TOutput__']>
+	getCommitteeFrozenBalance(ownerAccount: string, ): Promise<CommitteeFrozenBalance>
 	committeeFreezeBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
 	committeeWithdrawBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
 	createActivateCommitteeMemberProposal(sender: string, committeeToActivate: typeof committeeMemberId, expirationTime: number, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>

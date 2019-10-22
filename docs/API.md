@@ -87,6 +87,8 @@ try {
 <dd></dd>
 <dt><a href="#getCommitteeMemberByAccount">getCommitteeMemberByAccount(accountId, force)</a> ⇒ <code><a href="#Committee">Promise.&lt;Committee&gt;</a></code></dt>
 <dd></dd>
+<dt><a href="#getCommitteeFrozenBalance">getCommitteeFrozenBalance(ownerAccount)</a> ⇒ <code><a href="#CommitteeFrozenBalance">Promise.&lt;CommitteeFrozenBalance&gt;</a></code></dt>
+<dd></dd>
 <dt><a href="#lookupCommitteeMemberAccounts">lookupCommitteeMemberAccounts(lowerBoundName, limit)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getTransactionHex">getTransactionHex(transaction)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
@@ -525,6 +527,15 @@ try {
 | --- | --- | --- |
 | committeeMemberIds | <code>Array.&lt;String&gt;</code> | [Ids of the committee members to retrieve] |
 | force | <code>Boolean</code> | [If force equal to true then he will first see if you have this object in the cache] |
+
+<a name="getCommitteeFrozenBalance"></a>
+
+## getCommitteeFrozenBalance(ownerAccount) ⇒ <code>Promise.&lt;CommitteeFrozenBalance&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ownerAccount | <code>&lt;String&gt;</code> | [Id of the account to retrieve] |
 
 <a name="getCommitteeMemberByAccount"></a>
 
@@ -1346,6 +1357,16 @@ or
     amount: Number,
     signatures: String,
     withdraw_code: String
+}
+```
+
+## CommitteeFrozenBalance : <code>Object</code>
+<a name="CommitteeFrozenBalance"></a>
+
+```javascript
+{
+    owner: String,
+    balance: Number
 }
 ```
 

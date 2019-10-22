@@ -39,11 +39,8 @@ describe('account create operation', () => {
 				},
 				echorand_key: publicKey,
 				options: {
-					voting_account: `1.${ACCOUNT}.3`,
 					delegating_account: `1.${ACCOUNT}.3`,					
-					num_committee: 0,
 					delegate_share: 0,
-					votes: [],
 				},
 				extensions: [],
 			})
