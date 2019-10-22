@@ -19,7 +19,6 @@ import {
 	isBytecode,
 	isRipemd160,
 	isPublicKey,
-	isVoteId,
 	isCommitteeMemberId,
 	isBitAssetId,
 	isDynamicAssetDataId,
