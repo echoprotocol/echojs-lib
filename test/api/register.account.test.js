@@ -17,22 +17,4 @@ describe('API register account', () => {
 		});
 
 	});
-
-	describe('- register account old', () => {
-		it('register account', async () => {
-
-			const result = await echo.api.registerAccount(
-				'test-1-' + Date.now(),
-				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				() => {
-					console.log('was broadcasted');
-				}
-			);
-
-			expect(result).to.be.an('array');
-
-		}).timeout(1e6);
-	});
-
 });

@@ -125,8 +125,6 @@ try {
 <dd></dd>
 <dt><a href="#registerAccountPow">registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
-<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
-<dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
  Get operations relevant to the specified account.(accountId, stop, limit, start)</a> ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code></dt>
@@ -718,18 +716,6 @@ try {
 | --- | --- | --- |
 | signedTransactionObject | <code>Object</code> | [Signed transaction] |
 | wasBroadcastedCallback | <code>Function</code> | [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
-
-<a name="registerAccount"></a>
-
-## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
-| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
-| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
-| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
 <a name="registerAccountPow"></a>
 
