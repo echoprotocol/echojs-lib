@@ -1874,6 +1874,35 @@ class WalletAPI {
 		]]);
 	}
 
+	/**
+	 * @method updateCommitteeMember
+	 * @param {String} ownerAccount
+	 * @param {String} committeeMember
+	 * @param {String} newUrl
+	 * @param {String} newEthAddress
+	 * @param {String} newBtcPublicKey
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	updateCommitteeMember(ownerAccount, committeeMember, newUrl, newEthAddress, newBtcPublicKey, broadcast = false) {
+		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (!isCommitteeMemberId(committeeMember)) {
+			return Promise.reject(new Error('Invalid committee member id'));
+		}
+		if (newUrl && !validateUrl(newUrl) && newUrl !== '') {
+			return Promise.reject(new Error('Url should be string and valid'));
+		}
+
+		return this.wsRpc.call([0, 'update_committee_member', [
+			accountId.toRaw(ownerAccount),
+			committeeMemberId.toRaw(committeeMember),
+			string.toRaw(newUrl),
+			string.toRaw(newEthAddress),
+			string.toRaw(newBtcPublicKey),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
 }
 
 export default WalletAPI;
