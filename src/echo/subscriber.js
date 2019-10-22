@@ -861,13 +861,18 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @method _contractLogsUpdate
 	 *
-	 *  @param  {String} contractId
+	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
 	 *  @param  {*} result
 	 *
 	 *  @return {undefined}
 	 */
-	_contractLogsUpdate(contractId, result) {
-		const callbacks = this.subscribers.logs[contractId];
+	_contractLogsUpdate(contractTopicsMap, result) {
+		let callbacks = [];
+		contractTopicsMap.forEach((topicMap) => {
+			const [contractId] = topicMap;
+
+			callbacks = callbacks.concat(this.subscribers.logs[contractId]);
+		});
 
 		callbacks.forEach((callback) => callback(result));
 	}
@@ -875,50 +880,55 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @method _subscribeToContractLogs
 	 *
-	 *  @param  {String} contractId
-	 *  @param  {Number} fromBlock
+	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
 	 *
 	 *  @return {undefined}
 	 */
-	async _subscribeToContractLogs(contractId, fromBlock) {
+	async _subscribeToContractLogs(contractTopicsMap) {
 		await this._wsApi.database.subscribeContractLogs(
-			this._contractLogsUpdate.bind(this, contractId),
-			contractId,
-			fromBlock,
+			this._contractLogsUpdate.bind(this, contractTopicsMap),
+			contractTopicsMap,
 		);
 	}
 
 	/**
 	 *  @method setContractLogsSubscribe
 	 *
-	 *  @param  {String} contractId
+	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
 	 *  @param  {Function} callback
 	 *  @param  {Number} [fromBlock]
 	 *  @param  {Number} [toBlock]
 	 *
 	 *  @return {undefined}
 	 */
-	async setContractLogsSubscribe(contractId, callback, fromBlock, toBlock) {
+	async setContractLogsSubscribe(contractTopicsMap, callback, fromBlock, toBlock) {
 		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
 
-		// get blocks in interval
-		if (fromBlock) {
-			const logs = await this._wsApi.database.getContractLogs(
-				contractId,
-				fromBlock,
-				toBlock || globalInfo.head_block_number,
-			);
-			callback(logs);
-		}
+		const contractsToSubscribe = [];
 
-		// set subscriber from current block
-		if (!this.subscribers.logs[contractId]) {
-			this.subscribers.logs[contractId] = [];
-			await this._subscribeToContractLogs(contractId, globalInfo.head_block_number);
-		}
+		await Promise.all(contractTopicsMap.map((topicsItem) =>
+			(async () => {
+				const [contractId, topics] = topicsItem;
+				if (fromBlock) {
+					const logs = await this._wsApi.database.getContractLogs(
+						contractId,
+						topics,
+						fromBlock,
+						toBlock || globalInfo.head_block_number,
+					);
+					callback(logs);
+				}
 
-		// push to callbacks
-		this.subscribers.logs[contractId].push(callback);
+				// set subscriber from current block
+				if (!this.subscribers.logs[contractId]) {
+					this.subscribers.logs[contractId] = [];
+					contractsToSubscribe.push(topicsItem);
+				}
+
+				this.subscribers.logs[contractId].push(callback);
+			})()));
+
+		await this._subscribeToContractLogs(contractsToSubscribe);
 	}
 
 	/**

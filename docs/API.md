@@ -107,7 +107,7 @@ try {
 <dd></dd>
 <dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getContractLogs">getContractLogs(contractId, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
+<dt><a href="#getContractLogs">getContractLogs(contractId, topics, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
 <dd></dd>
@@ -180,6 +180,8 @@ try {
 <dt><a href="#getBtcDepositScript">getBtcDepositScript(AccountId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#requestRegistrationTask">requestRegistrationTask()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getCommitteeFrozenBalance">getCommitteeFrozenBalance()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 </dl>
 
@@ -634,12 +636,13 @@ try {
 
 <a name="getContractLogs"></a>
 
-## getContractLogs(contractId, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
+## getContractLogs(contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | contractId | <code>String</code> | [Id of the contract to retrieve] |
+| topics | <code>Array.&lt;String&gt;</code> | [Array of topics] |
 | fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
 | toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
 
@@ -896,6 +899,15 @@ try {
 **Kind**: global function
 **Returns**: <code>Promise.&lt;Object.&lt;{block\_id: String, rand\_num: String, difficulty: Number}&gt;&gt;</code> - { block_id: '00047a74744e20bd587a341820daa699b82e2e00', rand_num: '1409327409238134346', difficulty: 20 }
 
+<a name="getCommitteeFrozenBalance"></a>
+
+## getCommitteeFrozenBalance(committeeMemberId) ⇒ <code>Promise.&lt;*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| committeeMemberId | <code>String</code> | [Id of the committee member] |
+
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
 
@@ -1151,8 +1163,6 @@ try {
 {
     id:String,
     committee_member_account:String,
-    vote_id:String,
-    total_votes:Number,
     url:String,
     eth_address:String,
     btc_public_key:String
@@ -1185,10 +1195,7 @@ try {
     ed_key:String,
     options:{
         memo_key:String,
-        voting_account:String,
         delegating_account:String,
-        num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
@@ -1245,7 +1252,6 @@ try {
         voting_account:String,
         delegating_account:String,
         num_committee:Number,
-        votes:Array,
         extensions:Array
     },
     statistics:String,
