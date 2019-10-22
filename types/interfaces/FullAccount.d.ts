@@ -13,6 +13,7 @@ export default interface FullAccount {
 	network_fee_percentage: number,
 	lifetime_referrer_fee_percentage: number,
 	referrer_rewards_percentage: number,
+    active_delegate_share: number,
 	name: string,
 	owner: unknown,
 	active: SerializerOutput<typeof authority>,

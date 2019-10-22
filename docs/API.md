@@ -1185,6 +1185,7 @@ try {
     network_fee_percentage:Number,
     lifetime_referrer_fee_percentage:Number,
     referrer_rewards_percentage:Number,
+    active_delegate_share: Number,
     name:String,
     owner:{
         weight_threshold:Number,
