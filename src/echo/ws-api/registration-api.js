@@ -49,6 +49,15 @@ class RegistrationAPI {
 		return this.db.exec('submit_registration_solution', [callback, name, activeKey, echorandKey, nonce, randNum]);
 	}
 
+	/**
+	 *  @method getRegistrar
+	 *
+ 	 *  @return {Promise}
+	 */
+	getRegistrar() {
+		return this.db.exec('get_registrar', []);
+	}
+
 }
 
 export default RegistrationAPI;

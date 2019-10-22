@@ -183,6 +183,8 @@ try {
 <dd></dd>
 <dt><a href="#getCommitteeFrozenBalance">getCommitteeFrozenBalance()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getRegistrar">getRegistrar()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
 </dl>
 
 ## Typedefs
@@ -911,6 +913,12 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | committeeMemberId | <code>String</code> | [Id of the committee member] |
+
+<a name="getRegistrar"></a>
+
+## getRegistrar() ⇒ <code>Promise.&lt;String.&lt;'1.2.10'&gt;&gt;</code>
+**Kind**: global function
+**Returns**: <code>Promise.&lt;String.&lt;getRegistrar&gt;&gt;</code> - '1.2.10'
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
