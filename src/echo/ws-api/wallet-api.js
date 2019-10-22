@@ -1647,25 +1647,6 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
 	}
 
-	/**
-	 * @method registerAccountWithApi
-	 *
-	 * @param  {String} name
-	 * @param  {String} activeKey
-	 * @param  {String} echorandKey
-	 *
-	 * @returns {Promise<SignedTransaction>}
-	 */
-	registerAccountWithApi(name, activeKey, echorandKey) {
-		if (!isAccountName(name)) throw new Error('new account name is invalid');
-		if (!isPublicKey(activeKey)) throw new Error('active key is invalid');
-		if (!isPublicKey(echorandKey)) throw new Error('echorand key is invalid');
-
-		return this.wsRpc.call([0, 'register_account_with_api',
-			[name, activeKey, echorandKey],
-		]);
-	}
-
 	/*
 	 * @method generateBtcDepositAddress
 	 * @param {String} accountNameOrId
@@ -1727,18 +1708,18 @@ class WalletAPI {
 	}
 
 	/*
-	 * @method registerAccountWithProof
+	 * @method registerAccountWithApi
 	 * @param {String} name
 	 * @param {String} activeKey
 	 * @param {String} echorandKey
 	 * @returns {Promise<void>}
 	 */
-	registerAccountWithProof(name, activeKey, echorandKey) {
+	registerAccountWithApi(name, activeKey, echorandKey) {
 		if (!isAccountName(name)) return Promise.reject(new Error('new account name is invalid'));
 		if (!isPublicKey(activeKey)) return Promise.reject(new Error('active key is invalid'));
 		if (!isPublicKey(echorandKey)) return Promise.reject(new Error('echorand key is invalid'));
 
-		return this.wsRpc.call([0, 'register_account_with_proof', [name, activeKey, echorandKey]]);
+		return this.wsRpc.call([0, 'register_account_with_api', [name, activeKey, echorandKey]]);
 	}
 
 	/**

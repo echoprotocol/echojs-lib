@@ -2076,20 +2076,6 @@ describe('WALLET API', () => {
 			});
 
 
-		describe('#registerAccountWithProof()', () => {
-			it('should create account without errors', async () => {
-				try {
-					const name = `cookiezi-${Date.now()}`;
-					const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
-
-					await echo.walletApi.registerAccountWithProof(name, pubKey, pubKey);
-				} catch(e) {
-					console.log(e);
-					throw e;
-				}
-			}).timeout(5000);
-		});
-
 		describe('#registerAccountWithApi()', () => {
 			it('should create account without errors', async () => {
 				try {
