@@ -56,6 +56,7 @@ export default class Api {
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
+	getCommitteeFrozenBalance(committeeMemberId: string): Promise<Object>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
@@ -63,7 +64,7 @@ export default class Api {
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
-	getContractLogs(ontractId: string, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
+	getContractLogs(ontractId: string, topics: Array<string>, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
@@ -95,15 +96,9 @@ export default class Api {
 	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
 	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
-	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
 	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
 	requestRegistrationTask(): Promise<RegistrationTask>
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
-	getCommitteeFrozenBalance(ownerAccount: string, ): Promise<typeof asset['__TOutput__']>
-	committeeFreezeBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
-	committeeWithdrawBalance(ownerAccount: string, amount: string, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
-	createActivateCommitteeMemberProposal(sender: string, committeeToActivate: typeof committeeMemberId, expirationTime: number, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
-	createDeactivateCommitteeMemberProposal(sender: string, committeeTodeactivate: typeof committeeMemberId, expirationTime: number, broadcast: boolean): Promise<typeof signedTransaction['__TOutput__']>
 }

@@ -57,13 +57,14 @@ export const sidechainBtcAggregateOperationPropsSerializer = struct({
 	deposits: set(btcDepositId),
 	withdrawals: set(btcWithdrawId),
 	transaction_id: sha256,
-	aggregation_out_value: integers.uint64,
 	sma_address: struct({ address: stringSerializer }),
 	committee_member_ids_in_script: set(accountId),
+	aggregation_out_value: integers.uint64,
 	previous_aggregation: optional(btcAggregatingId),
 	signatures: map(integers.uint32, stringSerializer),
 	extensions,
 });
+
 
 export const sidechainBtcApproveWithdrawOperationPropsSerializer = struct({
 	fee: asset,
