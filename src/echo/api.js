@@ -174,7 +174,7 @@ import { PublicKey } from '../crypto';
 * 	 			extensions:Array
 * 	 		},
 * 	 		next_available_vote_id:Number,
-* 	 		active_committee_members:Array.<String>
+* 	 		active_committee_members:Array.<Array.<String>>
 *      }
 *  	} GlobalProperties */
 

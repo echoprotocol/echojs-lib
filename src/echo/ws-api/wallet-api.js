@@ -1785,7 +1785,7 @@ class WalletAPI {
 	/**
 	 * @method getCommitteeFrozenBalance
 	 * @param {String} ownerAccount
-	 * @returns {Promise<Asset>}
+	 * @returns {Promise<CommitteeFrozenBalance>}
 	 */
 	getCommitteeFrozenBalance(ownerAccount) {
 		if (!isAccountIdOrName(ownerAccount)) {

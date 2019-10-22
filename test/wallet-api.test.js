@@ -1624,7 +1624,6 @@ describe('WALLET API', () => {
 	describe('#getCommitteeFrozenBalance()', () => {
 		it('should returns the 0 for ECHO asset', async () => {
 			const result = await echo.walletApi.getCommitteeFrozenBalance('1.2.10');
-            console.log('TCL: result', result);
 			expect(result)
 				.to
 				.be

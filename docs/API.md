@@ -121,7 +121,9 @@ try {
 <dd></dd>
 <dt><a href="#getFeePool">getFeePool(assetId)</a> ⇒ <code>Promise.&lt;BigNumber&gt;</code></dt>
 <dd></dd>
-<dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>1
+<dd></dd>
+<dt><a href="#registerAccountPow">registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
 <dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
 <dd></dd>
@@ -727,6 +729,19 @@ try {
 | echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
 | wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
+<a name="registerAccountPow"></a>
+
+## registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
+| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
+| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
+
+
 <a name="getAccountHistory"></a>
 
 ## getAccountHistory(accountId, stop, limit, start) ⇒ <code>Promise.&lt;Array.&lt;AccountHistory&gt;&gt;</code>
@@ -1048,7 +1063,7 @@ try {
        extensions:Array
    },
    next_available_vote_id:Number,
-   active_committee_members:Array.<String>,
+   active_committee_members:Array.<Array<String>>,
 }
 ```
 ## Config : <code>Object</code>
@@ -1194,7 +1209,7 @@ try {
     blacklisted_accounts:Array,
     owner_special_authority:Array,
     active_special_authority:Array,
-    top_n_control_flags:Number
+    top_n_control_flags:NumberT
 }
 ```
 ## AccountHistory : <code>Object</code>
@@ -1238,9 +1253,7 @@ try {
     ed_key:String,
     options:{
         memo_key:String,
-        voting_account:String,
         delegating_account:String,
-        num_committee:Number,
         extensions:Array
     },
     statistics:String,
@@ -1296,7 +1309,7 @@ try {
     vote_id:String,
     total_votes:Number,
     url:String,
-    last_aslot:(Number|undefined),
+    last_avoting_accountslot:(Number|undefined),
     signing_key:(String|undefined),
     pay_vb:(String|undefined),
     total_missed:(Number|undefined),
@@ -1352,6 +1365,16 @@ or
     amount: Number,
     signatures: String,
     withdraw_code: String
+}
+```
+
+## CommitteeFrozenBalance : <code>Object</code>
+<a name="CommitteeFrozenBalance"></a>
+
+```javascript
+{
+    owner: String,
+    balance: Number
 }
 ```
 
