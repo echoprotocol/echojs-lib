@@ -1499,7 +1499,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#createCommitteeMember()', () => {
+	describe.skip('#createCommitteeMember()', () => {
 		it('Should creates a committee_member object owned by the given account', async () => {
 			const newAccountId = '1.2.0';
 			const url = '';
