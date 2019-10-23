@@ -2,7 +2,7 @@
 import BigNumber from 'bignumber.js';
 import Echo, { echo } from './echo';
 import * as constants from './constants';
-import { aes, hash, PrivateKey, PublicKey, ED25519, PrivateKeyECDSA, PublicKeyECDSA } from './crypto';
+import * as crypto from './crypto';
 import Transaction from './echo/transaction';
 import echoReducer from './redux/reducer';
 import * as validators from './utils/validators';
@@ -18,24 +18,20 @@ import { generateInterface } from './contract';
 require('buffer');
 
 const { OPERATIONS_IDS, CACHE_MAPS } = constants;
+const {
+	aes, hash, PrivateKeyECDSA, PublicKeyECDSA, PrivateKey, PublicKey, ED25519,
+} = crypto;
 
 export {
 	BigNumber,
 	Echo,
 	constants,
-	PrivateKey,
-	PublicKey,
-	ED25519,
 	Transaction,
 	echoReducer,
 	validators,
 	converters,
-	aes,
-	hash,
 	Signature,
 	serializers,
-	PrivateKeyECDSA,
-	PublicKeyECDSA,
 	OPERATIONS_IDS,
 	CACHE_MAPS,
 	Contract,
@@ -43,6 +39,14 @@ export {
 	decode,
 	Method,
 	generateInterface,
+	aes,
+	hash,
+	PrivateKeyECDSA,
+	PublicKeyECDSA,
+	PrivateKey,
+	PublicKey,
+	ED25519,
+	crypto,
 };
 
 export { handleConnectionClosedError } from './utils/helpers';

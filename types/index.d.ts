@@ -3,6 +3,7 @@ import * as constants from './constants';
 import Echo from './echo';
 import * as validators from './utils/validators'
 import * as converters from './utils/converters'
+import * as crypto from './crypto'
 
 export { default as Transaction } from './echo/transaction';
 export { default as PublicKey } from './crypto/public-key';
@@ -21,4 +22,4 @@ export default echo;
 
 export declare const { OPERATIONS_IDS, CACHE_MAPS }: typeof constants;
 
-export { BigNumber, Echo, constants, validators, converters, serializers, Contract, encode, decode };
+export { BigNumber, Echo, constants, validators, converters, serializers, Contract, encode, decode, crypto };
