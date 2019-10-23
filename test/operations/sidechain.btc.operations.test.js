@@ -28,6 +28,7 @@ describe('sidechain btc', () => {
 			btcAddressId = result[0].trx.operation_results[0][1];
 		}).timeout(50000);
 	});
+	// TODO:: fix me
 	describe.skip('create intermediate deposit', () => {
 		it('test', async () => {
 			const txInfo = {
@@ -77,6 +78,7 @@ describe('sidechain btc', () => {
 		}).timeout(50000);
 	});
 
+	// TODO:: fix me
 	describe.skip('aggregate', () => {
 		it('test', async () => {
 			const deposits = new Set();
