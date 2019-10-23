@@ -1317,27 +1317,6 @@ class WalletAPI {
 	}
 
 	/**
-	 * Creates a `committee_member` object owned by the given account.
-	 * An account can have at most one `committee_member` object.
-	 * @param {string} accountIdOrName the name or id of the account which is creating the `committee_member`
-	 * @param {string} url [a URL to include in the `committee_member` record in the blockchain. Clients may
-	 * display this when showing a list of committee_members. May be blank]
-	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
-	 * @returns {Promise<SignedTransaction>} the signed transaction registering a `committee_member`
-	 */
-	createCommitteeMember(accountIdOrName, url, shouldDoBroadcastToNetwork) {
-		if (!isAccountIdOrName(accountIdOrName)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!validateUrl(url) && url !== '') return Promise.reject(new Error('Url should be string and valid'));
-		return this.wsRpc.call([0, 'create_committee_member', [
-			string.toRaw(accountIdOrName),
-			string.toRaw(url),
-			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
-	}
-
-	/**
 	 * Returns information about the given committee member.
 	 * @param {string} accountIdOrName the name or id of the committee member account owner,
 	 * or the id of the committee member
@@ -1880,6 +1859,32 @@ class WalletAPI {
 			string.toRaw(newUrl),
 			string.toRaw(newEthAddress),
 			string.toRaw(newBtcPublicKey),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * @method createCommitteeMember
+	 * @param {String} ownerAccount
+	 * @param {String} url
+	 * @param {String} ethereumAddress
+	 * @param {String} btcPublicKey
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	createCommitteeMember(ownerAccount, url, amount, ethereumAddress, btcPublicKey, broadcast = false) {
+		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
+		if (url && !validateUrl(url) && url !== '') {
+			return Promise.reject(new Error('Url should be string and valid'));
+		}
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+
+		return this.wsRpc.call([0, 'create_committee_member', [
+			accountId.toRaw(ownerAccount),
+			string.toRaw(url),
+			string.toRaw(amount),
+			string.toRaw(ethereumAddress),
+			string.toRaw(btcPublicKey),
 			bool.toRaw(broadcast),
 		]]);
 	}
