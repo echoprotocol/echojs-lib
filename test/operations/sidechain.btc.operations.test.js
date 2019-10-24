@@ -75,7 +75,7 @@ describe('sidechain btc', () => {
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
 				committee_member_id: accountId,
             	account: accountId,
-				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.3`,
+				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.0`,
 				tx_info: txInfo
 			});
 
