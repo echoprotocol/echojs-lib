@@ -10,6 +10,7 @@
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
 		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",
+		"test-2": "mocha --compilers js:@babel/register --require @babel/polyfill test/operations/sidechain.btc.operations.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",

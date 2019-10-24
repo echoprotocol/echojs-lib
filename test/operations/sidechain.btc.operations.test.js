@@ -34,11 +34,11 @@ describe('sidechain btc', () => {
 
 		it('should create intermediate deposit', async () => {
 			const txInfo = {
-				block_number: 598305,				
+				block_number: 452487,				
 				out: {
 					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
-					index: 1,
-					amount: 100000000,
+					index: 0,
+					amount: 1,
 				},
 			};
 
@@ -55,18 +55,17 @@ describe('sidechain btc', () => {
 
 			await transaction.broadcast();
 
-
 		}).timeout(50000);
 	})
 
 	describe('when we broadcast SIDECHAIN_BTC_DEPOSIT operation', () => {
 		it('should create deposit', async () => {
 			const txInfo = {
-				block_number: 0,				
+				block_number: 452487,
 				out: {
 					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
-					index: 1,
-					amount: 100000000,
+					index: 0,
+					amount: 1,
 				},
 			};
 
@@ -75,7 +74,7 @@ describe('sidechain btc', () => {
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
 				committee_member_id: accountId,
             	account: accountId,
-				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.0`,
+				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.3`,
 				tx_info: txInfo
 			});
 
@@ -99,7 +98,7 @@ describe('sidechain btc', () => {
 				committee_member_id: '1.2.10',
 				deposits,
 				withdrawals,
-				transaction_id: '0b46f5ce1865c14ea78a00197b40d88573b32c9a5a09c68ca60dcfebe37e0db8', //TODO
+				transaction_id: '2d94683fa2f8aaae4a6f377d93b875f680adf96b9c3e9577554b742f412fa9ad', //TODO
 				aggregation_out_value: 1000,
 				sma_address: {
 					address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k'
