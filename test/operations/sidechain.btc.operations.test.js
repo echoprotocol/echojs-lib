@@ -1,8 +1,8 @@
+import { rejects } from 'assert';
 import { Echo, constants } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
-import { BTC_DEPOSIT, BTC_INTERMEDIATE_DEPOSIT } from '../../src/constants/object-types';
+import { BTC_INTERMEDIATE_DEPOSIT } from '../../src/constants/object-types';
 
-const { OPERATIONS_IDS } = constants;
 const echo = new Echo();
 
 describe('sidechain btc', () => {
@@ -10,10 +10,10 @@ describe('sidechain btc', () => {
 
 	after(() => echo.disconnect());
 
-	let btcAddressId;
+	let btcAddressId;	
 
-	describe('create address', () => {
-		it('test', async () => {
+	describe('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
+		it('should create address', async () => {
 
 			const transaction = echo.createTransaction();
 
@@ -25,17 +25,21 @@ describe('sidechain btc', () => {
 			transaction.addSigner(privateKey);
 
             const result = await transaction.broadcast();
-			btcAddressId = result[0].trx.operation_results[0][1];
+			btcAddressId = result[0].trx.operation_results[0][1];			
+			
 		}).timeout(50000);
 	});
-	// TODO:: fix me
-	describe.skip('create intermediate deposit', () => {
-		it('test', async () => {
+
+	describe('when we broadcast SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT operation', () => {
+
+		it('should create intermediate deposit', async () => {
 			const txInfo = {
-				block_number: 598305,
-				tx_id: '7f0baac0a332fd783d252b977e2cd390c6f854cc',
-				value: 322,
-				vout: 228,
+				block_number: 598305,				
+				out: {
+					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
+					index: 1,
+					amount: 100000000,
+				},
 			};
 
 			const transaction = echo.createTransaction();
@@ -49,18 +53,21 @@ describe('sidechain btc', () => {
 
 			transaction.addSigner(privateKey);
 
-            const result  = await transaction.broadcast();
-			console.log(result)
+			await transaction.broadcast();
+
+
 		}).timeout(50000);
 	})
-	// TODO:: fix me
-	describe.skip('deposit', () => {
-		it('test', async () => {
+
+	describe('when we broadcast SIDECHAIN_BTC_DEPOSIT operation', () => {
+		it('should create deposit', async () => {
 			const txInfo = {
-				block_number: 598305,
-				tx_id: '7f0baac0a332fd783d252b977e2cd390c6f854cc',
-				value: 322,
-				vout: 228,
+				block_number: 0,				
+				out: {
+					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
+					index: 1,
+					amount: 100000000,
+				},
 			};
 
 			const transaction = echo.createTransaction();
@@ -74,13 +81,13 @@ describe('sidechain btc', () => {
 
 			transaction.addSigner(privateKey);
 
-            await transaction.broadcast();
+			await transaction.broadcast();
+
 		}).timeout(50000);
 	});
 
-	// TODO:: fix me
-	describe.skip('aggregate', () => {
-		it('test', async () => {
+	describe('when we broadcast SIDECHAIN_BTC_AGGREGATE operation', () => {
+		it('should throw an error sma_out > fee', async () => {
 			const deposits = new Set();
 			const withdrawals = new Set();
 			const committeeMemberIdsInScript = new Set();
@@ -92,7 +99,7 @@ describe('sidechain btc', () => {
 				committee_member_id: '1.2.10',
 				deposits,
 				withdrawals,
-				transaction_id: '2d94683fa2f8aaae4a6f377d93b875f680adf96b9c3e9577554b742f412fa9ad', //TODO
+				transaction_id: '0b46f5ce1865c14ea78a00197b40d88573b32c9a5a09c68ca60dcfebe37e0db8', //TODO
 				aggregation_out_value: 1000,
 				sma_address: {
 					address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k'
@@ -103,7 +110,12 @@ describe('sidechain btc', () => {
 
 			transaction.addSigner(privateKey);
 
-            await transaction.broadcast();
+			await rejects(
+				async () => await transaction.broadcast(),
+				{
+					message: 'Assert Exception: sma_out > fee: ',
+				}
+			  );
 		}).timeout(50000);
 	});
 
