@@ -25,7 +25,7 @@ describe('sidechain btc', () => {
 			transaction.addSigner(privateKey);
 
             const result = await transaction.broadcast();
-			btcAddressId = result[0].trx.operation_results[0][1];			
+			btcAddressId = result[0].trx.operation_results[0][1];
 			
 		}).timeout(50000);
 	});
