@@ -1,5 +1,5 @@
 
-import Signature from './signature';
+import ED25519 from './ed25519';
 import PrivateKey from './private-key';
 
 /**
@@ -19,7 +19,8 @@ export function signData(data, privateKeys) {
 		throw new Error('one of the elements in an array is not PrivateKey');
 	}
 
-	return Buffer.concat(privateKeys.map((privateKey) => Signature.signBuffer(data, privateKey).toBuffer()));
+	return Buffer.concat(privateKeys.map((privateKey) =>
+		ED25519.signMessage(data, privateKey.toPublicKey().toBuffer(), privateKey.toBuffer())));
 
 }
 
