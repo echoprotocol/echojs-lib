@@ -1,5 +1,5 @@
 import { strictEqual, throws } from 'assert';
-import { utils, PrivateKey } from '../../src/crypto';
+import { utils, PrivateKey, ED25519 } from '../../src/crypto';
 import { WIF, WIF2 } from '../_test-data';
 
 describe('Utils', () => {
@@ -28,7 +28,7 @@ describe('Utils', () => {
 
 		it('should return the expected result with one PrivateKey', async () => {
 
-			const expectedBuffer = '17e1ba550622dadaad4a16dd486c8a7fa1c9a90f3a11290dcf7f897777899807ea162f135355c4b229938f0991e9008e0ed0c15d75ce3b75f3c4b2e0b144de05';
+			const expectedBuffer = '453ac952107e6279d3b31e8e257e010eaf3a36cf17e0a7a3cd24c02c7cbdd6afc155f71d20d4b5d2baef1db0ae9556db7d39ad4e1d0971a3fabcda337ddb7104';
 			const result = utils.signData(buffer, [privateKey1]);
 
 			strictEqual(expectedBuffer, result.toString('hex'));
@@ -37,7 +37,7 @@ describe('Utils', () => {
 
 		it('should return the concatenated result with two PrivateKeys', async () => {
 
-			const expectedBuffer = '17e1ba550622dadaad4a16dd486c8a7fa1c9a90f3a11290dcf7f897777899807ea162f135355c4b229938f0991e9008e0ed0c15d75ce3b75f3c4b2e0b144de058b049d0c424f2214ffb13a4651ff8437bbcd9a58d9100533da11bf6133b7a16f226d9955cb3bea8752d085f639c215dc20095230072a06377adc53c471c8a605';
+			const expectedBuffer = '453ac952107e6279d3b31e8e257e010eaf3a36cf17e0a7a3cd24c02c7cbdd6afc155f71d20d4b5d2baef1db0ae9556db7d39ad4e1d0971a3fabcda337ddb7104f41b7a26625a8578ba711cb9ae6956810206acc713d59f35ee751548ee6eab747c6d0d3df9790aece33412da18cd42176a9f0d3e5be3beae23477706db72cd0c';
 			const result = utils.signData(buffer, [privateKey1, privateKey2]);
 
 			strictEqual(expectedBuffer, result.toString('hex'));
