@@ -34,10 +34,10 @@ describe('sidechain btc', () => {
 
 		it('should create intermediate deposit', async () => {
 			const txInfo = {
-				block_number: 452487,				
+				block_number: 10,				
 				out: {
 					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
-					index: 0,
+					index: 10,
 					amount: 1,
 				},
 			};
@@ -53,7 +53,9 @@ describe('sidechain btc', () => {
 
 			transaction.addSigner(privateKey);
 
-			await transaction.broadcast();
+			const result = await transaction.broadcast();
+console.log('btcAddressId', btcAddressId)
+			console.log('res!!', JSON.stringify(result));
 
 		}).timeout(50000);
 	})
@@ -61,10 +63,10 @@ describe('sidechain btc', () => {
 	describe('when we broadcast SIDECHAIN_BTC_DEPOSIT operation', () => {
 		it('should create deposit', async () => {
 			const txInfo = {
-				block_number: 452487,
+				block_number: 10,
 				out: {
 					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
-					index: 0,
+					index: 10,
 					amount: 1,
 				},
 			};
@@ -74,7 +76,7 @@ describe('sidechain btc', () => {
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_DEPOSIT, {
 				committee_member_id: accountId,
             	account: accountId,
-				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.3`,
+				intermediate_deposit_id: `1.${BTC_INTERMEDIATE_DEPOSIT}.0`,
 				tx_info: txInfo
 			});
 
