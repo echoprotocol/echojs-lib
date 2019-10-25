@@ -53,9 +53,7 @@ describe('sidechain btc', () => {
 
 			transaction.addSigner(privateKey);
 
-			const result = await transaction.broadcast();
-
-			console.log('res!!', JSON.stringify(result));
+			await transaction.broadcast();
 
 		}).timeout(50000);
 	})
