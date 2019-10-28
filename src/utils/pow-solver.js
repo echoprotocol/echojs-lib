@@ -30,11 +30,11 @@ const getHashPow = (hash) => {
 export const solveRegistrationTask = async (blockId, randNum, difficulty) => {
 	const buffer = Buffer.concat([
 		Buffer.from(blockId, 'hex'),
-		uint64.serialize(randNum),
+		Buffer.from(uint64.serialize(randNum)),
 	]);
 	let nonce = 0;
 	while (true) {
-		const bufferToHash = Buffer.concat([buffer, uint64.serialize(nonce)]);
+		const bufferToHash = Buffer.concat([buffer, Buffer.from(uint64.serialize(nonce))]);
 		const hash = sha256(bufferToHash);
 		const hashPow = getHashPow(hash);
 		if (hashPow > difficulty) {
