@@ -57,7 +57,8 @@ export default class ISerializer {
 	serialize(value) {
 		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
 		this.appendToByteBuffer(value, result);
-		return result.copy(0, result.offset).toBuffer();
+		const buffer = result.copy(0, result.offset).toBuffer();
+		return buffer instanceof Buffer ? buffer : Buffer.from(buffer);
 	}
 
 	/**
