@@ -41,6 +41,7 @@ class Contract {
 
 		if (Buffer.isBuffer(code)) code = code.toString('hex');
 		else if (typeof code !== 'string') throw new Error('invalid code type');
+		if (code.startsWith('0x')) code = code.slice(2);
 		if (!(echo instanceof Echo)) throw new Error('echo is not instance of Echo class');
 		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
 		if (!options) options = {};
