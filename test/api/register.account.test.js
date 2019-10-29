@@ -18,16 +18,14 @@ describe('API register account POW', () => {
 
 	after(async () => await echo.disconnect());
 
-	describe.only('register account pow', () => {
+	describe('register account', () => {
 		it('register account', async () => {
 
 				const result = await echo.api.registerAccount(
 					'kokoko'+ Date.now(),
 					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-					() => {
-						console.log('was broadcasted');
-					}
+					() => console.log('was broadcasted'),
 				)
 
 				ok(Array.isArray(result));
