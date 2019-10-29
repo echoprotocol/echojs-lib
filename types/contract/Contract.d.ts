@@ -12,9 +12,9 @@ export default class Contract<TDeployArgs = Array<any>> {
 
 	static deploy(
 		code: Buffer | string,
-		echo: Echo,
 		privateKey: PrivateKey,
 		options?: {
+			echo?: Echo,
 			ethAccuracy?: boolean,
 			supportedAssetId?: string,
 			value?: { amount?: number | string | BigNumber, asset_id?: string },
@@ -23,16 +23,16 @@ export default class Contract<TDeployArgs = Array<any>> {
 
 	static deploy<T = Array<any>>(
 		code: Buffer | string,
-		echo: Echo,
 		privateKey: PrivateKey,
 		options: {
+			echo?: Echo,
 			abi: Abi,
 			ethAccuracy?: boolean,
 			supportedAssetId?: string,
 			value?: { amount?: number | string | BigNumber, asset_id?: string },
-			args?: any,
+			args?: T,
 		},
-	): Promise<Contract>;
+	): Promise<Contract<T>>;
 
 	readonly namesDublications: Set<string>;
 	readonly methods: { [nameOrHashOrSignature: string]: (...args: Array<any>) => Method };
@@ -45,6 +45,7 @@ export default class Contract<TDeployArgs = Array<any>> {
 		supportedAssetId?: string,
 		value?: { amount?: number | string | BigNumber, asset_id?: string },
 		args?: TDeployArgs,
+		echo?: Echo,
 	}): Promise<Contract<TDeployArgs>>;
 	parseLogs(logs: Array<{ address?: string, log: [string], data: string }>): {
 		[event: string]: { [field: string]: any },
