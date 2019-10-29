@@ -174,7 +174,7 @@ export function decodeArgument(code, index, type) {
  * @param {Array.<SolType>} types
  * @return {*|Array.<*>}
  */
-export function decode(rawCode, types) {
+export default function decode(rawCode, types) {
 	if (rawCode.length % 64 !== 0) {
 		if (rawCode.slice(0, 8) === '08c379a0') {
 			const errMessageLen = Number.parseInt(rawCode.slice(72, 136), 16);
@@ -199,5 +199,3 @@ export function decode(rawCode, types) {
 	if (types.length === 0) return null;
 	return res;
 }
-
-export default decode;

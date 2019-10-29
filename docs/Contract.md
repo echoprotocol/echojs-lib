@@ -15,9 +15,9 @@ const echo = new Echo();
 await echo.connect('ws://127.0.0.1:6311');
 const bytecode = '6080';
 const privateKey = PrivateKey.fromWif('5K2YUVmWfxbmvsNxCsfvArXdGXm7d5DC9pn4yD75k2UaSYgkXTh');
-const contractId = await Contract.deploy(bytecode, echo, privateKey);
+const contractId = await Contract.deploy(bytecode, privateKey, { echo });
 // or pass abi in options to get contract instance instead of new contract id
-const contract = await Contract.deploy(bytecode, echo, privateKey, { abi: require("abi.json") });
+const contract = await Contract.deploy(bytecode, privateKey, { abi: require("abi.json"), echo });
 ```
 
 ### Create contract instance by contract id
@@ -27,12 +27,12 @@ const contract = new Contract(abi, { echo, contractId: '1.14.123' });
 
 ### Call contract no changing state
 ```ts
-const result = await contract.methods.mathodName(arg).call();
+const result = await contract.methods.methodName(arg).call();
 ```
 
 ### Execute contract
 ```ts
-const broadcastingResult = await contract.methods.mathodName(arg).broadcast({ privateKey });
+const broadcastingResult = await contract.methods.methodName(arg).broadcast({ privateKey });
 const result = broadcastingResult.decodedResult;
 // you can find more information about transaction in this fields:
 const { transactionResult, contractResult, events } = broadcastingResult;
