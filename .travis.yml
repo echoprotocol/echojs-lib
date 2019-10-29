@@ -7,9 +7,6 @@ stages:
   - test
   - deploy
 
-before_install:
-  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-
 jobs:
   include:
     - stage: audit
@@ -31,6 +28,7 @@ jobs:
       if: tag IS present
       name: "Deploy to npm"
       script:
+        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
         - npm install
         - npm run build
         - ./script.sh
