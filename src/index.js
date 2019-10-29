@@ -11,7 +11,7 @@ import * as serializers from './serializers';
 import Signature from './crypto/signature';
 import Contract from './contract/Contract';
 import encode from './contract/encoders';
-import { decode } from './contract/decoders';
+import decode from './contract/decoders';
 import Method from './contract/Method';
 import { generateInterface } from './contract';
 

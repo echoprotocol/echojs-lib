@@ -5,7 +5,7 @@ import Echo from '../echo/index';
 import PrivateKey from '../crypto/private-key';
 import { OPERATIONS_IDS } from '../constants';
 import ContractTransaction from './ContractTransaction';
-import { decode } from './decoders';
+import decode from './decoders';
 import { checkContractId, contractIdRegExp } from './utils/validators';
 
 const NATHAN_ID = '1.2.12';

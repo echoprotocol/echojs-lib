@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { decode } from './decoders';
+import decode from './decoders';
 
 /** @typedef {import('../../types/echo/transaction').BroadcastingResult} BroadcastingResult */
 /** @typedef {import('../../types/interfaces/ContractResult').ContractResult} ContractResult */
