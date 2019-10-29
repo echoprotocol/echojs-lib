@@ -20,15 +20,13 @@ describe('API register account POW', () => {
 
 	describe('register account', () => {
 		it('register account', async () => {
-
-				const result = await echo.api.registerAccount(
-					'kokoko'+ Date.now(),
-					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-					() => console.log('was broadcasted'),
-				)
-
-				ok(Array.isArray(result));
+			const result = await echo.api.registerAccount(
+				'kokoko'+ Date.now(),
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				() => console.log('was broadcasted'),
+			)
+			ok(Array.isArray(result));
 		}).timeout(1e8);
 	});
 
