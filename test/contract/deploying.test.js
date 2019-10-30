@@ -35,6 +35,12 @@ describe('deploy', () => {
 		ok(isContractId(res.address), 'invalid contract address format');
 	}).timeout(10e3);
 
+	it('successful (bytecode starts with "0x")', async () => {
+		const res = await Contract.deploy(`0x${code}`, privateKey, { echo, accountId });
+		ok(typeof res === 'string', 'invalid result type');
+		ok(isContractId(res), 'invalid result format');
+	}).timeout(10e3);
+
 	it('value is BigNumber', async () => {
 		await Contract.deploy(code, privateKey,  { echo, accountId, value: { amount: new BigNumber(0) } });
 	}).timeout(10e3);
