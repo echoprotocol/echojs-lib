@@ -48,3 +48,17 @@ const privateKey = PrivateKey.fromBuffer(edKeyPair.privateKey);
 
 console.log('Random private key :', privateKey.toWif());
 console.log('Random public key :', privateKey.toPublicKey().toPublicKeyString());
+```
+
+#### Sign Data
+
+As a quick example, here's how to sign data:
+
+```javascript
+import { PrivateKey, crypto } from 'echojs-lib';
+
+const buffer = Buffer.from('test', 'utf-8');
+const result = crypto.utils.signData(buffer, [PrivateKey.fromWif('5JLi3M4H9qY3FMTyGW9TCC92ebbqNo36sUHwJqpKxvJMWN2XwbH')]);
+
+console.log('Signed data:', result.toString('hex'));
+```

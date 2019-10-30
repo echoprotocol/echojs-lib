@@ -123,9 +123,7 @@ try {
 <dd></dd>
 <dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>1
 <dd></dd>
-<dt><a href="#registerAccountPow">registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
-<dd></dd>
-<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
+<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;[{ block_num: number, tx_id: string }]&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
@@ -182,6 +180,8 @@ try {
 <dt><a href="#requestRegistrationTask">requestRegistrationTask()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getCommitteeFrozenBalance">getCommitteeFrozenBalance()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getRegistrar">getRegistrar()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 </dl>
 
@@ -719,19 +719,7 @@ try {
 
 <a name="registerAccount"></a>
 
-## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
-**Kind**: global function
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>String</code> | [The name of the account, must be unique. Shorter names are more expensive to register] |
-| activeKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
-| echoRandKey | <code>String</code> | [string in bs58 with prefix "ECHO"] |
-| wasBroadcastedCallback | <code>Function</code> |  [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
-
-<a name="registerAccountPow"></a>
-
-## registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
+## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise&lt;[{ block_num: number, tx_id: string }]&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
@@ -911,6 +899,12 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | committeeMemberId | <code>String</code> | [Id of the committee member] |
+
+<a name="getRegistrar"></a>
+
+## getRegistrar() ⇒ <code>Promise.&lt;String.&lt;'1.2.10'&gt;&gt;</code>
+**Kind**: global function
+**Returns**: <code>Promise.&lt;String.&lt;getRegistrar&gt;&gt;</code> - '1.2.10'
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>
@@ -1185,6 +1179,7 @@ try {
     network_fee_percentage:Number,
     lifetime_referrer_fee_percentage:Number,
     referrer_rewards_percentage:Number,
+    active_delegate_share: Number,
     name:String,
     owner:{
         weight_threshold:Number,

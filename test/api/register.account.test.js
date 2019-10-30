@@ -1,11 +1,9 @@
-import { expect } from 'chai';
-import { inspect } from 'util';
+import { ok } from 'assert';
 
-import echo from '../../src';
-
+import echo from '../..';
 import { url } from '../_test-data';
 
-describe('API register account', () => {
+describe('API register account POW', () => {
 	before(async () => {
 		await echo.connect(url, {
 			connectionTimeout: 5000,
@@ -18,21 +16,18 @@ describe('API register account', () => {
 
 	});
 
-	describe('- register account old', () => {
+	after(async () => await echo.disconnect());
+
+	describe('register account', () => {
 		it('register account', async () => {
-
 			const result = await echo.api.registerAccount(
-				'test-1-' + Date.now(),
+				'kokoko'+ Date.now(),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				() => {
-					console.log('was broadcasted');
-				}
-			);
-
-			expect(result).to.be.an('array');
-
-		}).timeout(1e6);
+				() => console.log('was broadcasted'),
+			)
+			ok(Array.isArray(result));
+		}).timeout(1e8);
 	});
 
 });

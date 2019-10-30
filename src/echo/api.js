@@ -289,6 +289,7 @@ import { PublicKey } from '../crypto';
 * 				network_fee_percentage:Number,
 * 				lifetime_referrer_fee_percentage:Number,
 * 				referrer_rewards_percentage:Number,
+*				active_delegate_share: Number,
 * 				name:String,
 * 				owner:{
 * 					weight_threshold:Number,
@@ -2053,54 +2054,24 @@ class API {
 	}
 
 	/**
-	 *  @method registerAccount
-	 *
-	 *  @param  {String} name
-	 * 	@param  {String} activeKey
-	 * 	@param  {String} echoRandKey
-	 *  @param  {Function} wasBroadcastedCallback
-	 *
-	 *  @return {Promise.<null>}
+	 * @method registerAccount
+	 * @param {string} name
+	 * @param {string} activeKey
+	 * @param {string} echoRandKey
+	 * @param {() => any} wasBroadcastedCallback
+	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
 	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
-		if (!isAccountName(name)) throw new Error('Name is invalid');
-		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
-		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
-		return new Promise(async (resolve, reject) => {
-			try {
-				await this.wsApi.registration.registerAccount((res) =>
-					resolve(res), name, activeKey, echoRandKey);
-			} catch (error) {
-				reject(error);
-			}
-			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
-		});
-
-	}
-
-	/**
-	 *  @method registerAccountPow
-	 *
-	 *  @param  {String} name
-	 * 	@param  {String} activeKey
-	 * 	@param  {String} echoRandKey
-	 *  @param  {Function} wasBroadcastedCallback
-	 *
-	 *  @return {Promise.<null>}
-	 */
-	async registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
 		const registrationTask = await this.wsApi.registration.requestRegistrationTask();
 		const { block_id: blockId, rand_num: randNum, difficulty } = registrationTask;
 		const nonce = await solveRegistrationTask(blockId, randNum, difficulty);
-
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution(
-					(res) =>
-						resolve(res),
+					(res) => resolve(res),
 					name,
 					activeKey,
 					echoRandKey,
@@ -2481,6 +2452,15 @@ class API {
 		}
 
 		return this.wsApi.database.getCommitteeFrozenBalance(committeeMemberId);
+	}
+
+	/**
+	 *  @method getRegistrar
+	 *
+ 	 *  @return {*}
+	 */
+	getRegistrar() {
+		return this.wsApi.registration.getRegistrar();
 	}
 
 	setOptions() { }

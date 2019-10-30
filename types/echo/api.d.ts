@@ -97,7 +97,14 @@ export default class Api {
 	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
 	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
-	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
+
+	registerAccount(
+		name: string,
+		activeKey: string,
+		echoRandKey: string,
+		wasBroadcastedCallback?: () => any,
+	): Promise<[{ block_num: number, tx_id: string }]>;
+
 	requestRegistrationTask(): Promise<RegistrationTask>
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;

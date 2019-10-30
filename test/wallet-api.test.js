@@ -12,7 +12,7 @@ import {
 	WIF,
 	walletURL
 } from './_test-data';
-import { ACCOUNT, ASSET} from '../src/constants/object-types';
+import { ACCOUNT, ASSET, COMMITTEE_MEMBER} from '../src/constants/object-types';
 import { ok } from 'assert';
 import { API_CONFIG } from '../src/constants';
 import { TRANSFER } from '../src/constants/operations-ids';
@@ -1499,13 +1499,19 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#createCommitteeMember()', () => {
+	describe.skip('#createCommitteeMember()', () => {
 		it('Should creates a committee_member object owned by the given account', async () => {
 			const newAccountId = '1.2.0';
 			const url = '';
+			const amount = '1';
+			const ethereumAddress = '7234F8149411B8F275373DC470011e18126489B6';
+			const btcPublicKey = '02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e';
 			const result = await echo.walletApi.createCommitteeMember(
 				newAccountId,
 				url,
+				amount,
+				ethereumAddress,
+				btcPublicKey,
 				shouldDoBroadcastToNetwork,
 				);
 				expect(result)
@@ -2076,20 +2082,6 @@ describe('WALLET API', () => {
 			});
 
 
-		describe('#registerAccountWithProof()', () => {
-			it('should create account without errors', async () => {
-				try {
-					const name = `cookiezi-${Date.now()}`;
-					const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
-
-					await echo.walletApi.registerAccountWithProof(name, pubKey, pubKey);
-				} catch(e) {
-					console.log(e);
-					throw e;
-				}
-			}).timeout(5000);
-		});
-
 		describe('#registerAccountWithApi()', () => {
 			it('should create account without errors', async () => {
 				try {
@@ -2189,6 +2181,20 @@ describe('WALLET API', () => {
 			}).timeout(5000);
 		});
 
+		describe('#updateCommitteeMember()', () => {
+			it('should update committee member', async () => {
+				try {
+					const result = await echo.walletApi.updateCommitteeMember(accountId, `1.${COMMITTEE_MEMBER}.4`, '', '7234F8149411B8F275373DC470011e18126489B6', '02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e');
+					expect(result)
+					.to
+					.be
+					.an('object').that.is.not.empty;
+				} catch (e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
+		});
 	});
 
 	// describe('#exit()', () => {
