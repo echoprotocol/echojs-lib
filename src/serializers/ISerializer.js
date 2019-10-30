@@ -58,7 +58,7 @@ export default class ISerializer {
 		const bytebuffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
 		this.appendToByteBuffer(value, bytebuffer);
 		// in browsers library "bytebuffer" returns ArrayBuffer instead of Buffer
-		/** @type {ByteBuffer | ArrayBuffer} */
+		/** @type {Buffer | ArrayBuffer} */
 		const result = bytebuffer.copy(0, bytebuffer.offset).toBuffer();
 		if (Buffer.isBuffer(result)) return result;
 		return Buffer.from(result);
