@@ -123,7 +123,7 @@ try {
 <dd></dd>
 <dt><a href="#broadcastTransactionWithCallback">broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>1
 <dd></dd>
-<dt><a href="#registerAccountPow">registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;null   &gt;</code></dt>
+<dt><a href="#registerAccount">registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback)</a> ⇒ <code>Promise.&lt;[{ block_num: number, tx_id: string }]&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getAccountHistory
  Get operations relevant to the specified account.">getAccountHistory
@@ -717,9 +717,9 @@ try {
 | signedTransactionObject | <code>Object</code> | [Signed transaction] |
 | wasBroadcastedCallback | <code>Function</code> | [The callback method that will be called when the transaction is included into a block. The callback method includes the transaction id, block number, and transaction number in the block] |
 
-<a name="registerAccountPow"></a>
+<a name="registerAccount"></a>
 
-## registerAccountPow(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise.&lt;null&gt;</code>
+## registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) ⇒ <code>Promise&lt;[{ block_num: number, tx_id: string }]&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
