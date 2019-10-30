@@ -7,7 +7,7 @@ export const PING_TIMEOUT: number;
 export const PING_DELAY: number;
 export const DEBUG: number;
 
-export { ChainApi };
+export { ChainApi as CHAIN_API };
 
 export const CHAIN_APIS: ChainApi[];
 export const DEFAULT_CHAIN_APIS: ChainApi[];

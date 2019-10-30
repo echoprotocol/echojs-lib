@@ -62,38 +62,24 @@ console.log(constants.WS_CONSTANTS) // websocket constants
 
 /*
 {
-    CONNECTION_TIMEOUT: 5 * 1000,
-    MAX_RETRIES: 1000;
-    PING_TIMEOUT: 10 * 1000,
-    PING_DELAY: 10 * 1000,
+    CONNECTION_TIMEOUT: 5000,
+    MAX_RETRIES: 1000,
+    PING_TIMEOUT: 10000,
+    PING_DELAY: 10000,
     DEBUG: false,
-    DATABASE_API: 'database',
-    NETWORK_BROADCAST_API: 'network_broadcast',
-    HISTORY_API: 'history',
-    REGISTRATION_API: 'registration',
-    ASSET_API: 'asset',
-    LOGIN_API: 'login',
-    NETWORK_NODE_API: 'network_node',
-    CHAIN_APIS: [
-        DATABASE_API,
-        NETWORK_BROADCAST_API,
-        HISTORY_API,
-        REGISTRATION_API,
-        ASSET_API,
-        LOGIN_API,
-        NETWORK_NODE_API,
-    ],
-    DEFAULT_CHAIN_APIS: [
-        DATABASE_API,
-        NETWORK_BROADCAST_API,
-        HISTORY_API,
-        LOGIN_API,
-    ],
-    STATUS: {
-        OPEN: 'OPEN',
-        ERROR: 'ERROR',
-        CLOSE: 'CLOSE',
+    CONNECTION_CLOSED_ERROR_MESSAGE: 'connection closed',
+    CHAIN_API: {
+        DATABASE_API: 'database',
+        NETWORK_BROADCAST_API: 'network_broadcast',
+        HISTORY_API: 'history',
+        REGISTRATION_API: 'registration',
+        ASSET_API: 'asset',
+        LOGIN_API: 'login',
+        NETWORK_NODE_API: 'network_node',
     },
+    CHAIN_APIS: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node'],
+    DEFAULT_CHAIN_APIS: ['database', 'network_broadcast', 'history', 'login'],
+    STATUS: { OPEN: 'OPEN', ERROR: 'ERROR', CLOSE: 'CLOSE' },
 }
 */
 
@@ -113,8 +99,8 @@ console.log(constants.ECHORAND_TYPES)
 
 /*
 {
-	START_NOTIFICATION: 1,
-	BLOCK_NOTIFICATION: 2,
+    START_NOTIFICATION: 1,
+    BLOCK_NOTIFICATION: 2,
 }
 */
 
