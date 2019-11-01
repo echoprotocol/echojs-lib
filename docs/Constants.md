@@ -77,8 +77,21 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         LOGIN_API: 'login',
         NETWORK_NODE_API: 'network_node',
     },
-    CHAIN_APIS: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login', 'network_node'],
-    DEFAULT_CHAIN_APIS: ['database', 'network_broadcast', 'history', 'login'],
+    CHAIN_APIS: [
+        CHAIN_API.DATABASE_API,
+        CHAIN_API.NETWORK_BROADCAST_API,
+        CHAIN_API.HISTORY_API,
+        CHAIN_API.REGISTRATION_API,
+        CHAIN_API.ASSET_API,
+        CHAIN_API.LOGIN_API,
+        CHAIN_API.NETWORK_NODE_API,
+    ],
+    DEFAULT_CHAIN_APIS: [
+        CHAIN_API.DATABASE_API,
+        CHAIN_API.NETWORK_BROADCAST_API,
+        CHAIN_API.HISTORY_API,
+        CHAIN_API.LOGIN_API,
+    ],
     STATUS: { OPEN: 'OPEN', ERROR: 'ERROR', CLOSE: 'CLOSE' },
 }
 */
