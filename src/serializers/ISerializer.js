@@ -55,10 +55,13 @@ export default class ISerializer {
 	 * @returns {Buffer}
 	 */
 	serialize(value) {
-		const result = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
-		this.appendToByteBuffer(value, result);
-		const buffer = result.copy(0, result.offset).toBuffer();
-		return buffer instanceof Buffer ? buffer : Buffer.from(buffer);
+		const bytebuffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+		this.appendToByteBuffer(value, bytebuffer);
+		// in browsers library "bytebuffer" returns ArrayBuffer instead of Buffer
+		/** @type {Buffer | ArrayBuffer} */
+		const result = bytebuffer.copy(0, bytebuffer.offset).toBuffer();
+		if (Buffer.isBuffer(result)) return result;
+		return Buffer.from(result);
 	}
 
 	/**
