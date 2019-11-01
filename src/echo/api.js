@@ -1927,7 +1927,7 @@ class API {
 	/**
 	 * @param {Object} [opts]
 	 * @param {string[]} [opts.contracts]
-	 * @param {(null | string | string[])[]} [opts.topics]
+	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
 	 * @param {number | BigNumber} [opts.fromBlock]
 	 * @param {number | BigNumber} [opts.toBlock]
 	 * @returns {Promise<unknown[]>}
@@ -1937,14 +1937,24 @@ class API {
 			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
 			for (const contractId of opts.contracts) ok(isContractId(contractId));
 		}
+		/** @type {typeof opts["topics"]} */
+		let topics;
 		if (opts.topics !== undefined) {
 			ok(Array.isArray(opts.topics), '"topics" option is not an array');
-			for (const topic of opts.topics) {
-				// eslint-disable-next-line no-nested-ternary
-				const topicVariants = Array.isArray(topic) ? topic : (topic === null ? [] : [topic]);
-				for (const topicVariant of topicVariants) {
-					ok(typeof topicVariant === 'string', 'invalid "topic" option type');
-					// TODO: validate topicVariant
+			topics = new Array(opts.topics.length).fill(null);
+			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
+				let topicVariants = opts.topics[topicIndex];
+				if (topicVariants === null) topicVariants = [];
+				else if (typeof topicVariants === 'string') topicVariants = [topicVariants];
+				topics[topicIndex] = new Array(topicVariants.length).fill(null);
+				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
+					let variant = topicVariants[variantIndex];
+					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
+					ok(typeof variant === 'string', 'invalid "topic" option type');
+					if (variant.startsWith('0x')) variant = variant.slice(2);
+					ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
+					ok(variant.length === 64, 'invalid "topic" length');
+					topics[topicIndex][variantIndex] = variant;
 				}
 			}
 		}
@@ -1953,7 +1963,7 @@ class API {
 		}
 		return this.wsApi.database.getContractLogs2({
 			contracts: opts.contracts,
-			topics: opts.topics,
+			topics,
 			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
 			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
 		});
