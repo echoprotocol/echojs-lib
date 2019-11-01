@@ -66,6 +66,14 @@ export default class Api {
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
 	getContractLogs(ontractId: string, topics: Array<string>, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
+
+	getContractLogs2(opts: {
+		contracts?: string[],
+		topics?: (string | string[])[],
+		from_block?: number | BigNumber,
+		to_block?: number | BigNumber,
+	}): Promise<unknown[]>;
+
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;

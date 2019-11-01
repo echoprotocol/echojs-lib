@@ -1,4 +1,6 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
+import { ok } from 'assert';
+import BigNumber from 'bignumber.js';
 import { Map, List, fromJS } from 'immutable';
 
 import {
@@ -26,10 +28,10 @@ import {
 	isOperationId,
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
+	isUInt32,
 } from '../utils/validators';
 import { solveRegistrationTask } from '../utils/pow-solver';
 
-/** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
@@ -1920,6 +1922,40 @@ class API {
 		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
 
 		return this.wsApi.database.getContractLogs(contractId, topics, fromBlock, toBlock);
+	}
+
+	/**
+	 * @param {Object} [opts]
+	 * @param {string[]} [opts.contracts]
+	 * @param {(string | string[])[]} [opts.topics]
+	 * @param {number | BigNumber} [opts.fromBlock]
+	 * @param {number | BigNumber} [opts.toBlock]
+	 * @returns {Promise<unknown[]>}
+	 */
+	async getContractLogs2(opts = {}) {
+		if (opts.contracts !== undefined) {
+			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
+			for (const contractId of opts.contracts) ok(isContractId(contractId));
+		}
+		if (opts.topics !== undefined) {
+			ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			for (const topic of opts.topics) {
+				const topicVariants = Array.isArray(topic) ? topic : [topic];
+				for (const topicVariant of topicVariants) {
+					ok(typeof topicVariant === 'string', 'invalid "topic" option type');
+					// TODO: validate topicVariant
+				}
+			}
+		}
+		for (const field of ['fromBlock', 'toBlock']) {
+			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
+		}
+		return this.wsApi.database.getContractLogs2({
+			contracts: opts.contracts,
+			topics: opts.topics,
+			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
+			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+		});
 	}
 
 	/**
