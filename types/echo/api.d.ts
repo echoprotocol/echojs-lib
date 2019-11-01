@@ -69,7 +69,7 @@ export default class Api {
 
 	getContractLogs2(opts: {
 		contracts?: string[],
-		topics?: (string | string[])[],
+		topics?: (null | string | string[])[],
 		from_block?: number | BigNumber,
 		to_block?: number | BigNumber,
 	}): Promise<unknown[]>;

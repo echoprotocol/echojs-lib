@@ -1927,7 +1927,7 @@ class API {
 	/**
 	 * @param {Object} [opts]
 	 * @param {string[]} [opts.contracts]
-	 * @param {(string | string[])[]} [opts.topics]
+	 * @param {(null | string | string[])[]} [opts.topics]
 	 * @param {number | BigNumber} [opts.fromBlock]
 	 * @param {number | BigNumber} [opts.toBlock]
 	 * @returns {Promise<unknown[]>}
@@ -1940,7 +1940,8 @@ class API {
 		if (opts.topics !== undefined) {
 			ok(Array.isArray(opts.topics), '"topics" option is not an array');
 			for (const topic of opts.topics) {
-				const topicVariants = Array.isArray(topic) ? topic : [topic];
+				// eslint-disable-next-line no-nested-ternary
+				const topicVariants = Array.isArray(topic) ? topic : (topic === null ? [] : [topic]);
 				for (const topicVariant of topicVariants) {
 					ok(typeof topicVariant === 'string', 'invalid "topic" option type');
 					// TODO: validate topicVariant
