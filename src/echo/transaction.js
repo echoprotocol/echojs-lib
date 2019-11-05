@@ -152,8 +152,8 @@ class Transaction {
 				return;
 			}
 			const arr = operationsByNotDefaultFee.get(notDefaultAssetId);
-			if (!arr) operationsByNotDefaultFee.set(notDefaultAssetId, [operation]);
-			else arr.push(operation);
+			if (!arr) operationsByNotDefaultFee.set(notDefaultAssetId, [operationProps]);
+			else arr.push(operationProps);
 		};
 		for (const op of operationTypes) {
 			if (op[1].fee === undefined || op[1].fee.asset_id === undefined) addOperationToAsset(assetId, op);
