@@ -535,17 +535,15 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method callContractNoChangingState
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {String} accountId
-	 *  @param  {String} assetId
-	 *  @param  {String} bytecode
-	 *
-	 *  @return {Promise}
+	 * @method callContractNoChangingState
+	 * @param {string} contractId
+	 * @param {string} accountId
+	 * @param {string} asset
+	 * @param {string} code
+	 * @return {Promise<string>}
 	 */
-	callContractNoChangingState(contractId, accountId, assetId, bytecode) {
-		return this.db.exec('call_contract_no_changing_state', [contractId, accountId, assetId, bytecode]);
+	callContractNoChangingState(contractId, caller, asset, code) {
+		return this.db.exec('call_contract_no_changing_state', [contractId, caller, asset, code]);
 	}
 
 	/**

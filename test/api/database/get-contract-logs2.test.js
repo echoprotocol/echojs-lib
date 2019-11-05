@@ -18,7 +18,7 @@ const bytecode = [
 	"c749b60050d7df224ded452a41549e1880caf023c417b9e1aca69645670029",
 ].join("");
 
-describe.only("getContractLogs2", () => {
+describe("getContractLogs2", () => {
 	const echo = new Echo();
 	/** @type {string} */
 	let contractId;

@@ -99,7 +99,14 @@ export default class Api {
 	getTransactionHex(tr: Object): Promise<any>;
 	getVestedBalances(balanceIds: Array<string>): Promise<any>;
 	getVestingBalances(balanceIds: Array<string>): Promise<any>;
-	callContractNoChangingState(contractId: string, accountId: string, assetId: string, bytecode: string): Promise<string>;
+
+	callContractNoChangingState(
+		contractId: string,
+		caller: string,
+		asset: { asset_id: string, amount: number | string },
+		code: string,
+	): Promise<string>;
+
 	listAssets(lowerBoundSymbol: string, limit: number): Promise<Array<Asset>>;
 	lookupAccounts(lowerBoundName: string, limit: number): Promise<Array<string>>;
 	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;

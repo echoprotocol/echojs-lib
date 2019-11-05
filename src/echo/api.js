@@ -29,6 +29,8 @@ import {
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
 	isUInt32,
+	isObject,
+	isInt64,
 } from '../utils/validators';
 import { solveRegistrationTask } from '../utils/pow-solver';
 
@@ -2003,23 +2005,21 @@ class API {
 	}
 
 	/**
-	 *  @method callContractNoChangingState
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {String} accountId
-	 *  @param  {String} assetId
-	 *  @param  {String} bytecode
-	 *
-	 *  @return {Promise<String>}
+	 * @method callContractNoChangingState
+	 * @param {string} contractId
+	 * @param {string} caller
+	 * @param {{ amount: number | string, asset_id: string }} asset
+	 * @param {string} code
+	 * @return {Promise<string>}
 	 */
-	async callContractNoChangingState(contractId, accountId, assetId, bytecode) {
+	async callContractNoChangingState(contractId, caller, asset, code) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isAccountId(accountId)) throw new Error('AccountId is invalid');
-		if (!isAssetId(assetId)) throw new Error('AssetId is invalid');
-		if (!isBytecode(bytecode)) throw new Error('Bytecode is invalid');
-
-		return this.wsApi.database
-			.callContractNoChangingState(contractId, accountId, assetId, bytecode);
+		if (!isAccountId(caller) && !isContractId(caller)) throw new Error('Caller is invalid');
+		if (!isObject(asset)) throw new Error('Asset is not an object');
+		if (!isInt64(asset.amount)) throw new Error('Asset amount is not int64');
+		if (!isAssetId(asset.asset_id)) throw new Error('Invalid asset id');
+		if (!/^([\da-fA-F]{2})*$/.test(code)) throw new Error('Bytecode is invalid');
+		return this.wsApi.database.callContractNoChangingState(contractId, caller, asset, code);
 	}
 
 	/**

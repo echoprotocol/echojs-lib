@@ -24,7 +24,12 @@ import {
 
 const { ethAddress, accountListing } = serializers.protocol;
 const { vector, optional } = serializers.collections;
-const { privateKey, publicKey, ripemd160 } = serializers.chain;
+const {
+	privateKey,
+	publicKey,
+	ripemd160,
+	asset: assetSerializer,
+} = serializers.chain;
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { priceFeed } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
@@ -796,13 +801,13 @@ class WalletAPI {
 	/**
 	 * Call a contract. Same as `callContract` method but doesn't change the state.
 	 * @param {string} idOfContract the id of the contract to call
-	 * @param {string} accountIdOrName name of the account calling the contract
-	 * @param {string} assetType the type of the asset transferred to the contract
+	 * @param {string} caller contract id or account name or id calling the contract
+	 * @param {typeof assetSerializer["__TInput__"]} asset the asset transferred to the contract
 	 * @param {string} codeOfTheContract the hash of the method to call
 	 * @returns {Promise<string>}
 	 */
-	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
-		if (!isAccountIdOrName(accountIdOrName)) {
+	callContractNoChangingState(idOfContract, caller, asset, codeOfTheContract) {
+		if (!isAccountIdOrName(caller)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isContractCode(codeOfTheContract)) {
@@ -810,8 +815,8 @@ class WalletAPI {
 		}
 		return this.wsRpc.call([0, 'call_contract_no_changing_state', [
 			contractId.toRaw(idOfContract),
-			string.toRaw(accountIdOrName),
-			assetId.toRaw(assetType),
+			string.toRaw(caller),
+			assetSerializer.toRaw(asset),
 			string.toRaw(codeOfTheContract),
 		]]);
 	}
