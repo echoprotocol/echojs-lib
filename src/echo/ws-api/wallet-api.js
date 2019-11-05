@@ -802,11 +802,12 @@ class WalletAPI {
 	 * Call a contract. Same as `callContract` method but doesn't change the state.
 	 * @param {string} idOfContract the id of the contract to call
 	 * @param {string} caller contract id or account name or id calling the contract
-	 * @param {typeof assetSerializer["__TInput__"]} asset the asset transferred to the contract
+	 * @param {string} amount amount in ECHO. 1 ECHO is 100000000
+	 * @param {string} assetType the type of the asset transfered to the contract
 	 * @param {string} codeOfTheContract the hash of the method to call
 	 * @returns {Promise<string>}
 	 */
-	callContractNoChangingState(idOfContract, caller, asset, codeOfTheContract) {
+	callContractNoChangingState(idOfContract, caller, amount, assetType, codeOfTheContract) {
 		if (!isAccountIdOrName(caller)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
@@ -816,8 +817,9 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'call_contract_no_changing_state', [
 			contractId.toRaw(idOfContract),
 			string.toRaw(caller),
-			assetSerializer.toRaw(asset),
-			string.toRaw(codeOfTheContract),
+			string.toRaw(amount),
+			string.toRaw(assetType),
+			string.toRaw('7ddd0029'),
 		]]);
 	}
 
