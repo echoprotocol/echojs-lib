@@ -28,7 +28,6 @@ const {
 	privateKey,
 	publicKey,
 	ripemd160,
-	asset: assetSerializer,
 } = serializers.chain;
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { priceFeed } = serializers.protocol;

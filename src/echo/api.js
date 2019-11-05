@@ -18,7 +18,6 @@ import {
 	isContractId,
 	isOperationHistoryId,
 	isContractResultId,
-	isBytecode,
 	isRipemd160,
 	isPublicKey,
 	isCommitteeMemberId,
