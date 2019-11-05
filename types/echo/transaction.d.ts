@@ -31,6 +31,7 @@ interface BroadcastingResult {
 
 export default class Transaction {
 	readonly transactionObject: any;
+	readonly operations: SerializerOutput<OperationSerializer>[];
 
 	addOperation<T extends OperationId>(
 		operationId: T,
@@ -41,6 +42,6 @@ export default class Transaction {
 	getPotentialSignatures(): Promise<{publicKeys:Array<string>}>;
 	sign(privateKey?: PrivateKey): Promise<void>;
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
-	setRequiredFees(assetId: string): Promise<void>;
+	setRequiredFees(assetId?: string): Promise<void>;
 	serialize(): Buffer;
 }

@@ -12,4 +12,5 @@ describe('operations', () => {
 	require('./operations/update-asset-feed-producers.test');
 	require('./operations/balance-freeze.operation.test');
 	require('./operations/sidechain.btc.operations.test');
+	require('./operations/non-default-fee-asset.test');
 });
