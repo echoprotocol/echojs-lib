@@ -18,7 +18,7 @@ const bytecode = [
 	"c749b60050d7df224ded452a41549e1880caf023c417b9e1aca69645670029",
 ].join("");
 
-describe("getContractLogs2", () => {
+describe("getContractLogs", () => {
 	const echo = new Echo();
 	/** @type {string} */
 	let contractId;
@@ -42,7 +42,7 @@ describe("getContractLogs2", () => {
 		/** @type {[]} */
 		let result;
 		it("should not rejects", async () => {
-			result = await echo.api.getContractLogs2();
+			result = await echo.api.getContractLogs();
 			ok(result !== undefined);
 		});
 		it("should return empty array", function () {

@@ -1904,28 +1904,6 @@ class API {
 	}
 
 	/**
-	 *  @method getContractLogs
-	 *
-	 *  @param  {String} contractId
-	 * 	@param  {Array<String>} topics
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
-	 *
-	 *  @return {
-	 *  	Promise.<Array.<ContractLogs>>
-	 *  }
-	 */
-	async getContractLogs(contractId, topics, fromBlock, toBlock) {
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isArray(topics)) throw new Error('topics should be a array');
-		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
-		if (!isUInt64(toBlock)) throw new Error('ToBlock should be a non negative integer');
-		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
-
-		return this.wsApi.database.getContractLogs(contractId, topics, fromBlock, toBlock);
-	}
-
-	/**
 	 * @param {Object} [opts]
 	 * @param {string[]} [opts.contracts]
 	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
@@ -1933,7 +1911,7 @@ class API {
 	 * @param {number | BigNumber} [opts.toBlock]
 	 * @returns {Promise<unknown[]>}
 	 */
-	async getContractLogs2(opts = {}) {
+	async getContractLogs(opts = {}) {
 		if (opts.contracts !== undefined) {
 			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
 			for (const contractId of opts.contracts) ok(isContractId(contractId));
@@ -1962,7 +1940,7 @@ class API {
 		for (const field of ['fromBlock', 'toBlock']) {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
-		return this.wsApi.database.getContractLogs2({
+		return this.wsApi.database.getContractLogs({
 			contracts: opts.contracts,
 			topics,
 			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,

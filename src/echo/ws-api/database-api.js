@@ -474,21 +474,7 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getContractLogs
-	 *
-	 *  @param  {String} contractId
-	 * 	@param 	{Array<String>} topics
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
-	 *
-	 *  @return {Promise}
-	 */
-	getContractLogs(contractId, topics, fromBlock, toBlock) {
-		return this.db.exec('get_contract_logs', [contractId, topics, fromBlock, toBlock]);
-	}
-
-	/**
-	 * @method getContractLogs2
+	 * @method getContractLogs
 	 * @param {Object} opts
 	 * @param {string[]} [opts.contracts]
 	 * @param {(string | string[])[]} [opts.topics]
@@ -496,8 +482,8 @@ class DatabaseAPI {
 	 * @param {number} [opts.to_block]
 	 * @returns {Promise<unknown[]>}
 	 */
-	getContractLogs2(opts) {
-		return this.db.exec('get_contract_logs2', [opts]);
+	getContractLogs(opts) {
+		return this.db.exec('get_contract_logs', [opts]);
 	}
 
 	/**
