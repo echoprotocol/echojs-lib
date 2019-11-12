@@ -57,9 +57,9 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	extensions: typeof extensions,	
 }>;
 
-export declare const sidechainBtcApproveWithdrawOperationPropsSerializer: StructSerializer<{
+export const sidechainBtcApproveAggregateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
-	withdraw_id: typeof btcWithdrawId,
-	extensions: typeof extensions,	
+	transaction_id: typeof sha256,
+	extensions: typeof extensions,
 }>;

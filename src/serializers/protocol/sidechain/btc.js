@@ -65,10 +65,9 @@ export const sidechainBtcAggregateOperationPropsSerializer = struct({
 	extensions,
 });
 
-
-export const sidechainBtcApproveWithdrawOperationPropsSerializer = struct({
+export const sidechainBtcApproveAggregateOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,
-	withdraw_id: btcWithdrawId,
+	transaction_id: sha256,
 	extensions,
 });
