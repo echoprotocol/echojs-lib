@@ -1652,14 +1652,14 @@ class WalletAPI {
 	}
 
 	/**
-	 * @method getBtcAddresses
+	 * @method getBtcAddress
 	 * @param {String} accountId
 	 * @returns {Promise<Array>}
 	 */
-	getBtcAddresses(accountIdValue) {
+	getBtcAddress(accountIdValue) {
 		if (!isAccountId(accountIdValue)) throw new Error('account should be valid');
 
-		return this.wsRpc.call([0, 'get_btc_addresses', [accountIdValue]]);
+		return this.wsRpc.call([0, 'get_btc_address', [accountIdValue]]);
 	}
 
 	/**

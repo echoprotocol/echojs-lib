@@ -2447,10 +2447,10 @@ class API {
 	 * @param {String} accountId
 	 * @return {*}
 	 */
-	getBtcAddresses(accountId) {
+	getBtcAddress(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
-		return this.wsApi.database.getBtcAddresses(accountId);
+		return this.wsApi.database.getBtcAddress(accountId);
 	}
 
 	/**

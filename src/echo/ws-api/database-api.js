@@ -640,13 +640,13 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getBtcAddresses
+	 *  @method getBtcAddress
 	 *  @param  {String} accountId
 	 *
 	 *  @return {Promise}
 	 */
-	getBtcAddresses(accountId) {
-		return this.db.exec('get_btc_addresses', [accountId]);
+	getBtcAddress(accountId) {
+		return this.db.exec('get_btc_address', [accountId]);
 	}
 
 	/**
