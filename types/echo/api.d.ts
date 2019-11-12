@@ -25,6 +25,7 @@ import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 import { signedTransaction } from '../serializers';
 import { committeeMemberId } from '../serializers/chain/id/protocol';
+import { uint32 } from '../serializers/basic/integers';
 
 type SidechainType = "" | "eth" | "btc";
 
@@ -56,6 +57,7 @@ export default class Api {
 	getBitAssetData(bitAssetId: string, force?: boolean): Promise<Object>;
 	getBlock(blockNum: number): Promise<Block>;
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
+	getBlockRewards(blockNum: typeof uint32["__TInput__"]): Promise<unknown>;
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddresses(accountId: string): Promise<Array<BtcAddress>>;
 	getBtcDepositScript(btcDepositId: string): Promise<String>;

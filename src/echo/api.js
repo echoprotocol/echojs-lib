@@ -37,7 +37,7 @@ import { solveRegistrationTask } from '../utils/pow-solver';
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation } from '../serializers';
+import { transaction, signedTransaction, operation, basic } from '../serializers';
 import { PublicKey } from '../crypto';
 
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
@@ -2410,6 +2410,15 @@ class API {
 		if (!isArray(keys)) return Promise.reject(new Error('Invalid keys'));
 
 		return this.wsApi.database.getBalanceObjects(keys);
+	}
+
+	/**
+	 * @method getBlockRewards
+	 * @param {typeof uint32["__TInput__"]} blockNum
+	 * @returns {Promise<unknown>}
+	 */
+	getBlockRewards(blockNum) {
+		return this.wsApi.database.getBlockRewards(basic.integers.uint32.toRaw(blockNum));
 	}
 
 	/**
