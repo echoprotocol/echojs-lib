@@ -4,5 +4,5 @@ export default interface BtcAddress {
     deposit_address: { address: string },
     committee_member_ids_in_script: Array<string>,
     backup_address: string,
-    extensions: Array<any>
+    extensions: Array<any>,
 }

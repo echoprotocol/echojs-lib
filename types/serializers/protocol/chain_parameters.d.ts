@@ -35,6 +35,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	committee_frozen_balance_to_activate: typeof uint64,
 	committee_maintenance_intervals_to_deposit: typeof uint64,
 	committee_freeze_duration_seconds: typeof uint32,
+	x86_64_maximum_contract_size: typeof uint64,
 	extensions: typeof extensions,
 }>;
 

@@ -32,6 +32,7 @@ const chainParametersSerializer = struct({
 	committee_frozen_balance_to_activate: uint64,
 	committee_maintenance_intervals_to_deposit: uint64,
 	committee_freeze_duration_seconds: uint32,
+	x86_64_maximum_contract_size: uint64,
 	extensions,
 });
 
