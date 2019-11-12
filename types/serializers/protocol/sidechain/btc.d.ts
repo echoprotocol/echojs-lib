@@ -3,6 +3,7 @@ import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWit
 import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
 import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
+import btcPublicKey from "../btcPublicKey";
 
 export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
@@ -51,7 +52,7 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	transaction_id: typeof sha256,
 	aggregation_out_value: typeof integers.uint64,
 	sma_address: StructSerializer<{ address: StringSerializer }>,
-	committee_member_ids_in_script: SetSerializer<typeof accountId>,
+	committee_member_ids_in_script: MapSerializer<typeof accountId, typeof btcPublicKey>,
 	previous_aggregation: typeof btcAggregatingId,
 	signatures: MapSerializer<typeof integers.uint32, StringSerializer>,
 	extensions: typeof extensions,	

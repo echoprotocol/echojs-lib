@@ -10,6 +10,7 @@ import {
 import { btcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import { struct, set, map, optional } from '../../collections';
 import { string as stringSerializer, integers } from '../../basic';
+import btcPublicKey from '../btcPublicKey';
 
 export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
 	fee: asset,
@@ -58,7 +59,7 @@ export const sidechainBtcAggregateOperationPropsSerializer = struct({
 	withdrawals: set(btcWithdrawId),
 	transaction_id: sha256,
 	sma_address: struct({ address: stringSerializer }),
-	committee_member_ids_in_script: set(accountId),
+	committee_member_ids_in_script: map(accountId, btcPublicKey),
 	aggregation_out_value: integers.uint64,
 	previous_aggregation: optional(btcAggregatingId),
 	signatures: map(integers.uint32, stringSerializer),
