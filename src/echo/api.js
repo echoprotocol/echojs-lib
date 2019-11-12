@@ -1133,6 +1133,19 @@ class API {
 	}
 
 	/**
+	 * @method getAccountWithdrawals
+	 * @param {string} account
+	 * @param {import("./ws-api/database-api").WithdrawalType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountWithdrawals(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		if (typeof type !== 'string') throw new Error('Type is not a string');
+		if (!['', 'eth', 'btc'].includes(type)) throw new Error(`Unsupported withdrawal type "${type}"`);
+		return this.wsApi.database.getAccountWithdrawals(account, type);
+	}
+
+	/**
 	 *  @method getFullAccounts
 	 *  @param  {Array<String>} accountNamesOrIds
 	 *  @param  {Boolean} subscribe

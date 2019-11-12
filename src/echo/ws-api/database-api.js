@@ -1,3 +1,5 @@
+/** @typedef {"" | "eth" | "btc"} WithdrawalType */
+
 class DatabaseAPI {
 
 	/**
@@ -191,6 +193,16 @@ class DatabaseAPI {
 	 */
 	getAccountReferences(accountId) {
 		return this.db.exec('get_account_references', [accountId]);
+	}
+
+	/**
+	 * @method getAccountWithdrawals
+	 * @param {string} account
+	 * @param {WithdrawalType} type
+	 * @returns {Promise<unknown>}
+	 */
+	getAccountWithdrawals(account, type) {
+		return this.db.exec('get_account_withdrawals', [account, type]);
 	}
 
 	/**

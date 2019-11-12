@@ -44,6 +44,7 @@ export default class Api {
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
 	getAccountHistoryOperations(accountId: string, operationId: string, start: number, stop: number, limit: number): Promise<Array<AccountHistory>>;
 	getAccountReferences(accountId: string, force?: boolean): Promise<Account>;
+	getAccountWithdrawals(account: string, type: "" | "eth" | "btc"): Promise<unknown>;
 	getAllAssetHolders(): Promise<Array<{asset_id: string, count: number}>>;
 	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{name: string, account_id: string, amount: string}>>;
 	getAssetHoldersCount(assetId: string): Promise<number>;
