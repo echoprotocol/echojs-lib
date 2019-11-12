@@ -1,4 +1,4 @@
-/** @typedef {"" | "eth" | "btc"} WithdrawalType */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
 
 class DatabaseAPI {
 
@@ -186,6 +186,16 @@ class DatabaseAPI {
 	}
 
 	/**
+	 * @method getAccountDeposits
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	getAccountDeposits(account, type) {
+		return this.db.exec('get_account_deposits', [account, type]);
+	}
+
+	/**
 	 *  @method getAccountReferences
 	 *  @param  {String} accountId
 	 *
@@ -198,7 +208,7 @@ class DatabaseAPI {
 	/**
 	 * @method getAccountWithdrawals
 	 * @param {string} account
-	 * @param {WithdrawalType} type
+	 * @param {SidechainType} type
 	 * @returns {Promise<unknown>}
 	 */
 	getAccountWithdrawals(account, type) {

@@ -26,6 +26,8 @@ import { VectorSerializer } from '../serializers/collections';
 import { signedTransaction } from '../serializers';
 import { committeeMemberId } from '../serializers/chain/id/protocol';
 
+type SidechainType = "" | "eth" | "btc";
+
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
 	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
@@ -41,10 +43,11 @@ export default class Api {
 
 	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
 	getAccountCount(): Promise<number>;
+	getAccountDeposits(account: string, type: SidechainType): Promise<unknown>;
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
 	getAccountHistoryOperations(accountId: string, operationId: string, start: number, stop: number, limit: number): Promise<Array<AccountHistory>>;
 	getAccountReferences(accountId: string, force?: boolean): Promise<Account>;
-	getAccountWithdrawals(account: string, type: "" | "eth" | "btc"): Promise<unknown>;
+	getAccountWithdrawals(account: string, type: SidechainType): Promise<unknown>;
 	getAllAssetHolders(): Promise<Array<{asset_id: string, count: number}>>;
 	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{name: string, account_id: string, amount: string}>>;
 	getAssetHoldersCount(assetId: string): Promise<number>;

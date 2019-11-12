@@ -30,6 +30,7 @@ import {
 	isUInt32,
 	isObject,
 	isInt64,
+	validateSidechainType,
 } from '../utils/validators';
 import { solveRegistrationTask } from '../utils/pow-solver';
 
@@ -38,6 +39,8 @@ import { solveRegistrationTask } from '../utils/pow-solver';
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
 import { transaction, signedTransaction, operation } from '../serializers';
 import { PublicKey } from '../crypto';
+
+/** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
 
 /** @typedef {
 *	{
@@ -1133,15 +1136,26 @@ class API {
 	}
 
 	/**
+	 * @method getAccountDeposits
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountDeposits(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		validateSidechainType(type);
+		return this.wsApi.database.getAccountDeposits(account, type);
+	}
+
+	/**
 	 * @method getAccountWithdrawals
 	 * @param {string} account
-	 * @param {import("./ws-api/database-api").WithdrawalType} type
+	 * @param {SidechainType} type
 	 * @returns {Promise<unknown>}
 	 */
 	async getAccountWithdrawals(account, type) {
 		if (!isAccountId(account)) throw new Error('Invalid account id format');
-		if (typeof type !== 'string') throw new Error('Type is not a string');
-		if (!['', 'eth', 'btc'].includes(type)) throw new Error(`Unsupported withdrawal type "${type}"`);
+		validateSidechainType(type);
 		return this.wsApi.database.getAccountWithdrawals(account, type);
 	}
 
