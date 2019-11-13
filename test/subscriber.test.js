@@ -100,6 +100,7 @@ describe('SUBSCRIBER', () => {
 								'login',
 								'network_node',
 							],
+							debug: true,
 						},
 					);
                     await echo.subscriber.setEchorandSubscribe(1);

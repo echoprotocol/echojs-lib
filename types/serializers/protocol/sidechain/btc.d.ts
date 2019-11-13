@@ -4,6 +4,7 @@ import { StructSerializer, SetSerializer, MapSerializer } from "../../collection
 import { StringSerializer, integers } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import btcPublicKey from "../btcPublicKey";
+import { uint8 } from "../../basic/integers";
 
 export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
@@ -54,6 +55,7 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	sma_address: StructSerializer<{ address: StringSerializer }>,
 	committee_member_ids_in_script: MapSerializer<typeof accountId, typeof btcPublicKey>,
 	previous_aggregation: typeof btcAggregatingId,
+	cpfp_depth: typeof uint8,
 	signatures: MapSerializer<typeof integers.uint32, StringSerializer>,
 	extensions: typeof extensions,	
 }>;
