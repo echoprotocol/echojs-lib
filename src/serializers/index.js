@@ -7,7 +7,17 @@ import OperationSerializer from './operation';
 import opWrapper from './protocol/opWrapper';
 import * as wallet from './wallet';
 
-export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
+export {
+	default as transaction,
+	signedTransactionSerializer as signedTransaction,
+	processedTransactionSerializer as processedTransaction,
+} from './transaction';
+export {
+	blockSignatureSerializer as blockSignature,
+	blockHeaderSerializer as blockHeader,
+	signedBlockHeaderSerializer as signedBlockHeader,
+	signedBlockSerializer as signedBlock,
+} from './block';
 
 export const operation = new OperationSerializer();
 
