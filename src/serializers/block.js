@@ -1,9 +1,12 @@
 import { struct, vector } from './collections';
 import { uint64, uint8, uint32 } from './basic/integers';
 import { timePointSec, string, bytes } from './basic';
-import { extensions, sha256, ripemd160 } from './chain';
+import { extensions, sha256, checksum } from './chain';
 import { processedTransactionSerializer } from './transaction';
 import { accountId } from './chain/id/protocol';
+import { blockId } from './chain/id';
+
+export const rand = sha256;
 
 export const blockSignatureSerializer = struct({
 	_bba_sign: bytes(64),
@@ -16,13 +19,13 @@ export const blockSignatureSerializer = struct({
 });
 
 export const blockHeaderSerializer = struct({
-	previous: ripemd160,
+	previous: blockId,
 	round: uint64,
 	attempt: uint8,
 	timestamp: timePointSec,
 	account: accountId,
 	delegate: accountId,
-	transaction_merkle_root: ripemd160,
+	transaction_merkle_root: checksum,
 	vm_root: vector(string),
 	prev_signatures: vector(blockSignatureSerializer),
 	extensions,
@@ -31,7 +34,7 @@ export const blockHeaderSerializer = struct({
 export const signedBlockHeaderSerializer = struct({
 	...blockHeaderSerializer.serializers,
 	ed_signature: bytes(64),
-	rand: sha256,
+	rand,
 	cert: vector(blockSignatureSerializer),
 });
 

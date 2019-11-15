@@ -5,6 +5,7 @@ import { BytesSerializer } from "../basic";
 import { uint16 } from "../basic/integers";
 
 export { default as asset } from "./asset";
+export { default as checksum } from "./checksum";
 export { default as extensions } from "./extensions";
 export { default as futureExtension } from "./future_extension";
 
