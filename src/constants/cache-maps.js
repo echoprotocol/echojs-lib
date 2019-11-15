@@ -15,7 +15,7 @@ export const CONTRACTS_BY_CONTRACT_ID = 'contractsByContractId';
 export const FULL_CONTRACTS_BY_CONTRACT_ID = 'fullContractsByContractId';
 export const CONTRACT_RESULTS_BY_CONTRACT_RESULT_ID = 'contractResultsByContractResultId';
 export const CONTRACT_HISTORY_BY_CONTRACT_ID = 'contractHistoryByContractId';
-export const CONTRACT_CODE_BY_CONTRACT_ID = 'contractCodeByContractId';
+export const CONTRACT_OBJECT_BY_CONTRACT_ID = 'contractObjectByContractId';
 
 export const BLOCK_HEADERS_BY_BLOCK_NUMBER = 'blockHeadersByBlockNumber';
 export const BLOCKS = 'blocks';

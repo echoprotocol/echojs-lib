@@ -1955,7 +1955,7 @@ class API {
 
 		return this._getSingleDataWithMultiSave(
 			contractId,
-			CACHE_MAPS.CONTRACT_CODE_BY_CONTRACT_ID,
+			CACHE_MAPS.CONTRACT_OBJECT_BY_CONTRACT_ID,
 			'getContract',
 			force,
 		);
