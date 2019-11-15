@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { Echo } from '../index';
 import  PrivateKey  from '../crypto/private-key';
 import  Transaction  from '../echo/transaction';
-import { ContractResult as ApiContractResult } from '../interfaces/ContractResult';
+import ApiContractResult from '../interfaces/ContractResult';
 import { BroadcastingResult } from '../echo/transaction';
 import { Abi } from '../interfaces/Abi';
 

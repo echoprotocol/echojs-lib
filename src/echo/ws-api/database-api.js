@@ -1,3 +1,5 @@
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
 class DatabaseAPI {
 
 	/**
@@ -184,6 +186,16 @@ class DatabaseAPI {
 	}
 
 	/**
+	 * @method getAccountDeposits
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	getAccountDeposits(account, type) {
+		return this.db.exec('get_account_deposits', [account, type]);
+	}
+
+	/**
 	 *  @method getAccountReferences
 	 *  @param  {String} accountId
 	 *
@@ -191,6 +203,16 @@ class DatabaseAPI {
 	 */
 	getAccountReferences(accountId) {
 		return this.db.exec('get_account_references', [accountId]);
+	}
+
+	/**
+	 * @method getAccountWithdrawals
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	getAccountWithdrawals(account, type) {
+		return this.db.exec('get_account_withdrawals', [account, type]);
 	}
 
 	/**
@@ -474,17 +496,16 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getContractLogs
-	 *
-	 *  @param  {String} contractId
-	 * 	@param 	{Array<String>} topics
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
-	 *
-	 *  @return {Promise}
+	 * @method getContractLogs
+	 * @param {Object} opts
+	 * @param {string[]} [opts.contracts]
+	 * @param {(string | string[])[]} [opts.topics]
+	 * @param {number} [opts.from_block]
+	 * @param {number} [opts.to_block]
+	 * @returns {Promise<unknown[]>}
 	 */
-	getContractLogs(contractId, topics, fromBlock, toBlock) {
-		return this.db.exec('get_contract_logs', [contractId, topics, fromBlock, toBlock]);
+	getContractLogs(opts) {
+		return this.db.exec('get_contract_logs', [opts]);
 	}
 
 	/**
@@ -522,17 +543,15 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method callContractNoChangingState
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {String} accountId
-	 *  @param  {String} assetId
-	 *  @param  {String} bytecode
-	 *
-	 *  @return {Promise}
+	 * @method callContractNoChangingState
+	 * @param {string} contractId
+	 * @param {string} accountId
+	 * @param {string} asset
+	 * @param {string} code
+	 * @return {Promise<string>}
 	 */
-	callContractNoChangingState(contractId, accountId, assetId, bytecode) {
-		return this.db.exec('call_contract_no_changing_state', [contractId, accountId, assetId, bytecode]);
+	callContractNoChangingState(contractId, caller, asset, code) {
+		return this.db.exec('call_contract_no_changing_state', [contractId, caller, asset, code]);
 	}
 
 	/**
@@ -591,6 +610,15 @@ class DatabaseAPI {
 	}
 
 	/**
+	 * @method getBlockRewards
+	 * @param {number} blockNum
+	 * @returns {Promise<unknown>}
+	 */
+	getBlockRewards(blockNum) {
+		return this.db.exec('get_block_rewards', [blockNum]);
+	}
+
+	/**
 	 *  @method getBlockVirtualOperations
 	 *
 	 *  @param  {Number} blockNum
@@ -612,13 +640,13 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method getBtcAddresses
+	 *  @method getBtcAddress
 	 *  @param  {String} accountId
 	 *
 	 *  @return {Promise}
 	 */
-	getBtcAddresses(accountId) {
-		return this.db.exec('get_btc_addresses', [accountId]);
+	getBtcAddress(accountId) {
+		return this.db.exec('get_btc_address', [accountId]);
 	}
 
 	/**
