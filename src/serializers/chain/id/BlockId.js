@@ -1,3 +1,3 @@
-import { ripemd160 } from '../';
+import { bytes } from '../../basic';
 
-export default ripemd160;
+export default bytes(20);
