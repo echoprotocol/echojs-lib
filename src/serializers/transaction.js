@@ -3,7 +3,7 @@ import { uint16, uint32, int64 } from './basic/integers';
 import { timePointSec, bytes } from './basic';
 import { extensions } from './chain';
 import OperationSerializer from './operation';
-import { operationResultSerializer } from './operation_result';
+import OperationResultSerializer from './operation_result';
 
 const transactionSerializer = struct({
 	ref_block_num: uint16,
@@ -21,6 +21,6 @@ export const signedTransactionSerializer = struct({
 
 export const processedTransactionSerializer = struct({
 	...signedTransactionSerializer.serializers,
-	operation_results: vector(operationResultSerializer),
+	operation_results: vector(OperationResultSerializer),
 	fees_collected: int64,
 });
