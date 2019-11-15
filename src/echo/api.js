@@ -1959,8 +1959,6 @@ class API {
 			'getContract',
 			force,
 		);
-
-		// return this.wsApi.database.getContract(contractId);
 	}
 
 	/**
