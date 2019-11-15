@@ -1,4 +1,4 @@
-import { staticVariant } from './collections';
+import { struct, staticVariant } from './collections';
 import { anyObjectId } from './chain/id';
 import { asset } from './chain';
 
@@ -8,8 +8,9 @@ export const operationResultVariant = {
 	ASSET: 2,
 };
 
-export const operationResultSerializer = staticVariant({
-	[operationResultVariant.VOID]: null,
+const operationResultSerializer = staticVariant({
+	[operationResultVariant.VOID]: struct({}),
 	[operationResultVariant.OBJECT]: anyObjectId,
 	[operationResultVariant.ASSET]: asset,
 });
+export default operationResultSerializer;

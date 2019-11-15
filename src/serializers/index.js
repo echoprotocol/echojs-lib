@@ -12,6 +12,7 @@ export {
 	signedTransactionSerializer as signedTransaction,
 	processedTransactionSerializer as processedTransaction,
 } from './transaction';
+export { default as operationResult } from './operation_result';
 export {
 	blockSignatureSerializer as blockSignature,
 	blockHeaderSerializer as blockHeader,
