@@ -30,13 +30,22 @@ import {
 	committeeMemberCreateOperationPropsSerializer,
 	committeeMemberUpdateOperationPropsSerializer,
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
+	committeeMemberActivateOperationPropsSerializer,
+	committeeMemberDeactivateOperationPropsSerializer,
 } from './committee_member';
+
+import {
+	committeeFrozenBalanceDepositOperationPropSerializer,
+	committeeFrozenBalanceWithdrawOperationPropSerializer,
+} from './committee_frozen_balance';
 
 import {
 	contractBaseOperationPropsSerializer,
 	contractCreateOperationPropsSerializer,
 	contractCallOperationPropsSerializer,
-	contractTransferOperationPropsSerializer,
+	contractInternalCreateOperationPropsSerializer,
+	contractInternalCallOperationPropsSerializer,
+	contractSelfdestructOperationPropsSerializer,
 	contractFundPoolOperationPropsSerializer,
 	contractWhitelistOperationPropsSerializer,
 	contractUpdateOperationPropsSerializer,
@@ -103,16 +112,25 @@ export const balance = {
 export { default as chainParameters } from './chain_parameters';
 
 export const committeeMember = {
+	activate: committeeMemberActivateOperationPropsSerializer,
+	deactivate: committeeMemberDeactivateOperationPropsSerializer,
 	create: committeeMemberCreateOperationPropsSerializer,
 	update: committeeMemberUpdateOperationPropsSerializer,
 	updateGlobalParameters: committeeMemberUpdateGlobalParametersOperationPropsSerializer,
+};
+
+export const committeeFrozenBalance = {
+	deposit: committeeFrozenBalanceDepositOperationPropSerializer,
+	withdraw: committeeFrozenBalanceWithdrawOperationPropSerializer,
 };
 
 export const contract = {
 	base: contractBaseOperationPropsSerializer,
 	create: contractCreateOperationPropsSerializer,
 	call: contractCallOperationPropsSerializer,
-	transfer: contractTransferOperationPropsSerializer,
+	internalCreate: contractInternalCreateOperationPropsSerializer,
+	internalCall: contractInternalCallOperationPropsSerializer,
+	selfdestruct: contractSelfdestructOperationPropsSerializer,
 	fundPool: contractFundPoolOperationPropsSerializer,
 	whitelist: contractWhitelistOperationPropsSerializer,
 	update: contractUpdateOperationPropsSerializer,

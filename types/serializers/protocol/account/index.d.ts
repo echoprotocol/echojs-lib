@@ -13,11 +13,8 @@ export { default as AccountListingSerializer, ACCOUNT_LISTING } from './account_
 export declare const accountListing: AccountListingSerializer;
 
 export declare const accountOptionsSerializer: StructSerializer<{
-	voting_account: typeof accountId,
 	delegating_account: typeof accountId,
 	delegate_share: typeof uint16,
-	num_committee: typeof uint16,
-	votes: SetSerializer<VoteIdSerializer>,
 	extensions: typeof extensions,
 }>;
 

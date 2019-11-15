@@ -42,6 +42,7 @@ export const eth = {
 export const btc = {
 	createAddress: _btc.sidechainBtcCreateAddressOperationPropsSerializer,
 	intermediateDeposit: _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
+	createIntermediateDeposit: _btc.sidechainBtcCreateIntermediateDepositOperationPropsSerializer,
 	deposit: _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: _btc.sidechainBtcWithdrawOperationPropsSerializer,
 	aggregate: _btc.sidechainBtcAggregateOperationPropsSerializer,

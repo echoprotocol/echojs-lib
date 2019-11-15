@@ -43,3 +43,8 @@ export const btcIntermediateDepositId = new ObjectIdSerializer(
 );
 export const btcDepositId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT);
 export const btcWithdrawId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_WITHDRAW);
+export const btcAggregatingId = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.BTC_AGGREGATING,
+);
+

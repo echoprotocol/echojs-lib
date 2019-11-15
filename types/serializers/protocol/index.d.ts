@@ -27,19 +27,28 @@ import {
 } from './balance';
 
 import {
+	committeeMemberActivateOperationPropsSerializer,
+	committeeMemberDeactivateOperationPropsSerializer,
 	committeeMemberCreateOperationPropsSerializer,
 	committeeMemberUpdateOperationPropsSerializer,
 	committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 } from './committee_member';
 
 import {
+	committeeFrozenBalanceDepositOperationPropsSerializer,
+	committeeFrozenBalanceWithdrawOperationPropsSerializer,
+} from './committee_frozen_balance';
+
+import {
 	contractBaseOperationPropsSerializer,
 	contractCreateOperationPropsSerializer,
 	contractCallOperationPropsSerializer,
-	contractTransferOperationPropsSerializer,
 	contractFundPoolOperationPropsSerializer,
 	contractWhitelistOperationPropsSerializer,
 	contractUpdateOperationPropsSerializer,
+	contractInternalCreateOperationPropsSerializer,
+	contractInternalCallOperationPropsSerializer,
+	contractSelfdestructOperationPropsSerializer
 } from './contract';
 
 import {
@@ -105,16 +114,25 @@ export declare const balance: {
 export { default as chainParameters } from './chain_parameters';
 
 export declare const committeeMember: {
+	activate: typeof committeeMemberActivateOperationPropsSerializer,
+	deactivate: typeof committeeMemberDeactivateOperationPropsSerializer,
 	create: typeof committeeMemberCreateOperationPropsSerializer,
 	update: typeof committeeMemberUpdateOperationPropsSerializer,
 	updateGlobalParameters: typeof committeeMemberUpdateGlobalParametersOperationPropsSerializer,
 };
 
+export declare const committeeFrozenBalance: {
+	deposit: typeof committeeFrozenBalanceDepositOperationPropsSerializer,
+	withdraw: typeof committeeFrozenBalanceWithdrawOperationPropsSerializer,
+}
+
 export declare const contract: {
 	base: typeof contractBaseOperationPropsSerializer,
 	create: typeof contractCreateOperationPropsSerializer,
 	call: typeof contractCallOperationPropsSerializer,
-	transfer: typeof contractTransferOperationPropsSerializer,
+	internalCreate: typeof contractInternalCreateOperationPropsSerializer,
+	selfdestruct: typeof contractSelfdestructOperationPropsSerializer
+	internalCall: typeof contractInternalCallOperationPropsSerializer,
 	fundPool: typeof contractFundPoolOperationPropsSerializer,
 	whitelist: typeof contractWhitelistOperationPropsSerializer,
 	update: typeof contractUpdateOperationPropsSerializer,

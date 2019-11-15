@@ -1,6 +1,8 @@
-import './contract/encoders/encoders.test';
-import './contract/decoders/decoders.test';
-import './contract/Contract.test';
-import './contract/utils/utils.test';
-import './contract/deploying.test';
-import './contract/Method.test';
+describe('Contract module', () => {
+	require('./contract/encoders/encoders.test');
+	require('./contract/decoders/decoders.test');
+	require('./contract/Contract.test');
+	require('./contract/utils/utils.test');
+	require('./contract/deploying.test');
+	require('./contract/Method.test');
+});

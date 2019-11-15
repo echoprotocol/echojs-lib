@@ -5,7 +5,7 @@ export const PING_DELAY = 10 * 1000;
 export const DEBUG = false;
 export const CONNECTION_CLOSED_ERROR_MESSAGE = 'connection closed';
 
-export const ChainApi = {
+export const CHAIN_API = {
 	DATABASE_API: 'database',
 	NETWORK_BROADCAST_API: 'network_broadcast',
 	HISTORY_API: 'history',
@@ -16,19 +16,19 @@ export const ChainApi = {
 };
 
 export const CHAIN_APIS = [
-	ChainApi.DATABASE_API,
-	ChainApi.NETWORK_BROADCAST_API,
-	ChainApi.HISTORY_API,
-	ChainApi.REGISTRATION_API,
-	ChainApi.ASSET_API,
-	ChainApi.LOGIN_API,
-	ChainApi.NETWORK_NODE_API,
+	CHAIN_API.DATABASE_API,
+	CHAIN_API.NETWORK_BROADCAST_API,
+	CHAIN_API.HISTORY_API,
+	CHAIN_API.REGISTRATION_API,
+	CHAIN_API.ASSET_API,
+	CHAIN_API.LOGIN_API,
+	CHAIN_API.NETWORK_NODE_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
-	ChainApi.DATABASE_API,
-	ChainApi.NETWORK_BROADCAST_API,
-	ChainApi.HISTORY_API,
-	ChainApi.LOGIN_API,
+	CHAIN_API.DATABASE_API,
+	CHAIN_API.NETWORK_BROADCAST_API,
+	CHAIN_API.HISTORY_API,
+	CHAIN_API.LOGIN_API,
 ];
 
 export const STATUS = {

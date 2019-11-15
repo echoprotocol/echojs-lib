@@ -477,9 +477,9 @@ Protocol contains all serializers of operations' properties.
   * `whitelist`
   * `transfer`
   * `addressCreate`
-* `price`
-* `priceFeed`
 * **asset**
+  * `priceFeed`
+  * `price`
   * `options`
   * `bitassetOptions`
   * `create`
@@ -494,19 +494,28 @@ Protocol contains all serializers of operations' properties.
 * `authority`
 * **balance**
   * `claim`
-* `chainParameters`
+  * `freeze`
+  * `unfreeze`
+* **committeeFrozenBalance**
+  * `deposit`
+  * `withdraw`
 * **committeeMember**
+  * `chainParameters`
   * `create`
   * `update`
   * `updateGlobalParameters`
+  * `activate`
+  * `deactivate`
 * **contract**
   * `base`
   * `create`
   * `call`
-  * `transfer`
   * `fundPool`
   * `whitelist`
   * `update`
+  * `internalCreate`
+  * `internalCall`
+  * `selfdestruct`
 * `ethAddress`
 * `feeParameters`
 * `feeSchedule`
@@ -571,7 +580,7 @@ console.log(transfer.toRaw({
 import { serializers, OPERATIONS_IDS } from "echojs-lib";
 const serializedOp = serializers.operation.serialize([
 	OPERATIONS_IDS.ACCOUNT_CREATE,
-	{
+  {
 		fee: { amount: 123, asset_id: '1.3.5' },
 		registrar: '1.2.123',
 		name: 'somenewaccount',
@@ -582,14 +591,11 @@ const serializedOp = serializers.operation.serialize([
 		},
 		echorand_key: 'ECHO6sCu8oaqyoRGvzSHuiiytDpGVwnCGjB75RRcbQwZnb1Q',
 		options: {
-			voting_account: new BigNumber(345), // same as '1.2.345'
 			delegating_account: '1.2.456',
-			num_committee: 3,
-			// votes: undefined, // optional
-			// extensions: undefined, // optional
+			delegate_share: 0,
 		},
 		// extensions: undefined, // optional
 	},
 ]);
-// '017b00000000000000057b0e736f6d656e65776163636f756e740200000001ea0101000...'
+// '037b00000000000000057b0e736f6d656e65776163636f756e740200000001ea0101000...'
 ```

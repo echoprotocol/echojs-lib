@@ -380,17 +380,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method lookupVoteIds
-	 *
-	 *  @param  {Array<Strings>} votes
-	 *
-	 *  @return {Promise}
-	 */
-	lookupVoteIds(votes) {
-		return this.db.exec('lookup_vote_ids', [votes]);
-	}
-
-	/**
 	 *  @method getTransactionHex
 	 *
 	 *  @param  {Object} transaction
@@ -488,25 +477,26 @@ class DatabaseAPI {
 	 *  @method getContractLogs
 	 *
 	 *  @param  {String} contractId
+	 * 	@param 	{Array<String>} topics
 	 *  @param  {Number} fromBlock
 	 *  @param  {Number} toBlock
 	 *
 	 *  @return {Promise}
 	 */
-	getContractLogs(contractId, fromBlock, toBlock) {
-		return this.db.exec('get_contract_logs', [contractId, fromBlock, toBlock]);
+	getContractLogs(contractId, topics, fromBlock, toBlock) {
+		return this.db.exec('get_contract_logs', [contractId, topics, fromBlock, toBlock]);
 	}
 
 	/**
 	 *  @method subscribeContractLogs
 	 *
 	 *  @param  {Function} callback
-	 *  @param  {String} contractId
+	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
 	 *
 	 *  @return {Promise}
 	 */
-	subscribeContractLogs(callback, contractId) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractId]);
+	subscribeContractLogs(callback, contractTopicsMap) {
+		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
 	}
 
 	/**
@@ -639,6 +629,16 @@ class DatabaseAPI {
 	 */
 	getBtcDepositScript(btcDepositId) {
 		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
+	}
+
+	/**
+	 *  @method getCommitteeFrozenBalance
+	 *  @param  {String} committeeMemberId
+	 *
+	 *  @return {Promise}
+	 */
+	getCommitteeFrozenBalance(committeeMemberId) {
+		return this.db.exec('get_committee_frozen_balance', [committeeMemberId]);
 	}
 
 }

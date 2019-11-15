@@ -1,8 +1,7 @@
 import { string as stringSerializer, bool } from '../basic';
 import { asset, extensions } from '../chain';
 import { accountId, assetId, contractId } from '../chain/id/protocol';
-import { anyObjectId } from '../chain/id';
-import { struct, optional, set } from '../collections';
+import { struct, optional, set, vector } from '../collections';
 
 export const contractBaseOperationPropsSerializer = struct({
 	fee: asset,
@@ -21,14 +20,6 @@ export const contractCreateOperationPropsSerializer = struct({
 export const contractCallOperationPropsSerializer = struct({
 	...contractBaseOperationPropsSerializer.serializers,
 	callee: contractId,
-	extensions,
-});
-
-export const contractTransferOperationPropsSerializer = struct({
-	fee: asset,
-	from: contractId,
-	to: anyObjectId,
-	amount: asset,
 	extensions,
 });
 
@@ -56,5 +47,32 @@ export const contractUpdateOperationPropsSerializer = struct({
 	sender: accountId,
 	contract: contractId,
 	new_owner: optional(accountId),
+	extensions,
+});
+
+export const contractInternalCreateOperationPropsSerializer = struct({
+	fee: asset,
+	caller: contractId,
+	new_contract: contractId,
+	value: asset,
+	eth_accuracy: bool,
+	supported_asset_id: optional(assetId),
+	extensions,
+});
+
+export const contractInternalCallOperationPropsSerializer = struct({
+	fee: asset,
+	caller: contractId,
+	callee: accountId,
+	method: stringSerializer,
+	value: asset,
+	extensions,
+});
+
+export const contractSelfdestructOperationPropsSerializer = struct({
+	fee: asset,
+	contract: contractId,
+	recipient: accountId,
+	amounts: vector(asset),
 	extensions,
 });

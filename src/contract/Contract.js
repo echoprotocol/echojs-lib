@@ -1,16 +1,16 @@
+import { ok, notStrictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
-import { ok, notStrictEqual } from 'assert';
 
-import Echo, { echo as defaultEcho } from '../echo/index';
-import PrivateKey from '../crypto/private-key';
 import { OPERATIONS_IDS, PROTOCOL_OBJECT_TYPE_ID } from '../constants';
+import PrivateKey from '../crypto/private-key';
+import Echo, { echo as defaultEcho } from '../echo';
 
 import encode from './encoders';
+import decode from './decoders';
 import Method from './Method';
 import { getMethodHash, getSignature, checkAbiFormat } from './utils/solidity-utils';
 import { checkContractId } from './utils/validators';
-import { decode } from './decoders';
 
 /** @typedef {import("../../types/interfaces/Abi").Abi} Abi */
 /** @typedef {import("../../types/echo/transaction").OPERATION_RESULT_VARIANT} OPERATION_RESULT_VARIANT */
@@ -41,6 +41,7 @@ class Contract {
 
 		if (Buffer.isBuffer(code)) code = code.toString('hex');
 		else if (typeof code !== 'string') throw new Error('invalid code type');
+		if (code.startsWith('0x')) code = code.slice(2);
 		if (!(echo instanceof Echo)) throw new Error('echo is not instance of Echo class');
 		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
 		if (!options) options = {};
@@ -54,18 +55,17 @@ class Contract {
 			}
 		}
 		if (!options.value) options.value = {};
-		if (options.value.amount === undefined) options.value.amount = 0;
-		else {
-			// eslint-disable-next-line no-lonely-if
-			if (typeof options.value.amount === 'number') {
-				if (options.value.amount < 0) throw new Error('amount is negative');
-				if (Number.isSafeInteger(options.value.amount)) throw new Error('amount is not safe integer');
-			} else if (BigNumber.isBigNumber(options.value.amount)) {
-				options.value.amount = options.value.amount.toString(10);
-			} else if (typeof options.value.amount !== 'string') throw new Error('invalid amount type');
-			else if (/^(0|[1-9]\d*)$/.test(options.value.amount) === false) {
-				throw new Error('amount is not non-negative integer');
-			}
+		if (options.value.amount === undefined) {
+			options.value.amount = 0;
+		} else if (typeof options.value.amount === 'number') {
+			if (options.value.amount < 0) throw new Error('amount is negative');
+			if (Number.isSafeInteger(options.value.amount)) throw new Error('amount is not safe integer');
+		} else if (BigNumber.isBigNumber(options.value.amount)) {
+			options.value.amount = options.value.amount.toString(10);
+		} else if (typeof options.value.amount !== 'string') {
+			throw new Error('invalid amount type');
+		} else if (/^(0|[1-9]\d*)$/.test(options.value.amount) === false) {
+			throw new Error('amount is not non-negative integer');
 		}
 		if (!options.value.assetId) options.value.assetId = '1.3.0';
 		else if (typeof options.value.assetId !== 'string') throw new Error('assetId is not string');
@@ -91,7 +91,7 @@ class Contract {
 			value: { amount: options.value.amount, asset_id: options.value.assetId },
 		}).addSigner(privateKey).broadcast()
 			.then(async (res) => {
-			/** @type {import("../../types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
+				/** @type {import("../../types/echo/transaction").OPERATION_RESULT<OPERATION_RESULT_VARIANT.OBJECT>} */
 				const [, opResId] = res[0].trx.operation_results[0];
 				const execRes = await echo.api.getContractResult(opResId, true).then((result) => result[1].exec_res);
 				if (execRes.excepted !== 'None') throw execRes;

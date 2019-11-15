@@ -19,7 +19,6 @@ import {
 	isBytecode,
 	isRipemd160,
 	isPublicKey,
-	isVoteId,
 	isCommitteeMemberId,
 	isBitAssetId,
 	isDynamicAssetDataId,
@@ -28,6 +27,7 @@ import {
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
 } from '../utils/validators';
+import { solveRegistrationTask } from '../utils/pow-solver';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
@@ -174,7 +174,7 @@ import { PublicKey } from '../crypto';
 * 	 			extensions:Array
 * 	 		},
 * 	 		next_available_vote_id:Number,
-* 	 		active_committee_members:Array.<String>
+* 	 		active_committee_members:Array.<Array.<String>>
 *      }
 *  	} GlobalProperties */
 
@@ -264,7 +264,6 @@ import { PublicKey } from '../crypto';
 *  		recent_slots_filled:String,
 *  		dynamic_flags:Number,
 *  		last_irreversible_block_num:Number,
-*  		last_rand_quantity:String
 *  	}
 *  	} DynamicGlobalProperties */
 
@@ -290,6 +289,7 @@ import { PublicKey } from '../crypto';
 * 				network_fee_percentage:Number,
 * 				lifetime_referrer_fee_percentage:Number,
 * 				referrer_rewards_percentage:Number,
+*				active_delegate_share: Number,
 * 				name:String,
 * 				owner:{
 * 					weight_threshold:Number,
@@ -1782,82 +1782,6 @@ class API {
 	}
 
 	/**
-	 *  @method lookupVoteIds
-	 *
-	 *  @param  {Array<String>} votes
-	 *  @param  {Boolean} force
-	 *
-	 *  @return {
-	 *  	Promise.<Array.<Vote>>
-	 *  }
-	 */
-	async lookupVoteIds(votes, force = false) {
-		if (!isArray(votes)) throw new Error('Votes should be an array');
-		if (!votes.every((id) => isVoteId(id))) throw new Error('Votes should contain valid vote_id_type ids');
-
-		const { length } = votes;
-
-		const resultArray = new Array(length).fill(null);
-		let requestedObjectsKeys = [];
-
-		if (force) {
-			requestedObjectsKeys = votes;
-		} else {
-			for (let i = 0; i < length; i += 1) {
-				const key = votes[i];
-
-				const cacheValue = this.cache[CACHE_MAPS.OBJECTS_BY_VOTE_ID].get(key);
-
-				if (cacheValue) {
-					resultArray[i] = cacheValue.toJS();
-					continue;
-				}
-
-				requestedObjectsKeys.push(key);
-			}
-		}
-
-
-		let requestedObjects;
-
-		try {
-			requestedObjects = await this.wsApi.database.lookupVoteIds(requestedObjectsKeys);
-		} catch (error) {
-			throw error;
-		}
-
-		for (let i = 0; i < length; i += 1) {
-			if (resultArray[i]) continue;
-			const key = requestedObjectsKeys.shift();
-			let requestedObject = requestedObjects.shift();
-
-			if (!requestedObject) {
-				resultArray[i] = null;
-				continue;
-			}
-
-			requestedObject = new Map(requestedObject);
-			const id = requestedObject.get('id');
-
-			this.cache.setInMap(CACHE_MAPS.OBJECTS_BY_VOTE_ID, key, requestedObject)
-				.setInMap(CACHE_MAPS.OBJECTS_BY_ID, id, requestedObject);
-
-			if (requestedObject.has('committee_member_account')) {
-
-				const accountId = requestedObject.get('committee_member_account');
-
-				this.cache.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_ACCOUNT_ID, accountId, requestedObject)
-					.setInMap(CACHE_MAPS.COMMITTEE_MEMBERS_BY_COMMITTEE_MEMBER_ID, id, requestedObject);
-
-			}
-
-			resultArray[i] = requestedObject.toJS();
-		}
-
-		return resultArray;
-	}
-
-	/**
 	 *  @method getTransactionHex
 	 *
 	 *  @param  {Object} tr
@@ -1980,6 +1904,7 @@ class API {
 	 *  @method getContractLogs
 	 *
 	 *  @param  {String} contractId
+	 * 	@param  {Array<String>} topics
 	 *  @param  {Number} fromBlock
 	 *  @param  {Number} toBlock
 	 *
@@ -1987,13 +1912,14 @@ class API {
 	 *  	Promise.<Array.<ContractLogs>>
 	 *  }
 	 */
-	async getContractLogs(contractId, fromBlock, toBlock) {
+	async getContractLogs(contractId, topics, fromBlock, toBlock) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+		if (!isArray(topics)) throw new Error('topics should be a array');
 		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
 		if (!isUInt64(toBlock)) throw new Error('ToBlock should be a non negative integer');
 		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
 
-		return this.wsApi.database.getContractLogs(contractId, fromBlock, toBlock);
+		return this.wsApi.database.getContractLogs(contractId, topics, fromBlock, toBlock);
 	}
 
 	/**
@@ -2128,29 +2054,35 @@ class API {
 	}
 
 	/**
-	 *  @method registerAccount
-	 *
-	 *  @param  {String} name
-	 * 	@param  {String} activeKey
-	 * 	@param  {String} echoRandKey
-	 *  @param  {Function} wasBroadcastedCallback
-	 *
-	 *  @return {Promise.<null>}
+	 * @method registerAccount
+	 * @param {string} name
+	 * @param {string} activeKey
+	 * @param {string} echoRandKey
+	 * @param {() => any} wasBroadcastedCallback
+	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
 	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
+		const registrationTask = await this.wsApi.registration.requestRegistrationTask();
+		const { block_id: blockId, rand_num: randNum, difficulty } = registrationTask;
+		const nonce = await solveRegistrationTask(blockId, randNum, difficulty);
 		return new Promise(async (resolve, reject) => {
 			try {
-				await this.wsApi.registration.registerAccount((res) =>
-					resolve(res), name, activeKey, echoRandKey);
+				await this.wsApi.registration.submitRegistrationSolution(
+					(res) => resolve(res),
+					name,
+					activeKey,
+					echoRandKey,
+					nonce,
+					randNum,
+				);
 			} catch (error) {
 				reject(error);
 			}
 			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
 		});
-
 	}
 
 	/**
@@ -2505,6 +2437,30 @@ class API {
 			if (typeof wasBroadcastedCallback !== 'undefined') wasBroadcastedCallback();
 		});
 
+	}
+
+	/**
+	 *  @method getCommitteeFrozenBalance
+	 *
+	 * 	@param {String} committeeMemberIds
+	 *
+ 	 *  @return {*}
+	 */
+	getCommitteeFrozenBalance(committeeMemberId) {
+		if (!isCommitteeMemberId(committeeMemberId)) {
+			return Promise.reject(new Error('CommitteeMemberId should be valid committee id'));
+		}
+
+		return this.wsApi.database.getCommitteeFrozenBalance(committeeMemberId);
+	}
+
+	/**
+	 *  @method getRegistrar
+	 *
+ 	 *  @return {*}
+	 */
+	getRegistrar() {
+		return this.wsApi.registration.getRegistrar();
 	}
 
 	setOptions() { }

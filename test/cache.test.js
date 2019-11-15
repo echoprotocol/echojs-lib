@@ -82,7 +82,7 @@ describe('cache', () => {
             before(async () => {
                 await echo.connect(url, {
                     apis: [
-                        constants.WS_CONSTANTS.ChainApi.DATABASE_API
+                        constants.WS_CONSTANTS.CHAIN_API.DATABASE_API
                     ],
                     cache: {
                         isUsed: false,
@@ -136,7 +136,7 @@ describe('cache', () => {
             before(async () => {
                 await echo.connect(url, {
                     apis: [
-                        constants.WS_CONSTANTS.ChainApi.DATABASE_API
+                        constants.WS_CONSTANTS.CHAIN_API.DATABASE_API
                     ],
                     cache: {
                         isUsed: false,
@@ -180,7 +180,7 @@ describe('cache', () => {
             before(async () => {
                 await echo.connect(url, {
                     apis: [
-                        constants.WS_CONSTANTS.ChainApi.DATABASE_API
+                        constants.WS_CONSTANTS.CHAIN_API.DATABASE_API
                     ],
                     cache: {
                         isUsed: false,
@@ -247,7 +247,7 @@ describe('cache', () => {
             before(async () => {
                 await echo.connect(url, {
                     apis: [
-                        constants.WS_CONSTANTS.ChainApi.DATABASE_API
+                        constants.WS_CONSTANTS.CHAIN_API.DATABASE_API
                     ],
                     cache: {
                         isUsed: false,
@@ -286,7 +286,7 @@ describe('cache', () => {
             before(async () => {
                 await echo.connect(url, {
                     apis: [
-                        constants.WS_CONSTANTS.ChainApi.DATABASE_API
+                        constants.WS_CONSTANTS.CHAIN_API.DATABASE_API
                     ],
                     cache: {
                         isUsed: true,

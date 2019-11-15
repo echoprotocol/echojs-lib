@@ -7,6 +7,7 @@ import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
 import Committee from '../interfaces/Committee';
 import Vote from '../interfaces/Vote';
+import CommitteeFrozenBalance from '../interfaces/CommitteeFrozenBalance'
 import ContractLogs from '../interfaces/ContractLogs';
 import AccountHistory from '../interfaces/AccountHistory';
 import FullAccount from '../interfaces/FullAccount';
@@ -22,6 +23,8 @@ import BtcAddress from '../interfaces/BtcAddress';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
+import { signedTransaction } from '../serializers';
+import { committeeMemberId } from '../serializers/chain/id/protocol';
 
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
@@ -54,6 +57,7 @@ export default class Api {
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
+	getCommitteeFrozenBalance(committeeMemberId: string): Promise<Object>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
@@ -61,7 +65,7 @@ export default class Api {
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
-	getContractLogs(ontractId: string, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
+	getContractLogs(ontractId: string, topics: Array<string>, fromBlock: number, toBlock: number): Promise<Array<ContractLogs>>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
@@ -93,8 +97,14 @@ export default class Api {
 	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
 	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
-	lookupVoteIds(votes: Array<string>, force?: boolean): Promise<Array<Vote>>;
-	registerAccount(name: string, activeKey: string, echoRandKey: string, wasBroadcastedCallback?: () => any): Promise<null>
+
+	registerAccount(
+		name: string,
+		activeKey: string,
+		echoRandKey: string,
+		wasBroadcastedCallback?: () => any,
+	): Promise<[{ block_num: number, tx_id: string }]>;
+
 	requestRegistrationTask(): Promise<RegistrationTask>
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
