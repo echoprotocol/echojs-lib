@@ -1998,13 +1998,19 @@ class API {
 	 *  @method getContract
 	 *
 	 *  @param  {String} contractId
+	 *  @param {Boolean} force
 	 *
 	 *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
 	 */
-	getContract(contractId) {
+	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 
-		return this.wsApi.database.getContract(contractId);
+		return this._getSingleDataWithMultiSave(
+			contractId,
+			CACHE_MAPS.CONTRACT_OBJECT_BY_CONTRACT_ID,
+			'getContract',
+			force,
+		);
 	}
 
 	/**
