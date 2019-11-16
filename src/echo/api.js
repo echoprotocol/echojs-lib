@@ -2463,6 +2463,24 @@ class API {
 		return this.wsApi.registration.getRegistrar();
 	}
 
+	/**
+	 *  @method getConnectedPeers
+	 *
+	 *  @return {*}
+	 */
+	getConnectedPeers() {
+		return this.wsApi.networkNode.getConnectedPeers();
+	}
+
+	/**
+	 *  @method getPotentialPeers
+	 *
+	 *  @return {*}
+	 */
+	getPotentialPeers() {
+		return this.wsApi.networkNode.getPotentialPeers();
+	}
+
 	setOptions() { }
 
 }
