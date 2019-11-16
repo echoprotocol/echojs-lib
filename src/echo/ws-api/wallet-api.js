@@ -818,7 +818,7 @@ class WalletAPI {
 			string.toRaw(caller),
 			string.toRaw(amount),
 			string.toRaw(assetType),
-			string.toRaw('7ddd0029'),
+			string.toRaw(codeOfTheContract),
 		]]);
 	}
 
