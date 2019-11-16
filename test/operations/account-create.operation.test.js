@@ -18,7 +18,7 @@ describe('account create operation', () => {
 
 	after(() => echo.disconnect());
 
-	it('account create successful', async () => {
+	it.skip('account create successful', async () => {
 		const edKeyPair = ED25519.createKeyPair();
 		const prKey = PrivateKey.fromBuffer(edKeyPair.privateKey);
 		const publicKey = prKey.toPublicKey().toPublicKeyString();

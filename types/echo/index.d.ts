@@ -7,9 +7,11 @@ import ChainApi from "../interfaces/ChainApi";
 export interface EchoOptions {
 	cache?: CacheOptions;
 	apis?: ChainApi[];
+	debug?: boolean;
 }
 
 export default class Echo {
+	public readonly isConnected: boolean;
 	public readonly subscriber: Subscriber;
 	public readonly apis: ReadonlySet<string>;
 	api: Api;

@@ -12,7 +12,7 @@ describe('sidechain btc', () => {
 
 	let btcAddressId;	
 
-	describe('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
+	describe.skip('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
 		it('should create address', async () => {
 
 			const transaction = echo.createTransaction();
@@ -30,7 +30,7 @@ describe('sidechain btc', () => {
 		}).timeout(50000);
 	});
 
-	describe('when we broadcast SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT operation', () => {
+	describe.skip('when we broadcast SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT operation', () => {
 
 		it('should create intermediate deposit', async () => {
 			const txInfo = {
@@ -58,7 +58,7 @@ describe('sidechain btc', () => {
 		}).timeout(50000);
 	})
 
-	describe('when we broadcast SIDECHAIN_BTC_DEPOSIT operation', () => {
+	describe.skip('when we broadcast SIDECHAIN_BTC_DEPOSIT operation', () => {
 		it('should create deposit', async () => {
 			const txInfo = {
 				block_number: 10,
@@ -85,7 +85,7 @@ describe('sidechain btc', () => {
 		}).timeout(50000);
 	});
 
-	describe('when we broadcast SIDECHAIN_BTC_AGGREGATE operation', () => {
+	describe.skip('when we broadcast SIDECHAIN_BTC_AGGREGATE operation', () => {
 		it('should throw an error sma_out > fee', async () => {
 			const deposits = new Set();
 			const withdrawals = new Set();
@@ -104,6 +104,7 @@ describe('sidechain btc', () => {
 					address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k'
 				},
 				committee_member_ids_in_script: committeeMemberIdsInScript,
+				cpfp_depth: 0,
 				signatures
 			});
 

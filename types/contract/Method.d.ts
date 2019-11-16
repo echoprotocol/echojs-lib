@@ -13,7 +13,7 @@ declare class Method<T = any, TEvents = { [eventName: string]: { [field: string]
 
 	call(options?: {
 		contractId?: string,
-		assetId?: string,
+		asset?: { asset_id: string, amount: number | string | BigNumber },
 		accountId?: string,
 		echo?: Echo,
 	}): Promise<T>;

@@ -1,4 +1,6 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
+import { ok } from 'assert';
+import BigNumber from 'bignumber.js';
 import { Map, List, fromJS } from 'immutable';
 
 import {
@@ -16,7 +18,6 @@ import {
 	isContractId,
 	isOperationHistoryId,
 	isContractResultId,
-	isBytecode,
 	isRipemd160,
 	isPublicKey,
 	isCommitteeMemberId,
@@ -26,15 +27,20 @@ import {
 	isOperationId,
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
+	isUInt32,
+	isObject,
+	isInt64,
+	validateSidechainType,
 } from '../utils/validators';
 import { solveRegistrationTask } from '../utils/pow-solver';
 
-/** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation } from '../serializers';
+import { transaction, signedTransaction, operation, basic } from '../serializers';
 import { PublicKey } from '../crypto';
+
+/** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
 
 /** @typedef {
 *	{
@@ -173,7 +179,6 @@ import { PublicKey } from '../crypto';
 * 	 			},
 * 	 			extensions:Array
 * 	 		},
-* 	 		next_available_vote_id:Number,
 * 	 		active_committee_members:Array.<Array.<String>>
 *      }
 *  	} GlobalProperties */
@@ -1130,6 +1135,30 @@ class API {
 	}
 
 	/**
+	 * @method getAccountDeposits
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountDeposits(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		validateSidechainType(type);
+		return this.wsApi.database.getAccountDeposits(account, type);
+	}
+
+	/**
+	 * @method getAccountWithdrawals
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountWithdrawals(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		validateSidechainType(type);
+		return this.wsApi.database.getAccountWithdrawals(account, type);
+	}
+
+	/**
 	 *  @method getFullAccounts
 	 *  @param  {Array<String>} accountNamesOrIds
 	 *  @param  {Boolean} subscribe
@@ -1901,25 +1930,48 @@ class API {
 	}
 
 	/**
-	 *  @method getContractLogs
-	 *
-	 *  @param  {String} contractId
-	 * 	@param  {Array<String>} topics
-	 *  @param  {Number} fromBlock
-	 *  @param  {Number} toBlock
-	 *
-	 *  @return {
-	 *  	Promise.<Array.<ContractLogs>>
-	 *  }
+	 * @param {Object} [opts]
+	 * @param {string[]} [opts.contracts]
+	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
+	 * @param {number | BigNumber} [opts.fromBlock]
+	 * @param {number | BigNumber} [opts.toBlock]
+	 * @returns {Promise<unknown[]>}
 	 */
-	async getContractLogs(contractId, topics, fromBlock, toBlock) {
-		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isArray(topics)) throw new Error('topics should be a array');
-		if (!isUInt64(fromBlock)) throw new Error('FromBlock should be a non negative integer');
-		if (!isUInt64(toBlock)) throw new Error('ToBlock should be a non negative integer');
-		if (fromBlock > toBlock) throw new Error('FromBlock should be less then toBlock');
-
-		return this.wsApi.database.getContractLogs(contractId, topics, fromBlock, toBlock);
+	async getContractLogs(opts = {}) {
+		if (opts.contracts !== undefined) {
+			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
+			for (const contractId of opts.contracts) ok(isContractId(contractId));
+		}
+		/** @type {typeof opts["topics"]} */
+		let topics;
+		if (opts.topics !== undefined) {
+			ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			topics = new Array(opts.topics.length).fill(null);
+			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
+				let topicVariants = opts.topics[topicIndex];
+				if (topicVariants === null) topicVariants = [];
+				else if (typeof topicVariants === 'string') topicVariants = [topicVariants];
+				topics[topicIndex] = new Array(topicVariants.length).fill(null);
+				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
+					let variant = topicVariants[variantIndex];
+					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
+					ok(typeof variant === 'string', 'invalid "topic" option type');
+					if (variant.startsWith('0x')) variant = variant.slice(2);
+					ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
+					ok(variant.length === 64, 'invalid "topic" length');
+					topics[topicIndex][variantIndex] = variant;
+				}
+			}
+		}
+		for (const field of ['fromBlock', 'toBlock']) {
+			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
+		}
+		return this.wsApi.database.getContractLogs({
+			contracts: opts.contracts,
+			topics,
+			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
+			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+		});
 	}
 
 	/**
@@ -1946,33 +1998,37 @@ class API {
 	 *  @method getContract
 	 *
 	 *  @param  {String} contractId
+	 *  @param {Boolean} force
 	 *
 	 *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
 	 */
-	getContract(contractId) {
+	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 
-		return this.wsApi.database.getContract(contractId);
+		return this._getSingleDataWithMultiSave(
+			contractId,
+			CACHE_MAPS.CONTRACT_OBJECT_BY_CONTRACT_ID,
+			'getContract',
+			force,
+		);
 	}
 
 	/**
-	 *  @method callContractNoChangingState
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {String} accountId
-	 *  @param  {String} assetId
-	 *  @param  {String} bytecode
-	 *
-	 *  @return {Promise<String>}
+	 * @method callContractNoChangingState
+	 * @param {string} contractId
+	 * @param {string} caller
+	 * @param {{ amount: number | string, asset_id: string }} asset
+	 * @param {string} code
+	 * @return {Promise<string>}
 	 */
-	async callContractNoChangingState(contractId, accountId, assetId, bytecode) {
+	async callContractNoChangingState(contractId, caller, asset, code) {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
-		if (!isAccountId(accountId)) throw new Error('AccountId is invalid');
-		if (!isAssetId(assetId)) throw new Error('AssetId is invalid');
-		if (!isBytecode(bytecode)) throw new Error('Bytecode is invalid');
-
-		return this.wsApi.database
-			.callContractNoChangingState(contractId, accountId, assetId, bytecode);
+		if (!isAccountId(caller) && !isContractId(caller)) throw new Error('Caller is invalid');
+		if (!isObject(asset)) throw new Error('Asset is not an object');
+		if (!isInt64(asset.amount)) throw new Error('Asset amount is not int64');
+		if (!isAssetId(asset.asset_id)) throw new Error('Invalid asset id');
+		if (!/^([\da-fA-F]{2})*$/.test(code)) throw new Error('Bytecode is invalid');
+		return this.wsApi.database.callContractNoChangingState(contractId, caller, asset, code);
 	}
 
 	/**
@@ -2362,6 +2418,15 @@ class API {
 	}
 
 	/**
+	 * @method getBlockRewards
+	 * @param {typeof uint32["__TInput__"]} blockNum
+	 * @returns {Promise<unknown>}
+	 */
+	getBlockRewards(blockNum) {
+		return this.wsApi.database.getBlockRewards(basic.integers.uint32.toRaw(blockNum));
+	}
+
+	/**
 	 *
 	 * @param {Number} blockNum
 	 * @return {*}
@@ -2388,10 +2453,10 @@ class API {
 	 * @param {String} accountId
 	 * @return {*}
 	 */
-	getBtcAddresses(accountId) {
+	getBtcAddress(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
-		return this.wsApi.database.getBtcAddresses(accountId);
+		return this.wsApi.database.getBtcAddress(accountId);
 	}
 
 	/**
