@@ -8,6 +8,7 @@ import * as PROTOCOL_OBJECT_TYPE_ID from './object-types';
 import * as OPERATIONS_IDS from './operations-ids';
 import * as WS_CONSTANTS from './ws-constants';
 import * as protocol from './protocol';
+import * as NET from './net';
 
 export const START_OPERATION_ID = `1.${PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY}.0`;
 export const CORE_ASSET_ID = `1.${PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
@@ -42,6 +43,7 @@ export {
 	PROTOCOL_OBJECT_TYPE_ID,
 	WS_CONSTANTS,
 	protocol,
+	NET,
 };
 
 export const AMOUNT_MAX_NUMBER = new BigNumber(2).pow(63).minus(1);

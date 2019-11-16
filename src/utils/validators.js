@@ -349,3 +349,8 @@ export const isValidAmount = (v) => {
 	return integer.times(1e12).lt(ECHO_MAX_SHARE_SUPPLY) && amountRegex.test(v);
 };
 
+/** @param {string} v */
+export function validateSidechainType(v) {
+	if (typeof v !== 'string') throw new Error('Type is not a string');
+	if (!['', 'eth', 'btc'].includes(v)) throw new Error(`Unsupported withdrawal type "${v}"`);
+}

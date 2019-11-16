@@ -111,7 +111,7 @@ try {
 <dd></dd>
 <dt><a href="#getContract">getContract(contractId, force)</a> ⇒ <code>Promise.&lt;[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]&gt;</code></dt>
 <dd></dd>
-<dt><a href="#callContractNoChangingState">callContractNoChangingState(contractId, accountId, assetId, bytecode)</a> ⇒ <code>Promise.&lt;String&gt;</code></dt>
+<dt><a href="#callContractNoChangingState">callContractNoChangingState(contractId, caller, asset, code)</a> ⇒ <code>Promise.&lt;String&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContracts">getContracts(contractIds, force)</a> ⇒ <code>Promise.&lt;Array.&lt;{id:String, statistics:String, suicided:Boolean}&gt;&gt;</code></dt>
 <dd></dd>
@@ -659,15 +659,15 @@ try {
 
 <a name="callContractNoChangingState"></a>
 
-## callContractNoChangingState(contractId, accountId, assetId, bytecode) ⇒ <code>Promise.&lt;String&gt;</code>
+## callContractNoChangingState(contractId, caller, asset, code) ⇒ <code>Promise.&lt;String&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | contractId | <code>String</code> | [Id of the contract to call] |
-| accountId | <code>String</code> | [Id of the account for which the call will being simulated] |
-| assetId | <code>String</code> | [Id of the asset with which the call will being simulated] |
-| bytecode | <code>String</code> | [The bytecode of the method to call] |
+| caller | <code>String</code> | [Id of the account or contract for which the call will being simulated] |
+| asset | <code>{ asset_id: string, amount: number | string | BigNumber }</code> | [Asset with which the call will being simulated] |
+| code | <code>String</code> | [The code of the method to call] |
 
 <a name="getContracts"></a>
 
@@ -1056,7 +1056,6 @@ try {
        },
        extensions:Array
    },
-   next_available_vote_id:Number,
    active_committee_members:Array.<Array<String>>,
 }
 ```

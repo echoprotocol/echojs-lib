@@ -910,7 +910,7 @@ class Subscriber extends EventEmitter {
 			(async () => {
 				const [contractId, topics] = topicsItem;
 				if (fromBlock) {
-					const logs = await this._wsApi.database.getContractLogs(
+					const logs = await this._wsApi.database.getContractLog(
 						contractId,
 						topics,
 						fromBlock,
