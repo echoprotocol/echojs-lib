@@ -20,7 +20,6 @@ export const proposalUpdateOperationPropsSerializer = struct({
 	proposal: proposalId,
 	active_approvals_to_add: set(accountId),
 	active_approvals_to_remove: set(accountId),
-	owner_approvals_to_remove: set(accountId),
 	key_approvals_to_add: set(publicKey),
 	key_approvals_to_remove: set(publicKey),
 	extensions,

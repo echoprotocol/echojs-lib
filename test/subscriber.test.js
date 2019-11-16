@@ -2,11 +2,11 @@ import { ok, deepStrictEqual, strictEqual } from 'assert';
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
 
-import { url } from './_test-data';
+import { url, accountId, privateKey } from './_test-data';
 import { shouldReject } from './_test-utils';
-import { Echo } from '../src';
+import { Echo, OPERATIONS_IDS, constants } from '..';
 
-import { BASE, ACCOUNT, ASSET, CONTRACT } from '../src/constants/object-types';
+import { ACCOUNT, CONTRACT } from '../src/constants/object-types';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../src/constants/chain-types';
 
 chai.use(spies);
@@ -85,230 +85,247 @@ describe('SUBSCRIBER', () => {
 	let echo = new Echo();
 
 	describe('echorand', () => {
-        describe('setEchorandSubscribe', () => {
-            it('is not a function', async () => {
-                try {
-					await echo.connect(
-						url,
-						{
-							apis: [
-								'database',
-								'network_broadcast',
-								'history',
-								'registration',
-								'asset',
-								'login',
-								'network_node',
-							],
-						},
-					);
-                    await echo.subscriber.setEchorandSubscribe(1);
-                } catch (err) {
-                    expect(err.message).to.equal('Callback is not a function');
-                }
-            });
+		describe('setEchorandSubscribe', () => {
+			it('is not a function', async () => {
+				try {
+					await echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS });
+					await echo.subscriber.setEchorandSubscribe(1);
+				} catch (err) {
+					expect(err.message).to.equal('Callback is not a function');
+				}
+			});
 
-            it.skip('reconnect', (done) => {
-                let isCalled = false;
-                let isReconnected = false;
+			it.skip('reconnect', (done) => {
+				let isCalled = false;
+				let isReconnected = false;
 
-                echo.subscriber.setEchorandSubscribe((result) => {
-                    if (!isCalled && isReconnected) {
-                        done();
-                        isCalled = true;
-                    }
-                }).then(() => echo.reconnect()).then(() => {
-                    isReconnected = true;
-                });
-            }).timeout(30 * 1000);
+				echo.subscriber.setEchorandSubscribe((result) => {
+					if (!isCalled && isReconnected) {
+						done();
+						isCalled = true;
+					}
+				}).then(() => echo.reconnect()).then(() => {
+					isReconnected = true;
+				});
+			}).timeout(30 * 1000);
 
 
-            it('test', (done) => {
-                let isCalled = false;
+			it('test', async () => {
+				let emitted = false;
+				let onEmit;
+				const onceEmitted = new Promise((resolve) => onEmit = resolve);
+				echo.subscriber.setEchorandSubscribe((result) => {
+					expect(result).to.be.an('array').that.is.not.empty;
+					expect(result[0]).to.be.an('object').that.is.not.empty;
+					expect(result[0].type).to.be.a('string');
+					expect(result[0].round).to.be.a('number');
+					if (!emitted) {
+						onEmit();
+						emitted = true;
+					}
+				});
+				await echo.createTransaction().addOperation(OPERATIONS_IDS.TRANSFER, {
+					amount: { asset_id: '1.3.0', amount: 1 },
+					extensions: [],
+					from: accountId,
+					to: '1.2.11',
+				}).addSigner(privateKey).broadcast();
+				await onceEmitted;
+			}).timeout(30 * 1000);
 
-			echo.subscriber.setEchorandSubscribe((result) => {
-				expect(result).to.be.an('array').that.is.not.empty;
-				expect(result[0]).to.be.an('object').that.is.not.empty;
-				expect(result[0].type).to.be.a('string');
-				expect(result[0].round).to.be.a('number');
+		});
 
-                    if (!isCalled) {
-                        done();
-                        isCalled = true;
-                    }
-                });
-            }).timeout(30 * 1000);
-
-        });
-
-        describe('removeEchorandSubscribe', () => {
-            it('test', async () => {
-                const callback = () => {};
-                await echo.subscriber.setEchorandSubscribe(callback);
-                echo.subscriber.removeEchorandSubscribe(callback);
-            });
-        });
+		describe('removeEchorandSubscribe', () => {
+			it('test', async () => {
+				const callback = () => {};
+				await echo.subscriber.setEchorandSubscribe(callback);
+				echo.subscriber.removeEchorandSubscribe(callback);
+			});
+		});
 	});
 
-    describe('block', () => {
-        describe('setBlockApplySubscribe', () => {
-            it('is not a function', async () => {
-                try {
-                    await echo.subscriber.setBlockApplySubscribe(1);
-                } catch (err) {
-                    expect(err.message).to.equal('Callback is not a function');
-                }
-            });
+	describe('block', () => {
+		describe('setBlockApplySubscribe', () => {
+			const accountToTransfer = '1.2.11';
+			before(async function () {
+				this.timeout(30e3);
+				ok(accountToTransfer !== accountId);
+				if (!echo.isConnected) await echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS });
+			});
 
-            it.skip('reconnect', (done) => {
-                let isCalled = false;
-                let isReconnected = false;
+			it('is not a function', async () => {
+				try {
+					await echo.subscriber.setBlockApplySubscribe(1);
+				} catch (err) {
+					expect(err.message).to.equal('Callback is not a function');
+				}
+			});
 
-                echo.subscriber.setBlockApplySubscribe(() => {
-                    if (!isCalled && isReconnected) {
-                        done();
-                        isCalled = true;
-                    }
-                }).then(() => echo.reconnect()).then(() => {
-                    isReconnected = true;
-                });
-            }).timeout(30 * 1000);
+			it.skip('reconnect', (done) => {
+				let isCalled = false;
+				let isReconnected = false;
+
+				echo.subscriber.setBlockApplySubscribe(() => {
+					if (!isCalled && isReconnected) {
+						done();
+						isCalled = true;
+					}
+				}).then(() => echo.reconnect()).then(() => {
+					isReconnected = true;
+				});
+			}).timeout(30 * 1000);
 
 
-            it('test', (done) => {
-                let isCalled = false;
+			it('test', async () => {
+				let emitted = false;
+				let onInited;
+				const onceEmitted = new Promise((resolve) => onInited = resolve);
 
-                echo.subscriber.setBlockApplySubscribe((result) => {
-                    expect(result).to.be.an('array').that.is.not.empty;
-                    expect(result[0]).to.be.an('string').that.is.not.empty;
+				echo.subscriber.setBlockApplySubscribe((result) => {
+					expect(result).to.be.an('array').that.is.not.empty;
+					expect(result[0]).to.be.an('string').that.is.not.empty;
 
-                    if (!isCalled) {
-                        done();
-                        isCalled = true;
-                    }
-                });
-            }).timeout(30 * 1000);
+					if (!emitted) {
+						emitted = true;
+						onInited();
+					}
+				});
+				// create transaction to trigger block producing
+				await echo.createTransaction().addOperation(OPERATIONS_IDS.TRANSFER, {
+					amount: { asset_id: '1.3.0', amount: 1 },
+					extensions: [],
+					from: accountId,
+					to: accountToTransfer,
+				}).addSigner(privateKey).broadcast();
+				await onceEmitted;
+			}).timeout(30 * 1000);
 
-        });
+		});
 
-        describe('removeBlockApplySubscribe', () => {
-            it('test', async () => {
-                const callback = () => {};
-                await echo.subscriber.setBlockApplySubscribe(callback);
-                echo.subscriber.removeBlockApplySubscribe(callback);
-            });
-        });
+		describe('removeBlockApplySubscribe', () => {
+			it('test', async () => {
+				const callback = () => {};
+				await echo.subscriber.setBlockApplySubscribe(callback);
+				echo.subscriber.removeBlockApplySubscribe(callback);
+			});
+		});
 	});
 
-    describe('account', () => {
-        describe('setAccountSubscribe', () => {
-            it('is not a function', async () => {
-                try {
-                    await echo.subscriber.setBlockApplySubscribe(1);
-                } catch (err) {
-                    expect(err.message).to.equal('Callback is not a function');
-                }
-            });
+	describe('account', () => {
+		describe('setAccountSubscribe', () => {
+			it('is not a function', async () => {
+				try {
+					await echo.subscriber.setBlockApplySubscribe(1);
+				} catch (err) {
+					expect(err.message).to.equal('Callback is not a function');
+				}
+			});
 
-            it('accounts should be an array', async () => {
-                try {
-                    const callback = () => {};
-                    await echo.subscriber.setAccountSubscribe(callback, 1);
-                } catch (err) {
-                    expect(err.message).to.equal('Accounts should be an array');
-                }
-            });
+			it('accounts should be an array', async () => {
+				try {
+					const callback = () => {};
+					await echo.subscriber.setAccountSubscribe(callback, 1);
+				} catch (err) {
+					expect(err.message).to.equal('Accounts should be an array');
+				}
+			});
 
-            it('accounts length should be more then 0', async () => {
-                try {
-                    const callback = () => {};
-                    const accounts = [];
-                    await echo.subscriber.setAccountSubscribe(callback, accounts);
-                } catch (err) {
-                    expect(err.message).to.equal('Accounts length should be more then 0');
-                }
-            });
+			it('accounts length should be more then 0', async () => {
+				try {
+					const callback = () => {};
+					const accounts = [];
+					await echo.subscriber.setAccountSubscribe(callback, accounts);
+				} catch (err) {
+					expect(err.message).to.equal('Accounts length should be more then 0');
+				}
+			});
 
-            it('accounts should contain valid account ids', async () => {
-                try {
-                    const callback = () => {};
-                    const accounts = [1];
-                    await echo.subscriber.setAccountSubscribe(callback, accounts);
-                } catch (err) {
-                    expect(err.message).to.equal('Accounts should contain valid account ids');
-                }
-            });
+			it('accounts should contain valid account ids', async () => {
+				try {
+					const callback = () => {};
+					const accounts = [1];
+					await echo.subscriber.setAccountSubscribe(callback, accounts);
+				} catch (err) {
+					expect(err.message).to.equal('Accounts should contain valid account ids');
+				}
+			});
 
-            it.skip('reconnect', (done) => {
-                let isCalled = false;
-                let isReconnected = false;
+			it.skip('reconnect', (done) => {
+				let isCalled = false;
+				let isReconnected = false;
 
-                echo.subscriber.setAccountSubscribe(() => {
-                    if (!isCalled && isReconnected) {
-                        done();
-                        isCalled = true;
-                    }
-                }, [`1.${ACCOUNT}.1`]).then(() => echo.reconnect()).then(() => {
-                    isReconnected = true;
-                });
-            }).timeout(30 * 1000);
+				echo.subscriber.setAccountSubscribe(() => {
+					if (!isCalled && isReconnected) {
+						done();
+						isCalled = true;
+					}
+				}, [`1.${ACCOUNT}.1`]).then(() => echo.reconnect()).then(() => {
+					isReconnected = true;
+				});
+			}).timeout(30 * 1000);
 
 
-            it.skip('test', (done) => {
-                let isCalled = false;
+			it.skip('test', (done) => {
+				let isCalled = false;
 
-                echo.subscriber.setAccountSubscribe((result) => {
-                    expect(result).to.be.an('object').that.is.not.empty;
+				echo.subscriber.setAccountSubscribe((result) => {
+					expect(result).to.be.an('object').that.is.not.empty;
 
-                    if (!isCalled) {
-                        done();
-                        isCalled = true;
-                    }
-                }, [`1.${ACCOUNT}.16`]);
-            }).timeout(300 * 1000);
+					if (!isCalled) {
+						done();
+						isCalled = true;
+					}
+				}, [`1.${ACCOUNT}.16`]);
+			}).timeout(300 * 1000);
 
-        });
+		});
 
-        describe('removeAccountSubscribe', () => {
-            it('test', async () => {
-                const callback = () => {};
-                await echo.subscriber.setAccountSubscribe(callback, [`1.${ACCOUNT}.1`]);
-                echo.subscriber.removeAccountSubscribe(callback);
-            });
-        });
+		describe('removeAccountSubscribe', () => {
+			it('test', async () => {
+				const callback = () => {};
+				await echo.subscriber.setAccountSubscribe(callback, [`1.${ACCOUNT}.1`]);
+				echo.subscriber.removeAccountSubscribe(callback);
+			});
+		});
 	});
 
-    describe('global', () => {
-        describe('setGlobalSubscribe', () => {
-            it('test', (done) => {
-                let isCalled = false;
+	describe('global', () => {
+		describe('setGlobalSubscribe', () => {
+			it('test', async () => {
+				let emitted = false;
+				let onEmit;
+				const onceEmitted = new Promise((resolve) => onEmit = resolve);
+				echo.subscriber.setGlobalSubscribe((result) => {
+					if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`) {
+						expect(result).to.be.an('array').that.is.not.empty;
+						expect(result[0]).to.be.an('object').that.is.not.empty;
+						expect(result[0].id).to.be.a('string');
+						expect(result[0].head_block_number).to.be.a('number');
 
-                echo.api.getObjects([`2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`]);
+						if (!emitted) {
+							emitted = true;
+							onEmit();
+						}
+					}
+				});
+				await echo.createTransaction().addOperation(OPERATIONS_IDS.TRANSFER, {
+					amount: { amount: 1, asset_id: '1.3.0' },
+					extensions: [],
+					from: accountId,
+					to: '1.2.11',
+				}).addSigner(privateKey).broadcast();
+				await onceEmitted;
+			}).timeout(30 * 1000);
+		});
 
-                echo.subscriber.setGlobalSubscribe((result) => {
-                    if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`) {
-                        expect(result).to.be.an('array').that.is.not.empty;
-                        expect(result[0]).to.be.an('object').that.is.not.empty;
-                        expect(result[0].id).to.be.a('string');
-                        expect(result[0].head_block_number).to.be.a('number');
-
-                        if (!isCalled) {
-                            done();
-                            isCalled = true;
-                        }
-                    }
-                });
-            }).timeout(30 * 1000);
-        });
-
-        describe('removeGlobalSubscribe', () => {
-            it('test', async () => {
-                const callback = () => {};
-                await echo.subscriber.setGlobalSubscribe(callback);
-                echo.subscriber.removeGlobalSubscribe(callback);
-            });
-        });
-    });
+		describe('removeGlobalSubscribe', () => {
+			it('test', async () => {
+				const callback = () => {};
+				await echo.subscriber.setGlobalSubscribe(callback);
+				echo.subscriber.removeGlobalSubscribe(callback);
+			});
+		});
+	});
 
 
 	describe('setPendingTransactionSubscribe', () => {
@@ -402,23 +419,23 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-    describe('setContractSubscribe', () => {
-        it('test', async () => {
-            await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], () => {});
-            expect(echo.subscriber.subscribers.contract.length).to.equal(1);
-        });
-    });
+	describe('setContractSubscribe', () => {
+		it('test', async () => {
+			await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], () => {});
+			expect(echo.subscriber.subscribers.contract.length).to.equal(1);
+		});
+	});
 
-    describe('removeContractSubscribe', () => {
-        it('test', async () => {
-            const callback = () => {};
-            await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], callback);
+	describe('removeContractSubscribe', () => {
+		it('test', async () => {
+			const callback = () => {};
+			await echo.subscriber.setContractSubscribe([`1.${CONTRACT}.23`], callback);
 
-            const { length } = echo.subscriber.subscribers.contract;
-            await echo.subscriber.removeContractSubscribe(callback);
-            expect(echo.subscriber.subscribers.contract.length).to.equal(length - 1);
-        });
-    });
+			const { length } = echo.subscriber.subscribers.contract;
+			await echo.subscriber.removeContractSubscribe(callback);
+			expect(echo.subscriber.subscribers.contract.length).to.equal(length - 1);
+		});
+	});
 
 	describe('setContractLogsSubscribe', () => {
 		it('test', async () => {

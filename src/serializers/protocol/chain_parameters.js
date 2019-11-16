@@ -15,12 +15,7 @@ const chainParametersSerializer = struct({
 	maximum_proposal_lifetime: uint32,
 	maximum_asset_whitelist_authorities: uint8,
 	maximum_asset_feed_publishers: uint8,
-	maximum_committee_count: uint16,
 	maximum_authority_membership: uint16,
-	reserve_percent_of_fee: uint16,
-	network_percent_of_fee: uint16,
-	committee_pay_vesting_seconds: uint32,
-	max_predicate_opcode: uint16,
 	accounts_per_fee_scale: uint16,
 	account_fee_scale_bitshifts: uint8,
 	max_authority_depth: uint8,
@@ -32,6 +27,7 @@ const chainParametersSerializer = struct({
 	committee_frozen_balance_to_activate: uint64,
 	committee_maintenance_intervals_to_deposit: uint64,
 	committee_freeze_duration_seconds: uint32,
+	x86_64_maximum_contract_size: uint64,
 	extensions,
 });
 
