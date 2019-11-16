@@ -24,7 +24,11 @@ import {
 
 const { ethAddress, accountListing } = serializers.protocol;
 const { vector, optional } = serializers.collections;
-const { privateKey, publicKey, ripemd160 } = serializers.chain;
+const {
+	privateKey,
+	publicKey,
+	ripemd160,
+} = serializers.chain;
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { priceFeed } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
@@ -796,13 +800,14 @@ class WalletAPI {
 	/**
 	 * Call a contract. Same as `callContract` method but doesn't change the state.
 	 * @param {string} idOfContract the id of the contract to call
-	 * @param {string} accountIdOrName name of the account calling the contract
-	 * @param {string} assetType the type of the asset transferred to the contract
+	 * @param {string} caller contract id or account name or id calling the contract
+	 * @param {string} amount amount in ECHO. 1 ECHO is 100000000
+	 * @param {string} assetType the type of the asset transfered to the contract
 	 * @param {string} codeOfTheContract the hash of the method to call
 	 * @returns {Promise<string>}
 	 */
-	callContractNoChangingState(idOfContract, accountIdOrName, assetType, codeOfTheContract) {
-		if (!isAccountIdOrName(accountIdOrName)) {
+	callContractNoChangingState(idOfContract, caller, amount, assetType, codeOfTheContract) {
+		if (!isAccountIdOrName(caller)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isContractCode(codeOfTheContract)) {
@@ -810,8 +815,9 @@ class WalletAPI {
 		}
 		return this.wsRpc.call([0, 'call_contract_no_changing_state', [
 			contractId.toRaw(idOfContract),
-			string.toRaw(accountIdOrName),
-			assetId.toRaw(assetType),
+			string.toRaw(caller),
+			string.toRaw(amount),
+			string.toRaw(assetType),
 			string.toRaw(codeOfTheContract),
 		]]);
 	}
@@ -844,10 +850,11 @@ class WalletAPI {
 	/**
 	 * Returns all approved deposits, for the given account id.
 	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {"" | "eth" | "bts"} type the type of the deposits may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public deposits data stored in the blockchain
 	 */
-	getAccountDeposits(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount)]]);
+	getAccountDeposits(idOfAccount, type) {
+		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount), type]]);
 	}
 
 	/**
@@ -985,10 +992,11 @@ class WalletAPI {
 	/**
 	 * Returns all approved withdrawals, for the given account id.
 	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {"" | "eth" | "bts"} type the type of the withdrawals may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public withdrawals data stored in the blockchain
 	 */
-	getAccountWithdrawals(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
+	getAccountWithdrawals(idOfAccount, type) {
+		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount), type]]);
 	}
 
 	/**
@@ -1646,14 +1654,14 @@ class WalletAPI {
 	}
 
 	/**
-	 * @method getBtcAddresses
+	 * @method getBtcAddress
 	 * @param {String} accountId
 	 * @returns {Promise<Array>}
 	 */
-	getBtcAddresses(accountIdValue) {
+	getBtcAddress(accountIdValue) {
 		if (!isAccountId(accountIdValue)) throw new Error('account should be valid');
 
-		return this.wsRpc.call([0, 'get_btc_addresses', [accountIdValue]]);
+		return this.wsRpc.call([0, 'get_btc_address', [accountIdValue]]);
 	}
 
 	/**
@@ -1837,25 +1845,20 @@ class WalletAPI {
 	/**
 	 * @method updateCommitteeMember
 	 * @param {String} ownerAccount
-	 * @param {String} committeeMember
 	 * @param {String} newUrl
 	 * @param {String} newEthAddress
 	 * @param {String} newBtcPublicKey
 	 * @param {Boolean} broadcast
 	 * @returns {Promise<SignedTransaction>}
 	 */
-	updateCommitteeMember(ownerAccount, committeeMember, newUrl, newEthAddress, newBtcPublicKey, broadcast = false) {
+	updateCommitteeMember(ownerAccount, newUrl, newEthAddress, newBtcPublicKey, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isCommitteeMemberId(committeeMember)) {
-			return Promise.reject(new Error('Invalid committee member id'));
-		}
 		if (newUrl && !validateUrl(newUrl) && newUrl !== '') {
 			return Promise.reject(new Error('Url should be string and valid'));
 		}
 
 		return this.wsRpc.call([0, 'update_committee_member', [
 			accountId.toRaw(ownerAccount),
-			committeeMemberId.toRaw(committeeMember),
 			string.toRaw(newUrl),
 			string.toRaw(newEthAddress),
 			string.toRaw(newBtcPublicKey),

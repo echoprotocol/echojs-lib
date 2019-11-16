@@ -17,7 +17,7 @@ const NATHAN_ID = '1.2.12';
 /**
  * @typedef {Object} CallOptions
  * @property {string} [contractId]
- * @property {string} [assetId]
+ * @property {{ asset_id: string, amount: number | string | BigNumber }} [asset]
  * @property {string} [accountId]
  * @property {Echo} [echo]
  */
@@ -76,18 +76,16 @@ export default class Method {
 		const { stack } = new Error().stack;
 		let {
 			contractId,
-			assetId,
-			accountId,
+			asset,
+			caller,
 			echo,
 		} = options;
 		if (contractId === undefined) {
 			if (this._contract.address === undefined) throw new Error('no contractId');
 			contractId = this._contract.address;
 		} else checkContractId(contractId);
-		if (assetId === undefined) assetId = '1.3.0';
-		else if (!/^1\.3\.(0|[1-9]\d*)$/.test(assetId)) throw new Error('invalid assetId format');
-		if (accountId === undefined) accountId = NATHAN_ID;
-		else if (!/^1\.2\.(0|[1-9]\d*)$/.test(accountId)) throw new Error('invalid accountId format');
+		if (asset === undefined) asset = { amount: 0, asset_id: '1.3.0' };
+		if (caller === undefined) caller = NATHAN_ID;
 		if (echo === undefined) {
 			if (this._contract.echo === undefined) throw new Error('no echo instance');
 			// eslint-disable-next-line prefer-destructuring
@@ -96,7 +94,7 @@ export default class Method {
 		try {
 			// FIXME: remove @type when JSDoc of callContractNoChangingState will be fixed
 			/** @type {string} */
-			const rawResult = await echo.api.callContractNoChangingState(contractId, accountId, assetId, this.code);
+			const rawResult = await echo.api.callContractNoChangingState(contractId, caller, asset, this.code);
 			if (rawResult === '') {
 				if (this._abiMethodOutputs.length === 0) return null;
 				throw new Error('call failed');

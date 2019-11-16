@@ -111,6 +111,8 @@ export declare const balance: {
 	unfreeze: typeof balanceUnfreezeOperationPropsSerializer,
 };
 
+export { default as btcPublicKey } from './btcPublicKey';
+
 export { default as chainParameters } from './chain_parameters';
 
 export declare const committeeMember: {
