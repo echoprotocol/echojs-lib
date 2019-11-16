@@ -1,6 +1,6 @@
 {
 	"name": "echojs-lib",
-	"version": "1.9.2",
+	"version": "1.9.1-echo.13-rc.2",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
@@ -9,7 +9,7 @@
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
 		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
 		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
-		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",		
+		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",
