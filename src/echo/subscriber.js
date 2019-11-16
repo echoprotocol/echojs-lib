@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import { Map, Set, fromJS } from 'immutable';
 
-import { STATUS, ChainApi } from '../constants/ws-constants';
+import { STATUS, CHAIN_API } from '../constants/ws-constants';
 
 import {
 	isFunction,
@@ -69,7 +69,7 @@ class Subscriber extends EventEmitter {
 		this._wsApi = wsApi;
 		this._api = api;
 
-		const databaseApiAvailable = this._ws.apis.includes(ChainApi.DATABASE_API);
+		const databaseApiAvailable = this._ws.apis.includes(CHAIN_API.DATABASE_API);
 		if (databaseApiAvailable) await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 		this.callCbOnConnect();
 		if (!databaseApiAvailable) {
