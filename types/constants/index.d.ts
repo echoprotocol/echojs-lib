@@ -5,6 +5,7 @@ import * as CHAIN_TYPES from './chain-types';
 import PROTOCOL_OBJECT_TYPE_ID = require('./object-types');
 import * as WS_CONSTANTS from './ws-constants';
 import * as protocol from './protocol';
+import * as NET from './net';
 
 export const START_OPERATION_ID: string;
 export const CORE_ASSET_ID: string;
@@ -20,4 +21,4 @@ export const BITASSET_UPDATE: string;
 export const ECHO_ASSET_ID: string;
 export const DYNAMIC_GLOBAL_OBJECT_ID: string;
 
-export { API_CONFIG, CACHE_MAPS, CHAIN_CONFIG, CHAIN_TYPES, PROTOCOL_OBJECT_TYPE_ID, WS_CONSTANTS, protocol }
+export { API_CONFIG, CACHE_MAPS, CHAIN_CONFIG, CHAIN_TYPES, PROTOCOL_OBJECT_TYPE_ID, WS_CONSTANTS, protocol, NET }

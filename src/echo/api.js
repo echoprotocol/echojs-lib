@@ -2528,6 +2528,18 @@ class API {
 		return this.wsApi.registration.getRegistrar();
 	}
 
+	/**
+	 * @method getConnectedPeers
+	 * @return {ReturnType<API["wsApi"]["networkNode"]["getConnectedPeers"]>}
+	 */
+	getConnectedPeers() { return this.wsApi.networkNode.getConnectedPeers(); }
+
+	/**
+	 * @method getPotentialPeers
+	 * @return {Promise<API["wsApi"]["networkNode"]["getPotentialPeers"]>}
+	 */
+	getPotentialPeers() { return this.wsApi.networkNode.getPotentialPeers(); }
+
 	setOptions() { }
 
 }

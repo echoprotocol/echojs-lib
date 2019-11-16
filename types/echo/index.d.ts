@@ -16,5 +16,6 @@ export default class Echo {
 	public readonly apis: ReadonlySet<string>;
 	api: Api;
 	connect(address: string, options?: EchoOptions): Promise<void>;
+	disconnect(): Promise<void>;
 	createTransaction(): Transaction;
 }
