@@ -37,6 +37,10 @@ import { transaction, signedTransaction, operation } from '../serializers';
 import { PublicKey } from '../crypto';
 
 /** @typedef {
+	import("../constants/net/peer-database").e_POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION
+} e_POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION */
+
+/** @typedef {
 *	{
 *  		previous:String,
 *  		timestamp:String,
@@ -2464,22 +2468,55 @@ class API {
 	}
 
 	/**
-	 *  @method getConnectedPeers
-	 *
-	 *  @return {*}
+	 * @typedef {Object} PeerDetails
+	 * @property {string} addr
+	 * @property {string} addrlocal
+	 * @property {string} services
+	 * @property {number} lastsend
+	 * @property {number} lastrecv
+	 * @property {number | string} bytessent
+	 * @property {number | string} bytesrecv
+	 * @property {string} conntime
+	 * @property {string} pingtime
+	 * @property {string} pingwait
+	 * @property {string} version
+	 * @property {string} subver
+	 * @property {boolean} inbound
+	 * @property {import("../constants/net/core-messages").e_FIREWALLED_STATE} firewall_status
+	 * @property {string} startingheight
+	 * @property {string} banscore
+	 * @property {string} syncnode
+	 * @property {string} [fc_git_revision_sha]
+	 * @property {string} [fc_git_revision_unix_timestamp]
+	 * @property {string} [fc_git_revision_age]
+	 * @property {string} [platform]
+	 * @property {string} current_head_block
+	 * @property {number} current_head_block_number
+	 * @property {string} current_head_block_time
 	 */
-	getConnectedPeers() {
-		return this.wsApi.networkNode.getConnectedPeers();
-	}
 
 	/**
-	 *  @method getPotentialPeers
-	 *
-	 *  @return {*}
+	 * @method getConnectedPeers
+	 * @return {Promise<Array<{ version: number, host: string, info: PeerDetails }>>}
 	 */
-	getPotentialPeers() {
-		return this.wsApi.networkNode.getPotentialPeers();
-	}
+	getConnectedPeers() { return this.wsApi.networkNode.getConnectedPeers(); }
+
+	/**
+	 * @typedef {Object} PotentialPeerRecord
+	 * @property {string} endpoint
+	 * @property {string} last_seen_time
+	 * @property {e_POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION} last_connection_disposition
+	 * @property {string} last_connection_attempt_time
+	 * @property {number} number_of_successful_connection_attempts
+	 * @property {number} number_of_failed_connection_attempts
+	 * @property {unknown} [last_error]
+	 */
+
+	/**
+	 * @method getPotentialPeers
+	 * @return {Promise<PotentialPeerRecord[]>}
+	 */
+	getPotentialPeers() { return this.wsApi.networkNode.getPotentialPeers(); }
 
 	setOptions() { }
 

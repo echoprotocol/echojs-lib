@@ -20,7 +20,9 @@ import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
 import FrozenBalance from '../interfaces/FrozenBalance';
 import BtcAddress from '../interfaces/BtcAddress';
+import { PotentialPeerRecord } from '../interfaces/net/peer-database';
 import RegistrationTask from '../interfaces/RegistrationTask';
+import PeerDetails from '../interfaces/PeerDetails';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 import { signedTransaction } from '../serializers';
@@ -109,4 +111,8 @@ export default class Api {
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
+
+	getConnectedPeers(): Promise<Array<{ version: number, host: string, info: PeerDetails }>>;
+	getPotentialPeers(): Promise<PotentialPeerRecord[]>;
+
 }
