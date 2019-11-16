@@ -2,6 +2,7 @@ import AnyObjectIdSerializer from './AnyObjectId';
 import ObjectIdSerializer from './ObjectId';
 import * as protocol from './protocol';
 
+export { default as blockId } from './BlockId';
 export const anyObjectId = new AnyObjectIdSerializer();
 
 /** @typedef {import("../../../constants/chain-types").ReservedSpaceId} ReservedSpaceId */
