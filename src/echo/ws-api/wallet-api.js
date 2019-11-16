@@ -850,10 +850,11 @@ class WalletAPI {
 	/**
 	 * Returns all approved deposits, for the given account id.
 	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {"" | "eth" | "bts"} type the type of the deposits may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public deposits data stored in the blockchain
 	 */
-	getAccountDeposits(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount)]]);
+	getAccountDeposits(idOfAccount, type) {
+		return this.wsRpc.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount), type]]);
 	}
 
 	/**
@@ -991,10 +992,11 @@ class WalletAPI {
 	/**
 	 * Returns all approved withdrawals, for the given account id.
 	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {"" | "eth" | "bts"} type the type of the withdrawals may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public withdrawals data stored in the blockchain
 	 */
-	getAccountWithdrawals(idOfAccount) {
-		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
+	getAccountWithdrawals(idOfAccount, type) {
+		return this.wsRpc.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount), type]]);
 	}
 
 	/**
@@ -1843,25 +1845,20 @@ class WalletAPI {
 	/**
 	 * @method updateCommitteeMember
 	 * @param {String} ownerAccount
-	 * @param {String} committeeMember
 	 * @param {String} newUrl
 	 * @param {String} newEthAddress
 	 * @param {String} newBtcPublicKey
 	 * @param {Boolean} broadcast
 	 * @returns {Promise<SignedTransaction>}
 	 */
-	updateCommitteeMember(ownerAccount, committeeMember, newUrl, newEthAddress, newBtcPublicKey, broadcast = false) {
+	updateCommitteeMember(ownerAccount, newUrl, newEthAddress, newBtcPublicKey, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isCommitteeMemberId(committeeMember)) {
-			return Promise.reject(new Error('Invalid committee member id'));
-		}
 		if (newUrl && !validateUrl(newUrl) && newUrl !== '') {
 			return Promise.reject(new Error('Url should be string and valid'));
 		}
 
 		return this.wsRpc.call([0, 'update_committee_member', [
 			accountId.toRaw(ownerAccount),
-			committeeMemberId.toRaw(committeeMember),
 			string.toRaw(newUrl),
 			string.toRaw(newEthAddress),
 			string.toRaw(newBtcPublicKey),

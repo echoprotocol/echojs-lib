@@ -12,7 +12,7 @@ describe('sidechain btc', () => {
 
 	let btcAddressId;	
 
-	describe('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
+	describe.skip('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
 		it('should create address', async () => {
 
 			const transaction = echo.createTransaction();
