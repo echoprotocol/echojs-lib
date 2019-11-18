@@ -25,7 +25,7 @@ describe('API register account POW', () => {
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				() => console.log('was broadcasted'),
-			)
+			);
 			ok(Array.isArray(result));
 		}).timeout(1e8);
 	});
