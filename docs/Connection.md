@@ -8,14 +8,16 @@ Lib provide reconnecting socket it can reconnect automatically after network dis
 import echo, { constants } from 'echojs-lib';
 
 const { 
-    WS_CONSTANTS: { 
-        DATABASE_API,
-        NETWORK_BROADCAST_API,
-        HISTORY_API,
-        REGISTRATION_API,
-        ASSET_API,
-        LOGIN_API,
-        NETWORK_NODE_API,
+    WS_CONSTANTS: {
+        CHAIN_API: {
+            DATABASE_API,
+            NETWORK_BROADCAST_API,
+            HISTORY_API,
+            REGISTRATION_API,
+            ASSET_API,
+            LOGIN_API,
+            NETWORK_NODE_API,
+        }
     } 
 } = constants; // access to different APIs
 

@@ -10,5 +10,12 @@ import * as wallet from './wallet';
 export declare const operation: OperationSerializer;
 
 export { default as transaction, signedTransactionSerializer as signedTransaction } from './transaction';
+export {
+	blockSignatureSerializer as blockSignature,
+	blockHeaderSerializer as blockHeader,
+	signedBlockHeaderSerializer as signedBlockHeader,
+	signedBlockSerializer as signedBlock,
+} from './block';
+export { default as operationResult } from './operation_result';
 
 export { basic, collections, chain, OperationSerializer, plugins, protocol, opWrapper, wallet };

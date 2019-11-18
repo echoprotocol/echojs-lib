@@ -5,7 +5,7 @@ import Cache from '../src/echo/cache';
 import API from '../src/echo/api';
 
 import echo, { constants } from '../src';
-import { DEFAULT_CHAIN_APIS, ChainApi } from '../src/constants/ws-constants';
+import { DEFAULT_CHAIN_APIS, CHAIN_API } from '../src/constants/ws-constants';
 
 import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
@@ -14,7 +14,7 @@ import { shouldReject } from './_test-utils';
 describe('API', () => {
 	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
-			const apis = [ChainApi.DATABASE_API, ChainApi.ASSET_API];
+			const apis = [CHAIN_API.DATABASE_API, CHAIN_API.ASSET_API];
 			before(async () => await echo.connect(url, { apis }));
 			after(async () => await echo.disconnect());
 			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
@@ -58,7 +58,7 @@ describe('API', () => {
 		});
 
 		describe('when reconnected', () => {
-			const apis = [...DEFAULT_CHAIN_APIS.slice(1), ChainApi.ASSET_API];
+			const apis = [...DEFAULT_CHAIN_APIS.slice(1), CHAIN_API.ASSET_API];
 			before(async () => {
 				await echo.connect(url, { apis });
 				await echo.reconnect();
@@ -923,8 +923,8 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe('#getBtcAddresses()', () => {
-			it('should get btc addresses by account id', async () => {
+		describe('#getBtcAddress()', () => {
+			it('should get btc address by account id', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
@@ -932,12 +932,12 @@ describe('API', () => {
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
-					const btcAddresses = await api.getBtcAddresses(accountId);
+					const btcAddress = await api.getBtcAddress(accountId);
 
-					expect(btcAddresses)
+					expect(btcAddress)
 						.to
 						.be
-						.an('array');;
+						.an('null');;
 				} catch (e) {
 					throw e;
 				}

@@ -30,14 +30,17 @@ import {
 	isUInt32,
 	isObject,
 	isInt64,
+	validateSidechainType,
 } from '../utils/validators';
 import { solveRegistrationTask } from '../utils/pow-solver';
 
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation } from '../serializers';
+import { transaction, signedTransaction, operation, basic } from '../serializers';
 import { PublicKey } from '../crypto';
+
+/** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
 
 /** @typedef {
 *	{
@@ -176,7 +179,6 @@ import { PublicKey } from '../crypto';
 * 	 			},
 * 	 			extensions:Array
 * 	 		},
-* 	 		next_available_vote_id:Number,
 * 	 		active_committee_members:Array.<Array.<String>>
 *      }
 *  	} GlobalProperties */
@@ -1133,6 +1135,30 @@ class API {
 	}
 
 	/**
+	 * @method getAccountDeposits
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountDeposits(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		validateSidechainType(type);
+		return this.wsApi.database.getAccountDeposits(account, type);
+	}
+
+	/**
+	 * @method getAccountWithdrawals
+	 * @param {string} account
+	 * @param {SidechainType} type
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountWithdrawals(account, type) {
+		if (!isAccountId(account)) throw new Error('Invalid account id format');
+		validateSidechainType(type);
+		return this.wsApi.database.getAccountWithdrawals(account, type);
+	}
+
+	/**
 	 *  @method getFullAccounts
 	 *  @param  {Array<String>} accountNamesOrIds
 	 *  @param  {Boolean} subscribe
@@ -1972,13 +1998,19 @@ class API {
 	 *  @method getContract
 	 *
 	 *  @param  {String} contractId
+	 *  @param {Boolean} force
 	 *
 	 *  @return {Promise.<[0, { code:String, storage:Array.<Array>}] | [1, { code:String }]>}
 	 */
-	getContract(contractId) {
+	getContract(contractId, force = false) {
 		if (!isContractId(contractId)) return Promise.reject(new Error('Contract id is invalid'));
 
-		return this.wsApi.database.getContract(contractId);
+		return this._getSingleDataWithMultiSave(
+			contractId,
+			CACHE_MAPS.CONTRACT_OBJECT_BY_CONTRACT_ID,
+			'getContract',
+			force,
+		);
 	}
 
 	/**
@@ -2386,6 +2418,15 @@ class API {
 	}
 
 	/**
+	 * @method getBlockRewards
+	 * @param {typeof uint32["__TInput__"]} blockNum
+	 * @returns {Promise<unknown>}
+	 */
+	getBlockRewards(blockNum) {
+		return this.wsApi.database.getBlockRewards(basic.integers.uint32.toRaw(blockNum));
+	}
+
+	/**
 	 *
 	 * @param {Number} blockNum
 	 * @return {*}
@@ -2412,10 +2453,10 @@ class API {
 	 * @param {String} accountId
 	 * @return {*}
 	 */
-	getBtcAddresses(accountId) {
+	getBtcAddress(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
-		return this.wsApi.database.getBtcAddresses(accountId);
+		return this.wsApi.database.getBtcAddress(accountId);
 	}
 
 	/**
@@ -2486,6 +2527,18 @@ class API {
 	getRegistrar() {
 		return this.wsApi.registration.getRegistrar();
 	}
+
+	/**
+	 * @method getConnectedPeers
+	 * @return {ReturnType<API["wsApi"]["networkNode"]["getConnectedPeers"]>}
+	 */
+	getConnectedPeers() { return this.wsApi.networkNode.getConnectedPeers(); }
+
+	/**
+	 * @method getPotentialPeers
+	 * @return {Promise<API["wsApi"]["networkNode"]["getPotentialPeers"]>}
+	 */
+	getPotentialPeers() { return this.wsApi.networkNode.getPotentialPeers(); }
 
 	setOptions() { }
 

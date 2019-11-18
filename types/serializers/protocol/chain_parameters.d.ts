@@ -16,12 +16,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	maximum_proposal_lifetime: typeof uint32,
 	maximum_asset_whitelist_authorities: typeof uint8,
 	maximum_asset_feed_publishers: typeof uint8,
-	maximum_committee_count: typeof uint16,
 	maximum_authority_membership: typeof uint16,
-	reserve_percent_of_fee: typeof uint16,
-	network_percent_of_fee: typeof uint16,
-	committee_pay_vesting_seconds: typeof uint32,
-	max_predicate_opcode: typeof uint16,
 	accounts_per_fee_scale: typeof uint16,
 	account_fee_scale_bitshifts: typeof uint8,
 	max_authority_depth: typeof uint8,
@@ -35,6 +30,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	committee_frozen_balance_to_activate: typeof uint64,
 	committee_maintenance_intervals_to_deposit: typeof uint64,
 	committee_freeze_duration_seconds: typeof uint32,
+	x86_64_maximum_contract_size: typeof uint64,
 	extensions: typeof extensions,
 }>;
 

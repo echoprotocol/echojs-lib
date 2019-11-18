@@ -21,7 +21,6 @@ export declare const proposalUpdateOperationPropsSerializer: StructSerializer<{
 	proposal: typeof proposalId,
 	active_approvals_to_add: SetSerializer<typeof accountId>,
 	active_apprivals_to_remove: SetSerializer<typeof accountId>,
-	owner_approvals_to_remove: SetSerializer<typeof accountId>,
 	key_approvals_to_add: SetSerializer<typeof publicKey>,
 	key_approvals_to_remove: SetSerializer<typeof publicKey>,
 	extensions: typeof extensions,

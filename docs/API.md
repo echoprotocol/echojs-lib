@@ -1056,7 +1056,6 @@ try {
        },
        extensions:Array
    },
-   next_available_vote_id:Number,
    active_committee_members:Array.<Array<String>>,
 }
 ```

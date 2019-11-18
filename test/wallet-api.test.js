@@ -844,7 +844,7 @@ describe('WALLET API', () => {
 
 	describe('#getAccountDeposits()', () => {
 		it('Should returns all approved deposits, for the given account id', async () => {
-			const result = await echo.walletApi.getAccountDeposits(accountId);
+			const result = await echo.walletApi.getAccountDeposits(accountId, '');
 			expect(result)
 				.to
 				.be
@@ -2190,7 +2190,12 @@ describe('WALLET API', () => {
 		describe('#updateCommitteeMember()', () => {
 			it('should update committee member', async () => {
 				try {
-					const result = await echo.walletApi.updateCommitteeMember(accountId, `1.${COMMITTEE_MEMBER}.4`, '', '7234F8149411B8F275373DC470011e18126489B6', '02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e');
+					const result = await echo.walletApi.updateCommitteeMember(
+						accountId,
+						'',
+						'7234F8149411B8F275373DC470011e18126489B6',
+						'02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e',
+					);
 					expect(result)
 					.to
 					.be
