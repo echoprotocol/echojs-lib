@@ -308,7 +308,6 @@ import { PublicKey } from '../crypto';
 * 					},
 * 				ed_key:String,
 * 				options:{
-* 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
 * 					num_committee:Number,
@@ -361,7 +360,6 @@ import { PublicKey } from '../crypto';
 * 					},
 * 				ed_key:String,
 * 				options:{
-* 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
 * 					num_committee:Number,

@@ -85,7 +85,6 @@ console.log(result);
     options: {
         delegating_account: "1.2.12",
         extensions: [],
-        memo_key: "ECHO5QoiCGa6pXBUTTqQqeuJCXZgX6eBmJ2uZRxZZtLc2bZcWPLMMd",
         num_committee: 0,
         votes: [],
         voting_account: "1.2.5"
