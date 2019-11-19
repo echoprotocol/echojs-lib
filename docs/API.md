@@ -1,3 +1,17 @@
+# Table of contents
+
+- [Api](#api)
+
+- [Classes](#classes)
+
+- [Functions](#functions)
+
+- [Typedefs](#typedefs)
+
+- [API](#API)
+    - [new API(cache, wsApi)](#new-api)
+
+
 ### Api
 This library provides api blockchain methods.
 

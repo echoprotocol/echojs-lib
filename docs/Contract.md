@@ -1,3 +1,16 @@
+# Table of contents
+
+- [Contract](#contract)
+
+- [Preparation](#preparation)
+
+- [Examples](#examples)
+    - [Deploy contract](#deploy-contract)
+    - [Create contract instance by contract id](#create-contract-instance-by-contract-id)
+    - [Call contract no changing state](#call-contract-no-changing-state)
+    - [Execute contract](#execute-contract)
+    - [Using encoders/decoders](#using-encoders/decoders)
+
 ## Contract
 
 This library for convenient work with Echo-contracts. Can be used to call contracts, sign and broadcast contracts' deployment and execution transactions.

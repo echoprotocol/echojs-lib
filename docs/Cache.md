@@ -1,3 +1,8 @@
+# Table of contents
+
+- [Cache](#cache)
+    - [Cache options](#cache-options)
+
 ### Cache
 To optimize requests we use caches
 
