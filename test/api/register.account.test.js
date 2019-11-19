@@ -19,9 +19,9 @@ describe('API register account POW', () => {
 	after(async () => await echo.disconnect());
 
 	describe('register account', () => {
-		let isResolved = false;
 		it('register account', async () => {
-			const result = echo.api.registerAccount(
+			let isResolved = false;
+			const promise = echo.api.registerAccount(
 					'kokoko'+ Date.now(),
 					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
@@ -30,9 +30,9 @@ describe('API register account POW', () => {
 			await new Promise((resolve) => setTimeout(() => resolve(), 100));
 			await echo.api.getAccountCount();
 			ok(!isResolved);
-			const promise = await result;
+			const result = await promise;
 			ok(isResolved);
-			ok(Array.isArray(promise));
+			ok(Array.isArray(result));
 		}).timeout(1e8);
 	});
 
