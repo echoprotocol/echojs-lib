@@ -19,8 +19,6 @@ describe('API register account POW', () => {
 	after(async () => await echo.disconnect());
 
 	describe('register account', () => {
-		let result2 = false;
-		let res;
 		it('register account', async () => {
 			const result = new Promise(async (resolve) => {
 				return resolve(echo.api.registerAccount(
