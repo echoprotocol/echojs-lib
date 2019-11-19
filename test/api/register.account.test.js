@@ -19,19 +19,20 @@ describe('API register account POW', () => {
 	after(async () => await echo.disconnect());
 
 	describe('register account', () => {
+		let isResolved = false;
 		it('register account', async () => {
-			const result = new Promise(async (resolve) => {
-				return resolve(echo.api.registerAccount(
-						'kokoko'+ Date.now(),
-						'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-						'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-						() => console.log('was broadcasted'),
-					));
-			});
-			setTimeout(async () => await echo.api.getAccountCount(), 100);
-			ok(!Array.isArray(result));
-			const registrationResult = await result;
-			ok(Array.isArray(registrationResult));
+			const result = echo.api.registerAccount(
+					'kokoko'+ Date.now(),
+					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+					() => isResolved = true,
+				);
+			await new Promise((resolve) => setTimeout(() => resolve(), 100));
+			await echo.api.getAccountCount();
+			ok(!isResolved);
+			const promise = await result;
+			ok(isResolved);
+			ok(Array.isArray(promise));
 		}).timeout(1e8);
 	});
 
