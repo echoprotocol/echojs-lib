@@ -3,7 +3,7 @@ import { ok } from 'assert';
 import echo from '../..';
 import { url } from '../_test-data';
 
-describe.only('API register account POW', () => {
+describe('API register account POW', () => {
 	before(async () => {
 		await echo.connect(url, {
 			connectionTimeout: 5000,
