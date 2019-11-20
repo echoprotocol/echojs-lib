@@ -20,6 +20,7 @@ const getHashPow = (hash) => {
 	}
 	return solPow;
 };
+
 /* eslint-disable import/prefer-default-export */
 /**
  *
@@ -37,9 +38,12 @@ export const solveRegistrationTask = async (blockId, randNum, difficulty) => {
 		const bufferToHash = Buffer.concat([buffer, uint64.serialize(nonce)]);
 		const hash = sha256(bufferToHash);
 		const hashPow = getHashPow(hash);
+		// eslint-disable-next-line no-await-in-loop
+		if (nonce % 1e6 === 0) await new Promise((resolve) => setTimeout(() => resolve(), 100));
 		if (hashPow > difficulty) {
 			return nonce;
 		}
 		nonce += 1;
 	}
 };
+
