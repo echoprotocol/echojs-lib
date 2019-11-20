@@ -1,3 +1,11 @@
+## Table of contents
+
+- [ECC](#ecc)
+    - [Private keys](#private-keys)
+    - [Echorand keys (ED25519)](#echorand-keys-(ED25519))
+    - [Random keys](#random-keys)
+    - [Sign Data](#sign-data)
+
 ### ECC
 The ECC library contains all the crypto functions for private and public keys as well as transaction creation/signing.
 

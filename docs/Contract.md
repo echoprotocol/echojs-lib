@@ -1,9 +1,7 @@
 # Table of contents
 
 - [Contract](#contract)
-
 - [Preparation](#preparation)
-
 - [Examples](#examples)
     - [Deploy contract](#deploy-contract)
     - [Create contract instance by contract id](#create-contract-instance-by-contract-id)

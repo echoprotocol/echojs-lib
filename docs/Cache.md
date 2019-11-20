@@ -1,7 +1,12 @@
 # Table of contents
 
 - [Cache](#cache)
+    - [Cache maps constants](#cache-maps-constants)
     - [Cache options](#cache-options)
+        - [isUsed](#isused)
+        - [blocksLimit](#blockslimit)
+        - [expirationTime](#expirationtime)
+        - [minCleaningTime](#mincleaningtime)
 
 ### Cache
 To optimize requests we use caches
@@ -9,7 +14,11 @@ To optimize requests we use caches
 In following example we import cache and get stored objects.
 ```javascript
 import echo, { constants } from "echojs-lib";
+```
 
+#### Cache maps constants
+
+```javascript
 const { CACHE_MAPS } = constants;
 
 console.log(echo.cache[CACHE_MAPS.OBJECTS_BY_ID]);
@@ -63,6 +72,8 @@ console.log(CACHE_MAPS)
 | expirationTime | `number | null` |`null` |
 | minCleaningTime | `number` | `500` |
 
+##### isUsed
+
 `isUsed` - a flag that determines whether or not to use the cache.
 
 ```javascript
@@ -70,6 +81,8 @@ import echo from 'echolib-js';
 const cacheOptions = { isUsed: false };
 await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
+
+##### blocksLimit
 
 `blocksLimit` - the maximum number of blocks stored in cache. Must be a non-negative integer.
 
@@ -79,6 +92,8 @@ const cacheOptions = { blocksLimit: 10 };
 await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
 
+##### expirationTime
+
 `expirationTime` - the time after which the object will be cleared from the cache. If equals to `null`, then it will never be cleared. Blocks will never be cleared this way _(see `isUsed` option)_.
 
 ```javascript
@@ -86,6 +101,8 @@ import echo from 'echolib-js';
 const cacheOptions = { expirationTime: 1e3 };
 await echo.connect('ws://127.0.0.1:9000', { cache: cacheOptions });
 ```
+
+##### minCleaningTime
 
 `minCleaningTime` - the minimal time after which objects will be cleared using `expirationTime`.
 

@@ -1,7 +1,18 @@
+## Table of contents
+
+- [Transactions](#transactions)
+    - [Transfer](#transfer)
+    - [Account create](#account-create)
+    - [Create contract operation](#create-contract-operation)
+    - [Call contract operation](#call-contract-operation)
+    - [Create asset operation](#create-asset-operation)
+    - [Issue asset](#issue-asset)
+    - [Account update operation](#account-update-operation)
+
 ### Transactions
 Using transaction builder you can build and broadcast transaction.
 
-#### Transfer with memo
+#### Transfer
 ```javascript
 import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
 
@@ -21,12 +32,6 @@ const options = {
     amount: {
         asset_id: '1.3.0',
         amount: 1
-    },
-    memo: { // optional
-        from: 'ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D', // memo key
-        to: 'ECHO8gP5V1F9cudUHxxoDb66BwiEPUB4ZQmwgtLXDrXaQAuJWb921w', // memo key
-        nonce: 424252442,
-        message: '746573745F6D657373616765', // hex string
     },
     extensions: [],
 };
