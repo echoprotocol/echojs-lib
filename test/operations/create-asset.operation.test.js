@@ -7,8 +7,8 @@ import testExtensionsField from './_testExtensionsField';
 
 describe('create asset', () => {
 	const echo = new Echo();
-	before(async () => await echo.connect(url));
-	after(async () => await echo.disconnect());
+	before(async () => echo.connect(url));
+	after(async () => echo.disconnect());
 
 	describe('when "bitasset_opts" field is not provided', () => {
 		/** @type {import("../../types/echo/transaction").default} */
@@ -33,9 +33,8 @@ describe('create asset', () => {
 				bitasset_opts: undefined,
 			}).addSigner(privateKey);
 		});
-		let result;
 		it('transaction broadcasting should not rejects', async () => {
-			result = await tx.broadcast();
+			await tx.broadcast();
 		}).timeout(15e3);
 	});
 

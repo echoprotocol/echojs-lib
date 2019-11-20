@@ -1,5 +1,6 @@
-import { inspect, promisify } from "util";
+// import { inspect, promisify } from 'util';
 import { expect } from 'chai';
+import { ok } from 'assert';
 
 import echo, { constants } from '../src';
 
@@ -12,8 +13,7 @@ import {
 	WIF,
 	walletURL,
 } from './_test-data';
-import { ACCOUNT, ASSET, COMMITTEE_MEMBER} from '../src/constants/object-types';
-import { ok } from 'assert';
+import { ACCOUNT, ASSET } from '../src/constants/object-types';
 import { API_CONFIG } from '../src/constants';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
@@ -53,12 +53,13 @@ describe('WALLET API', () => {
 	};
 
 	before(async () => {
-		await echo.connect(url,
+		await echo.connect(
+			url,
 			{
 				connectionTimeout: 10000,
-                apis: constants.WS_CONSTANTS.CHAIN_APIS,
+				apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: walletURL,
-			}
+			},
 		);
 		await echo.walletApi.setPassword('qwe');
 		await echo.walletApi.unlock('qwe');
@@ -110,7 +111,7 @@ describe('WALLET API', () => {
 
 	describe('#networkAddNodes()', () => {
 		it('should add new nodes to network', async () => {
-			const nodes = ["0.0.0.0:6311", "0.0.0.0:6310"];
+			const nodes = ['0.0.0.0:6311', '0.0.0.0:6310'];
 			const result = await echo.walletApi.networkAddNodes(nodes);
 			expect(result)
 				.to
@@ -132,14 +133,14 @@ describe('WALLET API', () => {
 	describe('#isNew()', () => {
 		it('should get state of the wallet is it new or no', async () => {
 			const result = await echo.walletApi.isNew();
-            ok(!result);
+			ok(!result);
 		}).timeout(5000);
 	});
 
 	describe('#isLocked()', () => {
 		it('should checks state of the wallet locked or unlocked', async () => {
 			const result = await echo.walletApi.isLocked();
-            ok(!result);
+			ok(!result);
 		}).timeout(5000);
 	});
 
@@ -216,8 +217,11 @@ describe('WALLET API', () => {
 
 	describe('#importKey()', () => {
 		it('Should imports the private key for an existing account', async () => {
-			const result = await echo.walletApi.importKey('1.2.11', '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
-            ok(result);
+			const result = await echo.walletApi.importKey(
+				'1.2.11',
+				'5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2',
+			);
+			ok(result);
 		}).timeout(5000);
 	});
 
@@ -226,11 +230,7 @@ describe('WALLET API', () => {
 			try {
 				const filename = 'wallet.cpp';
 				const password = 'password';
-				const result = await echo.walletApi.importAccounts(filename, password);
-				// expect(result)
-				// 	.to
-				// 	.be
-				// 	.an('boolean');
+				await echo.walletApi.importAccounts(filename, password);
 			} catch (e) {
 				throw e;
 			}
@@ -333,7 +333,7 @@ describe('WALLET API', () => {
 		it('should determine is key linked to any registered account', async () => {
 			const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
 			const result = await echo.walletApi.isPublicKeyRegistered(pubKey);
-			ok(!result)
+			ok(!result);
 		}).timeout(5000);
 	});
 
@@ -346,7 +346,7 @@ describe('WALLET API', () => {
 				to: `1.${ACCOUNT}.7`,
 				amount: {
 					asset_id: constants.ECHO_ASSET_ID,
-					amount: 1000
+					amount: 1000,
 				},
 			});
 			await unsignedTr.sign(PrivateKey.fromWif(pk));
@@ -417,7 +417,7 @@ describe('WALLET API', () => {
 		it('should get lists all accounts registered in the blockchain', async () => {
 			const result = await echo.walletApi.listAccounts(
 				accountName,
-				constants.API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT
+				constants.API_CONFIG.LIST_ACCOUNTS_DEFAULT_LIMIT,
 			);
 			expect(result)
 				.to
@@ -485,25 +485,23 @@ describe('WALLET API', () => {
 	describe.skip('#registerAccount()', () => {
 		it('should registers an account', async () => {
 			try {
-				const accountName = 'qweasdety';
+				const newAccountName = 'qweasdety';
 				const privateKey = PrivateKey.fromSeed(Math.random().toString());
 				const activeKey = privateKey.toPublicKey();
 				const result = await echo.walletApi.registerAccount(
-					accountName,
+					newAccountName,
 					activeKey,
 					accountId,
-					shouldDoBroadcastToNetwork
+					shouldDoBroadcastToNetwork,
 				);
-				console.log('---------result---------', result);
 				expect(result)
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				expect(result.name).equal(accountName);
+				expect(result.name).equal(newAccountName);
 				expect(result.registrar).equal(accountId);
 				expect(result.key_auths[0][0]).equal(activeKey);
 			} catch (e) {
-				console.error(inspect(e, false, null, true));
 				throw e;
 			}
 		}).timeout(5000);
@@ -511,12 +509,12 @@ describe('WALLET API', () => {
 
 	describe('#createAccountWithBrainKey()', () => {
 		it('should creates a new account and registers it', async () => {
-			const accountName = 'ales';
+			const newAccountName = 'ales';
 			const result = await echo.walletApi.createAccountWithBrainKey(
 				brainKey,
-				accountName,
+				newAccountName,
 				accountId,
-				shouldDoBroadcastToNetwork
+				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
 				.to
@@ -539,8 +537,9 @@ describe('WALLET API', () => {
 				useEthereumAssetAccuracy,
 				shouldSaveToWallet,
 			);
-			
-			contractResultId = result.operation_results[0][1];
+
+			const [, contractIdOfResult] = result.operation_results[0];
+			contractResultId = contractIdOfResult;
 			expect(result)
 				.to
 				.be
@@ -551,7 +550,8 @@ describe('WALLET API', () => {
 	describe.skip('#callContract()', () => {
 		it('should call a contract', async () => {
 			try {
-				const contractCode = '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001';
+				const code = '0000000000000000000000000000000000000000000000000000000000000001';
+				const contractCode = '86be3f80'.concat(code);
 				const amount = 1;
 				const shouldSaveToWallet = true;
 				const result = await echo.walletApi.callContract(
@@ -713,7 +713,7 @@ describe('WALLET API', () => {
 		it('Should returns the most recent operations on the named account', async () => {
 			const result = await echo.walletApi.getAccountHistory(
 				accountName,
-				constants.API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT
+				constants.API_CONFIG.ACCOUNT_HISTORY_DEFAULT_LIMIT,
 			);
 			expect(result)
 				.to
@@ -788,19 +788,18 @@ describe('WALLET API', () => {
 	describe('#callContractNoChangingState()', () => {
 		it('Should call contract but doesn\'t change the state', async () => {
 			try {
-			const result = await echo.walletApi.callContractNoChangingState(
-				contractId,
-				accountId,
-				'0',
-				constants.ECHO_ASSET_ID,
-				bytecode,
-			);
-			expect(result)
-				.to
-				.be
-				.an('string');
+				const result = await echo.walletApi.callContractNoChangingState(
+					contractId,
+					accountId,
+					'0',
+					constants.ECHO_ASSET_ID,
+					bytecode,
+				);
+				expect(result)
+					.to
+					.be
+					.an('string');
 			} catch (erro) {
-				console.log(JSON.stringify(erro));
 				throw erro;
 			}
 		}).timeout(5000);
@@ -819,7 +818,6 @@ describe('WALLET API', () => {
 	describe.skip('#getContractPoolWhitelist()', () => {
 		it('Should get contract\'s whitelist and blacklist', async () => {
 			const result = await echo.walletApi.getContractPoolWhitelist(contractId);
-			console.log('result', result);
 			expect(result)
 				.to
 				.be
@@ -830,12 +828,7 @@ describe('WALLET API', () => {
 	describe('#getEthAddress()', () => {
 		it('Should returns information about generated eth address', async () => {
 			try {
-				const result = await echo.walletApi.getEthAddress(accountId);
-				// expect(result)
-				// 	.to
-				// 	.be
-				// 	.an('object');
-				// console.log('result', result);
+				await echo.walletApi.getEthAddress(accountId);
 			} catch (e) {
 				throw e;
 			}
@@ -876,12 +869,7 @@ describe('WALLET API', () => {
 	describe('#getErc20Token()', () => {
 		it('Should returns information about erc20 token', async () => {
 			const ethereumTokenAddress = '9a1348ebe10f1ae4461fcb885d8cba8260757957';
-			const result = await echo.walletApi.getErc20Token(ethereumTokenAddress);
-			// expect(result)
-			// 	.to
-			// 	.be
-			// 	.an('object');
-			// console.log('result', result);
+			await echo.walletApi.getErc20Token(ethereumTokenAddress);
 		}).timeout(5000);
 	});
 
@@ -933,16 +921,16 @@ describe('WALLET API', () => {
 
 	describe('#generateAccountAddress()', () => {
 		it('Should generate account address', async () => {
-				const label = 'label';
-				const result = await echo.walletApi.generateAccountAddress(
-					accountId,
-					label,
-					shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
+			const label = 'label';
+			const result = await echo.walletApi.generateAccountAddress(
+				accountId,
+				label,
+				shouldDoBroadcastToNetwork,
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -961,12 +949,7 @@ describe('WALLET API', () => {
 	describe('#getAccountByAddress()', () => {
 		it('Should get owner of specified address', async () => {
 			const address = 'f54a5851e9372b87810a8e60cdd2e7cfd80b6e31';
-			const result = await echo.walletApi.getAccountByAddress(address);
-			// expect(result)
-			// 	.to
-			// 	.be
-			// 	.an('string');
-			// console.log('result', result);
+			await echo.walletApi.getAccountByAddress(address);
 		}).timeout(5000);
 	});
 
@@ -985,24 +968,23 @@ describe('WALLET API', () => {
 			try {
 				const proposalId = '1.5.0';
 				const delta = {
-					"active_approvals_to_add": ['1','1'],
-					"active_approvals_to_remove": ['1','1'],
-					"owner_approvals_to_add": ['1','1'],
-					"owner_approvals_to_remove": ['1','1'],
-					"key_approvals_to_add": ['1','1'],
-					"key_approvals_to_remove": ['1','1'],
+					active_approvals_to_add: ['1', '1'],
+					active_approvals_to_remove: ['1', '1'],
+					owner_approvals_to_add: ['1', '1'],
+					owner_approvals_to_remove: ['1', '1'],
+					key_approvals_to_add: ['1', '1'],
+					key_approvals_to_remove: ['1', '1'],
 				};
 				const result = await echo.walletApi.approveProposal(
 					accountId,
 					proposalId,
 					delta,
 					shouldDoBroadcastToNetwork,
-					);
+				);
 				expect(result)
 					.to
 					.be
 					.an('object');
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1028,7 +1010,7 @@ describe('WALLET API', () => {
 				ethAddress,
 				value,
 				shouldDoBroadcastToNetwork,
-				);
+			);
 			expect(result)
 				.to
 				.be
@@ -1048,18 +1030,18 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('#listAssets()', () => {
 		it('Should get lists of all assets registered', async () => {
 			const result = await echo.walletApi.listAssets(
 				constants.ECHO_ASSET_ID,
-				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT
-				);
-				expect(result)
-					.to
-					.be
-					.an('array').that.is.not.empty;
-				expect(result[0])
+				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT,
+			);
+			expect(result)
+				.to
+				.be
+				.an('array').that.is.not.empty;
+			expect(result[0]);
 		}).timeout(5000);
 	});
 
@@ -1067,7 +1049,7 @@ describe('WALLET API', () => {
 		it('Should get lists of all assets registered', async () => {
 			const result = await echo.walletApi.listAssets(
 				constants.ECHO_ASSET_ID,
-				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT
+				constants.API_CONFIG.LIST_ASSETS_MAX_LIMIT,
 			);
 			expect(result)
 				.to
@@ -1102,32 +1084,31 @@ describe('WALLET API', () => {
 	describe.skip('#updateAsset()', () => {
 		it('Should update the core options on an asset', async () => {
 			try {
-				const assetOption = {
-					"max_supply": 1,
-					"issuer_permissions": 0,
-					"flags": 0,
-					"core_exchange_rate": {
-						"base": {
-							"amount": 1,
-							"asset_id": '1.3.0',
+				const newAssetOption = {
+					max_supply: 1,
+					issuer_permissions: 0,
+					flags: 0,
+					core_exchange_rate: {
+						base: {
+							amount: 1,
+							asset_id: '1.3.0',
 						},
-						"quote": {
-							"amount": 1,
-							"asset_id": '1.3.1',
+						quote: {
+							amount: 1,
+							asset_id: '1.3.1',
 						},
 					},
-					"whitelist_authorities": [],
-					"blacklist_authorities": [],
-					"description": 'description',
-					"extensions": [],
+					whitelist_authorities: [],
+					blacklist_authorities: [],
+					description: 'description',
+					extensions: [],
 				};
 				const result = await echo.walletApi.updateAsset(
 					constants.ECHO_ASSET_ID,
 					accountId,
-					assetOption,
+					newAssetOption,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('result', result);
 				expect(result)
 					.to
 					.be
@@ -1140,15 +1121,15 @@ describe('WALLET API', () => {
 
 	describe.skip('#updateBitasset()', () => {
 		it('Should update the options specific to a BitAsset', async () => {
-			const bitassetOpts = {
-					feed_lifetime_sec: 1,
-					minimum_feeds: 2,
-					short_backing_asset: '1.3.0',
-					extensions: [],
-				};
+			const newBitassetOpts = {
+				feed_lifetime_sec: 1,
+				minimum_feeds: 2,
+				short_backing_asset: '1.3.0',
+				extensions: [],
+			};
 			const result = await echo.walletApi.updateBitasset(
 				constants.ECHO_ASSET_ID,
-				bitassetOpts,
+				newBitassetOpts,
 				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
@@ -1184,39 +1165,39 @@ describe('WALLET API', () => {
 				assetOption,
 				bitassetOpts,
 				shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			}).timeout(5000);
-		});
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(5000);
+	});
 
 	describe('#publishAssetFeed()', () => {
 		it('Should publishes a price feed for the named asset', async () => {
 			const priceFeed = {
-				"settlement_price": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
+				settlement_price: {
+					base: {
+						amount: 1,
+						asset_id: '1.3.0',
 					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
-				},
-				"core_exchange_rate": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
+					quote: {
+						amount: 1,
+						asset_id: '1.3.1',
 					},
 				},
-				"maintenance_collateral_ratio": 32e3,
-				"maximum_short_squeeze_ratio": 32e3,
+				core_exchange_rate: {
+					base: {
+						amount: 1,
+						asset_id: '1.3.0',
+					},
+					quote: {
+						amount: 1,
+						asset_id: '1.3.1',
+					},
+				},
+				maintenance_collateral_ratio: 32e3,
+				maximum_short_squeeze_ratio: 32e3,
 			};
 			const result = await echo.walletApi.publishAssetFeed(
 				accountId,
@@ -1234,42 +1215,41 @@ describe('WALLET API', () => {
 	describe.skip('#updateAsset()', () => {
 		it('Should update the core options on an asset', async () => {
 			try {
-				const assetOption = {
-					"max_supply": 1,
-					"issuer_permissions": 0,
-					"flags": 0,
-					"core_exchange_rate": {
-						"base": {
-							"amount": 1,
-							"asset_id": '1.3.0',
+				const newAssetOption = {
+					max_supply: 1,
+					issuer_permissions: 0,
+					flags: 0,
+					core_exchange_rate: {
+						base: {
+							amount: 1,
+							asset_id: '1.3.0',
 						},
-						"quote": {
-							"amount": 1,
-							"asset_id": '1.3.1',
+						quote: {
+							amount: 1,
+							asset_id: '1.3.1',
 						},
 					},
-					"whitelist_authorities": [],
-					"blacklist_authorities": [],
-					"description": 'description',
-					"extensions": [],
+					whitelist_authorities: [],
+					blacklist_authorities: [],
+					description: 'description',
+					extensions: [],
 				};
 				const result = await echo.walletApi.updateAsset(
 					constants.ECHO_ASSET_ID,
 					accountId,
-					assetOption,
+					newAssetOption,
 					shouldDoBroadcastToNetwork,
-					);
-					console.log('result', result);
-					expect(result)
-						.to
-						.be
-						.an('object');
-				} catch (e) {
-					throw e;
-				}
-			}).timeout(5000);
-		});
-	
+				);
+				expect(result)
+					.to
+					.be
+					.an('object');
+			} catch (e) {
+				throw e;
+			}
+		}).timeout(5000);
+	});
+
 	describe.skip('#issueAsset()', () => {
 		it('Should do issue new shares of an asset', async () => {
 			try {
@@ -1281,7 +1261,6 @@ describe('WALLET API', () => {
 					assetTicker,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('result', result);
 				expect(result)
 					.to
 					.be
@@ -1294,15 +1273,15 @@ describe('WALLET API', () => {
 
 	describe('#updateBitasset()', () => {
 		it('Should update the options specific to a BitAsset', async () => {
-			const bitassetOpts = {
-					feed_lifetime_sec: 1,
-					minimum_feeds: 2,
-					short_backing_asset: '1.3.0',
-					extensions: [],
-				};
+			const newBitassetOpts = {
+				feed_lifetime_sec: 1,
+				minimum_feeds: 2,
+				short_backing_asset: '1.3.0',
+				extensions: [],
+			};
 			const result = await echo.walletApi.updateBitasset(
 				constants.ECHO_ASSET_ID,
-				bitassetOpts,
+				newBitassetOpts,
 				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
@@ -1321,9 +1300,9 @@ describe('WALLET API', () => {
 				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
-			.to
-			.be
-			.an('object').that.is.not.empty;
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1340,28 +1319,28 @@ describe('WALLET API', () => {
 	describe('#publishAssetFeed()', () => {
 		it('Should publishes a price feed for the named asset', async () => {
 			const priceFeed = {
-				"settlement_price": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
+				settlement_price: {
+					base: {
+						amount: 1,
+						asset_id: '1.3.0',
 					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
-				},
-				"core_exchange_rate": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
+					quote: {
+						amount: 1,
+						asset_id: '1.3.1',
 					},
 				},
-				"maintenance_collateral_ratio": 32e3,
-				"maximum_short_squeeze_ratio": 32e3,
+				core_exchange_rate: {
+					base: {
+						amount: 1,
+						asset_id: '1.3.0',
+					},
+					quote: {
+						amount: 1,
+						asset_id: '1.3.1',
+					},
+				},
+				maintenance_collateral_ratio: 32e3,
+				maximum_short_squeeze_ratio: 32e3,
 			};
 			const result = await echo.walletApi.publishAssetFeed(
 				accountId,
@@ -1388,9 +1367,9 @@ describe('WALLET API', () => {
 					shouldDoBroadcastToNetwork,
 				);
 				expect(result)
-				.to
-				.be
-				.an('object');
+					.to
+					.be
+					.an('object');
 			} catch (e) {
 				throw e;
 			}
@@ -1402,7 +1381,7 @@ describe('WALLET API', () => {
 			try {
 				const symbol = 'TFYS';
 				const precision = 0;
-				const check = await echo.walletApi.createAsset(
+				await echo.walletApi.createAsset(
 					accountId,
 					symbol,
 					precision,
@@ -1410,14 +1389,12 @@ describe('WALLET API', () => {
 					bitassetOpts,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('check', check.operations[0][1]);
 				const bitasset = '1.3.0';
 				const result = await echo.walletApi.getBitassetData(bitasset);
 				expect(result)
 					.to
 					.be
 					.an('object');
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1432,7 +1409,7 @@ describe('WALLET API', () => {
 				constants.ECHO_ASSET_ID,
 				amount,
 				shouldDoBroadcastToNetwork,
-				);
+			);
 			expect(result)
 				.to
 				.be
@@ -1473,7 +1450,7 @@ describe('WALLET API', () => {
 			const result = await echo.walletApi.listCommitteeMembers(
 				lowerBoundName,
 				constants.API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
-				);
+			);
 			expect(result)
 				.to
 				.be
@@ -1508,36 +1485,35 @@ describe('WALLET API', () => {
 	describe.skip('#createCommitteeMember()', () => {
 		it('Should creates a committee_member object owned by the given account', async () => {
 			const newAccountId = '1.2.0';
-			const url = '';
+			const memberUrl = '';
 			const amount = '1';
 			const ethereumAddress = '7234F8149411B8F275373DC470011e18126489B6';
 			const btcPublicKey = '02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e';
 			const result = await echo.walletApi.createCommitteeMember(
 				newAccountId,
-				url,
+				memberUrl,
 				amount,
 				ethereumAddress,
 				btcPublicKey,
 				shouldDoBroadcastToNetwork,
-				);
-				expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-			}).timeout(5000);
+			);
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
+		}).timeout(5000);
 	});
 
 	describe.skip('#setDesiredCommitteeMemberCount()', () => {
 		it('Should set your vote for the number of committee_members', async () => {
 			try {
-			const accountName = 'bruno';
-			const newAccount = await echo.walletApi.createAccountWithBrainKey(
-				brainKey,
-				accountName,
-				accountId,
-				shouldDoBroadcastToNetwork
-			);
-				// console.log('---------voting_account---------', newAccount.operations[0][1].options.voting_account);
+				const newAccountName = 'bruno';
+				const newAccount = await echo.walletApi.createAccountWithBrainKey(
+					brainKey,
+					newAccountName,
+					accountId,
+					shouldDoBroadcastToNetwork,
+				);
 				const desiredNumberOfCommitteeMembers = 0;
 				const result = await echo.walletApi.setDesiredCommitteeMemberCount(
 					newAccount.operations[0][1].options.voting_account,
@@ -1545,16 +1521,15 @@ describe('WALLET API', () => {
 					shouldDoBroadcastToNetwork,
 				);
 				expect(result)
-				.to
-				.be
-				.an('object');
-			console.log('result', result);
+					.to
+					.be
+					.an('object');
 			} catch (e) {
 				throw e;
 			}
 		}).timeout(5000);
 	});
-			
+
 	describe.skip('#proposeParameterChange()', () => {
 		it('Should creates a transaction to propose a parameter change', async () => {
 			try {
@@ -1566,12 +1541,10 @@ describe('WALLET API', () => {
 					changedValues,
 					shouldDoBroadcastToNetwork,
 				);
-				// console.log('result', result);
-			expect(result)
-				.to
-				.be
-				.an('object');
-			console.log('result', result);
+				expect(result)
+					.to
+					.be
+					.an('object');
 			} catch (e) {
 				throw e;
 			}
@@ -1595,7 +1568,7 @@ describe('WALLET API', () => {
 			const result = await echo.walletApi.listCommitteeMembers(
 				lowerBoundName,
 				constants.API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_DEFAULT_LIMIT,
-				);
+			);
 			expect(result)
 				.to
 				.be
@@ -1658,9 +1631,9 @@ describe('WALLET API', () => {
 		it('should returns the 0 for ECHO asset', async () => {
 			const result = await echo.walletApi.committeeWithdrawBalance('1.2.10', '1');
 			expect(result)
-			.to
-			.be
-			.an('object').that.is.not.empty;
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 
 	});
@@ -1680,7 +1653,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1703,7 +1675,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1711,17 +1682,16 @@ describe('WALLET API', () => {
 	});
 
 
-
 	describe.skip('#changeSidechainConfig()', () => {
 		it('Should change sidechain config', async () => {
 			const changedValues = {
-				"_time_net_1mb": 1,
-				"_time_net_256b": 1,
-				"_creator_count": 1,
-				"_verifier_count": 1,
-				"_ok_threshold": 1,
-				"_max_bba_steps": 1,
-				"_gc1_delay": 1,
+				_time_net_1mb: 1,
+				_time_net_256b: 1,
+				_creator_count: 1,
+				_verifier_count: 1,
+				_ok_threshold: 1,
+				_max_bba_steps: 1,
+				_gc1_delay: 1,
 			};
 			const result = await echo.walletApi.changeSidechainConfig(
 				accountId,
@@ -1762,7 +1732,6 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('object').that.is.not.empty;
-				console.log('result', result);
 			} catch (e) {
 				throw e;
 			}
@@ -1772,13 +1741,13 @@ describe('WALLET API', () => {
 	describe.skip('#changeSidechainConfig()', () => {
 		it('Should change sidechain config', async () => {
 			const changedValues = {
-				"_time_net_1mb": 1,
-				"_time_net_256b": 1,
-				"_creator_count": 1,
-				"_verifier_count": 1,
-				"_ok_threshold": 1,
-				"_max_bba_steps": 1,
-				"_gc1_delay": 1,
+				_time_net_1mb: 1,
+				_time_net_256b: 1,
+				_creator_count: 1,
+				_verifier_count: 1,
+				_ok_threshold: 1,
+				_max_bba_steps: 1,
+				_gc1_delay: 1,
 			};
 			const result = await echo.walletApi.changeSidechainConfig(
 				accountId,
@@ -1828,10 +1797,10 @@ describe('WALLET API', () => {
 	describe('#getGlobalProperties()', () => {
 		it('should returns the number of registered accounts', async () => {
 			const result = await echo.walletApi.getGlobalProperties();
-            expect(result)
-                .to
-                .be
-                .an('object').that.is.not.empty;
+			expect(result)
+				.to
+				.be
+				.an('object').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1859,10 +1828,10 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('TRANSACTION BUILDER', () => {
 
-		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
+		beforeEach(async () => echo.walletApi.beginBuilderTransaction());
 
 		describe('#beginBuilderTransaction()', () => {
 			it('should returns number of built transaction', async () => {
@@ -1886,7 +1855,7 @@ describe('WALLET API', () => {
 						account_id: accountId,
 						new_owner: '1.2.1',
 						extensions: [],
-					}
+					},
 				];
 				const result = await echo.walletApi.addOperationToBuilderTransaction(transactionTypeHandle, operation);
 				expect(result)
@@ -1909,7 +1878,7 @@ describe('WALLET API', () => {
 							account_id: accountId,
 							new_owner: '1.2.1',
 							extensions: [],
-						}
+						},
 					];
 					const unsignedOperation = 4;
 					const result = await echo.walletApi.replaceOperationInBuilderTransaction(
@@ -1922,7 +1891,6 @@ describe('WALLET API', () => {
 						.be
 						.an('null');
 				} catch (e) {
-					console.log(e);
 					throw e;
 				}
 			}).timeout(5000);
@@ -1956,7 +1924,7 @@ describe('WALLET API', () => {
 				const transactionTypeHandle = 5;
 				const result = await echo.walletApi.signBuilderTransaction(
 					transactionTypeHandle,
-					shouldDoBroadcastToNetwork
+					shouldDoBroadcastToNetwork,
 				);
 				expect(result)
 					.to
@@ -1968,7 +1936,7 @@ describe('WALLET API', () => {
 		describe.skip('#proposeBuilderTransaction()', () => {
 			it('should get sing transaction', async () => {
 				const transactionTypeHandle = 6;
-				const date = new Date(2020,9,5);
+				const date = new Date(2020, 9, 5);
 				const reviewPeriod = 60000;
 				const result = await echo.walletApi.proposeBuilderTransaction(
 					transactionTypeHandle,
@@ -2084,8 +2052,8 @@ describe('WALLET API', () => {
 					.to
 					.be
 					.an('array');
-				}).timeout(5000);
-			});
+			}).timeout(5000);
+		});
 
 
 		describe('#registerAccountWithApi()', () => {
@@ -2095,8 +2063,7 @@ describe('WALLET API', () => {
 					const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
 
 					await echo.walletApi.registerAccountWithApi(name, pubKey, pubKey);
-				} catch(e) {
-					console.log(e);
+				} catch (e) {
 					throw e;
 				}
 			}).timeout(5000);
@@ -2114,9 +2081,8 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;	
+						.an('object').that.is.not.empty;
 				} catch (e) {
-					console.log(e);
 					throw e;
 				}
 			}).timeout(5000);
@@ -2131,16 +2097,16 @@ describe('WALLET API', () => {
 					to: `1.${ACCOUNT}.7`,
 					amount: {
 						asset_id: constants.ECHO_ASSET_ID,
-						amount: 1000
+						amount: 1000,
 					},
 				});
 				await transaction.sign(PrivateKey.fromWif(pk));
 				const trx = transaction.transactionObject;
 				const result = await echo.walletApi.serializeTransaction(trx);
 				expect(result)
-				.to
-				.be
-				.an('string');
+					.to
+					.be
+					.an('string');
 			}).timeout(5000);
 		});
 
@@ -2149,39 +2115,38 @@ describe('WALLET API', () => {
 				try {
 					const result = await echo.walletApi.listFrozenBalances(accountId);
 					expect(result)
-					.to
-					.be
-					.an('array').that.is.not.empty;
-				expect(result[0])
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				expect(result[0].id)
-					.to
-					.be
-					.an('string').that.is.not.empty;
-				expect(result[0].owner)
-					.to
-					.be
-					.an('string');
-				expect(result[0].balance)
-					.to
-					.be
-					.an('object').that.is.not.empty;
-				expect(result[0].multiplier)
-					.to
-					.be
-					.an('number');
-				expect(result[0].unfreeze_time)
-					.to
-					.be
-					.an('string').that.is.not.empty;
-				expect(result[0].extensions)
-					.to
-					.be
-					.an('array');	
+						.to
+						.be
+						.an('array').that.is.not.empty;
+					expect(result[0])
+						.to
+						.be
+						.an('object').that.is.not.empty;
+					expect(result[0].id)
+						.to
+						.be
+						.an('string').that.is.not.empty;
+					expect(result[0].owner)
+						.to
+						.be
+						.an('string');
+					expect(result[0].balance)
+						.to
+						.be
+						.an('object').that.is.not.empty;
+					expect(result[0].multiplier)
+						.to
+						.be
+						.an('number');
+					expect(result[0].unfreeze_time)
+						.to
+						.be
+						.an('string').that.is.not.empty;
+					expect(result[0].extensions)
+						.to
+						.be
+						.an('array');
 				} catch (e) {
-					console.log(e);
 					throw e;
 				}
 			}).timeout(5000);
@@ -2197,11 +2162,10 @@ describe('WALLET API', () => {
 						'02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e',
 					);
 					expect(result)
-					.to
-					.be
-					.an('object').that.is.not.empty;
+						.to
+						.be
+						.an('object').that.is.not.empty;
 				} catch (e) {
-					console.log(e);
 					throw e;
 				}
 			}).timeout(5000);

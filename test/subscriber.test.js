@@ -15,7 +15,7 @@ describe('SUBSCRIBER', () => {
 	describe('setStatusSubscribe', () => {
 		describe('when invalid status provided', () => {
 			const echo = new Echo();
-			shouldReject(async () => await echo.subscriber.setStatusSubscribe('conn', () => {}), 'Invalid status');
+			shouldReject(async () => echo.subscriber.setStatusSubscribe('conn', () => {}), 'Invalid status');
 		});
 
 		describe('when subscribed, but not connected', () => {
@@ -24,8 +24,8 @@ describe('SUBSCRIBER', () => {
 			let disconnected = false;
 			it('should not rejects', async () => {
 				await Promise.all([
-					echo.subscriber.setStatusSubscribe('connect', () => connected = true),
-					echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true),
+					echo.subscriber.setStatusSubscribe('connect', () => { connected = true; }),
+					echo.subscriber.setStatusSubscribe('disconnect', () => { disconnected = true; }),
 				]);
 			});
 			it('should not emits "connect" event', () => ok(!connected));
@@ -35,12 +35,12 @@ describe('SUBSCRIBER', () => {
 		describe('when subscribed on "connect" event', () => {
 			const echo = new Echo();
 			let connected = false;
-			after(async () => await echo.disconnect());
+			after(async () => echo.disconnect());
 			it('should not rejects', async () => {
-				await echo.subscriber.setStatusSubscribe('connect', () => connected = true);
+				await echo.subscriber.setStatusSubscribe('connect', () => { connected = true; });
 			});
 			it('should not emits before connect', () => ok(!connected));
-			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should not rejects on connect', async () => echo.connect(url));
 			it('should emits after connect', () => ok(connected));
 		});
 
@@ -48,12 +48,12 @@ describe('SUBSCRIBER', () => {
 			const echo = new Echo();
 			let disconnected = false;
 			it('should not rejects', async () => {
-				await echo.subscriber.setStatusSubscribe('disconnect', () => disconnected = true);
+				await echo.subscriber.setStatusSubscribe('disconnect', () => { disconnected = true; });
 			});
 			it('should not emits before connect', () => ok(!disconnected));
-			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should not rejects on connect', async () => echo.connect(url));
 			it('should not emits after connect', () => ok(!disconnected));
-			it('should not rejects on disconnect', async () => await echo.disconnect());
+			it('should not rejects on disconnect', async () => echo.disconnect());
 			it('should emits after disconnect', () => ok(disconnected));
 		});
 
@@ -61,7 +61,7 @@ describe('SUBSCRIBER', () => {
 			const echo = new Echo();
 			const STATUS = { CONNECTED: 'CONNECTED', DISCONNECTED: 'DISCONNECTED' };
 			const events = [];
-			after(async () => await echo.disconnect());
+			after(async () => echo.disconnect());
 			it('should not rejects', async () => {
 				await Promise.all([
 					echo.subscriber.setStatusSubscribe('connect', () => events.push(STATUS.CONNECTED)),
@@ -70,9 +70,9 @@ describe('SUBSCRIBER', () => {
 			});
 			it('should not emits "connect" event before connect', () => ok(!events.includes(STATUS.CONNECTED)));
 			it('should not emits "disconnect" event before connect', () => ok(!events.includes(STATUS.DISCONNECTED)));
-			it('should not rejects on connect', async () => await echo.connect(url));
+			it('should not rejects on connect', async () => echo.connect(url));
 			it('should emits single event "connect"', () => deepStrictEqual(events, [STATUS.CONNECTED]));
-			it('should not rejects on reconnect', async () => await echo.reconnect());
+			it('should not rejects on reconnect', async () => echo.reconnect());
 			it('should emits "disconnect" event on reconnect', () => strictEqual(events[1], STATUS.DISCONNECTED));
 			it('should emits "connect" event after reconnect', () => strictEqual(events[2], STATUS.CONNECTED));
 			it('should not emits more events', function () {
@@ -82,7 +82,7 @@ describe('SUBSCRIBER', () => {
 		});
 	});
 
-	let echo = new Echo();
+	const echo = new Echo();
 
 	describe('echorand', () => {
 		describe('setEchorandSubscribe', () => {
@@ -99,7 +99,7 @@ describe('SUBSCRIBER', () => {
 				let isCalled = false;
 				let isReconnected = false;
 
-				echo.subscriber.setEchorandSubscribe((result) => {
+				echo.subscriber.setEchorandSubscribe(() => {
 					if (!isCalled && isReconnected) {
 						done();
 						isCalled = true;
@@ -113,7 +113,7 @@ describe('SUBSCRIBER', () => {
 			it('test', async () => {
 				let emitted = false;
 				let onEmit;
-				const onceEmitted = new Promise((resolve) => onEmit = resolve);
+				const onceEmitted = new Promise((resolve) => { onEmit = resolve; });
 				echo.subscriber.setEchorandSubscribe((result) => {
 					expect(result).to.be.an('array').that.is.not.empty;
 					expect(result[0]).to.be.an('object').that.is.not.empty;
@@ -179,7 +179,7 @@ describe('SUBSCRIBER', () => {
 			it('test', async () => {
 				let emitted = false;
 				let onInited;
-				const onceEmitted = new Promise((resolve) => onInited = resolve);
+				const onceEmitted = new Promise((resolve) => { onInited = resolve; });
 
 				echo.subscriber.setBlockApplySubscribe((result) => {
 					expect(result).to.be.an('array').that.is.not.empty;
@@ -294,7 +294,7 @@ describe('SUBSCRIBER', () => {
 			it('test', async () => {
 				let emitted = false;
 				let onEmit;
-				const onceEmitted = new Promise((resolve) => onEmit = resolve);
+				const onceEmitted = new Promise((resolve) => { onEmit = resolve; });
 				echo.subscriber.setGlobalSubscribe((result) => {
 					if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`) {
 						expect(result).to.be.an('array').that.is.not.empty;
@@ -344,7 +344,7 @@ describe('SUBSCRIBER', () => {
 			expect(echo.subscriber.subscriptions.transaction).to.be.false;
 			expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.empty;
 
-			echo.subscriber.setPendingTransactionSubscribe((result) => {
+			echo.subscriber.setPendingTransactionSubscribe((/* result */) => {
 				// expect(result).to.be.an('array').that.is.not.empty;
 				// expect(result[0]).to.be.an('object').that.is.not.empty;
 				// expect(result[0].type).to.be.a('number');
@@ -396,7 +396,7 @@ describe('SUBSCRIBER', () => {
 
 	describe.skip('removeStatusSubscribe', () => {
 
-		it('status - connect',  async () => {
+		it('status - connect', async () => {
 			const spy = chai.spy(() => {});
 
 			const { length } = echo.subscriber.subscribers.connect;

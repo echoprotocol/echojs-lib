@@ -152,22 +152,28 @@ describe('encode', () => {
 	});
 
 	describe('static bytes', () => {
-		for (const { test, type, value, error } of [
-			{ test: 'not a hex string', type: 'bytes10', value: 'qwe', error: 'input is not a hex string' },
-			{ test: 'large input', type: 'bytes2', value: '0x012345', error: 'input is too large' },
-			{
-				test: 'short input',
-				type: 'bytes3',
-				value: '0x0123',
-				error: 'input is too short, maybe u need to use align?',
-			},
-			{
-				test: 'unknown align',
-				type: 'bytes3',
-				value: { value: '0x12', align: 'qwe' },
-				error: 'unknown align',
-			},
-		]) it(test, () => expect(() => encode({ type, value })).to.throw(Error, error));
+		for (const {
+			test, type, value, error,
+		} of [
+				{
+					test: 'not a hex string', type: 'bytes10', value: 'qwe', error: 'input is not a hex string',
+				},
+				{
+					test: 'large input', type: 'bytes2', value: '0x012345', error: 'input is too large',
+				},
+				{
+					test: 'short input',
+					type: 'bytes3',
+					value: '0x0123',
+					error: 'input is too short, maybe u need to use align?',
+				},
+				{
+					test: 'unknown align',
+					type: 'bytes3',
+					value: { value: '0x12', align: 'qwe' },
+					error: 'unknown align',
+				},
+			]) it(test, () => expect(() => encode({ type, value })).to.throw(Error, error));
 
 		describe('invalid bytes count', () => {
 			for (const { test, bytesCount, error } of [

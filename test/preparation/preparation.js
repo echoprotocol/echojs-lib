@@ -19,7 +19,7 @@ const prepare = async () => {
 		balance_to_claim: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BALANCE}.0`,
 		balance_owner_key: privateKey.toPublicKey().toString(),
 		total_claimed: balanceObject.balance,
-	}).addSigner(privateKey)
+	}).addSigner(privateKey);
 	console.log('broadcasting claim tx...');
 	await tx.broadcast();
 	console.log('claim tx was broadcasted');
@@ -29,6 +29,6 @@ prepare()
 	.then(() => echo.disconnect())
 	.catch((e) => {
 		console.log(e);
-		console.log(e.data.stack)
+		console.log(e.data.stack);
 		throw e;
 	});

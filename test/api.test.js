@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { deepStrictEqual } from 'assert';
 import WS from '../src/echo/ws';
 import WSAPI from '../src/echo/ws-api';
 import Cache from '../src/echo/cache';
@@ -8,18 +9,17 @@ import echo, { constants } from '../src';
 import { DEFAULT_CHAIN_APIS, CHAIN_API } from '../src/constants/ws-constants';
 
 import { url, accountId } from './_test-data';
-import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
 describe('API', () => {
 	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
 			const apis = [CHAIN_API.DATABASE_API, CHAIN_API.ASSET_API];
-			before(async () => await echo.connect(url, { apis }));
-			after(async () => await echo.disconnect());
+			before(async () => echo.connect(url, { apis }));
+			after(async () => echo.disconnect());
 			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
 			describe('when provided api used', () => {
-				it('should succeed', async () => await echo.api.getBlock(1));
+				it('should succeed', async () => echo.api.getBlock(1));
 			});
 			describe('when not provided api used', () => {
 				const expectedErrorMessage = [
@@ -33,11 +33,11 @@ describe('API', () => {
 		});
 
 		describe('when apis options is not provided', () => {
-			before(async () => await echo.connect(url, {}));
-			after(async () => await echo.disconnect());
+			before(async () => echo.connect(url, {}));
+			after(async () => echo.disconnect());
 			it('only default apis should be connected', () => deepStrictEqual(echo.apis, new Set(DEFAULT_CHAIN_APIS)));
 			describe('when deafult api used', () => {
-				it('should succed', async () => await echo.api.getBlock(1));
+				it('should succed', async () => echo.api.getBlock(1));
 			});
 			describe('when not default api used', () => {
 				const expectedErrorMessage = [
@@ -63,13 +63,13 @@ describe('API', () => {
 				await echo.connect(url, { apis });
 				await echo.reconnect();
 			});
-			after(async () => await echo.disconnect());
+			after(async () => echo.disconnect());
 			it('only provided apis should be connected', () => deepStrictEqual(echo.apis, new Set(apis)));
 			describe('when provided api used', () => {
-				it('should succeed', async () => await echo.api.getAllAssetHolders());
+				it('should succeed', async () => echo.api.getAllAssetHolders());
 			});
 			describe('when provided api used', () => {
-				it('should succeed', async () => await echo.api.getAccountHistory(accountId));
+				it('should succeed', async () => echo.api.getAccountHistory(accountId));
 			});
 			describe('when not nonprovided api used', () => {
 				const expectedErrorMessage = [
@@ -77,7 +77,7 @@ describe('API', () => {
 					'try to specify this in connection option called "apis"',
 				].join(', ');
 				shouldReject(async () => {
-					await echo.api.getBlock(1)
+					await echo.api.getBlock(1);
 				}, expectedErrorMessage, 'with expected message');
 			});
 		});
@@ -168,12 +168,10 @@ describe('API', () => {
 		beforeEach(async () => {
 			await ws.connect(url, {
 				debug: false,
-				apis: constants.WS_CONSTANTS.CHAIN_APIS
+				apis: constants.WS_CONSTANTS.CHAIN_APIS,
 			});
 		});
-		afterEach(async () => {
-			await ws.close();
-		});
+		afterEach(async () => ws.close());
 
 		describe('configs', () => {
 			describe('#getChainProperties()', () => {
@@ -514,11 +512,11 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 					const assetId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
 					const assetSymbol = 'ECHO';
 
-					const objects = await api.getObjects([accountId, assetId]);
+					const objects = await api.getObjects([newAccountId, assetId]);
 
 					const accountName = objects[0].name;
 
@@ -530,14 +528,14 @@ describe('API', () => {
 					expect(objects[0])
 						.to
 						.deep
-						.equal(cache.accountsById.get(accountId)
+						.equal(cache.accountsById.get(newAccountId)
 							.toJS());
 					expect(objects[0])
 						.to
 						.deep
-						.equal(cache.objectsById.get(accountId)
+						.equal(cache.objectsById.get(newAccountId)
 							.toJS());
-					expect(accountId)
+					expect(newAccountId)
 						.to
 						.equal(cache.accountsByName.get(accountName));
 					expect(objects[1])
@@ -568,11 +566,11 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 					const assetId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
 					const assetSymbol = 'ECHO';
 
-					const objects = await api.getObjects([accountId, assetId]);
+					const objects = await api.getObjects([newAccountId, assetId]);
 
 					const accountName = objects[0].name;
 
@@ -584,14 +582,14 @@ describe('API', () => {
 					expect(objects[0])
 						.to
 						.deep
-						.equal(cache.accountsById.get(accountId)
+						.equal(cache.accountsById.get(newAccountId)
 							.toJS());
 					expect(objects[0])
 						.to
 						.deep
-						.equal(cache.objectsById.get(accountId)
+						.equal(cache.objectsById.get(newAccountId)
 							.toJS());
-					expect(accountId)
+					expect(newAccountId)
 						.to
 						.equal(cache.accountsByName.get(accountName));
 					expect(objects[1])
@@ -783,7 +781,7 @@ describe('API', () => {
 				.timeout(5000);
 		});
 		describe('#requestRegistrationTask', () => {
-			it('should get registration task', async() => {
+			it('should get registration task', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
 					const cache = new Cache();
@@ -817,7 +815,7 @@ describe('API', () => {
 						.be
 						.an('array');
 
-					const accountId = objects[0].committee_member_account;
+					const committeeMemberAccountId = objects[0].committee_member_account;
 					const voteId = objects[0].vote_id;
 
 					expect(objects[0])
@@ -833,7 +831,7 @@ describe('API', () => {
 					expect(objects[0])
 						.to
 						.deep
-						.equal(cache.committeeMembersByAccountId.get(accountId)
+						.equal(cache.committeeMembersByAccountId.get(committeeMemberAccountId)
 							.toJS());
 					expect(objects[0])
 						.to
@@ -853,16 +851,15 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
-					const object = await api.getCommitteeMemberByAccount(accountId);
+					const object = await api.getCommitteeMemberByAccount(newAccountId);
 
 					expect(object)
 						.to
 						.be
 						.an('object');
-
-					const id = object.id;
+					const { id } = object;
 					const voteId = object.vote_id;
 
 					expect(object)
@@ -878,7 +875,7 @@ describe('API', () => {
 					expect(object)
 						.to
 						.deep
-						.equal(cache.committeeMembersByAccountId.get(accountId)
+						.equal(cache.committeeMembersByAccountId.get(newAccountId)
 							.toJS());
 					expect(object)
 						.to
@@ -891,7 +888,7 @@ describe('API', () => {
 			})
 				.timeout(5000);
 		});
-		describe('#getCommitteeFrozenBalance()', () =>{
+		describe('#getCommitteeFrozenBalance()', () => {
 			it('should get committee frozen balance by committee member id', async () => {
 				try {
 					const wsApi = new WSAPI(ws);
@@ -907,9 +904,10 @@ describe('API', () => {
 						.be
 						.an('object');
 
-					const { asset_id, amount } = object;
+					const { amount } = object;
+					const assetId = object.asset_id;
 
-					expect(asset_id)
+					expect(assetId)
 						.to
 						.be
 						.an('string').that.is.not.empty;
@@ -930,14 +928,14 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
-					const btcAddress = await api.getBtcAddress(accountId);
+					const btcAddress = await api.getBtcAddress(newAccountId);
 
 					expect(btcAddress)
 						.to
 						.be
-						.an('null');;
+						.an('null');
 				} catch (e) {
 					throw e;
 				}
@@ -945,10 +943,13 @@ describe('API', () => {
 				.timeout(5000);
 		});
 
+		/*eslint-disable */
 		// TODO:: return 76a9148768abc89249471f990fdf33029ac6c733603a258763ac6775532102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e74
 		// 2ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e4
 		// 96e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efe
 		// b07e496e742ac84512e21026b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b56ae68
+		/* eslint-enable */
+
 		describe.skip('#getBtcDepositScript()', () => {
 			it('should get null because script with this deposit id does not exist', async () => {
 				try {
@@ -963,7 +964,7 @@ describe('API', () => {
 					expect(script)
 						.to
 						.be
-						.an('null');;
+						.an('null');
 				} catch (e) {
 					throw e;
 				}
@@ -975,11 +976,12 @@ describe('API', () => {
 	describe('history', () => {
 		const ws = new WS();
 		beforeEach(async () => {
-			await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login'] });
+			await ws.connect(
+				url,
+				{ apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login'] },
+			);
 		});
-		afterEach(async () => {
-			await ws.close();
-		});
+		afterEach(async () => ws.close());
 		describe('#getAccountHistory()', () => {
 			it('should get account history', async () => {
 				try {
@@ -987,9 +989,9 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 
-					const history = await api.getAccountHistory(accountId);
+					const history = await api.getAccountHistory(newAccountId);
 					expect(history)
 						.to
 						.be
@@ -1007,12 +1009,12 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
 					const start = 0;
 					const stop = 0;
 					const limit = 10;
 
-					const history = await api.getRelativeAccountHistory(accountId, stop, limit, start);
+					const history = await api.getRelativeAccountHistory(newAccountId, stop, limit, start);
 					expect(history)
 						.to
 						.be
@@ -1030,13 +1032,19 @@ describe('API', () => {
 					const cache = new Cache();
 					const api = new API(cache, wsApi);
 
-					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
+					const newAccountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
 					const operationId = 0;
 					const start = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY}.0`;
 					const stop = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY}.0`;
 					const limit = 10;
 
-					const history = await api.getAccountHistoryOperations(accountId, operationId, start, stop, limit);
+					const history = await api.getAccountHistoryOperations(
+						newAccountId,
+						operationId,
+						start,
+						stop,
+						limit,
+					);
 					expect(history)
 						.to
 						.be

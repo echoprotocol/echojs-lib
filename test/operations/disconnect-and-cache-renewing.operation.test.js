@@ -1,8 +1,8 @@
 import 'mocha';
+import { expect } from 'chai';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url, contractId } from '../_test-data';
 import { Echo, constants } from '../../';
-import { expect } from 'chai';
 
 const { OPERATIONS_IDS } = constants;
 
@@ -27,7 +27,7 @@ describe('error while disconnecting and updating cache', () => {
 					registrar: accountId,
 					value: {
 						asset_id: '1.3.0',
-						amount: 0
+						amount: 0,
 					},
 				});
 				await tx.sign(privateKey);
@@ -43,24 +43,24 @@ describe('error while disconnecting and updating cache', () => {
 	describe('isAccountStatisticsId', () => {
 		it('connection closed during get full accounts callbacks from history', async () => {
 			try {
-			await echo.subscriber.setAccountSubscribe(() => {}, [accountId]);
-			await echo.createTransaction()
-				.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
-					fee: { asset_id: '1.3.0' },
-					account: accountId,
-					echorand_key: privateKey.toPublicKey()
-						.toString(),
-					active: {
-						weight_threshold: 1,
-						account_auths: [],
-						key_auths: [[ privateKey.toPublicKey().toString(), 1 ]],
-					},
-				})
-				.addSigner(privateKey)
-				.broadcast();
+				await echo.subscriber.setAccountSubscribe(() => {}, [accountId]);
+				await echo.createTransaction()
+					.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
+						fee: { asset_id: '1.3.0' },
+						account: accountId,
+						echorand_key: privateKey.toPublicKey()
+							.toString(),
+						active: {
+							weight_threshold: 1,
+							account_auths: [],
+							key_auths: [[privateKey.toPublicKey().toString(), 1]],
+						},
+					})
+					.addSigner(privateKey)
+					.broadcast();
 
-			await echo.subscriber._api.getFullAccounts([accountId], true, true);
-			await echo.disconnect();
+				await echo.subscriber._api.getFullAccounts([accountId], true, true);
+				await echo.disconnect();
 			} catch (err) {
 				expect(err.message).to.equal('Websocket is closed');
 			}
@@ -68,5 +68,3 @@ describe('error while disconnecting and updating cache', () => {
 	});
 
 });
-
-export { options };

@@ -2,10 +2,10 @@ import 'mocha';
 import { ok, strictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
-import { decodeSignedInteger } from '../../../src/contract/decoders';
+import decode, { decodeSignedInteger } from '../../../src/contract/decoders';
 import bitsCountTests from './_bitsCount.test';
 import valueTests from './_value.test';
-import decode from '../../../src/contract/decoders';
+
 
 describe('signed integer', () => {
 	describe('failure', () => {

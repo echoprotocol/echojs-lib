@@ -1,8 +1,8 @@
 import 'mocha';
 import { ok, strictEqual } from 'assert';
 import { expect } from 'chai';
-import decode from '../../../src/contract/decoders';
 import BigNumber from 'bignumber.js';
+import decode from '../../../src/contract/decoders';
 
 describe('dynamic bytes', () => {
 	describe('failure', () => {

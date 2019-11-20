@@ -1,5 +1,5 @@
-import { strictEqual, ok, fail } from "assert";
-import { inspect } from "util";
+import { strictEqual, ok, fail } from 'assert';
+import { inspect } from 'util';
 
 /**
  * @param {() => Promise<any> | any} f
@@ -20,11 +20,11 @@ export function shouldReject(f, expectedErrorMessage, testErrorMessage) {
 		console.log('got result:', inspect(res, false, null, true));
 		fail('should rejects');
 	});
-	it('instance of Error', function () {
+	it('instance of Error', () => {
 		if (!actualError) this.skip();
 		ok(actualError instanceof Error);
 	});
-	it(testErrorMessage || `with message "${expectedErrorMessage}"`, function () {
+	it(testErrorMessage || `with message "${expectedErrorMessage}"`, () => {
 		if (!actualError || !(actualError instanceof Error)) this.skip();
 		strictEqual(actualError.message, expectedErrorMessage);
 	});

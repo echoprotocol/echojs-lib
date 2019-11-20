@@ -1,13 +1,13 @@
+import { deepStrictEqual } from 'assert';
 import { shouldReject } from '../../_test-utils';
 import { serializers } from '../../../';
-import { deepStrictEqual } from 'assert';
 
-const static_variant_t = serializers.collections.staticVariant;
-const { string: string_s, bool } = serializers.basic;
+const staticVariantT = serializers.collections.staticVariant;
+const { string: stringSer, bool } = serializers.basic;
 const { uint32, varint32 } = serializers.basic.integers;
 
 describe('static variant', () => {
-	const s = static_variant_t({ 0: uint32, 1: string_s, 2: bool });
+	const s = staticVariantT({ 0: uint32, 1: stringSer, 2: bool });
 	describe('when invalid key provided', () => {
 		const key = 4;
 		shouldReject(() => s.deserialize(varint32.serialize(key)), `serializer with key ${key} not found`);

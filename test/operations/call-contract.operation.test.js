@@ -26,7 +26,7 @@ describe('call contract', () => {
 		// 			asset_id: '1.3.0',
 		// 			amount: 0,
 		// 		},
-		// 		code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001', // setVariable(uint256)
+		// 		code: '86be3f80' + '0000000000000000000000000000000000000000000000000000000000000001',
 		// 		callee: options.contractAddress,
 		// 	})
 		// 	.addSigner(privateKey)

@@ -1,8 +1,8 @@
 import 'mocha';
+import BigNumber from 'bignumber.js';
 import { deepStrictEqual, ok, strictEqual } from 'assert';
 import { expect } from 'chai';
 import decode from '../../../src/contract/decoders';
-import BigNumber from 'bignumber.js';
 
 describe('dynamic array', () => {
 	it('invalid offset', () => {
@@ -30,7 +30,7 @@ describe('dynamic array', () => {
 			'46273189767272440134904293994423341371457811516773246020914698249784488817547',
 			'103484385753905248778390947944422951340612094383824644796051262783048805749501',
 		];
-		for (let i = 0; i < res.length; i++) {
+		for (let i = 0; i < res.length; i += 1) {
 			const element = res[i];
 			ok(BigNumber.isBigNumber(element));
 			ok(element.eq(expectedResults[i]));

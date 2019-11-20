@@ -13,8 +13,8 @@ const echo = new Echo();
  */
 
 describe('Network API', () => {
-	before(async () => await echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS }));
-	after(async () => await echo.disconnect());
+	before(async () => echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS }));
+	after(async () => echo.disconnect());
 	describe('getConnectedPeers', () => {
 		describe('when not connected to any node', () => {
 			/** @type {UnPromisify<ReturnType<Echo["api"]["getConnectedPeers"]>>} */
@@ -24,11 +24,11 @@ describe('Network API', () => {
 				result = await echo.api.getConnectedPeers();
 				excepted = false;
 			});
-			it('should return array', function () {
+			it('should return array', () => {
 				if (excepted) this.skip();
 				ok(Array.isArray(result));
 			});
-			it('that is empty', function () {
+			it('that is empty', () => {
 				if (excepted || !Array.isArray(result)) this.skip();
 				strictEqual(result.length, 0);
 			});
@@ -42,12 +42,12 @@ describe('Network API', () => {
 			result = await echo.api.getPotentialPeers();
 			excepted = false;
 		});
-		it('should return array', function () {
+		it('should return array', () => {
 			if (excepted) this.skip();
 			ok(Array.isArray(result));
 		});
-		it('if is not empty', function () { if (!Array.isArray(result) || result.length === 0) this.skip(); });
-		it('every element is object', function () {
+		it('if is not empty', () => { if (!Array.isArray(result) || result.length === 0) this.skip(); });
+		it('every element is object', () => {
 			if (!Array.isArray(result) || result.length === 0) this.skip();
 			for (const e of result) ok(typeof e === 'object' && e !== null);
 		});
@@ -60,16 +60,20 @@ describe('Network API', () => {
 			'number_of_failed_connection_attempts',
 			'last_error',
 		]);
-		it('with no unexpected fields', function () {
+		it('with no unexpected fields', () => {
 			if (!Array.isArray(result) || result.length === 0) this.skip();
 			for (const e of result) {
-				for (const field in e) ok(expectedFields.has(field));
+				for (const field in e) {
+					if (Object.prototype.hasOwnProperty.call(e, field)) {
+						ok(expectedFields.has(field));
+					}
+				}
 			}
 		});
 		describe('with field "endpoint"', () => {
 			/** @type {string[]} */
 			let endpoints;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				endpoints = result.map((e) => e.endpoint);
 				ok(endpoints.every((e) => e !== undefined));
@@ -79,7 +83,7 @@ describe('Network API', () => {
 				ok(endpoints.every((e) => typeof e === 'string'));
 				isString = true;
 			});
-			it('that is ip-port url', function () {
+			it('that is ip-port url', () => {
 				if (!isString) this.skip();
 				for (const e of endpoints) {
 					const split = e.split(':');
@@ -101,7 +105,7 @@ describe('Network API', () => {
 		describe('with field "last_seen_time"', () => {
 			/** @type {string[]} */
 			let lastSeenTimes;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				lastSeenTimes = result.map((e) => e.last_seen_time);
 				ok(lastSeenTimes.every((e) => e !== undefined));
@@ -111,15 +115,15 @@ describe('Network API', () => {
 				ok(lastSeenTimes.every((e) => typeof e === 'string'));
 				isString = true;
 			});
-			it('that is ISO time with no miliseconds and "Z" postfix', function () {
+			it('that is ISO time with no miliseconds and "Z" postfix', () => {
 				if (!isString) this.skip();
-				for (const e of lastSeenTimes) strictEqual(new Date(e + 'Z').toISOString().slice(0, 19), e);
+				for (const e of lastSeenTimes) strictEqual(new Date(`${e}Z`).toISOString().slice(0, 19), e);
 			});
 		});
 		describe('with field "last_connection_disposition"', () => {
 			/** @type {string[]} */
 			let lastConnectionDispositions;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				lastConnectionDispositions = result.map((e) => e.last_connection_disposition);
 				ok(lastConnectionDispositions.every((e) => e !== undefined));
@@ -129,17 +133,16 @@ describe('Network API', () => {
 				ok(lastConnectionDispositions.every((e) => typeof e === 'string'));
 				isString = true;
 			});
-			it('that is "POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION"', function () {
+			it('that is "POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION"', () => {
 				if (!isString) this.skip();
-				ok(lastConnectionDispositions.every((e) => {
-					return Object.values(POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION).includes(e);
-				}));
+				ok(lastConnectionDispositions
+					.every((e) => Object.values(POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION).includes(e)));
 			});
 		});
 		describe('with field "last_connection_attempt_time"', () => {
 			/** @type {string[]} */
 			let lastConnectionAttemptTimes;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				lastConnectionAttemptTimes = result.map((e) => e.last_connection_attempt_time);
 				ok(lastConnectionAttemptTimes.every((e) => e !== undefined));
@@ -149,17 +152,17 @@ describe('Network API', () => {
 				ok(lastConnectionAttemptTimes.every((e) => typeof e === 'string'));
 				isString = true;
 			});
-			it('that is ISO time with no miliseconds and "Z" postfix', function () {
+			it('that is ISO time with no miliseconds and "Z" postfix', () => {
 				if (!isString) this.skip();
 				for (const e of lastConnectionAttemptTimes) {
-					strictEqual(new Date(e + 'Z').toISOString().slice(0, 19), e);
+					strictEqual(new Date(`${e}Z`).toISOString().slice(0, 19), e);
 				}
 			});
 		});
 		describe('with field "number_of_successful_connection_attempts"', () => {
 			/** @type {number[]} */
 			let numbersOfSuccessfulConnectionAttempts;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				numbersOfSuccessfulConnectionAttempts = result.map((e) => e.number_of_successful_connection_attempts);
 				ok(numbersOfSuccessfulConnectionAttempts.every((e) => e !== undefined));
@@ -173,7 +176,7 @@ describe('Network API', () => {
 		describe('with field "number_of_failed_connection_attempts"', () => {
 			/** @type {number[]} */
 			let numbersOfFailedConnectionAttempts;
-			before(function () {
+			before(() => {
 				if (!Array.isArray(result) || result.length === 0) this.skip();
 				numbersOfFailedConnectionAttempts = result.map((e) => e.number_of_failed_connection_attempts);
 				ok(numbersOfFailedConnectionAttempts.every((e) => e !== undefined));
