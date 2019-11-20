@@ -22,11 +22,11 @@ describe('API register account POW', () => {
 		it('register account', async () => {
 			let isResolved = false;
 			const promise = echo.api.registerAccount(
-					'kokoko'+ Date.now(),
-					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-					'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-					() => isResolved = true,
-				);
+				'kokoko'+ Date.now(),
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				() => isResolved = true,
+			);
 			await new Promise((resolve) => setTimeout(() => resolve(), 100));
 			await echo.api.getAccountCount();
 			ok(!isResolved);
