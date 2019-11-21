@@ -2,6 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url, contractId } from '../_test-data';
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants } from '../../';
 
 const { OPERATIONS_IDS } = constants;

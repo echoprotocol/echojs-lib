@@ -1,5 +1,6 @@
 import { ok, strictEqual } from 'assert';
 
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants } from '../..';
 import { url } from '../_test-data';
 

@@ -2,10 +2,11 @@ import 'mocha';
 import { strictEqual, ok, fail, deepStrictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { Echo, Contract } from '../../';
 import checkContractIdTests from './_checkContractId.test';
 import { abi, bytecode as code } from '../operations/_contract.test';
 import { url, privateKey, accountId } from '../_test-data';
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import { Echo, Contract } from '../../';
 
 describe('Method', () => {
 

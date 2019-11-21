@@ -1,7 +1,8 @@
 import { ok } from 'assert';
-import { Echo, OPERATIONS_IDS } from '../..';
 import { accountId, privateKey, url } from '../_test-data';
 import { getRandomAssetSymbol } from '../_test-utils';
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import { Echo, OPERATIONS_IDS } from '../..';
 
 /**
  * @typedef {import("../..")["serializers"]["protocol"]["asset"]["issue"]["__TOutput__"]} RawAssetIssueOperationProps

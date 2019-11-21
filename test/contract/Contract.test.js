@@ -2,6 +2,7 @@ import 'mocha';
 import { deepStrictEqual, notStrictEqual, strictEqual, ok } from 'assert';
 import { expect } from 'chai';
 
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Contract } from '../../';
 
 /** @typedef {import("../types/interfaces/Abi").AbiMethod} AbiMethod */

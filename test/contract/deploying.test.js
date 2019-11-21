@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { ok, strictEqual } from 'assert';
 import { PROTOCOL_OBJECT_TYPE_ID } from '../../src/constants';
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, Contract } from '../../';
 
 import { url, privateKey, accountId } from '../_test-data';

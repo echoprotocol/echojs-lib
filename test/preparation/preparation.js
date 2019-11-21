@@ -1,5 +1,6 @@
-import echo, { constants, OPERATIONS_IDS } from '../../';
 import { url, privateKey, accountId } from './../_test-data';
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import echo, { constants, OPERATIONS_IDS } from '../../';
 
 const prepare = async () => {
 	await echo.connect(url, {

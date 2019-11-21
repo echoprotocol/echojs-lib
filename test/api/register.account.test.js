@@ -1,5 +1,6 @@
 import { ok } from 'assert';
 
+// eslint-disable-next-line import/no-unresolved, import/extensions
 import echo from '../..';
 import { url } from '../_test-data';
 
