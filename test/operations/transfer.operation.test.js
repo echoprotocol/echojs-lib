@@ -1,8 +1,9 @@
 import { strictEqual, ok } from 'assert';
 
-import { Echo, constants, serializers } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
 import testExtensionsField from './_testExtensionsField';
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import { Echo, constants, serializers } from '../../';
 
 import { ACCOUNT, ASSET } from '../../src/constants/object-types';
 import { operation } from '../../src/serializers';
