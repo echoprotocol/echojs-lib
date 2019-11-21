@@ -1,6 +1,5 @@
 import { ok } from 'assert';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import echo from '../..';
 import { url } from '../_test-data';
 
@@ -26,7 +25,7 @@ describe('API register account POW', () => {
 				'kokoko'.concat(Date.now()),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				() => { isResolved = true },
+				() => { isResolved = true; },
 			);
 			await new Promise((resolve) => setTimeout(() => resolve(), 100));
 			await echo.api.getAccountCount();

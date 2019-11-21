@@ -10,6 +10,10 @@ module.exports = {
 	],
 	"rules": {
 		"global-require": 0,
+		"import/no-unresolved": [
+			2,
+			{ "caseSensitive": false }
+		],
 		"arrow-parens": [
 			"error",
 			"always"
