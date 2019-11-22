@@ -35,9 +35,9 @@ export function validateRegistrationOptions(options) {
 		ok(options.batch >= 0);
 	}
 	if (options.timeout) {
-		ok(typeof options.batch === 'number');
-		ok(Number.isSafeInteger(options.batch));
-		ok(options.batch >= 0);
+		ok(typeof options.timeout === 'number');
+		ok(Number.isSafeInteger(options.timeout));
+		ok(options.timeout >= 0);
 	}
 	const batch = options.batch === undefined ? 1e6 : options.batch;
 	const timeout = options.timeout === undefined ? 100 : options.timeout;
