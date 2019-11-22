@@ -8,7 +8,9 @@ import Transaction from './transaction';
 import { STATUS } from '../constants/ws-constants';
 import WalletAPI from './ws-api/wallet-api';
 
-/** @typedef {{ cache?: import("./cache").Options, apis?: string[] }} Options */
+/** @typedef {{ batch?: number, timeout?: number }} RegistrationOptions */
+
+/** @typedef {{ cache?: import("./cache").Options, apis?: string[], registration?: RegistrationOptions }} Options */
 
 class Echo {
 
@@ -79,7 +81,7 @@ class Echo {
 		this._wsApi = new WSAPI(this._ws);
 
 		this.cache = new Cache(options.cache);
-		this.api = new API(this.cache, this._wsApi);
+		this.api = new API(this.cache, this._wsApi, options.registration);
 		await this.subscriber.init(this.cache, this._wsApi, this.api);
 		this._ws.on(STATUS.OPEN, this.initEchoApi);
 	}
