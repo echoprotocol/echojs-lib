@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 
 import PublicKey from "../crypto/public-key";
 
+import AccountAddress from '../interfaces/AccountAddress';
 import BlockHeader from '../interfaces/BlockHeader';
 import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
@@ -62,6 +63,7 @@ export default class Api {
 	getBlockRewards(blockNum: typeof uint32["__TInput__"]): Promise<unknown>;
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
+	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;

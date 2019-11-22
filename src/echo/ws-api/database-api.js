@@ -669,6 +669,18 @@ class DatabaseAPI {
 		return this.db.exec('get_committee_frozen_balance', [committeeMemberId]);
 	}
 
+	/**
+	 *  @method getAccountAddresses
+	 *  @param  {String} id
+	 *  @param {Number} from
+	 *  @param {Number} limit
+	 *
+	 *  @return {Promise}
+	 */
+	getAccountAddresses(id, from, limit) {
+		return this.db.exec('get_account_addresses', [id, from, limit]);
+	}
+
 }
 
 export default DatabaseAPI;

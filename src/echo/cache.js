@@ -51,6 +51,7 @@ class Cache {
 		this.accountsByName = new Map();
 		this.accountsById = new Map();
 		this.accountsIdByKey = Map();
+		this.accountAddressesByAccountId = Map();
 
 		this.assetByAssetId = new Map();
 		this.assetBySymbol = new Map();

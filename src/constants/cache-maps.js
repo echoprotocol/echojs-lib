@@ -7,6 +7,7 @@ export const OBJECTS_BY_ID = 'objectsById';
 export const ACCOUNTS_BY_NAME = 'accountsByName';
 export const ACCOUNTS_BY_ID = 'accountsById';
 export const ACCOUNTS_ID_BY_KEY = 'accountsIdByKey';
+export const ACCOUNT_ADDRESSES_BY_ACCOUNT_ID = 'accountAddressesByAccountId';
 
 export const ASSET_BY_ASSET_ID = 'assetByAssetId';
 export const ASSET_BY_SYMBOL = 'assetBySymbol';

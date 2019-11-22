@@ -2461,6 +2461,35 @@ class API {
 
 	/**
 	 *
+	 * @param {String} accountId
+	 * @param {Number} from
+	 * @param {Number} limit
+	 * @return {*}
+	 */
+	getAccountAddresses(accountId, from, limit) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		if (!isNumber(from)) {
+			return Promise.reject(new Error('Invalid from block number'));
+		}
+
+		if (!isNumber(limit)) {
+			return Promise.reject(new Error('Invalid limit accounts number'));
+		}
+
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_ADDRESSES_BY_ACCOUNT_ID,
+			'getAccountAddresses',
+			false,
+			accountId,
+			from,
+			limit,
+		);
+	}
+
+	/**
+	 *
 	 * @param {String} btcAddressId
 	 * @return {*}
 	 */
