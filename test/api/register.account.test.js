@@ -20,12 +20,18 @@ describe('API register account POW', () => {
 
 	describe('register account', () => {
 		it('register account', async () => {
-			const result = await echo.api.registerAccount(
+			let isResolved = false;
+			const promise = echo.api.registerAccount(
 				'kokoko'+ Date.now(),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				() => console.log('was broadcasted'),
-			)
+				() => isResolved = true,
+			);
+			await new Promise((resolve) => setTimeout(() => resolve(), 100));
+			await echo.api.getAccountCount();
+			ok(!isResolved);
+			const result = await promise;
+			ok(isResolved);
 			ok(Array.isArray(result));
 		}).timeout(1e8);
 	});
