@@ -1,5 +1,8 @@
+import { ok } from 'assert';
 import { sha256 } from '../crypto/hash';
 import { uint64 } from '../serializers/basic/integers';
+
+/** @typedef {import("../echo").RegistrationOptions} RegistrationOptions */
 
 const getHashPow = (hash) => {
 	let solPow = 0;
@@ -21,14 +24,35 @@ const getHashPow = (hash) => {
 	return solPow;
 };
 
-/* eslint-disable import/prefer-default-export */
+/**
+ * @param {RegistrationOptions} options
+ * @returns {Required<RegistrationOptions>}
+ */
+export function validateRegistrationOptions(options) {
+	if (options.batch !== undefined) {
+		ok(typeof options.batch === 'number');
+		ok(Number.isSafeInteger(options.batch));
+		ok(options.batch >= 0);
+	}
+	if (options.timeout) {
+		ok(typeof options.timeout === 'number');
+		ok(Number.isSafeInteger(options.timeout));
+		ok(options.timeout >= 0);
+	}
+	const batch = options.batch === undefined ? 1e6 : options.batch;
+	const timeout = options.timeout === undefined ? 100 : options.timeout;
+	return { batch, timeout };
+}
+
 /**
  *
  * @param {String} blockId
  * @param {String} randNum
  * @param {Number} difficulty
+ * @param {RegistrationOptions} [options]
  */
-export const solveRegistrationTask = async (blockId, randNum, difficulty) => {
+export const solveRegistrationTask = async (blockId, randNum, difficulty, options = {}) => {
+	const { batch, timeout } = validateRegistrationOptions(options);
 	const buffer = Buffer.concat([
 		Buffer.from(blockId, 'hex'),
 		uint64.serialize(randNum),
@@ -39,7 +63,7 @@ export const solveRegistrationTask = async (blockId, randNum, difficulty) => {
 		const hash = sha256(bufferToHash);
 		const hashPow = getHashPow(hash);
 		// eslint-disable-next-line no-await-in-loop
-		if (nonce % 1e6 === 0) await new Promise((resolve) => setTimeout(() => resolve(), 100));
+		if (batch !== 0 && nonce % batch === 0) await new Promise((resolve) => setTimeout(() => resolve(), timeout));
 		if (hashPow > difficulty) {
 			return nonce;
 		}
