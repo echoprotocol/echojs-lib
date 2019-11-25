@@ -1,7 +1,7 @@
 ### Transactions
 Using transaction builder you can build and broadcast transaction.
 
-#### Transfer with memo
+#### Transfer
 ```javascript
 import echo, { constants, Transaction, PrivateKey } from 'echolib-js';
 
@@ -21,12 +21,6 @@ const options = {
     amount: {
         asset_id: '1.3.0',
         amount: 1
-    },
-    memo: { // optional
-        from: 'ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D', // memo key
-        to: 'ECHO8gP5V1F9cudUHxxoDb66BwiEPUB4ZQmwgtLXDrXaQAuJWb921w', // memo key
-        nonce: 424252442,
-        message: '746573745F6D657373616765', // hex string
     },
     extensions: [],
 };
@@ -72,7 +66,6 @@ const options = {
         ]],
     },
     options: {
-        memo_key: "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
         voting_account: "1.2.1",
         delegating_account: "1.2.1",
         num_committee: 0,
