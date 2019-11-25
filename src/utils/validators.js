@@ -63,6 +63,7 @@ const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEM
 const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.BLOCK_SUMMARY);
 const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_TRANSACTION_HISTORY);
 const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.CONTRACT_HISTORY);
+const accountAddressRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_ADDRESS);
 
 const hexRegex = /^[0-9a-fA-F]+/;
 const bytecodeRegex = /^[\da-fA-F0-9]{8}([\da-fA-F0-9]{64})*$/;
@@ -133,6 +134,7 @@ export const isObject = (v) => typeof v === 'object' && v !== null;
 export const isEmptyObject = (v) => isObject(v) && Object.keys(v).length === 0;
 
 export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
+export const isAccountAddressId = (v) => isString(v) && accountAddressRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 export const isBtcAddressId = (v) => isString(v) && btcAddressIdRegex.test(v);
 
