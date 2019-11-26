@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import PublicKey from "../crypto/public-key";
 
 import AccountAddress from '../interfaces/AccountAddress';
+import AccountEthAddress from '../interfaces/AccountEthAddress';
 import BlockHeader from '../interfaces/BlockHeader';
 import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
@@ -64,6 +65,7 @@ export default class Api {
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
 	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
+	getEthAddress(accountId: string): Promise<AccountEthAddress>;
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;

@@ -681,6 +681,16 @@ class DatabaseAPI {
 		return this.db.exec('get_account_addresses', [id, from, limit]);
 	}
 
+	/**
+	 *  @method getEthAddress
+	 *  @param  {String} id
+	 *
+	 *  @return {Promise}
+	 */
+	getEthAddress(id) {
+		return this.db.exec('get_eth_address', [id]);
+	}
+
 }
 
 export default DatabaseAPI;

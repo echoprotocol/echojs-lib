@@ -52,6 +52,7 @@ const balanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BA
 const frozenBalanceIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE);
 const contractIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
 const contractResultIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.CONTRACT_RESULT);
+const ethAddressIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.ETH_ADDRESS);
 const btcAddressIdRegex = generateProtocolObjectIdRegExp(PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
 
 const dynamicGlobalObjectIdRegex = new RegExp(`^2\\.${CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}\\.0$`);
@@ -137,6 +138,7 @@ export const isAccountId = (v) => isString(v) && accountIdRegex.test(v);
 export const isAccountAddressId = (v) => isString(v) && accountAddressRegex.test(v);
 export const isAssetId = (v) => isString(v) && assetIdRegex.test(v);
 export const isBtcAddressId = (v) => isString(v) && btcAddressIdRegex.test(v);
+export const isEthAddressId = (v) => isString(v) && ethAddressIdRegex.test(v);
 
 export const isCommitteeMemberId = (v) => isString(v) && committeeMemberIdRegex.test(v);
 export const isProposalId = (v) => isString(v) && proposalIdRegex.test(v);

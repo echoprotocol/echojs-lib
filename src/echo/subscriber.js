@@ -23,6 +23,7 @@ import {
 	isContractId,
 	isContractHistoryId,
 	isAccountAddressId,
+	isEthAddressId,
 } from '../utils/validators';
 
 import {
@@ -241,6 +242,11 @@ class Subscriber extends EventEmitter {
 			addressesList = addressesList.push(fromJS(object));
 
 			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ADDRESSES_BY_ACCOUNT_ID, object.owner, addressesList);
+			return null;
+		}
+
+		if (isEthAddressId(object.id)) {
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID, object.account, object);
 			return null;
 		}
 

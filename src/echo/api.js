@@ -2490,6 +2490,23 @@ class API {
 
 	/**
 	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getEthAddress(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID,
+			'getEthAddress',
+			false,
+			accountId,
+		);
+	}
+
+	/**
+	 *
 	 * @param {String} btcAddressId
 	 * @return {*}
 	 */

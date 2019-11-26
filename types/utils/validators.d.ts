@@ -20,6 +20,7 @@ export declare function isEmptyObject(value?: any): boolean;
 
 export declare function isAccountId(value?: any): boolean;
 export declare function isAccountAddressId(value?: any): boolean;
+export declare function isEthAddressId(value?: any): boolean;
 export declare function isAssetId(value?: any): boolean;
 export declare function isCommitteeMemberId(value?: any): boolean;
 export declare function isProposalId(value?: any): boolean;
