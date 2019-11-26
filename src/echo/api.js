@@ -2468,6 +2468,15 @@ class API {
 
 	/**
 	 *
+	 * @param {String} address
+	 * @return {*}
+	 */
+	getAccountByAddress(address) {
+		return this.wsApi.database.getAccountByAddress(address);
+	}
+
+	/**
+	 *
 	 * @param {String} accountId
 	 * @param {Number} from
 	 * @param {Number} limit
