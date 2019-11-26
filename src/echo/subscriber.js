@@ -259,7 +259,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isBtcAddressId(object.id)) {
-			const btcAddress = this.cache.accountBtcAddresByAccountId.get(object.account);
+			const btcAddress = this.cache.accountBtcAddressByAccountId.get(object.account);
 
 			if (!btcAddress) {
 				return null;
