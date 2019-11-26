@@ -46,3 +46,7 @@ export const GLOBAL_PROPERTIES: string;
 export const CONFIG: string;
 export const CHAIN_ID: string;
 export const DYNAMIC_GLOBAL_PROPERTIES: string;
+
+export const ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID: string;
+export const ACCOUNT_ADDRESSES_BY_ACCOUNT_ID: string;
+export const ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID: string;
