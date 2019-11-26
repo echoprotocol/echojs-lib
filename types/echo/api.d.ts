@@ -47,6 +47,7 @@ export default class Api {
 	): Promise<VectorSerializer<typeof asset>['__TOutput__']>;
 
 	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
+	getAccountByAddress(address: string): Promise<string>;
 	getAccountCount(): Promise<number>;
 	getAccountDeposits(account: string, type: SidechainType): Promise<unknown>;
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
