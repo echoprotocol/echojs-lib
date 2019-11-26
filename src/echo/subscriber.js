@@ -246,7 +246,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (isEthAddressId(object.id)) {
-			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID, object.account, object);
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID, object.account, fromJS(object));
 			return null;
 		}
 
