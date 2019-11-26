@@ -2456,7 +2456,14 @@ class API {
 	getBtcAddress(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
-		return this.wsApi.database.getBtcAddress(accountId);
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID,
+			'getBtcAddress',
+			false,
+			accountId,
+		);
+
 	}
 
 	/**

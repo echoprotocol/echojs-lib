@@ -15,6 +15,7 @@ let DEFAULT_FIELDS = Map({
 	accountsIdByKey: Map(),
 	accountAddressesByAccountId: Map(),
 	accountEthAddressByAccountId: Map(),
+	accountBtcAddressByAccountId: Map(),
 
 	assetByAssetId: new Map(),
 	assetBySymbol: new Map(),

@@ -9,6 +9,7 @@ export const ACCOUNTS_BY_ID = 'accountsById';
 export const ACCOUNTS_ID_BY_KEY = 'accountsIdByKey';
 export const ACCOUNT_ADDRESSES_BY_ACCOUNT_ID = 'accountAddressesByAccountId';
 export const ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID = 'accountEthAddressByAccountId';
+export const ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID = 'accountBtcAddressByAccounId';
 
 export const ASSET_BY_ASSET_ID = 'assetByAssetId';
 export const ASSET_BY_SYMBOL = 'assetBySymbol';

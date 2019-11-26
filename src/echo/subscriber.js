@@ -24,6 +24,7 @@ import {
 	isContractHistoryId,
 	isAccountAddressId,
 	isEthAddressId,
+	isBtcAddressId,
 } from '../utils/validators';
 
 import {
@@ -255,6 +256,16 @@ class Subscriber extends EventEmitter {
 
 			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID, object.account, fromJS(object));
 			return null;
+		}
+
+		if (isBtcAddressId(object.id)) {
+			const btcAddress = this.cache.accountBtcAddresByAccountId.get(object.account);
+
+			if (!btcAddress) {
+				return null;
+			}
+
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID, object.account, fromJS(object));
 		}
 
 		if (isBlockSummaryId(object.id)) {
