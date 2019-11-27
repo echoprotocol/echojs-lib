@@ -1,7 +1,6 @@
 import { strictEqual, throws } from 'assert';
 import bs58 from 'bs58';
-import ED25519 from '../../src/crypto/ed25519';
-import PrivateKey from '../../src/crypto/private-key';
+import { PrivateKey, ED25519 } from '../../';
 import { ED_PRIVATE, ED_PRIVATE_WITHOUT_PREFIX, WIF } from '../_test-data';
 
 describe('PrivateKey EdDSA', () => {

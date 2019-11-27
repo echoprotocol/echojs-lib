@@ -1,5 +1,5 @@
 import { strictEqual } from 'assert';
-import PublicKey from '../../src/crypto/public-key';
+import { PublicKey } from '../../';
 
 describe('PublicKey', () => {
 

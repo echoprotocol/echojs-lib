@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import decode from '../../../src/contract/decoders';
+import { decode } from '../../../';
 
 describe('decoders', () => {
 	it('unknown type', () => {

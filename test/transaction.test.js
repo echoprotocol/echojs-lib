@@ -1,10 +1,10 @@
 import 'mocha';
 // import { expect } from 'chai';
-import { Echo } from '../src';
+import { Echo } from '../';
 // import Transaction from '../src/echo/transaction';
 // import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 import { TRANSFER } from '../src/constants/operations-ids';
-// import PrivateKey from '../src/crypto/private-key';
+// import PrivateKey from '../';
 
 import { url } from './_test-data';
 import { ACCOUNT, ASSET } from '../src/constants/object-types';

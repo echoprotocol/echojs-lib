@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import echo, { constants, Echo } from '../src/index';
+import echo, { constants, Echo } from '../';
 import {
 	USE_CACHE_BY_DEFAULT,
 	DEFAULT_CACHE_EXPIRATION_TIME,

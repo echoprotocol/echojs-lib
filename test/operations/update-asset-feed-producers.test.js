@@ -1,7 +1,6 @@
 import { fail, ok, strictEqual } from 'assert';
-import { Echo } from '../../src';
+import { Echo, OPERATIONS_IDS } from '../../';
 import { url, accountId } from '../_test-data';
-import { OPERATIONS_IDS } from '../../src/constants';
 
 describe('update asset feed producers', () => {
 	const echo = new Echo();

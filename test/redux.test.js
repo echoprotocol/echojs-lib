@@ -1,11 +1,9 @@
 import { expect } from 'chai';
 import { combineReducers, createStore } from 'redux';
-import { Echo } from '../src';
+import { Echo } from '../';
 
 import cacheReducer from '../src/redux/reducer';
-
 import { url } from './_test-data';
-
 import { ACCOUNT } from '../src/constants/object-types';
 
 const defaultReducer = (state = {}, { type, payload }) => (type === 'SET' ? { ...state, ...payload } : state);

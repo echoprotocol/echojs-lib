@@ -1,5 +1,5 @@
 import { fail, ok, strictEqual } from 'assert';
-import { Echo, OPERATIONS_IDS } from '../../src';
+import { Echo, OPERATIONS_IDS } from '../../';
 import { url, accountId } from '../_test-data';
 import { ECHO_ASSET_ID } from '../../src/constants';
 

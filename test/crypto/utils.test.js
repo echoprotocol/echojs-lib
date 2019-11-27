@@ -1,5 +1,6 @@
 import { strictEqual, throws } from 'assert';
-import { utils, PrivateKey } from '../../src/crypto';
+import { utils } from '../../src/crypto';
+import { PrivateKey } from '../../';
 import { WIF, WIF2 } from '../_test-data';
 
 describe('Utils', () => {

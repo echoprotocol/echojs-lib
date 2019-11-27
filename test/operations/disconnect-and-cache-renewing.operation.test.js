@@ -2,9 +2,9 @@ import 'mocha';
 import { expect } from 'chai';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url, contractId } from '../_test-data';
-import { Echo, constants } from '../../';
+import { Echo, OPERATIONS_IDS } from '../../';
 
-const { OPERATIONS_IDS } = constants;
+// const { OPERATIONS_IDS } = constants;
 
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
 const options = {
@@ -45,7 +45,7 @@ describe('error while disconnecting and updating cache', () => {
 			try {
 				await echo.subscriber.setAccountSubscribe(() => {}, [accountId]);
 				await echo.createTransaction()
-					.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
+					.addOperation(OPERATIONS_IDS.ACCOUNT_UPDATE, {
 						fee: { asset_id: '1.3.0' },
 						account: accountId,
 						echorand_key: privateKey.toPublicKey()

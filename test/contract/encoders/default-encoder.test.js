@@ -3,7 +3,7 @@ import { strictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
 import $c from 'comprehension';
-import encode from '../../../src/contract/encoders';
+import { encode } from '../../../';
 import { toTwosPower } from '../../../src/contract/utils/converters';
 import { invalidContractIds as invalidAddressesIds } from '../_checkContractId.test';
 import { PROTOCOL_OBJECT_TYPE_ID } from '../../../src/constants';

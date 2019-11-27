@@ -2,7 +2,7 @@ import 'mocha';
 import BigNumber from 'bignumber.js';
 import { deepStrictEqual, ok, strictEqual } from 'assert';
 import { expect } from 'chai';
-import decode from '../../../src/contract/decoders';
+import { decode } from '../../../';
 
 describe('dynamic array', () => {
 	it('invalid offset', () => {

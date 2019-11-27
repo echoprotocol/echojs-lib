@@ -2,11 +2,10 @@ import 'mocha';
 // import { ok } from 'assert';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url } from '../_test-data';
-import { Echo, constants } from '../../';
+import { Echo, OPERATIONS_IDS } from '../../';
 import { ECHO_ASSET_ID } from '../../src/constants';
 // import { OPERATION_HISTORY } from '../../src/constants/object-types';
 
-const { OPERATIONS_IDS } = constants;
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
 const options = {
 	contractAddress: null,

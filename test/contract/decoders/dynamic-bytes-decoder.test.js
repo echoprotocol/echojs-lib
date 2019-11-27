@@ -2,7 +2,7 @@ import 'mocha';
 import { ok, strictEqual } from 'assert';
 import { expect } from 'chai';
 import BigNumber from 'bignumber.js';
-import decode from '../../../src/contract/decoders';
+import { decode } from '../../../';
 
 describe('dynamic bytes', () => {
 	describe('failure', () => {

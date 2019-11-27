@@ -1,5 +1,5 @@
 import { fail, strictEqual, ok } from 'assert';
-import { Echo, OPERATIONS_IDS } from '../../src';
+import { Echo, OPERATIONS_IDS } from '../../';
 import { url } from '../_test-data';
 
 describe('update committee member global parameters', () => {
