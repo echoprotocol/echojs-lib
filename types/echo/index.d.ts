@@ -8,6 +8,7 @@ export interface EchoOptions {
 	cache?: CacheOptions;
 	apis?: ChainApi[];
 	debug?: boolean;
+	registration?: { batch?: number, timeout?: number };
 }
 
 export default class Echo {
