@@ -22,6 +22,9 @@ import {
 	isArray,
 	isContractId,
 	isContractHistoryId,
+	isAccountAddressId,
+	isEthAddressId,
+	isBtcAddressId,
 } from '../utils/validators';
 
 import {
@@ -229,6 +232,40 @@ class Subscriber extends EventEmitter {
 
 			this.cache.setInMap(CACHE_MAPS.CONTRACT_HISTORY_BY_CONTRACT_ID, contractId, history);
 			return null;
+		}
+
+		if (isAccountAddressId(object.id)) {
+			let addressesList = this.cache.accountAddressesByAccountId.get(object.owner);
+
+			if (!addressesList) {
+				return null;
+			}
+			addressesList = addressesList.push(fromJS(object));
+
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ADDRESSES_BY_ACCOUNT_ID, object.owner, addressesList);
+			return null;
+		}
+
+		if (isEthAddressId(object.id)) {
+
+			const ethAddress = this.cache.accountEthAddressByAccountId.get(object.account);
+
+			if (!ethAddress) {
+				return null;
+			}
+
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID, object.account, fromJS(object));
+			return null;
+		}
+
+		if (isBtcAddressId(object.id)) {
+			const btcAddress = this.cache.accountBtcAddressByAccountId.get(object.account);
+
+			if (!btcAddress) {
+				return null;
+			}
+
+			this.cache.setInMap(CACHE_MAPS.ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID, object.account, fromJS(object));
 		}
 
 		if (isBlockSummaryId(object.id)) {

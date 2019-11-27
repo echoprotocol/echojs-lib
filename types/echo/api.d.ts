@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js';
 
 import PublicKey from "../crypto/public-key";
 
+import AccountAddress from '../interfaces/AccountAddress';
+import AccountEthAddress from '../interfaces/AccountEthAddress';
 import BlockHeader from '../interfaces/BlockHeader';
 import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
@@ -45,6 +47,7 @@ export default class Api {
 	): Promise<VectorSerializer<typeof asset>['__TOutput__']>;
 
 	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
+	getAccountByAddress(address: string): Promise<string>;
 	getAccountCount(): Promise<number>;
 	getAccountDeposits(account: string, type: SidechainType): Promise<unknown>;
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
@@ -62,6 +65,8 @@ export default class Api {
 	getBlockRewards(blockNum: typeof uint32["__TInput__"]): Promise<unknown>;
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
+	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
+	getEthAddress(accountId: string): Promise<AccountEthAddress>;
 	getBtcDepositScript(btcDepositId: string): Promise<String>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
