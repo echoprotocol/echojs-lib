@@ -32,7 +32,8 @@ import {
 	isInt64,
 	validateSidechainType,
 } from '../utils/validators';
-import { solveRegistrationTask } from '../utils/pow-solver';
+
+import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
 
 /** @typedef {import('./ws-api').default} WSAPI */
 
@@ -308,7 +309,6 @@ import { PublicKey } from '../crypto';
 * 					},
 * 				ed_key:String,
 * 				options:{
-* 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
 * 					num_committee:Number,
@@ -361,7 +361,6 @@ import { PublicKey } from '../crypto';
 * 					},
 * 				ed_key:String,
 * 				options:{
-* 					memo_key:String,
 * 					voting_account:String,
 * 					delegating_account:String,
 * 					num_committee:Number,
@@ -482,17 +481,18 @@ import { PublicKey } from '../crypto';
 *  	}
 * 	} ContractHistory */
 
-
 class API {
 
 	/**
 	 *
 	 * @param {Cache} cache
 	 * @param {WSAPI} wsApi
+	 * @param {import("./index").RegistrationOptions} [registrationOptions]
 	 */
-	constructor(cache, wsApi) {
+	constructor(cache, wsApi, registrationOptions = {}) {
 		this.cache = cache;
 		this.wsApi = wsApi;
+		this.registrationOptions = validateRegistrationOptions(registrationOptions);
 	}
 
 	/**
@@ -2114,7 +2114,7 @@ class API {
 	 * @param {string} name
 	 * @param {string} activeKey
 	 * @param {string} echoRandKey
-	 * @param {() => any} wasBroadcastedCallback
+	 * @param {() => any} [wasBroadcastedCallback]
 	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
 	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
@@ -2123,7 +2123,7 @@ class API {
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
 		const registrationTask = await this.wsApi.registration.requestRegistrationTask();
 		const { block_id: blockId, rand_num: randNum, difficulty } = registrationTask;
-		const nonce = await solveRegistrationTask(blockId, randNum, difficulty);
+		const nonce = await solveRegistrationTask(blockId, randNum, difficulty, this.registrationOptions);
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution(
@@ -2456,7 +2456,69 @@ class API {
 	getBtcAddress(accountId) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
-		return this.wsApi.database.getBtcAddress(accountId);
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_BTC_ADDRESS_BY_ACCOUNT_ID,
+			'getBtcAddress',
+			false,
+			accountId,
+		);
+
+	}
+
+	/**
+	 *
+	 * @param {String} address
+	 * @return {*}
+	 */
+	getAccountByAddress(address) {
+		return this.wsApi.database.getAccountByAddress(address);
+	}
+
+	/**
+	 *
+	 * @param {String} accountId
+	 * @param {Number} from
+	 * @param {Number} limit
+	 * @return {*}
+	 */
+	getAccountAddresses(accountId, from, limit) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		if (!isNumber(from)) {
+			return Promise.reject(new Error('Invalid from block number'));
+		}
+
+		if (!isNumber(limit)) {
+			return Promise.reject(new Error('Invalid limit accounts number'));
+		}
+
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_ADDRESSES_BY_ACCOUNT_ID,
+			'getAccountAddresses',
+			false,
+			accountId,
+			from,
+			limit,
+		);
+	}
+
+	/**
+	 *
+	 * @param {String} accountId
+	 * @return {*}
+	 */
+	getEthAddress(accountId) {
+		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
+
+		return this._getSingleDataByCompositeParams(
+			accountId,
+			CACHE_MAPS.ACCOUNT_ETH_ADDRESS_BY_ACCOUNT_ID,
+			'getEthAddress',
+			false,
+			accountId,
+		);
 	}
 
 	/**

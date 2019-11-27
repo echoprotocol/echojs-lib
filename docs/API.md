@@ -1199,7 +1199,6 @@ try {
         },
     ed_key:String,
     options:{
-        memo_key:String,
         delegating_account:String,
         extensions:Array
     },
@@ -1253,7 +1252,6 @@ try {
         },
     ed_key:String,
     options:{
-        memo_key:String,
         delegating_account:String,
         extensions:Array
     },

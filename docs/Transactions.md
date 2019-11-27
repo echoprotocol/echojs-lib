@@ -77,7 +77,6 @@ const options = {
         ]],
     },
     options: {
-        memo_key: "ECHO6tMhKMDpynSsLyFL3gk2gZi4xMayficom97fZQKh64FHtCpV7D",
         voting_account: "1.2.1",
         delegating_account: "1.2.1",
         num_committee: 0,

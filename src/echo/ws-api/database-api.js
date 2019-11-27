@@ -669,6 +669,38 @@ class DatabaseAPI {
 		return this.db.exec('get_committee_frozen_balance', [committeeMemberId]);
 	}
 
+	/**
+	 *  @method getAccountAddresses
+	 *  @param  {String} id
+	 *  @param {Number} from
+	 *  @param {Number} limit
+	 *
+	 *  @return {Promise}
+	 */
+	getAccountAddresses(id, from, limit) {
+		return this.db.exec('get_account_addresses', [id, from, limit]);
+	}
+
+	/**
+	 *  @method getEthAddress
+	 *  @param  {String} id
+	 *
+	 *  @return {Promise}
+	 */
+	getEthAddress(id) {
+		return this.db.exec('get_eth_address', [id]);
+	}
+
+	/**
+	 *  @method getAccountByAddress
+	 *  @param  {String} address
+	 *
+	 *  @return {Promise}
+	 */
+	getAccountByAddress(address) {
+		return this.db.exec('get_account_by_address', [address]);
+	}
+
 }
 
 export default DatabaseAPI;
