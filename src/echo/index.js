@@ -5,7 +5,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS } from '../constants/ws-constants';
+import { STATUS, DEFAULT_CHAIN_APIS } from '../constants/ws-constants';
 import WalletAPI from './ws-api/wallet-api';
 
 /** @typedef {{ batch?: number, timeout?: number }} RegistrationOptions */
@@ -23,7 +23,7 @@ class Echo {
 	}
 
 	get isConnected() {
-		return this._ws._connected;
+		return this._ws.isConnected;
 	}
 
 	/**
@@ -38,20 +38,15 @@ class Echo {
 	 * @private
 	 */
 	async _connectToNode(address, options) {
-		await this._ws.connect(address, options);
-
-		if (this._isInitModules) {
-			return;
-		}
-
-		await this._initModules(options);
-
-		if (!options.store && this.store) {
-			options.store = this.store;
-		}
-
+		const apis = options.apis === undefined ? DEFAULT_CHAIN_APIS : options.apis;
+		await this._ws.connect(address, apis, options);
+		this._wsApi = new WSAPI(this._ws);
+		this.cache = new Cache(options.cache);
+		this.api = new API(this.cache, this._wsApi, options.registration);
+		if (!options.store && this.store) options.store = this.store;
 		this.cache.setOptions(options);
 		this.subscriber.setOptions(options);
+		await this.subscriber.init(this.cache, this._wsApi, this.api);
 	}
 
 	/**
@@ -59,31 +54,10 @@ class Echo {
 	 * @param {Options} options
 	 */
 	async connect(address, options = {}) {
-		if (this._ws._connected) {
-			throw new Error('Connected');
-		}
-
-		try {
-			await Promise.all([
-				...address ? [this._connectToNode(address, options)] : [],
-				...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
-			]);
-		} catch (e) {
-			throw e;
-		}
-
-	}
-
-	/** @param {Options} options */
-	async _initModules(options) {
-		this._isInitModules = true;
-
-		this._wsApi = new WSAPI(this._ws);
-
-		this.cache = new Cache(options.cache);
-		this.api = new API(this.cache, this._wsApi, options.registration);
-		await this.subscriber.init(this.cache, this._wsApi, this.api);
-		this._ws.on(STATUS.OPEN, this.initEchoApi);
+		await Promise.all([
+			...address ? [this._connectToNode(address, options)] : [],
+			...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
+		]);
 	}
 
 	async initEchoApi() {

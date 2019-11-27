@@ -1,236 +1,204 @@
-/* global window */
-import EventEmitter from 'events';
-
-import ReconnectionWebSocket from './reconnection-websocket';
+import { EventEmitter } from 'events';
+import WebSocket from 'isomorphic-ws';
+import { inspect } from 'util';
+import { CHAIN_APIS, STATUS, CHAIN_API } from '../../constants/ws-constants';
 import EchoApi from './echo-api';
-import { validateUrl, validateOptionsError } from '../../utils/validators';
-import { CHAIN_APIS, DEFAULT_CHAIN_APIS, STATUS } from '../../constants/ws-constants';
 
-class WS extends EventEmitter {
+/** @typedef {import('../../constants/ws-constants').ChainApi} ChainApi */
 
-	constructor() {
-		super();
+export const ErrorCode = {
+	INVALID_API_NAME: 5001,
+	FORCE_DISCONNECT: 5002,
+	NOT_CONNECTED: 5003,
+	DISCONNECTED: 5004,
+	UNEXPECTED_RESPONSE_TYPE: 5005,
+	UNEXPECTED_RESPONSE_ID_TYPE: 5006,
+	UNEXPECTED_RESPONSE_ID: 5007,
+};
 
-		this._ws_rpc = new ReconnectionWebSocket();
+export class ReconnectionWebSocketError extends Error {
 
-		this._connected = false;
-		this._isFirstTime = true;
-
-		this.onOpenCb = null;
-		this.onCloseCb = null;
-		this.onErrorCb = null;
-
-		this._database = null;
-		this._network_broadcast = null;
-		this._history = null;
-		this._registration = null;
-		this._asset = null;
-		this._login = null;
-	}
-
-	async initEchoApi() {
-		const initPromises = [];
-
-		this.apis.forEach((api) => {
-			if (api === 'login') initPromises.push((this._login.api_id = 1));
-			else initPromises.push(this[`_${api}`].init());
-		});
-
-		try {
-			await Promise.all(initPromises);
-			await this._ws_rpc.login('', '');
-		} catch (e) {
-			console.error('[WS] >---- error ----->  ONOPEN', e);
-			await this.close();
-		}
-	}
+	get name() { return 'ReconnectionWebSocketError'; }
 
 	/**
-	 * On open callback
+	 * @param {number} code
+	 * @param {string} reason
+	 * @param {any} [data]
 	 */
-	_onOpen() {
-		if (!this._ws_rpc) return;
-
-		this._connected = true;
-
-		if (this._isFirstTime) {
-			this._isFirstTime = false;
-		}
-
-		if (this.onOpenCb) this.onOpenCb('open');
-		this.emit(STATUS.OPEN);
-
-	}
-
-	/**
-	 * On close callback
-	 */
-	_onClose() {
-		if (this._isFirstTime) this._isFirstTime = false;
-		this._connected = false;
-		if (this.onCloseCb) this.onCloseCb('close');
-
-		this.emit(STATUS.CLOSE);
-	}
-
-	/**
-	 * On error callback
-	 * @param error
-	 */
-	_onError(error) {
-		if (this.onErrorCb) this.onErrorCb('error', error);
-		this.emit(STATUS.ERROR);
-	}
-
-	/**
-	 * init params and connect to chain
-	 * @param {String} url - remote node address,
-	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-	 * @param {Object} options - connection params.
-	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests,
-	 * 		default call delay before reject it.
-	 * @param {Number} options.maxRetries - max count retries before close socket.
-	 * @param {Number} options.pingTimeout - delay time in ms between ping request
-	 * 		and socket disconnect.
-	 * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
-	 * @param {Boolean} options.debug - debug mode status.
-	 * @returns {Promise}
-	 */
-	async connect(url, options = {}) {
-		if (!validateUrl(url)) throw new Error(`Invalid address ${url}`);
-
-		if (
-			typeof window !== 'undefined' &&
-			window.location &&
-			window.location.protocol === 'https:' &&
-			url.indexOf('wss://') < 0
-		) {
-			throw new Error('Secure domains require wss connection');
-		}
-
-		const optionError = validateOptionsError(options);
-
-		if (optionError) throw new Error(optionError);
-
-		this.url = url;
-
-		this.options = {
-			connectionTimeout: options.connectionTimeout,
-			maxRetries: options.maxRetries,
-			pingTimeout: options.pingTimeout,
-			pingDelay: options.pingDelay,
-			debug: options.debug,
-		};
-
-		this.apis = options.apis || DEFAULT_CHAIN_APIS;
-		this._connected = false;
-		this._isFirstTime = true;
-
-		if (options.onOpen && typeof options.onOpen === 'function') this.onOpenCb = options.onOpen;
-		if (options.onClose && typeof options.onClose === 'function') this.onCloseCb = options.onClose;
-		if (options.onError && typeof options.onError === 'function') this.onErrorCb = options.onError;
-
-		if (!this._ws_rpc) this._ws_rpc = new ReconnectionWebSocket();
-
-		this._ws_rpc.onOpen = () => this._onOpen();
-		this._ws_rpc.onClose = () => this._onClose();
-		this._ws_rpc.onError = () => this._onError();
-
-		CHAIN_APIS.forEach((api) => { this[`_${api}`] = new EchoApi(this._ws_rpc, api); });
-
-		await this._ws_rpc.connect(url, this.options);
-		await this.initEchoApi();
-	}
-
-	/**
-	 * Reconnect to chain, can't be used after close
-	 * @returns {Promise}
-	 */
-	async reconnect() {
-		if (!this._ws_rpc) throw new Error('Socket close.');
-
-		const reconnectResult = await this._ws_rpc.reconnect();
-		return reconnectResult;
-	}
-
-	/**
-	 * Close socket, delete subscribers
-	 * @returns {Promise}
-	 */
-	async close() {
-		if (this._ws_rpc && this._ws_rpc.ws) {
-			try {
-				await this._ws_rpc.close();
-			} catch (error) {
-				throw error;
-			}
-		}
-	}
-
-	/**
-	 * Set debug option
-	 * @param {Boolean} status
-	 */
-	setDebugOption(status) {
-		this._ws_rpc.setDebugOption(status);
-	}
-
-	/**
-	 * database API
-	 * @returns {EchoApi}
-	 */
-	dbApi() {
-		return this._database;
-	}
-
-	/**
-	 * network API
-	 * @returns {EchoApi}
-	 */
-	networkApi() {
-		return this._network_broadcast;
-	}
-
-	/**
-	 * history API
-	 * @returns {EchoApi}
-	 */
-	historyApi() {
-		return this._history;
-	}
-
-	/**
-	 * registration API
-	 * @returns {EchoApi}
-	 */
-	registrationApi() {
-		return this._registration;
-	}
-
-	/**
-	 * asset API
-	 * @returns {EchoApi}
-	 */
-	assetApi() {
-		return this._asset;
-	}
-
-	/**
-	 * login API
-	 * @returns {EchoApi}
-	 */
-	loginApi() {
-		return this._login;
-	}
-
-	/**
-	 * network node API
-	 * @returns {EchoApi}
-	 */
-	networkNodeApi() {
-		return this._network_node;
+	constructor(code, reason, data) {
+		super(`ws closed with code ${code} and reason "${reason}"`);
+		this.code = code;
+		this.reason = reason;
+		this.data = data;
 	}
 
 }
 
-export default WS;
+export default class ReconnectionWebSocket extends EventEmitter {
+
+	get url() {
+		if (this._url === null) throw new Error('not connected');
+		return this._url;
+	}
+
+	constructor() {
+		super();
+		/** @type {WebSocket | null} */
+		this._ws = null;
+		/** @type {string | null} */
+		this._url = null;
+		/** @type {{ [key: number]: ChainApi }} */
+		this._apiNameMap = {};
+		/** @type {Map<number, { resolve: (result: any) => any, reject: (error: any) => any }>} */
+		this._calls = new Map();
+		this._lastUsedId = -1;
+		/** @type {Array<(error: any) => any>} */
+		this.errorHandlers = [];
+		this.isConnected = false;
+		/** @type {{ [apiName in ChainApi]?: EchoApi }} */
+		this.echoApis = {};
+		/** @type {ChainApi[]} */
+		this.apis = [];
+		/** @type {null | (() => void)} */
+		this._onDisconnect = null;
+	}
+
+	/**
+	 * @param {string} url
+	 * @param {ChainApi[]} apis
+	 * @returns {Promise<void>}
+	 */
+	async connect(url, apis) {
+		if (this._ws !== null) throw new Error('already connected');
+		this._url = url;
+		this.apis = apis;
+		this._ws = new WebSocket(url);
+		/** @type {null | () => void} */
+		let onConnect = null;
+		const onceConnected = new Promise((resolve) => { onConnect = resolve; });
+		this._ws.on('open', () => onConnect());
+		this._ws.on('message', (data) => this._onMessage(data));
+		this._ws.on('close', (code, reason) => {
+			if (code === ErrorCode.FORCE_DISCONNECT && this._onDisconnect) return this._onDisconnect();
+			const error = new ReconnectionWebSocketError(code, reason);
+			delete this._ws;
+			this._apiNameMap = {};
+			this._lastUsedId = -1;
+			this.isConnected = false;
+			for (const [, { reject }] of this._calls) reject(error);
+			this._calls.clear();
+			this.emit(STATUS.CLOSE);
+			return undefined;
+		});
+		this._ws.on('error', (error) => this._emitError(error));
+		await onceConnected;
+		await Promise.all(this.apis.map(async (apiName) => {
+			if (!CHAIN_APIS.includes(apiName)) {
+				const code = ErrorCode.INVALID_API_NAME;
+				throw new ReconnectionWebSocketError(code, `unknown api name ${apiName}`, apiName);
+			}
+			if (apiName === CHAIN_API.LOGIN_API) return;
+			const apiId = await this.call([1, apiName, []]);
+			if (typeof apiId !== 'number') throw new Error('unexpected api id type');
+			if (this._apiNameMap[apiId] !== undefined) throw new Error('api id duplicate');
+			this._apiNameMap[apiId] = apiName;
+			this.echoApis[apiName] = new EchoApi(this, apiId);
+		})).catch(async (error) => {
+			if (error instanceof ReconnectionWebSocketError && error.code === ErrorCode.INVALID_API_NAME) {
+				await this.close();
+			}
+			throw error;
+		});
+		for (const apiName of CHAIN_APIS) {
+			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this);
+		}
+		this.isConnected = true;
+		this.emit(STATUS.OPEN);
+	}
+
+	async close() {
+		if (!this._ws) throw new ReconnectionWebSocketError(ErrorCode.NOT_CONNECTED);
+		if ([WebSocket.CLOSING, WebSocket.CLOSED].includes(this._ws.readyState)) {
+			throw new ReconnectionWebSocketError(ErrorCode.DISCONNECTED);
+		}
+		this._ws.close();
+		const onceDisconnected = new Promise((resolve) => { this._onDisconnect = () => resolve(); });
+		await onceDisconnected;
+		this._onDisconnect = null;
+	}
+
+	async reconnect() {
+		const { apis } = this;
+		await this.close();
+		await this.connect(this.url, apis);
+	}
+
+	/** @param {[number, string, ...any]} props */
+	async call(props) {
+		const [apiId, method, params] = props;
+		this._lastUsedId += 1;
+		const callId = this._lastUsedId;
+		const data = { method: 'call', id: callId, params: [apiId, method, params] };
+		console.log(' >>', data);
+		this._ws.send(JSON.stringify(data));
+		if (this._calls.has(callId)) throw new Error('call id duplicate');
+		return new Promise((resolve, reject) => this._calls.set(callId, { resolve, reject }));
+	}
+
+	/**
+	 * @private
+	 * @param {WebSocket.Data} data
+	 * @returns {ReconnectionWebSocketError | undefined}
+	 */
+	_onMessage(data) {
+		console.log(' <<', data);
+		if (typeof data !== 'string') {
+			const code = ErrorCode.UNEXPECTED_RESPONSE_TYPE;
+			return this._emitInternalError(code, `unexpected response type ${typeof data}`, data);
+		}
+		const response = JSON.parse(data);
+		if (!response) {
+			return this._emitInternalError(ErrorCode.UNEXPECTED_RESPONSE_TYPE, 'response is empty', response);
+		}
+		const { id, result, error } = response;
+		if (typeof id !== 'number') {
+			const code = ErrorCode.UNEXPECTED_RESPONSE_ID_TYPE;
+			return this._emitInternalError(code, `unexpected response id type ${typeof id}`, id);
+		}
+		const call = this._calls.get(id);
+		if (!call) {
+			return this._emitInternalError(ErrorCode.UNEXPECTED_RESPONSE_ID, `unexpected response id ${id}`, id);
+		}
+		this._calls.delete(id);
+		if (error !== undefined) call.reject(error);
+		else call.resolve(result);
+		return undefined;
+	}
+
+	/**
+	 * @private
+	 * @param {any} error
+	 */
+	_emitError(error) {
+		if (this.errorHandlers.length === 0) {
+			console.error('[ReconnectionWebsocket] Unhandled response parser error');
+			const inspectedError = typeof error !== 'object' || error instanceof Error ? error :
+				inspect(error, false, null, true);
+			console.error(inspectedError);
+		} else for (const handler of this.errorHandlers) handler(error);
+		this.emit(STATUS.ERROR, error);
+	}
+
+	/**
+	 * @param {number} code
+	 * @param {string} reason
+	 * @param {any} [data]
+	 * @returns {ReconnectionWebSocketError}
+	 */
+	_emitInternalError(code, reason, data) {
+		const error = new ReconnectionWebSocketError(code, reason, data);
+		this._emitError(error);
+		return error;
+	}
+
+}

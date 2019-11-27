@@ -209,9 +209,12 @@ class ReconnectionWebSocket {
 		this._cbId += 1;
 
 		if (method === 'set_subscribe_callback' ||
-			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
-			method === 'set_block_applied_callback' || method === 'set_consensus_message_callback' ||
-			method === 'subscribe_contract_logs' || method === 'submit_registration_solution'
+			method === 'broadcast_transaction_with_callback' ||
+			method === 'set_pending_transaction_callback' ||
+			method === 'set_block_applied_callback' ||
+			method === 'set_consensus_message_callback' ||
+			method === 'subscribe_contract_logs' ||
+			method === 'submit_registration_solution'
 		) {
 			// Store callback in subs map
 			this._subs[this._cbId] = {

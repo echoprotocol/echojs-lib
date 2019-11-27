@@ -1,26 +1,15 @@
+/** @typedef {import(".").default} ReconnectionWebSocket */
+
 class EchoApi {
 
 	/**
 	 *
 	 * @param {ReconnectionWebSocket} wsRpc
-	 * @param {String} apiName
+	 * @param {number} [apiId]
 	 */
-	constructor(wsRpc, apiName) {
+	constructor(wsRpc, apiId) {
 		this.ws_rpc = wsRpc;
-		this.api_name = apiName;
-	}
-
-	/**
-	 *
-	 * @returns {Promise}
-	 */
-	async init() {
-		try {
-			this.api_id = await this.ws_rpc.call([1, this.api_name, []]);
-			return this;
-		} catch (e) {
-			throw e;
-		}
+		this.api_id = apiId;
 	}
 
 	/**
@@ -29,13 +18,13 @@ class EchoApi {
 	 * @param {Array<any>} params
 	 * @returns {Promise}
 	 */
-	exec(method, params) {
-		if (!this.api_id) {
+	async exec(method, params) {
+		if (this.api_id === undefined) {
 			const errMessage = [
 				`${this.api_name} API is not available`,
 				'try to specify this in connection option called "apis"',
 			].join(', ');
-			return Promise.reject(new Error(errMessage));
+			throw new Error(errMessage);
 		}
 		return this.ws_rpc.call([this.api_id, method, params]);
 	}
