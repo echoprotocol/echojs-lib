@@ -102,11 +102,11 @@ describe('API', () => {
 				expect(result)
 					.to
 					.be
-					.an('array').that.is.not.empty;
+					.an('array').to.not.have.lengthOf(0);
 				expect(result[0])
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('name');
 				expect(result[0].name)
 					.to
 					.be
@@ -141,11 +141,11 @@ describe('API', () => {
 				expect(result)
 					.to
 					.be
-					.an('array').that.is.not.empty;
+					.an('array').to.not.have.lengthOf(0);
 				expect(result[0])
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('asset_id');
 				expect(result[0].asset_id)
 					.to
 					.be
@@ -655,7 +655,7 @@ describe('API', () => {
 
 					const account = await api.getAccountByName(accountName, true);
 
-					expect(account).to.exist;
+					expect(account).not.to.equal(null).not.to.equal(undefined);
 
 					const { id } = account;
 
@@ -859,8 +859,7 @@ describe('API', () => {
 						.to
 						.be
 						.an('object');
-					const { id } = object;
-					const voteId = object.vote_id;
+					const { id, vote_id: voteId } = object;
 
 					expect(object)
 						.to
@@ -904,13 +903,12 @@ describe('API', () => {
 						.be
 						.an('object');
 
-					const { amount } = object;
-					const assetId = object.asset_id;
+					const { amount, asset_id: assetId } = object;
 
 					expect(assetId)
 						.to
 						.be
-						.an('string').that.is.not.empty;
+						.an('string').to.not.have.lengthOf(0);
 					expect(amount)
 						.to
 						.be
@@ -943,12 +941,11 @@ describe('API', () => {
 				.timeout(5000);
 		});
 
-		/*eslint-disable */
-		// TODO:: return 76a9148768abc89249471f990fdf33029ac6c733603a258763ac6775532102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e74
-		// 2ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e4
-		// 96e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efe
-		// b07e496e742ac84512e21026b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b56ae68
-		/* eslint-enable */
+		// TODO:: return 76a9148768abc89249471f990fdf33029ac6c733603a258763ac6775532102c16e97132e72738c9c0163656348cd1b
+		// e03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16
+		// e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17e
+		// feb07e496e742ac84512e2102c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e21026b86b273ff34fce
+		// 19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b56ae68
 
 		describe.skip('#getBtcDepositScript()', () => {
 			it('should get null because script with this deposit id does not exist', async () => {

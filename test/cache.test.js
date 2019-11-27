@@ -43,7 +43,7 @@ describe('cache', () => {
 			it('cache should not be used', () => {
 				const { isUsed } = echo.cache;
 
-				expect(isUsed).to.be.false;
+				expect(isUsed).to.equal(false);
 			});
 		});
 
@@ -331,7 +331,7 @@ describe('cache', () => {
 					await Promise.all(promises);
 
 					expect(newEcho.cache.blocks.size).to.be.equal(blocksRounds.length);
-					expect(newEcho.cache.timeout).to.be.null;
+					expect(newEcho.cache.timeout).to.equal(null);
 				} catch (e) {
 					throw e;
 				}

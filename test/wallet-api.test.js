@@ -74,7 +74,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('blockchain_name');
 		}).timeout(5000);
 	});
 
@@ -84,7 +84,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('head_block_num');
 		}).timeout(5000);
 	});
 
@@ -183,7 +183,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
@@ -270,7 +270,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('brain_key');
 			expect(result.brain_key)
 				.to
 				.be
@@ -301,11 +301,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('brain_key');
 			expect(result[0].brain_key)
 				.to
 				.be
@@ -405,11 +405,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('name');
 		}).timeout(5000);
 	});
 
@@ -422,15 +422,15 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0][0])
 				.to
 				.be
-				.an('string').that.is.not.empty;
+				.an('string').to.not.have.lengthOf(0);
 			expect(result[0][1])
 				.to
 				.be
@@ -444,11 +444,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('amount');
 			expect(result[0].amount)
 				.to
 				.be
@@ -466,11 +466,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('amount');
 			expect(result[0].amount)
 				.to
 				.be
@@ -497,7 +497,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('name');
 				expect(result.name).equal(newAccountName);
 				expect(result.registrar).equal(accountId);
 				expect(result.key_auths[0][0]).equal(activeKey);
@@ -519,7 +519,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -543,7 +543,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(10000);
 	});
 
@@ -565,7 +565,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			} catch (e) {
 				throw e;
 			}
@@ -584,7 +584,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -594,11 +594,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[1])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -616,7 +616,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -633,7 +633,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
@@ -641,7 +641,7 @@ describe('WALLET API', () => {
 			expect(result[1])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(10000);
 	});
 
@@ -657,7 +657,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(10000);
 	});
 
@@ -697,7 +697,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 			expect(result.id).equal(accountId);
 		}).timeout(5000);
 	});
@@ -731,11 +731,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('op');
 		}).timeout(5000);
 	});
 
@@ -745,7 +745,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -759,7 +759,7 @@ describe('WALLET API', () => {
 			expect(result[1])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('code');
 		}).timeout(5000);
 	});
 
@@ -781,7 +781,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -811,7 +811,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('amount');
 		}).timeout(5000);
 	});
 
@@ -862,7 +862,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -915,7 +915,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -930,7 +930,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -997,7 +997,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1014,7 +1014,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1040,7 +1040,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0]);
 		}).timeout(5000);
 	});
@@ -1054,11 +1054,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -1077,7 +1077,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1135,7 +1135,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 		}).timeout(5000);
 	});
 
@@ -1150,7 +1150,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1169,7 +1169,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1208,7 +1208,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1287,7 +1287,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1302,7 +1302,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1312,7 +1312,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -1351,7 +1351,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1413,7 +1413,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1429,7 +1429,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1439,7 +1439,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 			expect(result.committee_member_account).equal(accountId);
 		}).timeout(5000);
 	});
@@ -1454,11 +1454,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0][0])
 				.to
 				.be
@@ -1478,7 +1478,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1500,7 +1500,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1557,7 +1557,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 			expect(result.committee_member_account).equal(accountId);
 		}).timeout(5000);
 	});
@@ -1572,11 +1572,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0][0])
 				.to
 				.be
@@ -1591,7 +1591,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1602,7 +1602,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 	});
 
@@ -1612,7 +1612,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('amount');
 			expect(result.amount)
 				.to
 				.be
@@ -1633,7 +1633,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(5000);
 
 	});
@@ -1652,7 +1652,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			} catch (e) {
 				throw e;
 			}
@@ -1674,7 +1674,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			} catch (e) {
 				throw e;
 			}
@@ -1701,7 +1701,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(15000);
 	});
 
@@ -1712,7 +1712,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('round');
 			expect(result.round).equal(blockNumber);
 		}).timeout(5000);
 	});
@@ -1731,7 +1731,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			} catch (e) {
 				throw e;
 			}
@@ -1757,7 +1757,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('ref_block_num');
 		}).timeout(15000);
 	});
 
@@ -1768,7 +1768,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('round');
 			expect(result.round).equal(blockNumber);
 		}).timeout(5000);
 	});
@@ -1800,7 +1800,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -1810,7 +1810,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -1820,11 +1820,11 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('array').that.is.not.empty;
+				.an('array').to.not.have.lengthOf(0);
 			expect(result[0])
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('object').to.have.property('id');
 		}).timeout(5000);
 	});
 
@@ -1904,7 +1904,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -1915,7 +1915,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -1929,7 +1929,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -1947,7 +1947,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -1966,7 +1966,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -1996,7 +1996,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -2016,7 +2016,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 			}).timeout(5000);
 		});
 
@@ -2027,15 +2027,15 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('array').that.is.not.empty;
+					.an('array').to.have.property('ref_block_num');
 				expect(result[1])
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 				expect(result[1].fee)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 				expect(result[1].from)
 					.to
 					.be
@@ -2047,7 +2047,7 @@ describe('WALLET API', () => {
 				expect(result[1].amount)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('object').to.have.property('ref_block_num');
 				expect(result[1].extensions)
 					.to
 					.be
@@ -2081,7 +2081,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;
+						.an('object').to.have.property('ref_block_num');
 				} catch (e) {
 					throw e;
 				}
@@ -2117,15 +2117,15 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('array').that.is.not.empty;
+						.an('array').to.have.property('ref_block_num');
 					expect(result[0])
 						.to
 						.be
-						.an('object').that.is.not.empty;
+						.an('object').to.have.property('ref_block_num');
 					expect(result[0].id)
 						.to
 						.be
-						.an('string').that.is.not.empty;
+						.an('string').to.have.property('ref_block_num');
 					expect(result[0].owner)
 						.to
 						.be
@@ -2133,7 +2133,7 @@ describe('WALLET API', () => {
 					expect(result[0].balance)
 						.to
 						.be
-						.an('object').that.is.not.empty;
+						.an('object').to.have.property('ref_block_num');
 					expect(result[0].multiplier)
 						.to
 						.be
@@ -2141,7 +2141,7 @@ describe('WALLET API', () => {
 					expect(result[0].unfreeze_time)
 						.to
 						.be
-						.an('string').that.is.not.empty;
+						.an('string').to.have.property('ref_block_num');
 					expect(result[0].extensions)
 						.to
 						.be
@@ -2164,7 +2164,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;
+						.an('object').to.have.property('ref_block_num');
 				} catch (e) {
 					throw e;
 				}

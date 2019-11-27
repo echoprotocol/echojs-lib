@@ -20,11 +20,11 @@ export function shouldReject(f, expectedErrorMessage, testErrorMessage) {
 		console.log('got result:', inspect(res, false, null, true));
 		fail('should rejects');
 	});
-	it('instance of Error', () => {
+	it('instance of Error', function () {
 		if (!actualError) this.skip();
 		ok(actualError instanceof Error);
 	});
-	it(testErrorMessage || `with message "${expectedErrorMessage}"`, () => {
+	it(testErrorMessage || `with message "${expectedErrorMessage}"`, function () {
 		if (!actualError || !(actualError instanceof Error)) this.skip();
 		strictEqual(actualError.message, expectedErrorMessage);
 	});

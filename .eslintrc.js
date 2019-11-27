@@ -46,13 +46,5 @@ module.exports = {
 				]
 			}
 		]
-	},
-	"overrides": [
-		{
-			"files": ["*api.test.js", "*cache.test.js", "*subscriber.test.js"],
-			"rules": {
-				"no-unused-expressions": "off"
-			}
-		}
-	]
+	}
 };

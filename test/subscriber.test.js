@@ -116,8 +116,8 @@ describe('SUBSCRIBER', () => {
 				let onEmit;
 				const onceEmitted = new Promise((resolve) => { onEmit = resolve; });
 				echo.subscriber.setEchorandSubscribe((result) => {
-					expect(result).to.be.an('array').that.is.not.empty;
-					expect(result[0]).to.be.an('object').that.is.not.empty;
+					expect(result).to.be.an('array').to.not.have.lengthOf(0);
+					expect(result[0]).to.be.an('object').to.have.property('type');
 					expect(result[0].type).to.be.a('string');
 					expect(result[0].round).to.be.a('number');
 					if (!emitted) {
@@ -183,8 +183,8 @@ describe('SUBSCRIBER', () => {
 				const onceEmitted = new Promise((resolve) => { onInited = resolve; });
 
 				echo.subscriber.setBlockApplySubscribe((result) => {
-					expect(result).to.be.an('array').that.is.not.empty;
-					expect(result[0]).to.be.an('string').that.is.not.empty;
+					expect(result).to.be.an('array').to.not.have.lengthOf(0);
+					expect(result[0]).to.be.an('string').to.not.have.lengthOf(0);
 
 					if (!emitted) {
 						emitted = true;
@@ -270,7 +270,8 @@ describe('SUBSCRIBER', () => {
 				let isCalled = false;
 
 				echo.subscriber.setAccountSubscribe((result) => {
-					expect(result).to.be.an('object').that.is.not.empty;
+					expect(result).to.be.an('object');
+					expect(Object.keys(result)).to.not.have.lengthOf(0);
 
 					if (!isCalled) {
 						done();
@@ -298,8 +299,8 @@ describe('SUBSCRIBER', () => {
 				const onceEmitted = new Promise((resolve) => { onEmit = resolve; });
 				echo.subscriber.setGlobalSubscribe((result) => {
 					if (result[0] && result[0].id === `2.${IMPLEMENTATION_OBJECT_TYPE_ID.DYNAMIC_GLOBAL_PROPERTY}.0`) {
-						expect(result).to.be.an('array').that.is.not.empty;
-						expect(result[0]).to.be.an('object').that.is.not.empty;
+						expect(result).to.be.an('array').to.not.have.lengthOf(0);
+						expect(result[0]).to.be.an('object').to.have.property('id');
 						expect(result[0].id).to.be.a('string');
 						expect(result[0].head_block_number).to.be.a('number');
 
@@ -342,8 +343,8 @@ describe('SUBSCRIBER', () => {
 			/* callback test will be available, when transaction builder will be merged */
 			// let isCalled = false;
 
-			expect(echo.subscriber.subscriptions.transaction).to.be.false;
-			expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.empty;
+			expect(echo.subscriber.subscriptions.transaction).to.equal(false);
+			expect(echo.subscriber.subscribers.transaction).to.be.an('array').to.have.lengthOf(0);
 
 			echo.subscriber.setPendingTransactionSubscribe((/* result */) => {
 				// expect(result).to.be.an('array').that.is.not.empty;
@@ -356,8 +357,8 @@ describe('SUBSCRIBER', () => {
 				// 	isCalled = true;
 				// }
 			}).then(() => {
-				expect(echo.subscriber.subscriptions.transaction).to.be.true;
-				expect(echo.subscriber.subscribers.transaction).to.be.an('array').that.is.not.empty;
+				expect(echo.subscriber.subscriptions.transaction).to.equal(true);
+				expect(echo.subscriber.subscribers.transaction).to.be.an('array').to.not.have.lengthOf(0);
 				done();
 			});
 		}).timeout(30 * 1000);
