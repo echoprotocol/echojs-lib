@@ -1,5 +1,4 @@
 import { shouldReject } from './_test-utils';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { serializers } from '../';
 
 describe('deserializer', () => {

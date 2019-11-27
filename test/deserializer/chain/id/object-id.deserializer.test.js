@@ -1,5 +1,4 @@
 import { deepStrictEqual } from 'assert';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { serializers, constants } from '../../../..';
 
 const { CHAIN_TYPES, PROTOCOL_OBJECT_TYPE_ID } = constants;

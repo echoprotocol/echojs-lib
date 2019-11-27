@@ -1,5 +1,4 @@
 import { ok, deepStrictEqual } from 'assert';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, OPERATIONS_IDS } from '../../..';
 import { url, accountId, privateKey } from '../../_test-data';
 

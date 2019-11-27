@@ -1,7 +1,6 @@
 import 'mocha';
 import { fail, ok, strictEqual } from 'assert';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { constants, Echo, OPERATIONS_IDS } from '../../';
 
 import { privateKey, accountId, url } from '../_test-data';

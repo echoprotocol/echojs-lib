@@ -4,7 +4,6 @@ import spies from 'chai-spies';
 
 import { url, accountId, privateKey } from './_test-data';
 import { shouldReject } from './_test-utils';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, OPERATIONS_IDS, constants } from '..';
 
 import { ACCOUNT, CONTRACT } from '../src/constants/object-types';

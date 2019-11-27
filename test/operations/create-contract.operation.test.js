@@ -2,7 +2,6 @@ import 'mocha';
 // import { ok } from 'assert';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url } from '../_test-data';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants } from '../../';
 import { ECHO_ASSET_ID } from '../../src/constants';
 // import { OPERATION_HISTORY } from '../../src/constants/object-types';

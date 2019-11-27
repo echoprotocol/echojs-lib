@@ -1,7 +1,6 @@
 import { ok } from 'assert';
 import { accountId, privateKey, url } from '../_test-data';
 import { getRandomAssetSymbol } from '../_test-utils';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, OPERATIONS_IDS } from '../..';
 
 /**

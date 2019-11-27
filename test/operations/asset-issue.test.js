@@ -1,6 +1,5 @@
 import { strictEqual } from 'assert';
 import { url, accountId, privateKey } from '../_test-data';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, OPERATIONS_IDS, constants } from '../../';
 import { getRandomAssetSymbol } from '../_test-utils';
 

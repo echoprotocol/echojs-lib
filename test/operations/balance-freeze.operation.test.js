@@ -1,6 +1,5 @@
 import { ok } from 'assert';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants } from '../../';
 import { privateKey, accountId, url } from '../_test-data';
 

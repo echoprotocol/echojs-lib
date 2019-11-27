@@ -1,7 +1,6 @@
 import { ok, strictEqual } from 'assert';
 import { url, accountId, privateKey } from '../../_test-data';
 import { shouldReject, getMinContractBytecode } from '../../_test-utils';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, OPERATIONS_IDS, constants } from '../../../';
 
 describe('checkERC20Token', () => {

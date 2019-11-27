@@ -1,7 +1,6 @@
 import { rejects } from 'assert';
 import { privateKey, accountId, url } from '../_test-data';
 import { BTC_INTERMEDIATE_DEPOSIT } from '../../src/constants/object-types';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants } from '../../';
 
 const echo = new Echo();

@@ -1,5 +1,4 @@
 import { deepStrictEqual } from 'assert';
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { serializers } from '../../../';
 
 const { uint32 } = serializers.basic.integers;

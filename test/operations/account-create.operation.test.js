@@ -1,7 +1,6 @@
 import 'mocha';
 import { ok } from 'assert';
 
-// eslint-disable-next-line import/no-unresolved, import/extensions
 import { Echo, constants, PrivateKey } from '../../';
 import { ED25519 } from '../../src/crypto';
 
