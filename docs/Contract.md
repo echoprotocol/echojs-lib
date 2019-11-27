@@ -7,7 +7,7 @@
     - [Create contract instance by contract id](#create-contract-instance-by-contract-id)
     - [Call contract no changing state](#call-contract-no-changing-state)
     - [Execute contract](#execute-contract)
-    - [Using encoders/decoders](#using-encoders/decoders)
+    - [Using encoders/decoders](#using-encodersdecoders)
 
 ## Contract
 

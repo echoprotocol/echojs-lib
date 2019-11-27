@@ -2,7 +2,7 @@
 
 - [ECC](#ecc)
     - [Private keys](#private-keys)
-    - [Echorand keys (ED25519)](#echorand-keys-(ED25519))
+    - [Echorand keys (ED25519)](#echorand-keys-ed25519)
     - [Random keys](#random-keys)
     - [Sign Data](#sign-data)
 
