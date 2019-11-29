@@ -79,7 +79,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		this._ws.on('open', () => onConnect());
 		this._ws.on('message', (data) => this._onMessage(data));
 		this._ws.on('close', (code, reason) => {
-			if (code === ErrorCode.FORCE_DISCONNECT && this._onDisconnect) return this._onDisconnect();
+			if (this._onDisconnect) return this._onDisconnect();
 			const error = new ReconnectionWebSocketError(code, reason);
 			delete this._ws;
 			this._apiNameMap = {};
@@ -102,7 +102,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			if (typeof apiId !== 'number') throw new Error('unexpected api id type');
 			if (this._apiNameMap[apiId] !== undefined) throw new Error('api id duplicate');
 			this._apiNameMap[apiId] = apiName;
-			this.echoApis[apiName] = new EchoApi(this, apiId);
+			this.echoApis[apiName] = new EchoApi(this, apiName, apiId);
 		})).catch(async (error) => {
 			if (error instanceof ReconnectionWebSocketError && error.code === ErrorCode.INVALID_API_NAME) {
 				await this.close();
@@ -110,7 +110,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			throw error;
 		});
 		for (const apiName of CHAIN_APIS) {
-			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this);
+			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this, apiName);
 		}
 		this.isConnected = true;
 		this.emit(STATUS.OPEN);
@@ -121,8 +121,8 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		if ([WebSocket.CLOSING, WebSocket.CLOSED].includes(this._ws.readyState)) {
 			throw new ReconnectionWebSocketError(ErrorCode.DISCONNECTED);
 		}
-		this._ws.close();
 		const onceDisconnected = new Promise((resolve) => { this._onDisconnect = () => resolve(); });
+		this._ws.close();
 		await onceDisconnected;
 		this._onDisconnect = null;
 	}

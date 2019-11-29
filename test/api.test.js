@@ -21,7 +21,7 @@ describe('API', () => {
 			describe('when provided api used', () => {
 				it('should succeed', async () => await echo.api.getBlock(1));
 			});
-			describe('when not provided api used', () => {
+			describe.only('when not provided api used', () => {
 				const expectedErrorMessage = [
 					'history API is not available',
 					'try to specify this in connection option called "apis"',

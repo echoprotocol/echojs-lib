@@ -1,3 +1,4 @@
+/** @typedef {import("../../constants/ws-constants").ChainApi} ChainApi */
 /** @typedef {import(".").default} ReconnectionWebSocket */
 
 class EchoApi {
@@ -5,11 +6,13 @@ class EchoApi {
 	/**
 	 *
 	 * @param {ReconnectionWebSocket} wsRpc
+	 * @param {ChainApi} apiName
 	 * @param {number} [apiId]
 	 */
-	constructor(wsRpc, apiId) {
+	constructor(wsRpc, apiName, apiId) {
 		this.ws_rpc = wsRpc;
 		this.api_id = apiId;
+		this.api_name = apiName;
 	}
 
 	/**
