@@ -25,6 +25,7 @@ import {
 	isAccountAddressId,
 	isEthAddressId,
 	isBtcAddressId,
+	isContractPoolId,
 } from '../utils/validators';
 
 import {
@@ -475,7 +476,7 @@ class Subscriber extends EventEmitter {
 			});
 		}
 
-		if (isContractHistoryId(object.id)) {
+		if (isContractHistoryId(object.id) || isContractPoolId(object.id)) {
 			this._notifyContractSubscribers(obj);
 			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}

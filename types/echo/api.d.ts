@@ -84,6 +84,7 @@ export default class Api {
 		fromBlock?: number | BigNumber,
 		toBlock?: number | BigNumber,
 	}): Promise<unknown[]>;
+	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
