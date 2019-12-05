@@ -142,6 +142,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		if (options.pingTimeout !== undefined) {
 			result.pingTimeout = safeUnsignedInteger(options.pingTimeout, 'ping timeout');
 		} else result.pingTimeout = WS_CONSTANTS.PING_TIMEOUT;
+		return result;
 	}
 
 	/**
@@ -294,7 +295,9 @@ export default class ReconnectionWebSocket extends EventEmitter {
 
 	_setPingDelay() {
 		this._clearPingDelay();
-		this._pingDelayId = setTimeout(() => this.ping().catch((error) => this._emitError(error)), this._pingDelay);
+		this._pingDelayId = setTimeout(() => (
+			this.ping().catch((error) => this._emitError(error))
+		), this._options.pingDelay);
 	}
 
 	/**
