@@ -39,6 +39,15 @@ export class ReconnectionWebSocketError extends Error {
 
 }
 
+/**
+ * @typedef {Object} Call
+ * @property {(result: any) => any} resolve
+ * @property {(error: any) => any} reject
+ * @property {ChainApi} api
+ * @property {string} method
+ * @property {any} params
+ */
+
 export default class ReconnectionWebSocket extends EventEmitter {
 
 	get url() {
@@ -54,7 +63,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		this._url = null;
 		/** @type {{ [key: number]: ChainApi }} */
 		this._apiNameMap = {};
-		/** @type {Map<number, { resolve: (result: any) => any, reject: (error: any) => any }>} */
+		/** @type {Map<number, Call>} */
 		this._calls = new Map();
 		this._pingDelay = null;
 		this._lastUsedId = -1;
@@ -98,7 +107,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		const onceConnected = new Promise((resolve) => { onConnect = resolve; });
 		this._ws.on('open', () => onConnect());
 		this._ws.on('message', (data) => this._onMessage(data));
-		this._ws.on('close', (code, reason) => {
+		this._ws.on('close', async (code, reason) => {
 			this._clearPingDelay();
 			this._ws = null;
 			this._apiNameMap = {};
@@ -106,10 +115,22 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			this._lastUsedId = -1;
 			this.isConnected = false;
 			const error = new ReconnectionWebSocketError(code, reason);
-			for (const [, { reject }] of this._calls) reject(error);
-			this._calls.clear();
-			this.emit(STATUS.CLOSE);
-			if (this._onDisconnect) return this._onDisconnect();
+			if ([1006, 1007].includes(error.code)) {
+				const calls = [...this._calls.entries()].map(([, call]) => call);
+				this._calls.clear();
+				this._emitError(error);
+				await this.connect(this.url, { ...options, emitOpen: false });
+				for (const call of calls) {
+					this.call([this.echoApis[call.api].api_id, call.method, call.params])
+						.then((res) => call.resolve(res))
+						.catch((err) => call.reject(err));
+				}
+			} else {
+				for (const [, { reject }] of this._calls) reject(error);
+				this._calls.clear();
+				this.emit(STATUS.CLOSE);
+				if (this._onDisconnect) return this._onDisconnect();
+			}
 			return undefined;
 		});
 		this._ws.on('error', (error) => this._emitError(error));
@@ -132,7 +153,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this, apiName);
 		}
 		this.isConnected = true;
-		this.emit(STATUS.OPEN);
+		if (options.emitOpen === undefined || options.emitOpen === true) this.emit(STATUS.OPEN);
 	}
 
 	async close() {
@@ -165,10 +186,16 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			params[0] = callId;
 		}
 		const data = { method: 'call', id: callId, params: [apiId, method, params] };
-		console.log(' >>', data);
+		// console.log(' >>', data);
 		this._ws.send(JSON.stringify(data));
 		if (this._calls.has(callId)) throw new Error('call id duplicate');
-		return new Promise((resolve, reject) => this._calls.set(callId, { resolve, reject }));
+		return new Promise((resolve, reject) => this._calls.set(callId, {
+			resolve,
+			reject,
+			api: this._apiNameMap[apiId],
+			method,
+			params,
+		}));
 	}
 
 	/**
@@ -207,7 +234,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 	 */
 	_onMessage(data) {
 		this._setPingDelay();
-		console.log(' <<', data);
+		// console.log(' <<', data);
 		if (typeof data !== 'string') {
 			const code = ErrorCode.UNEXPECTED_RESPONSE_TYPE;
 			return this._emitInternalError(code, `unexpected response type ${typeof data}`, data);
