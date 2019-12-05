@@ -2,9 +2,8 @@ import { ok } from 'assert';
 import { EventEmitter } from 'events';
 import WebSocket from 'isomorphic-ws';
 import { inspect } from 'util';
-import { CHAIN_APIS, STATUS, CHAIN_API, SUBSCRIBERS, PING_DELAY } from '../../constants/ws-constants';
+import * as WS_CONSTANTS from '../../constants/ws-constants';
 import EchoApi from './echo-api';
-import { DEFAULT_CHAIN_APIS } from '../../../dist/constants/ws-constants';
 
 /** @typedef {import('../../constants/ws-constants').ChainApi} ChainApi */
 
@@ -40,6 +39,16 @@ export class ReconnectionWebSocketError extends Error {
 }
 
 /**
+ * @typedef {Object} Options
+ * @property {number} [connectionTimeout]
+ * @property {number} [maxRetries]
+ * @property {number} [pingTimeout]
+ * @property {number} [pingDelay]
+ * @property {boolean} [debug]
+ * @property {ChainApi[]} [apis]
+ */
+
+/**
  * @typedef {Object} Call
  * @property {(result: any) => any} resolve
  * @property {(error: any) => any} reject
@@ -56,6 +65,16 @@ export class ReconnectionWebSocketError extends Error {
  * @property {(data: any) => any} resolver
  * @property {boolean} inited
  */
+
+/**
+ * @param {number} num
+ * @returns {number}
+ */
+function safeUnsignedInteger(num, field) {
+	ok(Number.isSafeInteger(num), `${field} is not a safe integer`);
+	ok(num >= 0, `${field} is negative`);
+	return num;
+}
 
 export default class ReconnectionWebSocket extends EventEmitter {
 
@@ -89,27 +108,52 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		this._subscribers = new Map();
 		/** @type {number | null} */
 		this._pingDelayId = null;
+		/** @type {Required<Options> | null} */
+		this._options = null;
+	}
+
+	/**
+	 * @param {Options} options
+	 * @returns {Required<Options>}
+	 */
+	_validatedOptions(options) {
+		/** @type {Options} */
+		const result = {};
+		if (options.apis !== undefined) {
+			ok(Array.isArray(options.apis), 'apis option is not an array');
+			for (const apiName of options.apis) {
+				ok(WS_CONSTANTS.CHAIN_APIS.includes(apiName), `unexpected api name ${apiName}`);
+			}
+			result.apis = options.apis;
+		} else result.apis = WS_CONSTANTS.DEFAULT_CHAIN_APIS;
+		if (options.connectionTimeout !== undefined) {
+			result.connectionTimeout = safeUnsignedInteger(options.connectionTimeout, 'connection timeout');
+		} else result.connectionTimeout = WS_CONSTANTS.WS_CONSTANTSCONNECTION_TIMEOUT;
+		if (options.debug !== undefined) {
+			ok(typeof options.debug === 'boolean', 'debug option is not a boolean');
+			result.debug = options.debug;
+		} else result.debug = WS_CONSTANTS.DEBUG;
+		if (options.maxRetries !== undefined) {
+			result.maxRetries = safeUnsignedInteger(options.maxRetries, 'max retries');
+		} else result.maxRetries = WS_CONSTANTS.MAX_RETRIES;
+		if (options.pingDelay !== undefined) {
+			result.pingDelay = safeUnsignedInteger(options.pingDelay, 'ping delay');
+		} else result.pingDelay = WS_CONSTANTS.PING_DELAY;
+		if (options.pingTimeout !== undefined) {
+			result.pingTimeout = safeUnsignedInteger(options.pingTimeout, 'ping timeout');
+		} else result.pingTimeout = WS_CONSTANTS.PING_TIMEOUT;
 	}
 
 	/**
 	 * @param {string} url
-	 * @param {any} options
+	 * @param {Options} options
 	 * @returns {Promise<void>}
 	 */
 	async connect(url, options) {
 		if (this._ws !== null) throw new Error('already connected');
-		const apis = options.apis === undefined ? DEFAULT_CHAIN_APIS : options.apis;
-		if (!Array.isArray(apis)) throw new Error('apis option is not an array');
-		for (const apiName of apis) {
-			if (!CHAIN_APIS.includes(apiName)) throw new Error(`unknown api name "${apiName}"`);
-		}
-		if (options.pingDelay !== undefined) {
-			if (!Number.isSafeInteger(options.pingDelay)) throw new Error('ping delay is not a safe integer');
-			if (options.pingDelay < 0) throw new Error('ping delay is negative');
-		}
-		this._pingDelay = options.pingDelay === undefined ? PING_DELAY : options.pingDelay;
+		this._options = this._validatedOptions(options);
 		this._url = url;
-		this.apis = apis;
+		this.apis = this._options.apis;
 		this._ws = new WebSocket(url);
 		/** @type {null | () => void} */
 		let onConnect = null;
@@ -146,7 +190,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 				this._subscribers.clear();
 				for (const [, { reject }] of this._calls) reject(error);
 				this._calls.clear();
-				this.emit(STATUS.CLOSE);
+				this.emit(WS_CONSTANTS.STATUS.CLOSE);
 				if (this._onDisconnect) return this._onDisconnect();
 			}
 			return undefined;
@@ -155,7 +199,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		await onceConnected;
 		this._setPingDelay();
 		await Promise.all(this.apis.map(async (apiName) => {
-			if (apiName === CHAIN_API.LOGIN_API) return;
+			if (apiName === WS_CONSTANTS.CHAIN_API.LOGIN_API) return;
 			const apiId = await this.call([1, apiName, []]);
 			if (typeof apiId !== 'number') throw new Error('unexpected api id type');
 			if (this._apiNameMap[apiId] !== undefined) throw new Error('api id duplicate');
@@ -167,11 +211,11 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			}
 			throw error;
 		});
-		for (const apiName of CHAIN_APIS) {
+		for (const apiName of WS_CONSTANTS.CHAIN_APIS) {
 			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this, apiName);
 		}
 		this.isConnected = true;
-		if (options.emitOpen !== false) this.emit(STATUS.OPEN);
+		if (options.emitOpen !== false) this.emit(WS_CONSTANTS.STATUS.OPEN);
 	}
 
 	async close() {
@@ -198,7 +242,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		const [apiId, method, params] = props;
 		this._lastUsedId += 1;
 		const callId = this._lastUsedId;
-		if (SUBSCRIBERS.includes(method)) {
+		if (WS_CONSTANTS.SUBSCRIBERS.includes(method)) {
 			ok(typeof params[0] === 'function', 'callback is not a function');
 			this._subscribers.set(callId, {
 				api: this._apiNameMap[apiId],
@@ -313,7 +357,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 				inspect(error, false, null, true);
 			console.error(inspectedError);
 		} else for (const handler of this.errorHandlers) handler(error);
-		this.emit(STATUS.ERROR, error);
+		this.emit(WS_CONSTANTS.STATUS.ERROR, error);
 	}
 
 	/**
