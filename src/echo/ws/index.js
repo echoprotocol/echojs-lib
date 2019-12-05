@@ -1,9 +1,9 @@
+import { ok } from 'assert';
 import { EventEmitter } from 'events';
 import WebSocket from 'isomorphic-ws';
 import { inspect } from 'util';
 import { CHAIN_APIS, STATUS, CHAIN_API, SUBSCRIBERS, PING_DELAY } from '../../constants/ws-constants';
 import EchoApi from './echo-api';
-import { ok } from 'assert';
 import { DEFAULT_CHAIN_APIS } from '../../../dist/constants/ws-constants';
 
 /** @typedef {import('../../constants/ws-constants').ChainApi} ChainApi */
@@ -48,6 +48,15 @@ export class ReconnectionWebSocketError extends Error {
  * @property {any} params
  */
 
+/**
+ * @typedef {Object} Subscriber
+ * @property {ChainApi} api
+ * @property {string} method
+ * @property {any} params
+ * @property {(data: any) => any} resolver
+ * @property {boolean} inited
+ */
+
 export default class ReconnectionWebSocket extends EventEmitter {
 
 	get url() {
@@ -76,8 +85,8 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		this.apis = [];
 		/** @type {null | (() => void)} */
 		this._onDisconnect = null;
-		/** @type {{ [id: number]: (data: any) => any }} */
-		this._subscribers = {};
+		/** @type {Map<number, Subscriber>} */
+		this._subscribers = new Map();
 		/** @type {number | null} */
 		this._pingDelayId = null;
 	}
@@ -120,12 +129,21 @@ export default class ReconnectionWebSocket extends EventEmitter {
 				this._calls.clear();
 				this._emitError(error);
 				await this.connect(this.url, { ...options, emitOpen: false });
+				const subs = [...this._subscribers.entries()]
+					.map(([, subscriber]) => subscriber)
+					.filter(({ inited }) => inited);
+				this._subscribers.clear();
+				for (const subscriber of subs) {
+					this.call([this.echoApis[subscriber.api].api_id, subscriber.method, subscriber.params])
+						.catch((err) => this._emitError(err));
+				}
 				for (const call of calls) {
 					this.call([this.echoApis[call.api].api_id, call.method, call.params])
 						.then((res) => call.resolve(res))
 						.catch((err) => call.reject(err));
 				}
 			} else {
+				this._subscribers.clear();
 				for (const [, { reject }] of this._calls) reject(error);
 				this._calls.clear();
 				this.emit(STATUS.CLOSE);
@@ -153,7 +171,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			if (this.echoApis[apiName] === undefined) this.echoApis[apiName] = new EchoApi(this, apiName);
 		}
 		this.isConnected = true;
-		if (options.emitOpen === undefined || options.emitOpen === true) this.emit(STATUS.OPEN);
+		if (options.emitOpen !== false) this.emit(STATUS.OPEN);
 	}
 
 	async close() {
@@ -182,11 +200,17 @@ export default class ReconnectionWebSocket extends EventEmitter {
 		const callId = this._lastUsedId;
 		if (SUBSCRIBERS.includes(method)) {
 			ok(typeof params[0] === 'function', 'callback is not a function');
-			[this._subscribers[callId]] = params;
+			this._subscribers.set(callId, {
+				api: this._apiNameMap[apiId],
+				inited: false,
+				method,
+				params: [...params],
+				resolver: params[0],
+			});
 			params[0] = callId;
 		}
 		const data = { method: 'call', id: callId, params: [apiId, method, params] };
-		// console.log(' >>', data);
+		console.log(' >>', data);
 		this._ws.send(JSON.stringify(data));
 		if (this._calls.has(callId)) throw new Error('call id duplicate');
 		return new Promise((resolve, reject) => this._calls.set(callId, {
@@ -195,7 +219,11 @@ export default class ReconnectionWebSocket extends EventEmitter {
 			api: this._apiNameMap[apiId],
 			method,
 			params,
-		}));
+		})).then((res) => {
+			const subscriber = this._subscribers.get(callId);
+			if (subscriber) subscriber.inited = true;
+			return res;
+		});
 	}
 
 	/**
@@ -222,9 +250,7 @@ export default class ReconnectionWebSocket extends EventEmitter {
 
 	_setPingDelay() {
 		this._clearPingDelay();
-		this._pingDelayId = setTimeout(() => {
-			return this.ping().catch((error) => this._emitError(error));
-		}, this._pingDelay);
+		this._pingDelayId = setTimeout(() => this.ping().catch((error) => this._emitError(error)), this._pingDelay);
 	}
 
 	/**
@@ -254,11 +280,11 @@ export default class ReconnectionWebSocket extends EventEmitter {
 				return this._emitInternalError(code, `unexpected notice params length ${params.length}`, params);
 			}
 			const [subscriberId, notice] = params;
-			if (!this._subscribers[subscriberId]) {
+			if (!this._subscribers.has(subscriberId)) {
 				const code = ErrorCode.UNEXPECTED_NOTICE_CALLBACK_ID;
 				return this._emitInternalError(code, `unexpected notice callback id ${subscriberId}`, params);
 			}
-			this._subscribers[subscriberId](notice);
+			this._subscribers.get(subscriberId).resolver(notice);
 			return undefined;
 		}
 		const { id, error, result } = response;
