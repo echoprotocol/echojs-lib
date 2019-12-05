@@ -87,7 +87,7 @@ class WalletAPI {
 	 * @param {Parameters<ReconnectionWebSocket['connect']>[1]} connectionOptions connection params.
 	 * @returns {Promise<void>}
 	 */
-	async connect(url, connectionOptions) { await this.wsRpc.connect(url, connectionOptions); }
+	async connect(url, connectionOptions) { await this.wsRpc.connect(url, { ...connectionOptions, apis: [] }); }
 
 	/**
 	 * Exit from current wallet.

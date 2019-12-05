@@ -21,7 +21,7 @@ describe('API', () => {
 			describe('when provided api used', () => {
 				it('should succeed', async () => await echo.api.getBlock(1));
 			});
-			describe.only('when not provided api used', () => {
+			describe('when not provided api used', () => {
 				const expectedErrorMessage = [
 					'history API is not available',
 					'try to specify this in connection option called "apis"',
@@ -51,9 +51,10 @@ describe('API', () => {
 		});
 
 		describe('when used nonexistent api', () => {
-			const expectedErrorMessage = 'Parameter apis is invalid';
+			const apiName = 'nonexistent'
+			const expectedErrorMessage = `unknown api name "${apiName}"`;
 			shouldReject(async () => {
-				await echo.connect(url, { apis: ['nonexistent'] });
+				await echo.connect(url, { apis: [apiName] });
 			}, expectedErrorMessage);
 		});
 

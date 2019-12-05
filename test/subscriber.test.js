@@ -456,6 +456,6 @@ describe('SUBSCRIBER', () => {
 	});
 
 	after(async () => {
-		await echo.disconnect();
+		if (echo.isConnected) await echo.disconnect();
 	});
 });

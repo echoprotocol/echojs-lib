@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { Echo } from '../src';
-import { encode } from 'bs58';
 
 import { combineReducers, createStore } from 'redux';
 

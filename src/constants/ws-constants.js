@@ -31,4 +31,14 @@ export const STATUS = {
 
 export { CHAIN_API };
 
+export const SUBSCRIBERS = [
+	'set_subscribe_callback',
+	'broadcast_transaction_with_callback',
+	'set_pending_transaction_callback',
+	'set_block_applied_callback',
+	'set_consensus_message_callback',
+	'subscribe_contract_logs',
+	'submit_registration_solution',
+];
+
 /** @typedef {typeof CHAIN_API[keyof typeof CHAIN_API]} ChainApi */

@@ -18,5 +18,6 @@ export default class Echo {
 	api: Api;
 	connect(address: string, options?: EchoOptions): Promise<void>;
 	disconnect(): Promise<void>;
+	reconnect(): Promise<void>;
 	createTransaction(): Transaction;
 }
