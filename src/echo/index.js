@@ -1,4 +1,4 @@
-import WS from './ws';
+import EchoWS from './ws';
 import WSAPI from './ws-api';
 
 import Cache from './cache';
@@ -14,20 +14,20 @@ import WalletAPI from './ws-api/wallet-api';
 class Echo {
 
 	constructor() {
-		this._ws = new WS();
-		this.subscriber = new Subscriber(this._ws);
+		this.ws = new EchoWS();
+		this.subscriber = new Subscriber(this.ws);
 		this.walletApi = new WalletAPI();
 	}
 
 	get isConnected() {
-		return this._ws.isConnected;
+		return this.ws.isConnected;
 	}
 
 	/**
 	 * @readonly
 	 * @type {Set<string>}
 	 */
-	get apis() { return new Set(this._ws.apis); }
+	get apis() { return new Set(this.ws.apis); }
 
 	/**
 	 * @param {string} address
@@ -35,8 +35,8 @@ class Echo {
 	 * @private
 	 */
 	async _connectToNode(address, options) {
-		await this._ws.connect(address, options);
-		this._wsApi = new WSAPI(this._ws);
+		await this.ws.connect(address, options);
+		this._wsApi = new WSAPI(this.ws);
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this._wsApi, options.registration);
 		if (!options.store && this.store) options.store = this.store;
@@ -57,14 +57,14 @@ class Echo {
 	}
 
 	syncCacheWithStore(store) {
-		if (this._ws.isConnected) {
+		if (this.ws.isConnected) {
 			this.cache.setStore({ store });
 		}
 		this.store = store;
 	}
 
 	async reconnect() {
-		await this._ws.reconnect();
+		await this.ws.reconnect();
 		await this.subscriber.init(this.cache, this._wsApi, this.api);
 	}
 
@@ -72,7 +72,7 @@ class Echo {
 		this.subscriber.callCbOnDisconnect();
 		this.subscriber.reset();
 		if (this.cache) this.cache.reset();
-		await this._ws.close();
+		await this.ws.close();
 		this.onOpen = null;
 	}
 

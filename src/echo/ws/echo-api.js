@@ -1,11 +1,11 @@
 /** @typedef {import("../../constants/ws-constants").ChainApi} ChainApi */
-/** @typedef {import(".").default} ReconnectionWebSocket */
+/** @typedef {import(".").EchoWS} EchoWS */
 
 class EchoApi {
 
 	/**
 	 *
-	 * @param {ReconnectionWebSocket} wsRpc
+	 * @param {EchoWS} wsRpc
 	 * @param {ChainApi} apiName
 	 * @param {number} [apiId]
 	 */

@@ -41,7 +41,7 @@ class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
-	 *  @param {ws} ws
+	 *  @param {import('./ws').default} ws
 	 */
 	constructor(ws) {
 		super();

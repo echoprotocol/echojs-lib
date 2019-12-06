@@ -1,6 +1,6 @@
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
-import ReconnectionWebSocket from '../ws';
+import EchoWS from '../ws';
 import {
 	isAccountId,
 	isAccountIdOrName,
@@ -79,12 +79,12 @@ const {
 
 class WalletAPI {
 
-	constructor() { this.wsRpc = new ReconnectionWebSocket(); }
+	constructor() { this.wsRpc = new EchoWS(); }
 
 	/**
 	 * Init params and connect to chain.
 	 * @param {string} url remote node address
-	 * @param {Parameters<ReconnectionWebSocket['connect']>[1]} connectionOptions connection params.
+	 * @param {Parameters<EchoWS['connect']>[1]} connectionOptions connection params.
 	 * @returns {Promise<void>}
 	 */
 	async connect(url, connectionOptions) { await this.wsRpc.connect(url, { ...connectionOptions, apis: [] }); }
