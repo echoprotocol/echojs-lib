@@ -2064,6 +2064,19 @@ class API {
 	}
 
 	/**
+	 *  @method getContractPoolBalance
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getContractPoolBalance(contractId) {
+		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+
+		return this.wsApi.database.getContractPoolBalance(contractId);
+	}
+
+	/**
 	 *  @method getRecentTransactionById
 	 *
 	 *  @param  {String} transactionId
@@ -2283,19 +2296,24 @@ class API {
 			}
 		}
 
-		const [contract, balances, history] = await Promise.all([
+		const [contract, balances, history, poolBalance] = await Promise.all([
 			this.getContract(contractId, force),
 			this.getContractBalances(contractId),
 			this.getContractHistory(contractId),
+			this.getContractPoolBalance(contractId),
 		]);
 
 		this.cache.setInMap(
 			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
 			contractId,
-			fromJS({ contract, history, balances }),
+			fromJS({
+				contract, history, balances, poolBalance,
+			}),
 		);
 
-		return { contract, history, balances };
+		return {
+			contract, history, balances, poolBalance,
+		};
 	}
 
 	/**
