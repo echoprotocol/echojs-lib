@@ -2316,7 +2316,7 @@ class API {
 			this.getContractPoolBalance(contractId),
 			this.getContractPoolWhitelist(contractId)
 				.catch((err) => {
-					if (err === 'Contract pool object not found') {
+					if (err.message === 'Contract pool object not found') {
 						return [];
 					}
 					throw err;
