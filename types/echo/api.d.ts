@@ -76,6 +76,7 @@ export default class Api {
 	getConfig(force?: boolean): Promise<Config>;
 	getContract(contractId: string): Promise<Array<any>>;
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
+	getContractPoolWhitelist(contractId: string): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
 	getContractLogs(opts: {

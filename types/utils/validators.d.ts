@@ -48,6 +48,7 @@ export declare function isTransactionId(value?: any): boolean;
 export declare function isBlockSummaryId(value?: any): boolean;
 export declare function isAccountTransactionHistoryId(value?: any): boolean;
 export declare function isContractHistoryId(value?: any): boolean;
+export declare function isContractPoolId(value?: any): boolean;
 export declare function isDynamicGlobalObjectId(value?: any): boolean;
 
 export declare function isPublicKey(value?: any): boolean;
