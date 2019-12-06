@@ -2064,7 +2064,7 @@ class API {
 	}
 
 	/**
-	 *  @method getContractPoolBalance
+	 *  @method getContractPoolWhitelist
 	 *
 	 *  @param  {String} contractId
 	 *
@@ -2077,7 +2077,7 @@ class API {
 	}
 
 	/**
-	 *  @method getContractPoolWhitelist
+	 *  @method getContractPoolBalance
 	 *
 	 *  @param  {String} contractId
 	 *
