@@ -2064,6 +2064,19 @@ class API {
 	}
 
 	/**
+	 *  @method getContractPoolWhitelist
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getContractPoolWhitelist(contractId) {
+		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+
+		return this.wsApi.database.getContractPoolWhitelist(contractId);
+	}
+
+	/**
 	 *  @method getContractPoolBalance
 	 *
 	 *  @param  {String} contractId
@@ -2296,23 +2309,30 @@ class API {
 			}
 		}
 
-		const [contract, balances, history, poolBalance] = await Promise.all([
+		const [contract, balances, history, poolBalance, lists] = await Promise.all([
 			this.getContract(contractId, force),
 			this.getContractBalances(contractId),
 			this.getContractHistory(contractId),
 			this.getContractPoolBalance(contractId),
+			this.getContractPoolWhitelist(contractId)
+				.catch((err) => {
+					if (err.message === 'Assert Exception: itr != index.end(): Contract pool object not found') {
+						return [];
+					}
+					throw err;
+				}),
 		]);
 
 		this.cache.setInMap(
 			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
 			contractId,
 			fromJS({
-				contract, history, balances, poolBalance,
+				contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
 			}),
 		);
 
 		return {
-			contract, history, balances, poolBalance,
+			contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
 		};
 	}
 
