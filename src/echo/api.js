@@ -2314,7 +2314,13 @@ class API {
 			this.getContractBalances(contractId),
 			this.getContractHistory(contractId),
 			this.getContractPoolBalance(contractId),
-			this.getContractPoolWhitelist(contractId),
+			this.getContractPoolWhitelist(contractId)
+				.catch((err) => {
+					if (err === 'Contract pool object not found') {
+						return [];
+					}
+					throw err;
+				}),
 		]);
 
 		this.cache.setInMap(
