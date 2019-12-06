@@ -599,6 +599,17 @@ class DatabaseAPI {
 	}
 
 	/**
+	 *  @method getContractPoolBalance
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise}
+	 */
+	getContractPoolBalance(contractId) {
+		return this.db.exec('get_contract_pool_balance', [contractId]);
+	}
+
+	/**
 	 *  @method getRecentTransactionById
 	 *
 	 *  @param  {String} transactionId

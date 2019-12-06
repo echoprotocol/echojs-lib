@@ -2064,7 +2064,7 @@ class API {
 	}
 
 	/**
-	 *  @method getContractPoolWhitelist
+	 *  @method getContractPoolBalance
 	 *
 	 *  @param  {String} contractId
 	 *
@@ -2074,6 +2074,19 @@ class API {
 		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
 
 		return this.wsApi.database.getContractPoolWhitelist(contractId);
+	}
+
+	/**
+	 *  @method getContractPoolWhitelist
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getContractPoolBalance(contractId) {
+		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+
+		return this.wsApi.database.getContractPoolBalance(contractId);
 	}
 
 	/**
@@ -2296,10 +2309,11 @@ class API {
 			}
 		}
 
-		const [contract, balances, history, lists] = await Promise.all([
+		const [contract, balances, history, poolBalance, lists] = await Promise.all([
 			this.getContract(contractId, force),
 			this.getContractBalances(contractId),
 			this.getContractHistory(contractId),
+			this.getContractPoolBalance(contractId),
 			this.getContractPoolWhitelist(contractId),
 		]);
 
@@ -2307,12 +2321,12 @@ class API {
 			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
 			contractId,
 			fromJS({
-				contract, history, balances, whitelist: lists.whitelist, blacklist: lists.blacklist,
+				contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
 			}),
 		);
 
 		return {
-			contract, history, balances, whitelist: lists.whitelist, blacklist: lists.blacklist,
+			contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
 		};
 	}
 
