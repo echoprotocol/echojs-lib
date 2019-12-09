@@ -19,6 +19,7 @@ export declare const sidechainConfigSerializer: StructSerializer<{
 	eth_gen_address_method: typeof ethMethodSerializer,
 	eth_withdraw_method: typeof ethMethodSerializer,
 	eth_update_addr_method: typeof ethMethodSerializer,
+	eth_update_contract_address: typeof ethMethodSerializer,
 	eth_withdraw_token_method: typeof ethMethodSerializer,
 	eth_collect_tokens_method: typeof ethMethodSerializer,
 	eth_committee_updated_topic: typeof ethTopicSerializer,
@@ -28,14 +29,13 @@ export declare const sidechainConfigSerializer: StructSerializer<{
 	erc20_deposit_topic: typeof ethTopicSerializer,
 	erc20_withdraw_topic: typeof ethTopicSerializer,
 	ETH_asset_id: typeof assetId,
-	waiting_eth_blocks: typeof uint32,
-	fines: typeof sidechainFinesSerializer,
-	waiting_blocks: typeof uint32,
 	BTC_asset_id: typeof assetId,
-	waiting_btc_blocks: typeof uint32,
+	fines: typeof sidechainFinesSerializer,
+	gas_price: typeof uint64,
 	satoshis_per_byte: typeof uint32,
-	echo_blocks_per_aggregation: typeof uint32,
-	echo_blocks_per_deposit: typeof uint32,
+	coefficient_waiting_blocks: typeof uint32,
+	btc_deposit_withdrawal_min: typeof uint64,
+	btc_deposit_withdrawal_fee: typeof uint64,
 }>;
 
 export declare const sidechainERC20ConfigSerializer: StructSerializer<{

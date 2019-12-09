@@ -19,6 +19,7 @@ export const sidechainConfigSerializer = struct({
 	eth_gen_address_method: ethMethodSerializer,
 	eth_withdraw_method: ethMethodSerializer,
 	eth_update_addr_method: ethMethodSerializer,
+	eth_update_contract_address: ethMethodSerializer,
 	eth_withdraw_token_method: ethMethodSerializer,
 	eth_collect_tokens_method: ethMethodSerializer,
 	eth_committee_updated_topic: ethTopicSerializer,
@@ -28,14 +29,13 @@ export const sidechainConfigSerializer = struct({
 	erc20_deposit_topic: ethTopicSerializer,
 	erc20_withdraw_topic: ethTopicSerializer,
 	ETH_asset_id: assetId,
-	waiting_eth_blocks: uint32,
-	fines: sidechainFinesSerializer,
-	waiting_blocks: uint32,
 	BTC_asset_id: assetId,
-	waiting_btc_blocks: uint32,
+	fines: sidechainFinesSerializer,
+	gas_price: uint64,
 	satoshis_per_byte: uint32,
-	echo_blocks_per_aggregation: uint32,
-	echo_blocks_per_deposit: uint32,
+	coefficient_waiting_blocks: uint32,
+	btc_deposit_withdrawal_min: uint64,
+	btc_deposit_withdrawal_fee: uint64,
 });
 
 export const sidechainERC20ConfigSerializer = struct({
