@@ -3,7 +3,7 @@ import * as _eth from './eth';
 import * as _btc from './btc';
 import { struct } from '../../collections';
 import { asset, extensions } from '../../chain';
-import { accountId, ethDepositId, withdrawId } from '../../chain/id/protocol';
+import { accountId, ethDepositId, ethWithdrawId } from '../../chain/id/protocol';
 
 export const sidechainIssueOperationPropsSerializer = struct({
 	fee: asset,
@@ -18,7 +18,7 @@ export const sidechainBurnOperationPropsSerializer = struct({
 	fee: asset,
 	value: asset,
 	account: accountId,
-	withdraw_id: withdrawId,
+	withdraw_id: ethWithdrawId,
 	extensions,
 });
 
@@ -37,6 +37,7 @@ export const eth = {
 	deposit: _eth.sidechainEthDepositOperationPropsSerializer,
 	sendDeposit: _eth.sidechainEthSendDepositOperationPropsSerializer,
 	withdraw: _eth.sidechainEthWithdrawOperationPropsSerializer,
+	sendWithdraw: _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 };
 

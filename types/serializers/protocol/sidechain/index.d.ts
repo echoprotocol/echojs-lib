@@ -2,7 +2,7 @@ import * as _erc20 from './erc20';
 import * as _eth from './eth';
 import * as _btc from './btc';
 import { asset, extensions } from '../../chain';
-import { accountId, ethDepositId, withdrawId } from '../../chain/id/protocol';
+import { accountId, ethDepositId, ethWithdrawId } from '../../chain/id/protocol';
 import { StructSerializer } from '../../collections';
 
 export declare const sidechainIssueOperationPropsSerializer: StructSerializer<{
@@ -17,7 +17,7 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	value: typeof asset,
 	account: typeof accountId,
-	withdraw_id: typeof withdrawId,
+	withdraw_id: typeof ethWithdrawId,
 	extensions: typeof extensions,
 }>;
 
@@ -36,6 +36,7 @@ export declare const eth: {
 	deposit: typeof _eth.sidechainEthDepositOperationPropsSerializer,
 	sendDeposit: typeof _eth.sidechainEthSendDepositOperationPropsSerializer,
 	withdraw: typeof _eth.sidechainEthWithdrawOperationPropsSerializer,
+	sendWithdraw: typeof _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 };
 

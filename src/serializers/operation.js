@@ -46,6 +46,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: protocol.sidechain.eth.deposit,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_SEND_DEPOSIT]: protocol.sidechain.eth.sendDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: protocol.sidechain.eth.withdraw,
+	[OPERATIONS_IDS.SIDECHAIN_ETH_SEND_WITHDRAW]: protocol.sidechain.eth.sendWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: protocol.sidechain.eth.approveWithdraw,
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: protocol.contract.fundPool,
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: protocol.contract.whitelist,

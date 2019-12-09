@@ -5,7 +5,7 @@
 	* [ ] Add method `unsubscribe_contract_logs` in database API
 * [ ] Bitcoin key to configure-keys
 * [ ] Implement 24 hours delay for deposit and withdrawal processing in Ethereum sidechain
-	* [ ] sidechain_eth_send_deposit_operation
-	* [ ] sidechain_eth_send_withdraw_operation
-	* [ ] sidechain_erc20_send_deposit_operation
-	* [ ] sidechain_erc20_send_withdraw_operation
+	* [x] `sidechain_eth_send_deposit_operation`
+	* [x] `sidechain_eth_send_withdraw_operation`
+	* [ ] `sidechain_erc20_send_deposit_operation`
+	* [ ] `sidechain_erc20_send_withdraw_operation`

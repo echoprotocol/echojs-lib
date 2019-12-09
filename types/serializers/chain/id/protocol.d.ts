@@ -9,7 +9,7 @@ export declare const vestingBalanceId: ObjectIdSerializer<RESERVED_SPACE_ID.PROT
 export declare const balanceId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const contractId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const ethDepositId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
-export declare const withdrawId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
+export declare const ethWithdrawId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const erc20TokenId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const depositErc20TokenId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const withdrawErc20TokenId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;

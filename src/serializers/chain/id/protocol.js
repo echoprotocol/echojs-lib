@@ -23,7 +23,7 @@ export const ethDepositId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_DEPOSIT,
 );
-export const withdrawId = new ObjectIdSerializer(
+export const ethWithdrawId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_WITHDRAW,
 );

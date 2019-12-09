@@ -46,6 +46,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ETH_DEPOSIT]: typeof protocol.sidechain.eth.deposit,
 	[OperationId.SIDECHAIN_ETH_SEND_DEPOSIT]: typeof protocol.sidechain.eth.sendDeposit,
 	[OperationId.SIDECHAIN_ETH_WITHDRAW]: typeof protocol.sidechain.eth.withdraw,
+	[OperationId.SIDECHAIN_ETH_SEND_WITHDRAW]: typeof protocol.sidechain.eth.sendWithdraw,
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: typeof protocol.sidechain.eth.approveWithdraw,
 	[OperationId.CONTRACT_FUND_POOL]: typeof protocol.contract.fundPool,
 	[OperationId.CONTRACT_WHITELIST]: typeof protocol.contract.whitelist,

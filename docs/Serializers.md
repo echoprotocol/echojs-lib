@@ -332,7 +332,7 @@ Available protocol object id serializers:
 * `balanceId`
 * `contractId`
 * `ethDepositId`
-* `withdrawId`
+* `ethWithdrawId`
 * `erc20TokenId`
 
 Example:
