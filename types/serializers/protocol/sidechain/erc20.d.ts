@@ -42,6 +42,13 @@ export declare const sidechainERC20WithdrawTokenOperationPropsSerializer: Struct
 	extensions: typeof extensions,
 }>;
 
+export const sidechainERC20SendWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	withdraw_id: typeof withdrawErc20TokenId,
+	extensions: typeof extensions,
+}>;
+
 export declare const sidechainERC20ApproveTokenWithdrawOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,

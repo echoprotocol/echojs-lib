@@ -26,6 +26,7 @@ export declare const erc20: {
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	sendDeposit: typeof _erc20.sidechainERC20SendDepositOperationPropsSerializer,
 	withdrawToken: typeof _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
+	sendWithdraw: typeof _erc20.sidechainERC20SendWithdrawOperationPropsSerializer,
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
 	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,
