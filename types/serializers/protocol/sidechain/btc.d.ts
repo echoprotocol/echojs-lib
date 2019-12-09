@@ -52,6 +52,7 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	withdrawals: SetSerializer<typeof btcWithdrawId>,
 	transaction_id: typeof sha256,
 	aggregation_out_value: typeof integers.uint64,
+	btc_block_number: typeof integers.uint32,
 	sma_address: StructSerializer<{ address: StringSerializer }>,
 	committee_member_ids_in_script: MapSerializer<typeof accountId, typeof btcPublicKey>,
 	previous_aggregation: typeof btcAggregatingId,
