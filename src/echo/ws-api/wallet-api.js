@@ -565,6 +565,23 @@ class WalletAPI {
 	}
 
 	/**
+	 * Returns the relative operations on the id contract from start number
+	 * @param {typeof contractId["__TInput__"]} _contractId the ID of the contract
+	 * @param {typeof uint32["__TInput__"]} stop Sequence number of earliest operation
+	 * @param {typeof uint32["__TInput__"]} limit the number of entries to return
+	 * @param {typeof uint32["__TInput__"]} start the sequence number where to start looping back throw the history
+	 * @returns {Promise<unknown[]>} a list of operation history objects
+	 */
+	async getRelativeContractHistory(_contractId, stop, limit, start) {
+		return this.wsRpc.call([0, 'get_relative_contract_history', [
+			contractId.toRaw(_contractId),
+			uint32.toRaw(stop),
+			uint32.toRaw(limit),
+			uint32.toRaw(start),
+		]]);
+	}
+
+	/**
 	 * Transfer an amount from one account to another.
 	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
 	 * @param {string} toAccountNameOrId the name or id of the account receiving the funds

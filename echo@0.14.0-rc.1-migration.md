@@ -14,6 +14,6 @@
 	* [x] Add field `eth_update_contract_address` to `sidechain_config`
 * [ ] Add methods to wallet-api
 	* [x] `get_contract_history`
-	* [ ] `get_relative_contract_history`
+	* [x] `get_relative_contract_history`
 
 * [ ] Update operations' id's in docs
