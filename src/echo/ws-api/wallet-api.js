@@ -553,6 +553,18 @@ class WalletAPI {
 	}
 
 	/**
+	 * Returns the most recent operations on the contract id.
+	 *
+	 * This returns a list of operation history objects, which describe activity on the contract.
+	 * @param {typeof contractId["__TInput__"]} _contractId the ID of the contract
+	 * @param {typeof uint32["__TInput__"]} limit the number of entries to return (starting from the most recent)
+	 * @returns {Promise<unknown[]>} a list of accounts mapping account names to account ids
+	 */
+	async getContractHistory(_contractId, limit) {
+		return this.wsRpc.call([0, 'get_contract_history', [contractId.toRaw(_contractId), uint32.toRaw(limit)]]);
+	}
+
+	/**
 	 * Transfer an amount from one account to another.
 	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
 	 * @param {string} toAccountNameOrId the name or id of the account receiving the funds
