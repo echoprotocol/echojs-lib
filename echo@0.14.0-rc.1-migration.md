@@ -9,5 +9,8 @@
 	* [x] `sidechain_eth_send_withdraw_operation`
 	* [x] `sidechain_erc20_send_deposit_operation`
 	* [x] `sidechain_erc20_send_withdraw_operation`
+* [x] Add functionality to update ETH contract address
+	* [x] Add `sidechain_eth_update_contract_address_operation`
+	* [x] Add field `eth_update_contract_address` to `sidechain_config`
 
 * [ ] Update operations' id's in docs

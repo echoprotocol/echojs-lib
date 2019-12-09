@@ -40,6 +40,7 @@ export declare const eth: {
 	withdraw: typeof _eth.sidechainEthWithdrawOperationPropsSerializer,
 	sendWithdraw: typeof _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
+	updateContractAddress: typeof _eth.sidechainEthUpdateContractAddressOperationPropsSerializer,
 };
 
 export declare const btc: {

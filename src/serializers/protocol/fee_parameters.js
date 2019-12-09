@@ -56,6 +56,7 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_SEND_WITHDRAW]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ISSUE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_BURN]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: struct({ fee: uint64, pool_fee: uint64 }),

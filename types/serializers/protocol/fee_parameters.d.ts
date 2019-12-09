@@ -66,6 +66,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ETH_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_SEND_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: typeof defaultFeeParametersSerializer,
+	[OperationId.SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ISSUE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BURN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_REGISTER_TOKEN]: StructSerializer<{ fee: typeof uint64, pool_fee: typeof uint64 }>,

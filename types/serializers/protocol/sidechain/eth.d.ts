@@ -56,3 +56,9 @@ export declare const sidechainEthApproveWithdrawOperationPropsSerializer: Struct
 	withdraw_id: typeof uint64,
 	extensions: typeof extensions,
 }>;
+
+export const sidechainEthUpdateContractAddressOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	new_addr: typeof ethAddress,
+	extensions: typeof extensions,
+}>;

@@ -56,3 +56,9 @@ export const sidechainEthApproveWithdrawOperationPropsSerializer = struct({
 	withdraw_id: uint64,
 	extensions,
 });
+
+export const sidechainEthUpdateContractAddressOperationPropsSerializer = struct({
+	fee: asset,
+	new_addr: ethAddress,
+	extensions,
+});
