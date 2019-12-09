@@ -7,5 +7,5 @@
 * [ ] Implement 24 hours delay for deposit and withdrawal processing in Ethereum sidechain
 	* [x] `sidechain_eth_send_deposit_operation`
 	* [x] `sidechain_eth_send_withdraw_operation`
-	* [ ] `sidechain_erc20_send_deposit_operation`
+	* [x] `sidechain_erc20_send_deposit_operation`
 	* [ ] `sidechain_erc20_send_withdraw_operation`

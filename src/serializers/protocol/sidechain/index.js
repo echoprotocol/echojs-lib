@@ -25,6 +25,7 @@ export const sidechainBurnOperationPropsSerializer = struct({
 export const erc20 = {
 	registerToken: _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
 	depositToken: _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
+	sendDeposit: _erc20.sidechainERC20SendDepositOperationPropsSerializer,
 	withdrawToken: _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
 	approveTokenWithdraw: _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: _erc20.sidechainERC20IssueOperationPropsSerializer,
