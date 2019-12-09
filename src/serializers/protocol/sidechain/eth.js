@@ -1,7 +1,7 @@
 import ethAddress from '../ethAddress';
 import { uint64 } from '../../basic/integers';
 import { asset, extensions } from '../../chain';
-import { accountId } from '../../chain/id/protocol';
+import { accountId, ethDepositId } from '../../chain/id/protocol';
 import { struct, vector } from '../../collections';
 
 export const sidechainEthCreateAddressOperationPropsSerializer = struct({
@@ -25,6 +25,13 @@ export const sidechainEthDepositOperationPropsSerializer = struct({
 	deposit_id: uint64,
 	account: accountId,
 	value: uint64,
+	extensions,
+});
+
+export const sidechainEthSendDepositOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	deposit_id: ethDepositId,
 	extensions,
 });
 

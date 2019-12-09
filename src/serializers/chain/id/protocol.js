@@ -19,7 +19,7 @@ export const frozenBalanceId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.FROZEN_BALANCE,
 );
 export const contractId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.CONTRACT);
-export const depositId = new ObjectIdSerializer(
+export const ethDepositId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.SIDECHAIN_ETH_DEPOSIT,
 );
