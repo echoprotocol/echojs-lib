@@ -220,11 +220,7 @@ class Transaction {
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
 		if (!this.hasAllFees) await this.setRequiredFees();
 		const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
-		if (this.expiration === undefined) {
-			const headBlockTimeSeconds = Math.ceil(new Date(`${dynamicGlobalChainData.time}Z`).getTime() / 1000);
-			this.expiration = headBlockTimeSeconds + EXPIRATION_SECONDS;
-		}
-
+		if (this.expiration === undefined) this.expiration = Math.ceil(Date.now() / 1e3) + EXPIRATION_SECONDS;
 		const chainId = await this.api.getChainId();
 		// one more check to avoid that the sign method was called several times
 		// without waiting for the first call to be executed
