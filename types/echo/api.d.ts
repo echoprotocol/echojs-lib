@@ -129,6 +129,7 @@ export default class Api {
 	 * Get logs of specified contract logs filter options
 	 * @param contracts IDs of the contract
 	 * @param topics Filters by certain events if any provided
+	 * @param blocks Contract logs filter options
 	 * @param blocks.from Number of block to start retrive from
 	 * @param blocks.to Number of block to end to retrive
 	 * @returns The contracts logs from specified blocks interval

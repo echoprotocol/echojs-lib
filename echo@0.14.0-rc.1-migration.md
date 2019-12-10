@@ -21,3 +21,4 @@
 * [ ] Tests
 	* [ ] `get_contract_history`
 	* [ ] `get_relative_contract_history`
+	* [ ] `get_contract_logs`
