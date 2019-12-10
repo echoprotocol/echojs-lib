@@ -1009,9 +1009,9 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#generateEthAddress()', () => {
+	describe('#createEthAddress()', () => {
 		it('Should generate eth address', async () => {
-			const result = await echo.walletApi.generateEthAddress(accountId, shouldDoBroadcastToNetwork);
+			const result = await echo.walletApi.createEthAddress(accountId, shouldDoBroadcastToNetwork);
 			expect(result)
 				.to
 				.be

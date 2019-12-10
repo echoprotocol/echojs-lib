@@ -1052,11 +1052,11 @@ class WalletAPI {
 	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
+	createEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsRpc.call([0, 'generate_eth_address', [
+		return this.wsRpc.call([0, 'create_eth_address', [
 			string.toRaw(accountIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);

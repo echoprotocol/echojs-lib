@@ -16,7 +16,8 @@
 	* [x] `get_contract_history`
 	* [x] `get_relative_contract_history`
 * [x] Change arguments of `get_contract_logs` method and make it async
-* [x] Change type of argument in method `get_btc_address` from `account_id` to `string` (may be account's id or name)
+* [x] Change type of argument in wallet-api method `get_btc_address` from `account_id` to `string`
+* [x] Rename wallet-api method `generate_eth_address` to `create_eth_address`
 
 * [ ] Update operations' id's in docs
 * [ ] Tests
