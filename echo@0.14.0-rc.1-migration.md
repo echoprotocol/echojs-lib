@@ -16,6 +16,7 @@
 	* [x] `get_contract_history`
 	* [x] `get_relative_contract_history`
 * [x] Change arguments of `get_contract_logs` method and make it async
+* [x] Change type of argument in method `get_btc_address` from `account_id` to `string` (may be account's id or name)
 
 * [ ] Update operations' id's in docs
 * [ ] Tests
