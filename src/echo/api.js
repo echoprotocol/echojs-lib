@@ -1,6 +1,4 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
-import { ok } from 'assert';
-import BigNumber from 'bignumber.js';
 import { Map, List, fromJS } from 'immutable';
 
 import {
@@ -27,7 +25,6 @@ import {
 	isOperationId,
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
-	isUInt32,
 	isObject,
 	isInt64,
 	validateSidechainType,
@@ -38,10 +35,19 @@ import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation, basic, chain } from '../serializers';
+import { transaction, signedTransaction, operation, basic, chain, collections } from '../serializers';
 import { PublicKey } from '../crypto';
 
+/** @typedef {import("bignumber.js").default} BigNumber */
+/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
+
+/** @typedef {string | number | BigNumber} ObjectId_t */
+/** @typedef {number | BigNumber | string} Integer_t */
+/**
+ * @template T
+ * @typedef {Set<T> | T[] | undefined} Set_t
+ */
 
 /** @typedef {
 *	{
@@ -1930,48 +1936,28 @@ class API {
 	}
 
 	/**
-	 * @param {Object} [opts]
-	 * @param {string[]} [opts.contracts]
-	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
-	 * @param {number | BigNumber} [opts.fromBlock]
-	 * @param {number | BigNumber} [opts.toBlock]
-	 * @returns {Promise<unknown[]>}
+	 * @param {Set_t<ObjectId_t>} contracts
+	 * @param {Array<Set_t<string>>} topics
+	 * @param {Object} [blocks]
+	 * @param {Integer_t} [blocks.from]
+	 * @param {Integer_t} [blocks.to]
+	 * @returns {Promise<Log[]>}
 	 */
-	async getContractLogs(opts = {}) {
-		if (opts.contracts !== undefined) {
-			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
-			for (const contractId of opts.contracts) ok(isContractId(contractId));
-		}
-		/** @type {typeof opts["topics"]} */
-		let topics;
-		if (opts.topics !== undefined) {
-			ok(Array.isArray(opts.topics), '"topics" option is not an array');
-			topics = new Array(opts.topics.length).fill(null);
-			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
-				let topicVariants = opts.topics[topicIndex];
-				if (topicVariants === null) topicVariants = [];
-				else if (typeof topicVariants === 'string') topicVariants = [topicVariants];
-				topics[topicIndex] = new Array(topicVariants.length).fill(null);
-				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
-					let variant = topicVariants[variantIndex];
-					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
-					ok(typeof variant === 'string', 'invalid "topic" option type');
-					if (variant.startsWith('0x')) variant = variant.slice(2);
-					ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
-					ok(variant.length === 64, 'invalid "topic" length');
-					topics[topicIndex][variantIndex] = variant;
-				}
-			}
-		}
-		for (const field of ['fromBlock', 'toBlock']) {
-			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
-		}
-		return this.wsApi.database.getContractLogs({
-			contracts: opts.contracts,
-			topics,
-			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
-			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
-		});
+	async getContractLogs(contracts, topics, blocks = {}) {
+		/** @type {string[]} */
+		const contractsList = collections.set(chain.ids.protocol.contractId).toRaw(contracts);
+		/** @type {Array<string[]>} */
+		const topicsList = collections.vector(collections.set(basic.string)).toRaw(topics);
+		const from = blocks.from === undefined ? undefined : basic.integers.int32.toRaw(blocks.from);
+		const to = blocks.to === undefined ? undefined : basic.integers.int32.toRaw(blocks.to);
+		if (from !== undefined && from < 0) throw new Error('`blocks.from` must be greater than or equal to zero');
+		if (to !== undefined && to <= 0) throw new Error('`blocks.to` must be greater than zero');
+		return new Promise((resolve) => this.wsApi.database.getContractLogs((res) => resolve(res), {
+			contracts: contractsList,
+			topics: topicsList,
+			from_block: from,
+			to_block: to,
+		}));
 	}
 
 	/**

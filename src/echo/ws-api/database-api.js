@@ -1,3 +1,5 @@
+/** @typedef {import("../../../types/interfaces/vm/types").Log} Log */
+
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
 class DatabaseAPI {
@@ -496,17 +498,14 @@ class DatabaseAPI {
 	}
 
 	/**
-	 * @method getContractLogs
+	 * @param {(result: Log[]) => any} cb
 	 * @param {Object} opts
-	 * @param {string[]} [opts.contracts]
-	 * @param {(string | string[])[]} [opts.topics]
+	 * @param {string[]} opts.contracts
+	 * @param {Array<string[]>} opts.topics
 	 * @param {number} [opts.from_block]
 	 * @param {number} [opts.to_block]
-	 * @returns {Promise<unknown[]>}
 	 */
-	getContractLogs(opts) {
-		return this.db.exec('get_contract_logs', [opts]);
-	}
+	getContractLogs(cb, opts) { return this.db.exec('get_contract_logs', [cb, opts]); }
 
 	/**
 	 *  @method subscribeContractLogs

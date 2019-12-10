@@ -12,8 +12,12 @@
 * [x] Add functionality to update ETH contract address
 	* [x] Add `sidechain_eth_update_contract_address_operation`
 	* [x] Add field `eth_update_contract_address` to `sidechain_config`
-* [ ] Add methods to wallet-api
+* [x] Add methods to wallet-api
 	* [x] `get_contract_history`
 	* [x] `get_relative_contract_history`
+* [x] Change arguments of `get_contract_logs` method and make it async
 
 * [ ] Update operations' id's in docs
+* [ ] Tests
+	* [ ] `get_contract_history`
+	* [ ] `get_relative_contract_history`

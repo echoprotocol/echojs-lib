@@ -26,11 +26,13 @@ import { OperationHistoryObject } from '../interfaces/chain';
 import { PotentialPeerRecord } from '../interfaces/net/peer-database';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import PeerDetails from '../interfaces/PeerDetails';
+import { Log } from '../interfaces/vm/types';
 import { asset } from '../serializers/chain';
-import { VectorSerializer } from '../serializers/collections';
 import { signedTransaction } from '../serializers';
-import { uint32, uint64 } from '../serializers/basic/integers';
+import { StringSerializer } from '../serializers/basic';
+import { uint32, uint64, int32 } from '../serializers/basic/integers';
 import { committeeMemberId, contractId } from '../serializers/chain/id/protocol';
+import { VectorSerializer, SetSerializer } from '../serializers/collections';
 
 type SidechainType = "" | "eth" | "btc";
 
@@ -123,7 +125,21 @@ export default class Api {
 		suicided: boolean,
 	}>>;
 
-	getContractLogs(opts: {
+	/**
+	 * Get logs of specified contract logs filter options
+	 * @param contracts IDs of the contract
+	 * @param topics Filters by certain events if any provided
+	 * @param blocks.from Number of block to start retrive from
+	 * @param blocks.to Number of block to end to retrive
+	 * @returns The contracts logs from specified blocks interval
+	 */
+	getContractLogs(
+		contracts: SetSerializer<typeof contractId>["__TInput__"],
+		topics: VectorSerializer<SetSerializer<StringSerializer>>["__TInput__"],
+		blocks?: { from?: typeof int32["__TInput__"], to?: typeof int32["__TInput__"] },
+	): Promise<Log[]>;
+
+	getContractLogs1(opts: {
 		contracts?: string[],
 		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
 		fromBlock?: number | BigNumber,

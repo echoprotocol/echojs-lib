@@ -5,7 +5,7 @@ import VectorSerializer from "./Vector";
 type TInput<T extends ISerializer> =
 	SerializerInput<VectorSerializer<T>>[] | Set<SerializerInput<VectorSerializer<T>>> | undefined;
 
-export default class SetSerializer<T extends ISerializer> extends VectorSerializer<T> {
+export default class SetSerializer<T extends ISerializer> extends VectorSerializer<T, TInput<T>> {
 	constructor(serializer: T);
 	validate(value: TInput<T>): void;
 	serialize(value: TInput<T>): Buffer;
