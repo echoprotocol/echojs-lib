@@ -38,7 +38,7 @@ import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation, basic } from '../serializers';
+import { transaction, signedTransaction, operation, basic, chain } from '../serializers';
 import { PublicKey } from '../crypto';
 
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
@@ -2288,6 +2288,22 @@ class API {
 			limit,
 			start,
 		);
+	}
+
+	/**
+	 * @param {typeof chain.ids["protocol"]["contractId"]["__TInput__"]} contract
+	 * @param {Object} [options]
+	 * @param {typeof basic.integers["uint64"]["__TInput__"]} [options.stop]
+	 * @param {typeof basic.integers["uint32"]["__TInput__"]} [options.limit]
+	 * @param {typeof basic.integers["uint64"]["__TInput__"]} [options.start]
+	 */
+	async getRelativeContractHistory(contract, options = {}) {
+		contract = chain.ids.protocol.contractId.toRaw(contract);
+		const stop = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.stop);
+		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
+		const start = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
+		if (limit > 100) throw new Error('Limit is greater than 100');
+		return this.wsApi.history.getRelativeContractHistory(contract, stop, limit, start);
 	}
 
 	/**

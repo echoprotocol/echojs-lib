@@ -22,14 +22,15 @@ import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
 import FrozenBalance from '../interfaces/FrozenBalance';
 import BtcAddress from '../interfaces/BtcAddress';
+import { OperationHistoryObject } from '../interfaces/chain';
 import { PotentialPeerRecord } from '../interfaces/net/peer-database';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import PeerDetails from '../interfaces/PeerDetails';
 import { asset } from '../serializers/chain';
 import { VectorSerializer } from '../serializers/collections';
 import { signedTransaction } from '../serializers';
-import { committeeMemberId } from '../serializers/chain/id/protocol';
-import { uint32 } from '../serializers/basic/integers';
+import { uint32, uint64 } from '../serializers/basic/integers';
+import { committeeMemberId, contractId } from '../serializers/chain/id/protocol';
 
 type SidechainType = "" | "eth" | "btc";
 
@@ -51,11 +52,25 @@ export default class Api {
 	getAccountCount(): Promise<number>;
 	getAccountDeposits(account: string, type: SidechainType): Promise<unknown>;
 	getAccountHistory(accountId: string, stop: string, limit: number, start: string): Promise<Array<AccountHistory>>;
-	getAccountHistoryOperations(accountId: string, operationId: string, start: number, stop: number, limit: number): Promise<Array<AccountHistory>>;
+
+	getAccountHistoryOperations(
+		accountId: string,
+		operationId: string,
+		start: number,
+		stop: number,
+		limit: number,
+	): Promise<AccountHistory[]>;
+
 	getAccountReferences(accountId: string, force?: boolean): Promise<Account>;
 	getAccountWithdrawals(account: string, type: SidechainType): Promise<unknown>;
 	getAllAssetHolders(): Promise<Array<{asset_id: string, count: number}>>;
-	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{name: string, account_id: string, amount: string}>>;
+
+	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{
+		name: string,
+		account_id: string,
+		amount: string,
+	}>>;
+
 	getAssetHoldersCount(assetId: string): Promise<number>;
 	getAssets(assetIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
 	getBalanceObjects(keys: Object): any;
@@ -77,21 +92,57 @@ export default class Api {
 	getContract(contractId: string): Promise<Array<any>>;
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractPoolWhitelist(contractId: string): Promise<unknown>;
-	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
-	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
+
+	getContractHistory(
+		operationId: string,
+		stop: number,
+		limit: number,
+		start: number,
+	): Promise<ContractHistory[]>;
+
+	/**
+	 * Get operations relevant to the specified contract referenced by an event numbering specific to the contract.
+	 * The current number of operations for the contract can be found in the contract statistics (or use 0 for start).
+	 * @param contract the contract whose history should be queried
+	 * @param options.stop
+	 * Sequence number of earliest operation. 0 is default and will query `limit` number of operations.
+	 * @param options.limit Maximum number of operations to retrive (must not exceed 100)
+	 * @param options.start Sequence number of the most recent operation to retrive.
+	 * 0 is default, which will start querying from the most recent operation.
+	 * @returns A list of operations performed by contract, ordered from most recent to oldest
+	 */
+	getRelativeContractHistory(contract: typeof contractId["__TInput__"], options?: {
+		stop?: typeof uint64["__TInput__"],
+		limit?: typeof uint64["__TInput__"],
+		start?: typeof uint64["__TInput__"],
+	}): Promise<OperationHistoryObject[]>;
+
+	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{
+		id: string,
+		statistics: string,
+		suicided: boolean,
+	}>>;
+
 	getContractLogs(opts: {
 		contracts?: string[],
 		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
 		fromBlock?: number | BigNumber,
 		toBlock?: number | BigNumber,
 	}): Promise<unknown[]>;
+
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
-	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
+
+	getFullAccounts(
+		accountNamesOrIds: string[],
+		subscribe?: boolean,
+		force?: boolean,
+	): Promise<FullAccount[]>;
+
 	getFullContract(contractId: string, force?: boolean): Promise<Object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
 	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
@@ -102,11 +153,19 @@ export default class Api {
 	getPotentialSignatures(tr: Object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;
 	getRecentTransactionById(transactionId: string): Promise<any>;
-	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<Array<AccountHistory>>;
+	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<AccountHistory[]>;
 	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
 	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;
 	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
-	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
+
+	getTradeHistory(
+		baseAssetName: string,
+		quoteAssetName: number,
+		start: number,
+		stop: number,
+		limit: number,
+	): Promise<unknown>;
+
 	getTransaction(blockNum: number, transactionIndex: number): Promise<TransactionObject>;
 	getTransactionHex(tr: Object): Promise<any>;
 	getVestedBalances(balanceIds: Array<string>): Promise<any>;
