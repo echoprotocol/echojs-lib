@@ -1,4 +1,4 @@
 import { bytes } from '../basic';
 
-const ethAddress = bytes(20);
+const ethAddress = bytes();
 export default ethAddress;
