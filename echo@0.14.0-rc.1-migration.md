@@ -23,6 +23,7 @@
 * [x] wallet-api's `create_contract` method receives `amount` argument as `number|string|BigNumber` instead of `uint64`
 * [x] wallet-api's `call_contract` method receives `amount` argument as `number|string|BigNumber` instead of `uint64`
 * [x] Remove field `min_btc_deposit_withdrawal` from `sidechain_config`
+* [ ] Remove field `immutable_parameters` from `chain_property_object`
 
 * [ ] Update contract's logs' filter
 * [ ] Update operations' id's in docs
