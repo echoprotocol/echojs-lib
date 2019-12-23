@@ -494,12 +494,12 @@ class WalletAPI {
 	 * @param {string} accountNameOrId name of the account calling the contract
 	 * @param {string} idOfContract the id of the contract to call
 	 * @param {string} contractCode the hash of the method to call
-	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {number|BigNumber|string} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
 	 * @param {boolean} shouldSaveToWallet whether to save the contract call to the wallet
 	 * @returns {Promise<any>} the signed transaction calling the contract
 	 */
-	callContract(
+	async callContract(
 		accountNameOrId,
 		idOfContract,
 		contractCode,
@@ -507,15 +507,14 @@ class WalletAPI {
 		assetType,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+		amount = validateAmount(amount);
 		return this.wsRpc.call([0, 'call_contract', [
 			string.toRaw(accountNameOrId),
 			contractId.toRaw(idOfContract),
 			string.toRaw(contractCode),
-			uint64.toRaw(amount),
+			string.toRaw(amount),
 			assetId.toRaw(assetType),
 			bool.toRaw(shouldSaveToWallet),
 		]]);

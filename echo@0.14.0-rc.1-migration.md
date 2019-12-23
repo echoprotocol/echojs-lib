@@ -21,6 +21,7 @@
 * [x] Rename `deposit_erc20_token_object` to `erc20_deposit_token_object`
 * [x] Rename `withdraw_erc20_token_object` to `erc20_withdraw_token_object`
 * [x] wallet-api's `create_contract` method receives `amount` argument as `number|string|BigNumber` instead of `uint64`
+* [x] wallet-api's `call_contract` method receives `amount` argument as `number|string|BigNumber` instead of `uint64`
 
 * [ ] Update contract's logs' filter
 * [ ] Update operations' id's in docs
