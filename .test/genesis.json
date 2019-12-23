@@ -217,6 +217,5 @@
 		"eth_address": "298915A83Bd8a0D536aDBe300F12cA1e4388C3BA",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}],
-	"initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21",
-	"immutable_parameters": { "min_committee_member_count": 5 }
+	"initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21"
 }
