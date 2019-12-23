@@ -26,9 +26,9 @@
 * [x] Remove field `immutable_parameters` from `chain_property_object`
 * [x] Remove method `get_block_rewards` from `database-api`
 
-* [ ] Update contract's logs' filter
+* [x] Update contract's logs' filter
 * [ ] Update operations' id's in docs
 * [ ] Tests
 	* [ ] `get_contract_history`
 	* [ ] `get_relative_contract_history`
-	* [ ] `get_contract_logs`
+	* [x] `get_contract_logs`
