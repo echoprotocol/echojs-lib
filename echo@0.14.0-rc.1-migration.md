@@ -18,7 +18,9 @@
 * [x] Change arguments of `get_contract_logs` method and make it async
 * [x] Change type of argument in wallet-api method `get_btc_address` from `account_id` to `string`
 * [x] Rename wallet-api method `generate_eth_address` to `create_eth_address`
+* [x] Rename `deposit_erc20_token_object` to `erc20_deposit_token_object`
 
+* [ ] Update contract's logs' filter
 * [ ] Update operations' id's in docs
 * [ ] Tests
 	* [ ] `get_contract_history`
