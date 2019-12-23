@@ -36,6 +36,17 @@ import { VectorSerializer, SetSerializer } from '../serializers/collections';
 
 type SidechainType = "" | "eth" | "btc";
 
+interface ContractLogsFilterOptions {
+	/** IDs of the contract */
+	contracts?: SetSerializer<typeof contractId>["__TInput__"],
+	/** Filters by certain events if any provided */
+	topics?: VectorSerializer<SetSerializer<StringSerializer>>["__TInput__"],
+	/** Number of block to start retrieve from */
+	fromBlock?: typeof int32["__TInput__"],
+	/** Number of block to end to retrieve */
+	toBlock?: typeof int32["__TInput__"],
+}
+
 export default class Api {
 	broadcastTransaction(tr: Object): Promise<any>;
 	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
@@ -126,18 +137,10 @@ export default class Api {
 
 	/**
 	 * Get logs of specified contract logs filter options
-	 * @param contracts IDs of the contract
-	 * @param topics Filters by certain events if any provided
-	 * @param blocks Contract logs filter options
-	 * @param blocks.from Number of block to start retrive from
-	 * @param blocks.to Number of block to end to retrive
+	 * @param opts Contract logs filter options (see {@link ContractLogsFilterOptions})
 	 * @returns The contracts logs from specified blocks interval
 	 */
-	getContractLogs(
-		contracts: SetSerializer<typeof contractId>["__TInput__"],
-		topics: VectorSerializer<SetSerializer<StringSerializer>>["__TInput__"],
-		blocks?: { from?: typeof int32["__TInput__"], to?: typeof int32["__TInput__"] },
-	): Promise<Log[]>;
+	getContractLogs(opts?: ContractLogsFilterOptions): Promise<Log[]>;
 
 	getContractLogs1(opts: {
 		contracts?: string[],

@@ -1,4 +1,5 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
+import * as assert from 'assert';
 import { Map, List, fromJS } from 'immutable';
 
 import {
@@ -1933,28 +1934,34 @@ class API {
 	}
 
 	/**
-	 * @param {Set_t<ObjectId_t>} contracts
-	 * @param {Array<Set_t<string>>} topics
-	 * @param {Object} [blocks]
-	 * @param {Integer_t} [blocks.from]
-	 * @param {Integer_t} [blocks.to]
+	 * @param {Object} [opts]
+	 * @param {Set_t<ObjectId_t>} [opts.contracts]
+	 * @param {Array<Set_t<string>>} [opts.topics]
+	 * @param {Integer_t} [opts.fromBlock]
+	 * @param {Integer_t} [opts.toBlock]
 	 * @returns {Promise<Log[]>}
 	 */
-	async getContractLogs(contracts, topics, blocks = {}) {
+	async getContractLogs(opts = {}) {
 		/** @type {string[]} */
-		const contractsList = collections.set(chain.ids.protocol.contractId).toRaw(contracts);
+		const contractsList = opts.contracts === undefined ? undefined :
+			collections.set(chain.ids.protocol.contractId).toRaw(opts.contracts, 'contracts');
 		/** @type {Array<string[]>} */
-		const topicsList = collections.vector(collections.set(basic.string)).toRaw(topics);
-		const from = blocks.from === undefined ? undefined : basic.integers.int32.toRaw(blocks.from);
-		const to = blocks.to === undefined ? undefined : basic.integers.int32.toRaw(blocks.to);
-		if (from !== undefined && from < 0) throw new Error('`blocks.from` must be greater than or equal to zero');
-		if (to !== undefined && to <= 0) throw new Error('`blocks.to` must be greater than zero');
+		const topicsList = opts.topics === undefined ? undefined :
+			collections.vector(collections.set(basic.string)).toRaw(opts.topics, '`topics`');
+		const from = opts.fromBlock === undefined ? undefined : basic.integers.int32.toRaw(opts.fromBlock, 'fromBlock');
+		const to = opts.toBlock === undefined ? undefined : basic.integers.int32.toRaw(opts.toBlock, 'toBlock');
+		if (from !== undefined && from < 0) throw new Error('`fromBlock` must be greater than or equal to zero');
+		if (to !== undefined && to <= 0) throw new Error('`toBlock` must be greater than zero');
 		return new Promise((resolve) => this.wsApi.database.getContractLogs((res) => resolve(res), {
 			contracts: contractsList,
 			topics: topicsList,
 			from_block: from,
 			to_block: to,
-		}));
+		})).then((res) => {
+			assert.ok(Array.isArray(res));
+			assert.strictEqual(res.length, 1);
+			return res[0];
+		});
 	}
 
 	/**

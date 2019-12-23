@@ -43,3 +43,8 @@ export function getRandomAssetSymbol() {
 	const result = String.fromCharCode(...charCodes);
 	return result;
 }
+
+/**
+ * @template T
+ * @typedef {T extends Promise<infer U> ? U : T} UnPromisify
+ */
