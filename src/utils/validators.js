@@ -4,7 +4,7 @@ import bs58 from 'bs58';
 
 import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
-import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY } from '../constants';
+import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY, chain } from '../constants';
 import { walletAPIMethodsArray, operationPrototypeArray } from './methods-operations-data';
 
 export function validateSafeInteger(value, fieldName) {
@@ -359,4 +359,19 @@ export const isValidAmount = (v) => {
 export function validateSidechainType(v) {
 	if (typeof v !== 'string') throw new Error('Type is not a string');
 	if (!['', 'eth', 'btc'].includes(v)) throw new Error(`Unsupported withdrawal type "${v}"`);
+}
+
+/**
+ * @param {number|BN|string} v
+ * @returns {string}
+ */
+export function validateAmount(v) {
+	if (typeof v === 'number' || typeof v === 'string') v = new BN(v);
+	if (!(v instanceof BN)) throw new Error('amount: invalid type');
+	if (v.isNaN()) throw new Error('amount: not a number');
+	const dp = v.dp();
+	if (dp > 12) throw new Error('amont: invalid precision');
+	const minSatoshis = v.times(`1e${dp.toString(10)}`).abs();
+	if (minSatoshis > chain.config.ECHO_MAX_SHARE_SUPPLY) throw new Error('amount: overflow');
+	return v.toString(10);
 }

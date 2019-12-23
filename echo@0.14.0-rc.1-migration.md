@@ -19,6 +19,8 @@
 * [x] Change type of argument in wallet-api method `get_btc_address` from `account_id` to `string`
 * [x] Rename wallet-api method `generate_eth_address` to `create_eth_address`
 * [x] Rename `deposit_erc20_token_object` to `erc20_deposit_token_object`
+* [x] Rename `withdraw_erc20_token_object` to `erc20_withdraw_token_object`
+* [x] wallet-api's `create_contract` method receives `amount` argument as `number|string|BigNumber` instead of `uint64`
 
 * [ ] Update contract's logs' filter
 * [ ] Update operations' id's in docs

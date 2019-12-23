@@ -20,6 +20,7 @@ import {
 	isPublicKey,
 	isUInt64,
 	isCommitteeMemberId,
+	validateAmount,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -66,6 +67,7 @@ const {
 	committeeMemberId,
 } = serializers.chain.ids.protocol;
 
+/** @typedef {import("bignumber.js").BigNumber} BigNumber */
 /**
  * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
  */
@@ -455,7 +457,7 @@ class WalletAPI {
 	 * Upload/Create a contract.
 	 * @param {string} accountNameOrId name of the account creating the contract
 	 * @param {string} contractCode code of the contract
-	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {number|string|BigNumber} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
 	 * @param {string} supportedAssetId the asset that can be used to create/call the contract
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-supported-asset)
@@ -464,7 +466,7 @@ class WalletAPI {
 	 * @param {boolean} shouldSaveToWallet whether to save the contract to the wallet
 	 * @returns {Promise<any>} the signed transaction creating the contract
 	 */
-	createContract(
+	async createContract(
 		accountNameOrId,
 		contractCode,
 		amount,
@@ -473,14 +475,13 @@ class WalletAPI {
 		useEthereumAssetAccuracy,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+		amount = validateAmount(amount);
 		return this.wsRpc.call([0, 'create_contract', [
 			string.toRaw(accountNameOrId),
 			string.toRaw(contractCode),
-			uint64.toRaw(amount),
+			string.toRaw(amount),
 			assetId.toRaw(assetType),
 			assetId.toRaw(supportedAssetId),
 			bool.toRaw(useEthereumAssetAccuracy),
