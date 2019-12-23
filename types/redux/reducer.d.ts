@@ -1,1 +1,1 @@
-export default function (caches?: Array<String>): object;
+export default function (caches?: Array<string>): object;

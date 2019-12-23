@@ -4,14 +4,14 @@ export default class PrivateKey {
 	static fromWif(wif: string): PrivateKey;
 	toPublicKey(): PublicKey;
 	static fromBuffer(buf: Buffer): PrivateKey;
-	static fromSeed(seed: String): PrivateKey;
-	static fromWif(_privateWIF: String): PrivateKey;
-	toWif(): String;
+	static fromSeed(seed: string): PrivateKey;
+	static fromWif(_privateWIF: string): PrivateKey;
+	toWif(): string;
 	toPublicKey(): PublicKey;
 	toBuffer(): Buffer;
 	getSharedSecret(): Buffer;
-	static fromHex(hex: String): PrivateKey;
-	toHex(): String;
-	toPrivateKeyString(): String;
-	static fromPrivateKeyString(privateKeyString: String): PrivateKey|null;
+	static fromHex(hex: string): PrivateKey;
+	toHex(): string;
+	toPrivateKeyString(): string;
+	static fromPrivateKeyString(privateKeyString: string): PrivateKey|null;
 }
