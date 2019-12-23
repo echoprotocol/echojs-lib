@@ -114,9 +114,6 @@ import { PublicKey } from '../crypto';
 *	{
 *  		id:String,
 *  		chain_id:String,
-*  		immutable_parameters:{
-*  			min_committee_member_count:Number
-*  		}
 *  	}
 * 	} ChainProperties */
 
@@ -2455,15 +2452,6 @@ class API {
 		if (!isArray(keys)) return Promise.reject(new Error('Invalid keys'));
 
 		return this.wsApi.database.getBalanceObjects(keys);
-	}
-
-	/**
-	 * @method getBlockRewards
-	 * @param {typeof uint32["__TInput__"]} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.wsApi.database.getBlockRewards(basic.integers.uint32.toRaw(blockNum));
 	}
 
 	/**

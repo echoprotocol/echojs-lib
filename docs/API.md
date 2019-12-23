@@ -981,9 +981,6 @@ try {
 {
     id:String,
     chain_id:String,
-    immutable_parameters:{
-        min_committee_member_count:Number
-    }
 }
 ```
 

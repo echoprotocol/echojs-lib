@@ -79,7 +79,6 @@ export default class Api {
 	getBitAssetData(bitAssetId: string, force?: boolean): Promise<Object>;
 	getBlock(blockNum: number): Promise<Block>;
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
-	getBlockRewards(blockNum: typeof uint32["__TInput__"]): Promise<unknown>;
 	getBlockVirtualOperations(blockNum: number): any;
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
 	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;

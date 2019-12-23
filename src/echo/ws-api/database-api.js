@@ -631,15 +631,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 * @method getBlockRewards
-	 * @param {number} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.db.exec('get_block_rewards', [blockNum]);
-	}
-
-	/**
 	 *  @method getBlockVirtualOperations
 	 *
 	 *  @param  {Number} blockNum
