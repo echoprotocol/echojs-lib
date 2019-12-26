@@ -206,7 +206,7 @@ describe('cache', () => {
                         } else {
                             if (currentCacheSize !== 0) {
                                 tickTimeoutId = setTimeout(() => {
-									delete tickTimeoutId;
+									tickTimeoutId = undefined;
                                     tick(res, callCount + 1, currentCacheSize);
                                 }, tickInterval);
                             }
