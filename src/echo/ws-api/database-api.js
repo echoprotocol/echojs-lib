@@ -510,6 +510,9 @@ class DatabaseAPI {
 	 */
 	subscribeContractLogs(cb, options) { return this.db.exec('subscribe_contract_logs', [cb, options]); }
 
+	/** @param {number|string} cbId */
+	unsubscribeContractLogs(cbId) { return this.db.exec('unsubscribe_contract_logs', [cbId]); }
+
 	/**
 	 *  @method getContractResult
 	 *

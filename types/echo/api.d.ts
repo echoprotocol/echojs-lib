@@ -207,10 +207,16 @@ export default class Api {
 
 	/**
 	 * @param cb
-	 * @param options Contract logs filter options (see {@link ContractLogsFilterOptions})
-	 * @returns Callback id which should be referenced in {@link unsubscribeContractLogs}
+	 * @param options Contract logs filter options (see `ContractLogsFilterOptions` method)
+	 * @returns Callback id which should be referenced in `unsubscribeContractLogs`
 	 */
 	subscribeContractLogs(cb: (result: Log[]) => any, options?: ContractLogsFilterOptions): Promise<number|string>;
+
+	/**
+	 * Unsubscribe from contract log subscription
+	 * @param subscribeId Subscribe id (returns by `subscribeContractLogs`)
+	 */
+	unsubscribeContractLogs(subscribeId: typeof uint64["__TInput__"]): Promise<void>;
 
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;

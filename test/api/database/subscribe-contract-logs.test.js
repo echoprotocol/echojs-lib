@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Echo } from "../../..";
+import { Echo, BigNumber } from "../../..";
 import { url } from "../../_test-data";
 import { deploy, emit, emit1 } from "../../_event-emitter-contract";
 
@@ -17,10 +17,24 @@ describe('subscribeContractLogs', () => {
 	after(async () => echo.disconnect());
 	describe('when no any options are provided', () => {
 		/** @type {number|string} */
-		let cbId;
+		let subscribeId;
 		/** @type {Log[]} */
 		let emits = [];
-		it('should succeed', async () => cbId = await echo.api.subscribeContractLogs((logs) => emits.push(...logs)));
+		it('should succeed', async () => {
+			subscribeId = await echo.api.subscribeContractLogs((logs) => emits.push(...logs));
+		});
+		describe('should returns subscribeId', () => {
+			/** @type {BigNumber} */
+			let subIdBN;
+			before('should returns subscribeId', () => {
+				assert.ok(subscribeId !== undefined);
+				subIdBN = new BigNumber(subscribeId);
+			});
+			it('number', () => assert.ok(!new BigNumber(subscribeId).isNaN()));
+			it('integer', () => assert.ok(new BigNumber(subscribeId).isInteger()));
+			it('non-negative', () => assert.ok(new BigNumber(subscribeId).gte(0)));
+			it('less than 2**64', () => assert.ok(new BigNumber(subscribeId).lt(new BigNumber(2).pow(64))));
+		});
 		describe('when different contracts emit', () => {
 			before(() => emits = []);
 			it('should not rejects', async function () {
@@ -37,7 +51,6 @@ describe('subscribeContractLogs', () => {
 				assert.deepStrictEqual(new Set([contract1, contract2]), new Set(emits.map((log) => log[1].address)));
 			});
 		});
-		// TODO: unsubscribe
-		after(async () => { if (cbId !== undefined); });
+		after(async () => { if (subscribeId !== undefined) await echo.api.unsubscribeContractLogs(subscribeId); });
 	});
 });

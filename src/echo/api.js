@@ -43,6 +43,7 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
+/** @typedef {typeof basic.integers["uint64"]["__TInput__"]} UInt64 */
 
 /** @typedef {
 *	{
@@ -1952,6 +1953,11 @@ class API {
 			assert.strictEqual(result.length, 1);
 			callback(result[0]);
 		}, toRawContractLogsFilterOptions(opts));
+	}
+
+	/** @param {UInt64} subscribeId */
+	async unsubscribeContractLogs(subscribeId) {
+		return this.wsApi.database.unsubscribeContractLogs(basic.integers.uint64.toRaw(subscribeId));
 	}
 
 	/**
