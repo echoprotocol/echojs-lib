@@ -1,4 +1,4 @@
 export default interface CommitteeFrozenBalance {
-    owner: String,
-    balance: Number
+    owner: string,
+    balance: number
 }

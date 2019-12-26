@@ -11,6 +11,6 @@ export default interface Block {
 	ed_signature: string,
 	round: number,
 	rand: string,
-	cert: Object,
+	cert: object,
 	transactions: TransactionObject[],
 }

@@ -577,6 +577,17 @@ class DatabaseAPI {
 	}
 
 	/**
+	 *  @method getContractPoolWhitelist
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise}
+	 */
+	getContractPoolWhitelist(contractId) {
+		return this.db.exec('get_contract_pool_whitelist', [contractId]);
+	}
+
+	/**
 	 *  @method subscribeContracts
 	 *
 	 *  @param  {Array<String>} contractIds

@@ -34,8 +34,8 @@ import { uint32 } from '../serializers/basic/integers';
 type SidechainType = "" | "eth" | "btc";
 
 export default class Api {
-	broadcastTransaction(tr: Object): Promise<any>;
-	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
+	broadcastTransaction(tr: object): Promise<any>;
+	broadcastTransactionWithCallback(signedTransactionObject: object, wasBroadcastedCallback?: () => any): Promise<any>;
 	checkERC20Token(contractId: string): Promise<boolean>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
@@ -58,8 +58,8 @@ export default class Api {
 	getAssetHolders(assetId: string, start: number, limit: number): Promise<Array<{name: string, account_id: string, amount: string}>>;
 	getAssetHoldersCount(assetId: string): Promise<number>;
 	getAssets(assetIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
-	getBalanceObjects(keys: Object): any;
-	getBitAssetData(bitAssetId: string, force?: boolean): Promise<Object>;
+	getBalanceObjects(keys: object): any;
+	getBitAssetData(bitAssetId: string, force?: boolean): Promise<object>;
 	getBlock(blockNum: number): Promise<Block>;
 	getBlockHeader(blockNum: number): Promise<BlockHeader>;
 	getBlockRewards(blockNum: typeof uint32["__TInput__"]): Promise<unknown>;
@@ -67,15 +67,16 @@ export default class Api {
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
 	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
 	getEthAddress(accountId: string): Promise<AccountEthAddress>;
-	getBtcDepositScript(btcDepositId: string): Promise<String>;
+	getBtcDepositScript(btcDepositId: string): Promise<string>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
-	getCommitteeFrozenBalance(committeeMemberId: string): Promise<Object>;
+	getCommitteeFrozenBalance(committeeMemberId: string): Promise<object>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
 	getContract(contractId: string): Promise<Array<any>>;
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
+	getContractPoolWhitelist(contractId: string): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
 	getContractLogs(opts: {
@@ -86,28 +87,28 @@ export default class Api {
 	}): Promise<unknown[]>;
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
-	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
+	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 	getFullAccounts(accountNamesOrIds: Array<string>, subscribe?: boolean, force?: boolean): Promise<Array<FullAccount>>;
-	getFullContract(contractId: string, force?: boolean): Promise<Object>;
+	getFullContract(contractId: string, force?: boolean): Promise<object>;
 	getGlobalProperties(force?: boolean): Promise<GlobalProperties>;
 	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
 	getMarginPositions(accountId: string): Promise<any>;
-	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
-	getObject(objectId: string, force?: boolean): Promise<Object>;
-	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
-	getPotentialSignatures(tr: Object): Promise<any>;
+	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<object>;
+	getObject(objectId: string, force?: boolean): Promise<object>;
+	getObjects(objectIds: string, force?: boolean): Promise<Array<object>>;
+	getPotentialSignatures(tr: object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;
 	getRecentTransactionById(transactionId: string): Promise<any>;
 	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<Array<AccountHistory>>;
-	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
-	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;
+	getRequiredFees(operations: Array<object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
+	getRequiredSignatures(tr: object, availableKey: Array<string>): Promise<any>;
 	getTicker(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getTradeHistory(baseAssetName: string, quoteAssetName: number, start: number, stop: number, limit: number): Promise<any>;
 	getTransaction(blockNum: number, transactionIndex: number): Promise<TransactionObject>;
-	getTransactionHex(tr: Object): Promise<any>;
+	getTransactionHex(tr: object): Promise<any>;
 	getVestedBalances(balanceIds: Array<string>): Promise<any>;
 	getVestingBalances(balanceIds: Array<string>): Promise<any>;
 
@@ -132,9 +133,9 @@ export default class Api {
 	): Promise<[{ block_num: number, tx_id: string }]>;
 
 	requestRegistrationTask(): Promise<RegistrationTask>
-	validateTransaction(tr: Object): Promise<any>;
-	verifyAuthority(tr: Object): Promise<any>;
-	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;
+	validateTransaction(tr: object): Promise<any>;
+	verifyAuthority(tr: object): Promise<any>;
+	verifyAccountAuthority(accountNameOrId: object, signers: Array<string>): Promise<any>;
 
 	getConnectedPeers(): Promise<Array<{ version: number, host: string, info: PeerDetails }>>;
 	getPotentialPeers(): Promise<PotentialPeerRecord[]>;
