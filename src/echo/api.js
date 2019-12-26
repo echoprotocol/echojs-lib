@@ -36,19 +36,13 @@ import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation, basic, chain, collections } from '../serializers';
+import { transaction, signedTransaction, operation, basic, chain } from '../serializers';
 import { PublicKey } from '../crypto';
+import { toRawContractLogsFilterOptions } from '../utils/converters';
 
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
-
-/** @typedef {string | number | BigNumber} ObjectId_t */
-/** @typedef {number | BigNumber | string} Integer_t */
-/**
- * @template T
- * @typedef {Set<T> | T[] | undefined} Set_t
- */
 
 /** @typedef {
 *	{
@@ -1934,34 +1928,30 @@ class API {
 	}
 
 	/**
-	 * @param {Object} [opts]
-	 * @param {Set_t<ObjectId_t>} [opts.contracts]
-	 * @param {Array<Set_t<string>>} [opts.topics]
-	 * @param {Integer_t} [opts.fromBlock]
-	 * @param {Integer_t} [opts.toBlock]
+	 * @param {ContractLogsFilterOptions_t} [opts]
 	 * @returns {Promise<Log[]>}
 	 */
 	async getContractLogs(opts = {}) {
-		/** @type {string[]} */
-		const contractsList = opts.contracts === undefined ? undefined :
-			collections.set(chain.ids.protocol.contractId).toRaw(opts.contracts, 'contracts');
-		/** @type {Array<string[]>} */
-		const topicsList = opts.topics === undefined ? undefined :
-			collections.vector(collections.set(basic.string)).toRaw(opts.topics, '`topics`');
-		const from = opts.fromBlock === undefined ? undefined : basic.integers.int32.toRaw(opts.fromBlock, 'fromBlock');
-		const to = opts.toBlock === undefined ? undefined : basic.integers.int32.toRaw(opts.toBlock, 'toBlock');
-		if (from !== undefined && from < 0) throw new Error('`fromBlock` must be greater than or equal to zero');
-		if (to !== undefined && to <= 0) throw new Error('`toBlock` must be greater than zero');
-		return new Promise((resolve) => this.wsApi.database.getContractLogs((res) => resolve(res), {
-			contracts: contractsList,
-			topics: topicsList,
-			from_block: from,
-			to_block: to,
-		})).then((res) => {
+		return new Promise((resolve) => {
+			this.wsApi.database.getContractLogs((res) => resolve(res), toRawContractLogsFilterOptions(opts));
+		}).then((res) => {
 			assert.ok(Array.isArray(res));
 			assert.strictEqual(res.length, 1);
 			return res[0];
 		});
+	}
+
+	/**
+	 * @param {(result: Log[]) => any} callback
+	 * @param {ContractLogsFilterOptions_t} [opts]
+	 * @returns {Promise<Log[]>}
+	 */
+	async subscribeContractLogs(callback, opts = {}) {
+		return this.wsApi.database.subscribeContractLogs((result) => {
+			assert.ok(Array.isArray(result));
+			assert.strictEqual(result.length, 1);
+			callback(result[0]);
+		}, toRawContractLogsFilterOptions(opts));
 	}
 
 	/**

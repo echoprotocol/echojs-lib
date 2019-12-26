@@ -499,25 +499,16 @@ class DatabaseAPI {
 
 	/**
 	 * @param {(result: Log[]) => any} cb
-	 * @param {Object} opts
-	 * @param {string[]} opts.contracts
-	 * @param {Array<string[]>} opts.topics
-	 * @param {number} [opts.from_block]
-	 * @param {number} [opts.to_block]
+	 * @param {ContractLogsFilterOptionsRaw} opts
 	 */
 	getContractLogs(cb, opts) { return this.db.exec('get_contract_logs', [cb, opts]); }
 
 	/**
-	 *  @method subscribeContractLogs
-	 *
-	 *  @param  {Function} callback
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
-	 *
-	 *  @return {Promise}
+	 * @param {(result: Log[]) => any} cb
+	 * @param {ContractLogsFilterOptionsRaw} options
+	 * @returns {Promise<number|string>}
 	 */
-	subscribeContractLogs(callback, contractTopicsMap) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
-	}
+	subscribeContractLogs(cb, options) { return this.db.exec('subscribe_contract_logs', [cb, options]); }
 
 	/**
 	 *  @method getContractResult

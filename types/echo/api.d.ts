@@ -142,13 +142,6 @@ export default class Api {
 	 */
 	getContractLogs(opts?: ContractLogsFilterOptions): Promise<Log[]>;
 
-	getContractLogs1(opts: {
-		contracts?: string[],
-		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
-		fromBlock?: number | BigNumber,
-		toBlock?: number | BigNumber,
-	}): Promise<unknown[]>;
-
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
@@ -211,6 +204,14 @@ export default class Api {
 	): Promise<[{ block_num: number, tx_id: string }]>;
 
 	requestRegistrationTask(): Promise<RegistrationTask>
+
+	/**
+	 * @param cb
+	 * @param options Contract logs filter options (see {@link ContractLogsFilterOptions})
+	 * @returns Callback id which should be referenced in {@link unsubscribeContractLogs}
+	 */
+	subscribeContractLogs(cb: (result: Log[]) => any, options?: ContractLogsFilterOptions): Promise<number|string>;
+
 	validateTransaction(tr: Object): Promise<any>;
 	verifyAuthority(tr: Object): Promise<any>;
 	verifyAccountAuthority(accountNameOrId: Object, signers: Array<string>): Promise<any>;

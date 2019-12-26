@@ -33,6 +33,8 @@ export default class Transaction {
 	readonly transactionObject: any;
 	readonly operations: SerializerOutput<OperationSerializer>[];
 
+	expiration: number;
+
 	addOperation<T extends OperationId>(
 		operationId: T,
 		props?: TOperationInput<T, true>[1],
