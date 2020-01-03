@@ -34,6 +34,7 @@ export declare function isContractResultId(value?: any): boolean;
 export declare function isAccountBalanceId(value?: any): boolean;
 export declare function isOperationId(value?: any): boolean;
 export declare function isVoteId(value?: any): boolean;
+export declare function isERC20TokenId(value?: string): boolean;
 export declare function isObjectId(value?: any): boolean;
 
 export declare function isBuffer(value?: any): boolean;

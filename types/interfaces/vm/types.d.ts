@@ -1,7 +1,4 @@
-export enum LogType {
-	EVM = 0,
-	X86_X64 = 1,
-}
+import { VMType } from "../objects";
 
 export interface LogEntry {
 	address: string;
@@ -12,4 +9,4 @@ export interface LogEntry {
 	op_num: number;
 }
 
-export type Log = [LogType, LogEntry];
+export type Log = [VMType, LogEntry];

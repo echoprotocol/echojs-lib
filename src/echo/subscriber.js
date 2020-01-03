@@ -37,7 +37,6 @@ import {
 
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
-import { chain, collections, basic } from '../serializers';
 import { toRawContractLogsFilterOptions } from '../utils/converters';
 
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */

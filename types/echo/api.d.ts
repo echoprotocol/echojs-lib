@@ -17,13 +17,13 @@ import ChainProperties from '../interfaces/ChainProperties';
 import GlobalProperties from '../interfaces/GlobalProperties';
 import Config from '../interfaces/Config';
 import DynamicGlobalProperties from '../interfaces/DynamicGlobalProperties';
-import Asset from '../interfaces/Asset';
 import ContractHistory from '../interfaces/ContractHistory';
 import ContractResult from '../interfaces/ContractResult';
 import FrozenBalance from '../interfaces/FrozenBalance';
 import BtcAddress from '../interfaces/BtcAddress';
 import { OperationHistoryObject } from '../interfaces/chain';
 import { PotentialPeerRecord } from '../interfaces/net/peer-database';
+import { IObject, IAssetObject, IAccountObject } from '../interfaces/objects';
 import RegistrationTask from '../interfaces/RegistrationTask';
 import PeerDetails from '../interfaces/PeerDetails';
 import { Log } from '../interfaces/vm/types';
@@ -33,6 +33,7 @@ import { StringSerializer } from '../serializers/basic';
 import { uint32, uint64, int32 } from '../serializers/basic/integers';
 import { committeeMemberId, contractId } from '../serializers/chain/id/protocol';
 import { VectorSerializer, SetSerializer } from '../serializers/collections';
+import { Contract } from '../interfaces/Contract';
 
 type SidechainType = "" | "eth" | "btc";
 
@@ -52,7 +53,7 @@ export default class Api {
 	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
 	checkERC20Token(contractId: string): Promise<boolean>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
-	getAccounts(accountIds: Array<string>, force?: boolean): Promise<Array<Account>>;
+	getAccounts(accountIds: Array<string>, force?: boolean): Promise<IAccountObject[]>;
 
 	getAccountBalances(
 		accountId: string,
@@ -60,7 +61,7 @@ export default class Api {
 		force?: boolean,
 	): Promise<VectorSerializer<typeof asset>['__TOutput__']>;
 
-	getAccountByName(accountName: string, force?: boolean): Promise<Account>;
+	getAccountByName(accountName: string, force?: boolean): Promise<IAccountObject>;
 	getAccountByAddress(address: string): Promise<string>;
 	getAccountCount(): Promise<number>;
 	getAccountDeposits(account: string, type: SidechainType): Promise<unknown>;
@@ -74,7 +75,7 @@ export default class Api {
 		limit: number,
 	): Promise<AccountHistory[]>;
 
-	getAccountReferences(accountId: string, force?: boolean): Promise<Account>;
+	getAccountReferences(accountId: string, force?: boolean): Promise<IAccountObject>;
 	getAccountWithdrawals(account: string, type: SidechainType): Promise<unknown>;
 	getAllAssetHolders(): Promise<Array<{asset_id: string, count: number}>>;
 
@@ -85,7 +86,7 @@ export default class Api {
 	}>>;
 
 	getAssetHoldersCount(assetId: string): Promise<number>;
-	getAssets(assetIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
+	getAssets(assetIds: Array<string>, force?: boolean): Promise<Array<IAssetObject>>;
 	getBalanceObjects(keys: Object): any;
 	getBitAssetData(bitAssetId: string, force?: boolean): Promise<Object>;
 	getBlock(blockNum: number): Promise<Block>;
@@ -101,7 +102,7 @@ export default class Api {
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
-	getContract(contractId: string): Promise<Array<any>>;
+	getContract(contractId: string): Promise<Contract | null>;
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractPoolWhitelist(contractId: string): Promise<unknown>;
 
@@ -160,7 +161,7 @@ export default class Api {
 	getKeyReferences(keys: Array<string | PublicKey>, force?: boolean): Promise<string[][]>;
 	getMarginPositions(accountId: string): Promise<any>;
 	getNamedAccountBalances(accountName: string, assetIds: Array<string>, force?: boolean): Promise<Object>;
-	getObject(objectId: string, force?: boolean): Promise<Object>;
+	getObject<T extends IObject = IObject>(objectId: string, force?: boolean): Promise<T>;
 	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
 	getPotentialSignatures(tr: Object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;
@@ -190,10 +191,10 @@ export default class Api {
 		code: string,
 	): Promise<string>;
 
-	listAssets(lowerBoundSymbol: string, limit: number): Promise<Array<Asset>>;
+	listAssets(lowerBoundSymbol: string, limit: number): Promise<IAssetObject[]>;
 	lookupAccounts(lowerBoundName: string, limit: number): Promise<Array<string>>;
-	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<Array<Account>>;
-	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<Array<Asset>>;
+	lookupAccountNames(accountNames: Array<string>, force?: boolean): Promise<IAccountObject[]>;
+	lookupAssetSymbols(symbolsOrIds: Array<string>, force?: boolean): Promise<IAssetObject[]>;
 	lookupCommitteeMemberAccounts(lowerBoundName: string, limit: number): Promise<any>;
 
 	registerAccount(
