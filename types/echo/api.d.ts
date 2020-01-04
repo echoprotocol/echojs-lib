@@ -49,8 +49,8 @@ interface ContractLogsFilterOptions {
 }
 
 export default class Api {
-	broadcastTransaction(tr: Object): Promise<any>;
-	broadcastTransactionWithCallback(signedTransactionObject: Object, wasBroadcastedCallback?: () => any): Promise<any>;
+	broadcastTransaction(tr: object): Promise<any>;
+	broadcastTransactionWithCallback(signedTransactionObject: object, wasBroadcastedCallback?: () => any): Promise<any>;
 	checkERC20Token(contractId: string): Promise<boolean>;
 	get24Volume(baseAssetName: string, quoteAssetName: string): Promise<any>;
 	getAccounts(accountIds: Array<string>, force?: boolean): Promise<IAccountObject[]>;
@@ -95,10 +95,10 @@ export default class Api {
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
 	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
 	getEthAddress(accountId: string): Promise<AccountEthAddress>;
-	getBtcDepositScript(btcDepositId: string): Promise<String>;
+	getBtcDepositScript(btcDepositId: string): Promise<string>;
 	getChainId(force?: boolean): Promise<string>
 	getChainProperties(force?: boolean): Promise<ChainProperties>;
-	getCommitteeFrozenBalance(committeeMemberId: string): Promise<Object>;
+	getCommitteeFrozenBalance(committeeMemberId: string): Promise<object>;
 	getCommitteeMembers(committeeMemberIds: Array<string>, force?: boolean): Promise<Array<Committee>>;
 	getCommitteeMemberByAccount(accountId: string, force?: boolean): Promise<Committee>;
 	getConfig(force?: boolean): Promise<Config>;
@@ -145,7 +145,7 @@ export default class Api {
 
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
-	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<Object>;
+	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
@@ -180,7 +180,7 @@ export default class Api {
 	): Promise<unknown>;
 
 	getTransaction(blockNum: number, transactionIndex: number): Promise<TransactionObject>;
-	getTransactionHex(tr: Object): Promise<any>;
+	getTransactionHex(tr: object): Promise<any>;
 	getVestedBalances(balanceIds: Array<string>): Promise<any>;
 	getVestingBalances(balanceIds: Array<string>): Promise<any>;
 

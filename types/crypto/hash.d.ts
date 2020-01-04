@@ -1,16 +1,15 @@
 import {Buffer} from 'buffer';
 
-declare function sha1(data: string|Buffer, encoding: string): String|Buffer;
-declare function sha256(data: string|Buffer, encoding: string): String|Buffer;
-declare function sha512(data: string|Buffer, encoding: string): String|Buffer;
-declare function HmacSHA256(data: Buffer, secret: Buffer): String|Buffer;
-declare function ripemd160(data: Buffer): String|Buffer;
-
+export function sha1(data: string|Buffer, encoding: string): string|Buffer;
+export function sha256(data: string|Buffer, encoding: string): string|Buffer;
+export function sha512(data: string|Buffer, encoding: string): string|Buffer;
+export function HmacSHA256(data: Buffer, secret: Buffer): string|Buffer;
+export function ripemd160(data: Buffer): string|Buffer;
 
 export default interface Hash {
-	sha1(data: string|Buffer, encoding: string): String|Buffer,
-	sha256(data: string|Buffer, encoding: string): String|Buffer,
-	sha512(data: string|Buffer, encoding: string): String|Buffer,
-	HmacSHA256(data: Buffer, secret: Buffer): String|Buffer,
-	ripemd160(data: Buffer): String|Buffer,
+	sha1(data: string|Buffer, encoding: string): string|Buffer,
+	sha256(data: string|Buffer, encoding: string): string|Buffer,
+	sha512(data: string|Buffer, encoding: string): string|Buffer,
+	HmacSHA256(data: Buffer, secret: Buffer): string|Buffer,
+	ripemd160(data: Buffer): string|Buffer,
 }
