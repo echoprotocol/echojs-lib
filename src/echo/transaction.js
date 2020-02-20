@@ -277,11 +277,16 @@ class Transaction {
 			operations: this.operations,
 			extensions: [],
 			signatures: this._signatures.map((signature) => signature.toBuffer()),
+			signed_with_echorand_key: false,
 		});
 	}
 
 	serialize() {
 		return transaction.serialize(this.transactionObject);
+	}
+
+	signedTransactionSerializer() {
+		return signedTransaction.serialize(this.transactionObject);
 	}
 
 	/**
