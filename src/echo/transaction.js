@@ -51,7 +51,7 @@ class Transaction {
 
 	/** @param {Api} value */
 	set api(value) {
-		if (!(value instanceof Api)) throw new Error('value is not a Api instance');
+		// if (!(value instanceof Api)) throw new Error('value is not a Api instance');
 		/**
 		 * @private
 		 * @type {Api}
@@ -222,6 +222,44 @@ class Transaction {
 		const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 		if (this.expiration === undefined) this.expiration = Math.ceil(Date.now() / 1e3) + EXPIRATION_SECONDS;
 		const chainId = await this.api.getChainId();
+		// one more check to avoid that the sign method was called several times
+		// without waiting for the first call to be executed
+		this.checkNotFinalized();
+		this._finalized = true;
+		/**
+		 * @private
+		 * @type {number|undefined}
+		 */
+		this._refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
+		/**
+		 * @private
+		 * @type {number|undefined}
+		 */
+		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+		const transactionBuffer = transaction.serialize({
+			ref_block_num: this.refBlockNum,
+			ref_block_prefix: this.refBlockPrefix,
+			expiration: this.expiration,
+			operations: this.operations,
+			extensions: [],
+		});
+
+		const chainBuffer = Buffer.from(chainId, 'hex');
+		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
+		this._signatures = this._signers.map(({ privateKey }) => Signature.signBuffer(bufferToSign, privateKey));
+	}
+
+	/**
+	 * @param {PrivateKey=} _privateKey
+	 * @param {Object=} dynamicGlobalChainData
+	 */
+	async offlineSign(_privateKey, dynamicGlobalChainData, chainId) {
+		this.checkNotFinalized();
+		if (_privateKey !== undefined) this.addSigner(_privateKey);
+		if (!this.hasAllFees) await this.setRequiredFees();
+		// const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+		if (this.expiration === undefined) this.expiration = Math.ceil(Date.now() / 1e3) + EXPIRATION_SECONDS;
+		// const chainId = await this.api.getChainId();
 		// one more check to avoid that the sign method was called several times
 		// without waiting for the first call to be executed
 		this.checkNotFinalized();
