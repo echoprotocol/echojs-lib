@@ -1,18 +1,24 @@
 import 'mocha';
 import { expect } from 'chai';
-import { Echo } from '../src';
-import Transaction from '../src/echo/transaction';
+import { Echo, Transaction } from '../src';
 import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 
-import { url } from './_test-data';
+import { url, WIF } from './_test-data';
 import { ACCOUNT, ASSET} from '../src/constants/object-types';
+import { DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
 
 
 const echo = new Echo();
+const options = {
+  from: `1.${ACCOUNT}.6`,
+  to: `1.${ACCOUNT}.10`,
+  amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
+  fee: { asset_id: '1.3.0', amount: 300 },
+};
 
-describe.skip('Transaction', () => {
+describe.only('Transaction', () => { //skip
 
 	before(() => echo.connect(url));
 
@@ -27,7 +33,7 @@ describe.skip('Transaction', () => {
 	// 		deepStrictEqual(transaction.operations, []);
 	// 	});
 	// });
-
+	//
 	// describe('addOperation', () => {
 	// 	describe('failure', () => {
 	// 		it('without name', () => {
@@ -67,7 +73,7 @@ describe.skip('Transaction', () => {
 	// 		// TODO: test with excess fields
 	// 	});
 	// });
-
+	//
 	// describe('setRequiredFees', () => {
 	// 	describe('failure', () => {
 	// 		it('no operations', async () => {
@@ -110,10 +116,10 @@ describe.skip('Transaction', () => {
 	// 			strictEqual(fee.asset_id, `1.${ASSET}.1`);
 	// 			ok(fee.amount > 0);
 	// 		});
-
+	//
 	// 	});
 	// });
-
+	//
 	// describe('broadcast', () => {
 	// 	it('qwe', async () => {
 	// 		const pk = 'WIF';
@@ -129,19 +135,135 @@ describe.skip('Transaction', () => {
 	// 	}).timeout(11000);
 	// });
 
-	describe('get potential signatures', () => {
-		it('asd', async () => {
-			const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
-			const transaction = echo.createTransaction();
-			transaction.addOperation(TRANSFER, {
-				from: `1.${ACCOUNT}.6`,
-				to: `1.${ACCOUNT}.7`,
-				amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
-			});
-			// await transaction.sign(PrivateKey.fromWif(pk));
-			// console.log(await transaction.broadcast(console.log));
-			console.log(await transaction.getPotentialSignatures());
-		}).timeout(12e3);
-	});
+	// describe('get potential signatures', () => {
+	// 	it('asd', async () => {
+	// 		const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
+	// 		const transaction = echo.createTransaction();
+	// 		transaction.addOperation(TRANSFER, {
+	// 			from: `1.${ACCOUNT}.6`,
+	// 			to: `1.${ACCOUNT}.7`,
+	// 			amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
+	// 		});
+	// 		// await transaction.sign(PrivateKey.fromWif(pk));
+	// 		// console.log(await transaction.broadcast(console.log));
+	// 		console.log(await transaction.getPotentialSignatures());
+	// 	}).timeout(12e3);
+	// });
+
+  	describe('sing transaction offline', () => {
+  	  //create 2 different instance of ECHO 1 use for getting data, second for use TX and offline sing
+	  	it('should fall, already finalized', async () => {
+			const tx = echo.createTransaction();
+			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+			tx.chainId = await echo.api.getChainId();
+			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
+			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+			try {
+				tx.addOperation(TRANSFER, options);
+			} catch (err) {
+			  	expect(err.message).to.equal('already finalized');
+			}
+	  	}).timeout(11000);
+		it('should fall, when use invalid chainId data', async () => {
+			const tx = new Transaction();
+			try {
+			  	tx.chainId = 'you shall not pass!!!';
+		  	} catch (err) {
+				expect(err.message).to.equal('invalid chainId format or length');
+		 	}
+		});
+	  	it('should fall, when use negative refBlockNum value', async () => {
+			const tx = new Transaction();
+			try {
+			  	tx.refBlockNum = -1;
+			} catch (err) {
+			  	expect(err.message).to.equal('value is not positive');
+			}
+	  	});
+		it('should fall, when use not integer as refBlockNum value', async () => {
+			const tx = new Transaction();
+			try {
+			  	tx.refBlockNum = 1.23;
+			  	await tx.sign(privateKey);
+			} catch (err) {
+				expect(err.message).to.equal('undefined is not a integer');
+			}
+		});
+		it('should fall, when use not a number as refBlockNum value', async () => {
+			const tx = new Transaction();
+			try {
+				tx.refBlockNum = 'you shall not pass!!!';
+				await tx.sign(privateKey);
+			} catch (err) {
+			  	expect(err.message).to.equal('undefined is not a number');
+			}
+		});
+		it('should fall, when use not safe number as refBlockNum value', async () => {
+			const tx = new Transaction();
+			try {
+				tx.refBlockNum = 100000000000000;
+				await tx.sign(privateKey);
+			} catch (err) {
+			  	expect(err.message).to.equal('number is not safe');
+			}
+		});
+		it('should fall, when use not UInt32 as refBlockPrefix value', async () => {
+			const tx = new Transaction();
+			try {
+				tx.refBlockPrefix = 'notPass';
+				await tx.sign(privateKey);
+			} catch (err) {
+			  	expect(err.message).to.equal('invalid refBlockPrefix format');
+			}
+		});
+	  	it('should fall, when use offline sign did not provide all needed data', async () => {
+			const tx = new Transaction();
+			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+			const privateKey = PrivateKey.fromWif(WIF);
+			tx.addOperation(TRANSFER, options);
+			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
+			try {
+				await tx.sign(privateKey);
+		  	} catch (err) {
+				expect(err.message).to.equal('value is not a Api instance');
+		  	}
+		});
+		it('should succeeded, sing offline and broadcast', async () => {
+			const tx = new Transaction();
+			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+			const privateKey = PrivateKey.fromWif(WIF);
+			tx.addOperation(TRANSFER, options);
+			tx.chainId = await echo.api.getChainId();
+			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
+			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+			await tx.sign(privateKey);
+			// const result2 = await tx.broadcast((res) => console.log('res', res));
+			// console.log('result2', result2);
+		});
+  	});
+  	describe('sing transaction online', () => {
+		it('should fall, when try sing offline', async () => {
+			const tx = new Transaction();
+			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+			const privateKey = PrivateKey.fromWif(WIF);
+			tx.addOperation(TRANSFER, options);
+			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+			try {
+			  	await tx.sign(privateKey);
+			} catch (err) {
+			  	expect(err.message).to.equal('value is not a Api instance');
+			}
+		});
+	  	it.skip('should succeeded, sing with provided data and get rest of needed data', async () => {
+			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+			const privateKey = PrivateKey.fromWif(WIF);
+			const tx = echo.createTransaction();
+			tx.addOperation(TRANSFER, options);
+			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+			await tx.sign(privateKey);
+			const result2 = await tx.broadcast((res) => console.log('res', res));
+			console.log('result2', result2);
+	  	})
+	})
 
 });
