@@ -539,7 +539,7 @@ describe('WALLET API', () => {
 				useEthereumAssetAccuracy,
 				shouldSaveToWallet,
 			);
-			
+
 			contractResultId = result.operation_results[0][1];
 			expect(result)
 				.to
@@ -1048,7 +1048,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('#listAssets()', () => {
 		it('Should get lists of all assets registered', async () => {
 			const result = await echo.walletApi.listAssets(
@@ -1269,7 +1269,7 @@ describe('WALLET API', () => {
 				}
 			}).timeout(5000);
 		});
-	
+
 	describe.skip('#issueAsset()', () => {
 		it('Should do issue new shares of an asset', async () => {
 			try {
@@ -1410,7 +1410,7 @@ describe('WALLET API', () => {
 					bitassetOpts,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('check', check.operations[0][1]);
+				console.log('transaction.js.js', check.operations[0][1]);
 				const bitasset = '1.3.0';
 				const result = await echo.walletApi.getBitassetData(bitasset);
 				expect(result)
@@ -1554,7 +1554,7 @@ describe('WALLET API', () => {
 			}
 		}).timeout(5000);
 	});
-			
+
 	describe.skip('#proposeParameterChange()', () => {
 		it('Should creates a transaction to propose a parameter change', async () => {
 			try {
@@ -1859,7 +1859,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('TRANSACTION BUILDER', () => {
 
 		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
@@ -2114,7 +2114,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;	
+						.an('object').that.is.not.empty;
 				} catch (e) {
 					console.log(e);
 					throw e;
@@ -2179,7 +2179,7 @@ describe('WALLET API', () => {
 				expect(result[0].extensions)
 					.to
 					.be
-					.an('array');	
+					.an('array');
 				} catch (e) {
 					console.log(e);
 					throw e;

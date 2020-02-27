@@ -59,7 +59,7 @@ export default class SetSerializer extends VectorSerializer {
 	 */
 	readFromBuffer(buffer, offset = 0) {
 		const { res, newOffset } = super.readFromBuffer(buffer, offset);
-		// `this.toRaw` is used here to check duplicates
+		// `this.toRaw` is used here to transaction.js duplicates
 		return { res: this.toRaw(res), newOffset };
 	}
 
