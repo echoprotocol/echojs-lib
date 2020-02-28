@@ -14,11 +14,11 @@ const echo = new Echo();
 const options = {
   from: `1.${ACCOUNT}.6`,
   to: `1.${ACCOUNT}.10`,
-  amount: { asset_id: `1.${ASSET}.0`, amount: 1000 },
-  fee: { asset_id: '1.3.0', amount: 300 },
+  amount: { asset_id: `1.${ASSET}.0`, amount: 10 },
+  fee: { asset_id: '1.3.0', amount: 0 },
 };
 
-describe('Transaction', () => {
+describe.only('Transaction', () => { //skip
 
 	before(() => echo.connect(url));
 
@@ -155,9 +155,13 @@ describe('Transaction', () => {
 	  	it('should fall, already finalized', async () => {
 			const tx = echo.createTransaction();
 			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
-			tx.chainId = await echo.api.getChainId();
+			console.log('dynamicGlobalChainData.head_block_id', dynamicGlobalChainData.head_block_id);
 			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+			tx.chainId = await echo.api.getChainId();
+			// tx.refBlockNum = dynamicGlobalChainData.head_block_number;
+			// tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+
 			try {
 				tx.addOperation(TRANSFER, options);
 			} catch (err) {
@@ -233,11 +237,13 @@ describe('Transaction', () => {
 			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 			const privateKey = PrivateKey.fromWif(WIF);
 			tx.addOperation(TRANSFER, options);
-			tx.chainId = await echo.api.getChainId();
+			const chainId = await echo.api.getChainId();
+			tx.chainId = chainId.slice(2);
 			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
 			await tx.sign(privateKey);
-			// const result2 = await tx.broadcast((res) => console.log('res', res));
+		  	console.log('tx', tx._operations[0]);
+			// const result2 = await /*tx.broadcast*/echo.api.broadcastTransactionWithCallback(tx,(res) => console.log('res', res));
 			// console.log('result2', result2);
 		});
   	});
@@ -251,19 +257,16 @@ describe('Transaction', () => {
 			try {
 			  	await tx.sign(privateKey);
 			} catch (err) {
-			  console.log('err.message', err.message);
 			  	expect(err.message).to.equal('Api instance does not exist, check your connection');
 			}
 		});
-	  	it.skip('should succeeded, sing with provided data and get rest of needed data', async () => {
+	  	it('should succeeded, sing with provided data and get rest of needed data', async () => {
 			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 			const privateKey = PrivateKey.fromWif(WIF);
 			const tx = echo.createTransaction();
 			tx.addOperation(TRANSFER, options);
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
 			await tx.sign(privateKey);
-			const result2 = await tx.broadcast((res) => console.log('res', res));
-			console.log('result2', result2);
 	  	})
 	})
 

@@ -7,7 +7,6 @@ import {
 	validateUnsignedSafeInteger,
 	validatePositiveSafeInteger,
 	isHex,
-	isBuffer,
 	isUInt32,
 } from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
@@ -47,8 +46,11 @@ class Transaction {
 
 	/** @param {string|number|buffer|undefined} value */
 	set refBlockPrefix(value) {
-		if (!isUInt32(value) && !isHex(value) && !isBuffer(value)) throw new Error('invalid refBlockPrefix format');
-		this._refBlockPrefix = Buffer.from(value, 'hex').readUInt32LE(4);
+		if (isHex(value) || isUInt32(value)) {
+			this._refBlockPrefix = Buffer.from(value, 'hex').readUInt32LE(4);
+			return;
+		}
+		throw new Error('invalid refBlockPrefix format');
 	}
 
 	/** @param {string|undefined} value */
