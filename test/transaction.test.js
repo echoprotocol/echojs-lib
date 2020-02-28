@@ -2,23 +2,33 @@ import 'mocha';
 import { expect } from 'chai';
 import { Echo, Transaction } from '../src';
 import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
-import { TRANSFER } from '../src/constants/operations-ids';
+import { CONTRACT_CREATE, TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 
 import { url, WIF } from './_test-data';
 import { ACCOUNT, ASSET} from '../src/constants/object-types';
 import { DYNAMIC_GLOBAL_OBJECT_ID } from '../src/constants';
+import { bytecode } from './operations/_contract.test';
 
 
 const echo = new Echo();
 const options = {
   from: `1.${ACCOUNT}.6`,
   to: `1.${ACCOUNT}.10`,
+  // eth_accuracy: false,
   amount: { asset_id: `1.${ASSET}.0`, amount: 10 },
   fee: { asset_id: '1.3.0', amount: 0 },
+  extensions: [],
+};
+const options2 = {
+  registrar: `1.${ACCOUNT}.6`,
+  value: { asset_id: '1.3.0', amount: 0 },
+  eth_accuracy: false,
+  code: bytecode,
+  fee: { asset_id: '1.3.0', amount: 500 },
 };
 
-describe.only('Transaction', () => { //skip
+describe('Transaction', () => { //skip
 
 	before(() => echo.connect(url));
 
@@ -151,7 +161,6 @@ describe.only('Transaction', () => { //skip
 	// });
 
   	describe('sing transaction offline', () => {
-  	  //create 2 different instance of ECHO 1 use for getting data, second for use TX and offline sing
 	  	it('should fall, already finalized', async () => {
 			const tx = echo.createTransaction();
 			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
@@ -159,9 +168,6 @@ describe.only('Transaction', () => { //skip
 			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
 			tx.chainId = await echo.api.getChainId();
-			// tx.refBlockNum = dynamicGlobalChainData.head_block_number;
-			// tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
-
 			try {
 				tx.addOperation(TRANSFER, options);
 			} catch (err) {
@@ -237,13 +243,12 @@ describe.only('Transaction', () => { //skip
 			const dynamicGlobalChainData = await echo.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 			const privateKey = PrivateKey.fromWif(WIF);
 			tx.addOperation(TRANSFER, options);
-			const chainId = await echo.api.getChainId();
-			tx.chainId = chainId.slice(2);
+		  	tx.addOperation(CONTRACT_CREATE, options2);
+			tx.chainId = await echo.api.getChainId();
 			tx.refBlockNum = dynamicGlobalChainData.head_block_number;
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
 			await tx.sign(privateKey);
-		  	console.log('tx', tx._operations[0]);
-			// const result2 = await /*tx.broadcast*/echo.api.broadcastTransactionWithCallback(tx,(res) => console.log('res', res));
+			// const result2 = await echo.api.broadcastTransactionWithCallback(tx);
 			// console.log('result2', result2);
 		});
   	});
@@ -267,7 +272,8 @@ describe.only('Transaction', () => { //skip
 			tx.addOperation(TRANSFER, options);
 			tx.refBlockPrefix = dynamicGlobalChainData.head_block_id;
 			await tx.sign(privateKey);
-	  	})
+		  	// await tx.broadcast();
+	  	});
 	})
 
 });

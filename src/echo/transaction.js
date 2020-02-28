@@ -44,10 +44,14 @@ class Transaction {
 		return this._refBlockPrefix;
 	}
 
-	/** @param {string|number|buffer|undefined} value */
+	/** @param {string|number|undefined} value */
 	set refBlockPrefix(value) {
-		if (isHex(value) || isUInt32(value)) {
+		if (isHex(value)) {
 			this._refBlockPrefix = Buffer.from(value, 'hex').readUInt32LE(4);
+			return;
+		}
+		if (isUInt32(value)) {
+			this._refBlockPrefix = value;
 			return;
 		}
 		throw new Error('invalid refBlockPrefix format');
@@ -55,10 +59,11 @@ class Transaction {
 
 	/** @param {string|undefined} value */
 	set chainId(value) {
-		if (!isHex(value) && value.length !== CHAIN_CONFIG.CHAIN_ID_LENGTH) {
-			throw new Error('invalid chainId format or length');
+		if (isHex(value) && value.length === CHAIN_CONFIG.CHAIN_ID_LENGTH) {
+			this._chainId = value;
+			return;
 		}
-		this._chainId = value;
+		throw new Error('invalid chainId format or length');
 	}
 
 	/**
