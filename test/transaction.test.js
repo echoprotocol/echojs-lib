@@ -18,7 +18,7 @@ const options = {
   fee: { asset_id: '1.3.0', amount: 300 },
 };
 
-describe.only('Transaction', () => { //skip
+describe('Transaction', () => {
 
 	before(() => echo.connect(url));
 
@@ -225,7 +225,7 @@ describe.only('Transaction', () => { //skip
 			try {
 				await tx.sign(privateKey);
 		  	} catch (err) {
-				expect(err.message).to.equal('value is not a Api instance');
+				expect(err.message).to.equal('Api instance does not exist, check your connection');
 		  	}
 		});
 		it('should succeeded, sing offline and broadcast', async () => {
@@ -251,7 +251,8 @@ describe.only('Transaction', () => { //skip
 			try {
 			  	await tx.sign(privateKey);
 			} catch (err) {
-			  	expect(err.message).to.equal('value is not a Api instance');
+			  console.log('err.message', err.message);
+			  	expect(err.message).to.equal('Api instance does not exist, check your connection');
 			}
 		});
 	  	it.skip('should succeeded, sing with provided data and get rest of needed data', async () => {

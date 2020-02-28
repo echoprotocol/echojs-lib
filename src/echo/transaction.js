@@ -82,12 +82,13 @@ class Transaction {
 
 	/** @type {Api} */
 	get api() {
-		if (!(this._api instanceof Api)) throw new Error('value is not a Api instance');
+		if (!this._api) throw new Error('Api instance does not exist, check your connection');
 		return this._api;
 	}
 
 	/** @param {Api} value */
 	set api(value) {
+		if (value && !(value instanceof Api)) throw new Error('value is not a Api instance');
 		/**
 		 * @private
 		 * @type {Api}
@@ -143,6 +144,14 @@ class Transaction {
 
 	checkNotFinalized() { if (this.finalized) throw new Error('already finalized'); }
 	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
+
+	async getGlobalChainData() {
+		if (this.refBlockPrefix && this.refBlockNum) {
+			return { refBlockNum: this.refBlockNum, refBlockPrefix: this.refBlockPrefix };
+		}
+		const globalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+		return { refBlockNum: globalChainData.head_block_number, refBlockPrefix: globalChainData.head_block_id };
+	}
 
 	/**
 	 * @param {OperationId} operationId
@@ -249,14 +258,14 @@ class Transaction {
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
 
 		if (!this.finalized) {
+			const { refBlockNum, refBlockPrefix } = await this.getGlobalChainData();
+
 			if (!this.hasAllFees) await this.setRequiredFees();
-			const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
 			if (!this.refBlockNum) {
-				// eslint-disable-next-line no-bitwise
-				this.refBlockNum = dynamicGlobalChainData.head_block_number;
+				this.refBlockNum = refBlockNum;
 			}
 			if (!this.refBlockPrefix) {
-				this.refBlockPrefix = dynamicGlobalChainData.head_block_id;
+				this.refBlockPrefix = refBlockPrefix;
 			}
 			if (!this.chainId) {
 				this.chainId = await this.api.getChainId();
