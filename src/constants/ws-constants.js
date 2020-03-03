@@ -1,4 +1,4 @@
-export const CONNECTION_TIMEOUT = 5 * 1000;
+export const CONNECTION_TIMEOUT = 30e3;
 export const MAX_RETRIES = 1000;
 export const PING_TIMEOUT = 10 * 1000;
 export const PING_DELAY = 10 * 1000;
