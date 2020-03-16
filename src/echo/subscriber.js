@@ -548,7 +548,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {Promise.<undefined>}
 	 */
 	async _setConsensusMessageCallback() {
-		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+		await this._wsApi.echorand.setConsensusMessageCallback(this._echorandUpdate.bind(this));
 		this.subscriptions.echorand = true;
 	}
 
