@@ -70,3 +70,4 @@ apidoc
 
 dist/
 lib/
+client.js

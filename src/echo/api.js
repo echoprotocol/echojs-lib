@@ -31,6 +31,7 @@ import {
 	isObject,
 	isInt64,
 	validateSidechainType,
+	isFunction,
 } from '../utils/validators';
 
 import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
@@ -1931,13 +1932,15 @@ class API {
 
 	/**
 	 * @param {Object} [opts]
+	 * @param {Function} cb
 	 * @param {string[]} [opts.contracts]
 	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
 	 * @param {number | BigNumber} [opts.fromBlock]
 	 * @param {number | BigNumber} [opts.toBlock]
-	 * @returns {Promise<unknown[]>}
+	 * @returns {Promise<null>}
 	 */
-	async getContractLogs(opts = {}) {
+	async getContractLogs(cb, opts = { }) {
+		ok(isFunction(cb), '"cb" must be a function');
 		if (opts.contracts !== undefined) {
 			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
 			for (const contractId of opts.contracts) ok(isContractId(contractId));
@@ -1966,7 +1969,7 @@ class API {
 		for (const field of ['fromBlock', 'toBlock']) {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
-		return this.wsApi.database.getContractLogs({
+		return this.wsApi.database.getContractLogs(cb, {
 			contracts: opts.contracts,
 			topics,
 			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
@@ -2140,10 +2143,11 @@ class API {
 	 * @param {string} name
 	 * @param {string} activeKey
 	 * @param {string} echoRandKey
+	 * @param {string} evmAddress
 	 * @param {() => any} [wasBroadcastedCallback]
 	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
-	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
+	async registerAccount(name, activeKey, echoRandKey, evmAddress, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
@@ -2157,6 +2161,7 @@ class API {
 					name,
 					activeKey,
 					echoRandKey,
+					evmAddress,
 					nonce,
 					randNum,
 				);
@@ -2585,17 +2590,18 @@ class API {
 	 * 	@param {String} name
 	 * 	@param {String} activeKey
 	 * 	@param {String} echorandKey
+	 * 	@param {String} evmAddress
 	 * 	@param {Number} nounce
 	 * 	@param {Number} randNum
 	 * 	@param {Function} wasBroadcastedCallback
 	 *
  	 *  @return {Promise<Boolean>}
 	 */
-	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+	submitRegistrationSolution(name, activeKey, echorandKey, evmAddress, nounce, randNum, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution((res) =>
-					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+					resolve(res), name, activeKey, echorandKey, evmAddress, nounce, randNum);
 			} catch (error) {
 				reject(error);
 			}

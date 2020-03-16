@@ -79,12 +79,12 @@ export default class Api {
 	getContractPoolWhitelist(contractId: string): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
-	getContractLogs(opts: {
+	getContractLogs(cb: () => any, opts: {
 		contracts?: string[],
 		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
 		fromBlock?: number | BigNumber,
 		toBlock?: number | BigNumber,
-	}): Promise<unknown[]>;
+	}): Promise<null>;
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;
@@ -129,6 +129,7 @@ export default class Api {
 		name: string,
 		activeKey: string,
 		echoRandKey: string,
+		evmAddress: string,
 		wasBroadcastedCallback?: () => any,
 	): Promise<[{ block_num: number, tx_id: string }]>;
 

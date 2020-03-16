@@ -1027,7 +1027,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsRpc.call([0, 'generate_eth_address', [
+		return this.wsRpc.call([0, 'create_eth_address', [
 			string.toRaw(accountIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);

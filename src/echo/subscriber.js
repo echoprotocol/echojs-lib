@@ -137,7 +137,7 @@ class Subscriber extends EventEmitter {
 			echorand: [],
 			block: [],
 			transaction: [],
-			logs: {},	// [contractId]: []
+			logs: {},	// {[cbId]: cb}
 			contract: [],
 			connect: [],
 			disconnect: [],
@@ -896,35 +896,36 @@ class Subscriber extends EventEmitter {
 		});
 	}
 
-	/**
-	 *  @method _contractLogsUpdate
-	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
-	 *  @param  {*} result
-	 *
-	 *  @return {undefined}
-	 */
-	_contractLogsUpdate(contractTopicsMap, result) {
-		let callbacks = [];
-		contractTopicsMap.forEach((topicMap) => {
-			const [contractId] = topicMap;
-
-			callbacks = callbacks.concat(this.subscribers.logs[contractId]);
-		});
-
-		callbacks.forEach((callback) => callback(result));
-	}
+	// /**
+	//  *  @method _contractLogsUpdate
+	//  *
+	//  *  @param  {Array<Array<String, Array<String>>} contractLogsMap
+	//  *  @param  {*} result
+	//  *
+	//  *  @return {undefined}
+	//  */
+	// _contractLogsUpdate(contractTopicsMap, result) {
+	// 	let callbacks = [];
+	// 	contractTopicsMap.forEach((topicMap) => {
+	// 		const [contractId] = topicMap;
+	//
+	// 		callbacks = callbacks.concat(this.subscribers.logs[contractId]);
+	// 	});
+	//
+	// 	callbacks.forEach((callback) => callback(result));
+	// }
 
 	/**
 	 *  @method _subscribeToContractLogs
 	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
+	 * @param {Number} cbId
+	 *  @param  {<Map<String, Array<String>>} contractLogsMap
 	 *
 	 *  @return {undefined}
 	 */
-	async _subscribeToContractLogs(contractTopicsMap) {
+	async _subscribeToContractLogs(cbId, contractTopicsMap) {
 		await this._wsApi.database.subscribeContractLogs(
-			this._contractLogsUpdate.bind(this, contractTopicsMap),
+			cbId,
 			contractTopicsMap,
 		);
 	}
@@ -932,7 +933,7 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @method setContractLogsSubscribe
 	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
+	 *  @param  {Array<Map<String, Array<String>>} contractTopicsMap
 	 *  @param  {Function} callback
 	 *  @param  {Number} [fromBlock]
 	 *  @param  {Number} [toBlock]
@@ -942,44 +943,46 @@ class Subscriber extends EventEmitter {
 	async setContractLogsSubscribe(contractTopicsMap, callback, fromBlock, toBlock) {
 		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
 
-		const contractsToSubscribe = [];
+		const contractsToSubscribe = {};
+		const cbId = Object.keys(this.subscribers.logs).length + 1;
 
 		await Promise.all(contractTopicsMap.map((topicsItem) =>
 			(async () => {
 				const [contractId, topics] = topicsItem;
 				if (fromBlock) {
-					const logs = await this._wsApi.database.getContractLog(
-						contractId,
-						topics,
-						fromBlock,
-						toBlock || globalInfo.head_block_number,
+					await this._wsApi.database.getContractLogs(
+						callback,
+						{
+							contracts: [contractId],
+							topics,
+							from_block: fromBlock,
+							to_block: toBlock || globalInfo.head_block_number,
+						},
 					);
-					callback(logs);
 				}
-
-				// set subscriber from current block
-				if (!this.subscribers.logs[contractId]) {
-					this.subscribers.logs[contractId] = [];
-					contractsToSubscribe.push(topicsItem);
-				}
-
-				this.subscribers.logs[contractId].push(callback);
+				contractsToSubscribe[contractId] = topics;
 			})()));
 
-		await this._subscribeToContractLogs(contractsToSubscribe);
+		this.subscribers.logs[cbId] = callback;
+		await this._subscribeToContractLogs(cbId, contractsToSubscribe);
+		return cbId;
 	}
 
 	/**
-	 *  @method removeMarketSubscribe
+	 *  @method removeContractLogsSubscribe
 	 *
-	 *  @param  {String} contractId
-	 *  @param  {Function} callback
+	 *  @param  {Number} cbId
 	 *
 	 *  @return {undefined}
 	 */
-	removeContractLogsSubscribe(contractId, callback) {
-		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
-			.filter((c) => (c !== callback));
+	async removeContractLogsSubscribe(cbId) {
+		await this._wsApi.database.unsubscribeContractLogs(cbId);
+		this.subscribers.logs = Object.entries(this.subscribers.logs).reduce((obj, [id, cb]) => {
+			if (id === cbId.toString(10)) {
+				return obj;
+			}
+			return { ...obj, [id]: cb };
+		}, {});
 	}
 
 	/**
