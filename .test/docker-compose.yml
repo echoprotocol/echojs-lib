@@ -28,7 +28,7 @@ services:
     container_name: echo-wallet
     command:
       -s ws://echo:6311
-      --chain-id="714ebe4ea3f46b0789fb08104ab5caf928da1aae4ede57c32861bc5bd54c3bcf"
+      --chain-id="7741d10331c76fd1bb7304256e9df1dcd1f87c6469033f210eabbcb6b4b33366"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
       -r 0.0.0.0:6312
