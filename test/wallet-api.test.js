@@ -2087,17 +2087,17 @@ describe('WALLET API', () => {
 
 
 		describe('#registerAccountWithApi()', () => {
-			// it('should create account without errors', async () => {
-			// 	try {
-			// 		const name = `cookiezi-${Date.now()}`;
-			// 		const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
-			//
-			// 		await echo.walletApi.registerAccountWithApi(name, pubKey, pubKey);
-			// 	} catch(e) {
-			// 		console.log(e);
-			// 		throw e;
-			// 	}
-			// }).timeout(5000);
+			it('should create account without errors', async () => {
+				try {
+					const name = `cookiezi-${Date.now()}`;
+					const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
+
+					await echo.walletApi.registerAccountWithApi(name, pubKey, pubKey, null);
+				} catch(e) {
+					console.log(e);
+					throw e;
+				}
+			}).timeout(5000);
 		});
 
 		describe('#freezeBalance()', () => {
