@@ -32,6 +32,6 @@ jobs:
       name: "Deploy to npm"
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-        - npm install --no-optional
+        - npm install
         - npm run build
         - ./script.sh
