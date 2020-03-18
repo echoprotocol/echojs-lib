@@ -974,10 +974,11 @@ class Subscriber extends EventEmitter {
 	 *  @method removeContractLogsSubscribe
 	 *
 	 *  @param  {String} contractId
+	 *  @param  {Function} callback
 	 *
-	 *  @return {Function} callback
+	 *  @return {undefined}
 	 */
-	async removeContractLogsSubscribe(contractId, callback) {
+	removeContractLogsSubscribe(contractId, callback) {
 		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
 			.filter((c) => (c !== callback));
 	}

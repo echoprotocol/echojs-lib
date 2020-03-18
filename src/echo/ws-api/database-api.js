@@ -522,17 +522,6 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method unsubscribeContractLogs
-	 *
-	 * @param {Number} cbId
-	 *
-	 *  @return {Promise}
-	 */
-	unsubscribeContractLogs(cbId) {
-		return this.db.exec('unsubscribe_contract_logs', [cbId]);
-	}
-
-	/**
 	 *  @method getContractResult
 	 *
 	 *  @param  {String} resultContractId

@@ -7,9 +7,9 @@
 	"scripts": {
 		"pretest": "npm run build && babel-node ./test/preparation/preparation.js",
 		"test": "mocha --require @babel/register --require @babel/polyfill --exit",
-		"test-api": "mocha --compilers js:@babel/register --require @babel/polyfill test/api.test.js",
-		"test-subscriber": "mocha --compilers js:@babel/register --require @babel/polyfill test/subscriber.test.js",
-		"test-contract": "mocha --compilers js:@babel/register --require @babel/polyfill test/contract.test.js",
+		"test-api": "mocha  --require @babel/register --require @babel/polyfill test/api.test.js",
+		"test-subscriber": "mocha --require @babel/register --require @babel/polyfill test/subscriber.test.js",
+		"test-contract": "mocha  --require @babel/register --require @babel/polyfill test/contract.test.js",
 		"build": "npx babel src --out-dir dist",
 		"check-typing": "npx tsc",
 		"lint": "eslint .",
