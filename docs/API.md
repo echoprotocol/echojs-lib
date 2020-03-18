@@ -627,13 +627,12 @@ try {
 
 <a name="getContractLogs"></a>
 
-## getContractLogs(cb, contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
+## getContractLogs(contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | cb | <code>Function</code> | [The callback method.] |
-| cb | <code>String</code> | [Id of the contract to retrieve] |
 | contractId | <code>String</code> | [Id of the contract to retrieve] |
 | topics | <code>Array.&lt;String&gt;</code> | [Array of topics] |
 | fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |

@@ -512,13 +512,13 @@ class DatabaseAPI {
 	/**
 	 *  @method subscribeContractLogs
 	 *
-	 * @param {Number} cbId
+	 *  @param  {Function} callback
 	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
 	 *
 	 *  @return {Promise}
 	 */
-	subscribeContractLogs(cbId, contractTopicsMap) {
-		return this.db.exec('subscribe_contract_logs', [cbId, contractTopicsMap]);
+	subscribeContractLogs(callback, contractTopicsMap) {
+		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
 	}
 
 	/**
