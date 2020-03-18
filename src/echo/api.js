@@ -31,7 +31,6 @@ import {
 	isObject,
 	isInt64,
 	validateSidechainType,
-	isFunction,
 } from '../utils/validators';
 
 import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
@@ -431,6 +430,8 @@ import { PublicKey } from '../crypto';
 *  		address:String,
 *  		log:Array.<String>,
 *  		data:String
+ *  	trx_num:Number,
+ *  	op_num:Number
 *  	}
 *  	} ContractLogs */
 
@@ -1932,15 +1933,13 @@ class API {
 
 	/**
 	 * @param {Object} [opts]
-	 * @param {Function} cb
 	 * @param {string[]} [opts.contracts]
 	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
 	 * @param {number | BigNumber} [opts.fromBlock]
 	 * @param {number | BigNumber} [opts.toBlock]
-	 * @returns {Promise<null>}
+	 * @returns {Promise<Array<ContractLogs>>}
 	 */
-	async getContractLogs(cb, opts = { }) {
-		ok(isFunction(cb), '"cb" must be a function');
+	async getContractLogs(opts = { }) {
 		if (opts.contracts !== undefined) {
 			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
 			for (const contractId of opts.contracts) ok(isContractId(contractId));
@@ -1969,11 +1968,14 @@ class API {
 		for (const field of ['fromBlock', 'toBlock']) {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
-		return this.wsApi.database.getContractLogs(cb, {
-			contracts: opts.contracts,
-			topics,
-			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
-			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+		return new Promise((resolve) => {
+			const cb = (logs) => resolve(logs);
+			this.wsApi.database.getContractLogs(cb, {
+				contracts: opts.contracts,
+				topics,
+				from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
+				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+			});
 		});
 	}
 

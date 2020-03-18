@@ -8,8 +8,6 @@ import BlockHeader from '../interfaces/BlockHeader';
 import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
 import Committee from '../interfaces/Committee';
-import Vote from '../interfaces/Vote';
-import CommitteeFrozenBalance from '../interfaces/CommitteeFrozenBalance'
 import ContractLogs from '../interfaces/ContractLogs';
 import AccountHistory from '../interfaces/AccountHistory';
 import FullAccount from '../interfaces/FullAccount';
@@ -79,12 +77,12 @@ export default class Api {
 	getContractPoolWhitelist(contractId: string): Promise<unknown>;
 	getContractHistory(operationId: string, stop: number, limit: number, start: number): Promise<Array<ContractHistory>>;
 	getContracts(contractIds: Array<string>, force?: boolean): Promise<Array<{id: string, statistics: string, suicided: boolean}>>;
-	getContractLogs(cb: () => any, opts: {
+	getContractLogs(opts: {
 		contracts?: string[],
 		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
 		fromBlock?: number | BigNumber,
 		toBlock?: number | BigNumber,
-	}): Promise<null>;
+	}): Promise<Array<ContractLogs>>;
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;

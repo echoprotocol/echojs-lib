@@ -41,11 +41,9 @@ describe("getContractLogs", () => {
 	describe("when options are not provided", () => {
 		/** @type {[]} */
 		let result;
-		let promise;
-		let cb = (data) => result = data;
 		it("should not rejects", async () => {
-			promise = await echo.api.getContractLogs(cb);
-			ok(promise !== undefined);
+			result = await echo.api.getContractLogs();
+			ok(result !== undefined);
 		});
 		it("should return empty array", function () {
 			if (result === undefined) this.skip();
