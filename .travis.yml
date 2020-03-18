@@ -14,6 +14,7 @@ jobs:
       name: "Test lint and audit"
       script:
         - npm run lint
+        - audit-ci
     - stage: test
       if: type = pull_request
       name: "Run unit testing"
