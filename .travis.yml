@@ -13,7 +13,7 @@ jobs:
       if: tag IS blank
       name: "Test lint and audit"
       script:
-        - rm -rf node_modules
+        - rm -rf node_modules && rm package-lock.json
         - npm install --no-optional
         - npm dedupe
         - npm run lint
