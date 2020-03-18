@@ -13,6 +13,7 @@ jobs:
       if: tag IS blank
       name: "Test lint and audit"
       script:
+        - npm dedupe
         - npm run lint
         - audit-ci --moderate
     - stage: test
@@ -29,6 +30,6 @@ jobs:
       name: "Deploy to npm"
       script:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-        - npm install
+        - npm install --no-optional
         - npm run build
         - ./script.sh

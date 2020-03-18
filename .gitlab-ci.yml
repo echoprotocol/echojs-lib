@@ -8,8 +8,7 @@ publish:
   only:
     - tags
   script:
-    - npm install --no-optional
-    - npm dedupe
+    - npm install
     - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
     - npm publish
     - rm .npmrc
