@@ -11,21 +11,21 @@ describe('API register account POW', () => {
 			pingTimeout: 3000,
 			pingDelay: 10000,
 			debug: false,
-			apis: ['database', 'registration'],//constants.WS_CONSTANTS.CHAIN_APIS,
+			apis: ['database', 'registration'], // constants.WS_CONSTANTS.CHAIN_APIS,
 		});
 
 	});
 
-	after(async () => await echo.disconnect());
+	after(async () => echo.disconnect());
 
 	describe('register account', () => {
 		it('register account', async () => {
 			let isResolved = false;
 			const promise = echo.api.registerAccount(
-				'kokoko'+ Date.now(),
+				'kokoko'.concat(Date.now()),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
-				() => isResolved = true,
+				() => { isResolved = true; },
 			);
 			await new Promise((resolve) => setTimeout(() => resolve(), 100));
 			await echo.api.getAccountCount();

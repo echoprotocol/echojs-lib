@@ -17,9 +17,11 @@ describe('number representations', () => {
 				{ test: 'bits count is not a safe integer', bitsCount: Number.MAX_SAFE_INTEGER * 2 },
 				{ test: 'bits count is negative', bitsCount: -12, error: 'bits count is not positive' },
 				{ test: 'bits count is equals to zero', bitsCount: -12, error: 'bits count is not positive' },
-			]) {it(test, () => {
-				expect(() => toDirectRepresentation(123, bitsCount)).to.throw(Error, error || test);
-			});}
+			]) {
+				it(test, () => {
+					expect(() => toDirectRepresentation(123, bitsCount)).to.throw(Error, error || test);
+				});
+			}
 			it('overflow', () => {
 				const value = toTwosPower(8).plus(123);
 				expect(() => toDirectRepresentation(value, 8)).to.throw(Error, 'int8 overflow');

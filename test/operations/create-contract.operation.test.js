@@ -1,12 +1,11 @@
 import 'mocha';
-import { ok } from 'assert';
+// import { ok } from 'assert';
 import { bytecode } from './_contract.test';
 import { privateKey, accountId, url } from '../_test-data';
-import { Echo, constants } from '../../';
-
-const { OPERATIONS_IDS } = constants;
+import { Echo, OPERATIONS_IDS } from '../../';
 import { ECHO_ASSET_ID } from '../../src/constants';
-import { OPERATION_HISTORY } from '../../src/constants/object-types';
+// import { OPERATION_HISTORY } from '../../src/constants/object-types';
+
 /** @type {{contractAddress:string|null, netAddress:string, startValue:string}} */
 const options = {
 	contractAddress: null,
@@ -30,18 +29,18 @@ describe('create contract', () => {
 			registrar: accountId,
 			value: {
 				asset_id: ECHO_ASSET_ID,
-				amount: 0
+				amount: 0,
 			},
 		});
 		await tx.sign(privateKey);
 		/** @type {string} */
-		const operationResultId = await tx.broadcast()
+		/* const operationResultId = */await tx.broadcast()
 			.then((res) => res[0].trx.operation_results[0][1]);
 
 		// TODO Should be fixed
 		// const newAddress = await echo.api.getContractResult(operationResultId, true)
-			// .then((res) => res[1].exec_res.new_address)
-			// .catch((e) => console.log(e));
+		// .then((res) => res[1].exec_res.new_address)
+		// .catch((e) => console.log(e));
 		// console.log(newAddress);
 		// const contractId = `1.${OPERATION_HISTORY}.${parseInt(newAddress.slice(2), 16)}`;
 
@@ -54,5 +53,3 @@ describe('create contract', () => {
 	}).timeout(15e3);
 
 });
-
-export { options };

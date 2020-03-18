@@ -1,5 +1,5 @@
-import { privateKey } from "../_test-data";
-import { deepStrictEqual, fail, ok, strictEqual } from "assert";
+import { deepStrictEqual, fail, ok, strictEqual } from 'assert';
+import { privateKey } from '../_test-data';
 
 /**
  * @param {import("../../types/echo").default} echo
@@ -22,14 +22,14 @@ export default function testExtensionsField(echo, operationId, getProps) {
 					.addSigner(privateKey);
 			});
 
-			it('signing should succeed', async () => await transaction.sign());
+			it('signing should succeed', async () => transaction.sign());
 
 			it('transaction object should contains "extensions" field, that equals to empty array', () => {
-				const { extensions } = transaction.transactionObject.operations[0][1];
-				deepStrictEqual(extensions, []);
+				const newExtensions = transaction.transactionObject.operations[0][1].extensions;
+				deepStrictEqual(newExtensions, []);
 			});
 
-			it('broadcasting should succeed', async () => await transaction.broadcast()).timeout(15e3);
+			it('broadcasting should succeed', async () => transaction.broadcast()).timeout(15e3);
 		});
 	}
 

@@ -1,7 +1,8 @@
+import { strictEqual } from 'assert';
 import { url, accountId, privateKey } from '../_test-data';
 import { Echo, OPERATIONS_IDS, constants } from '../../';
 import { getRandomAssetSymbol } from '../_test-utils';
-import { strictEqual } from 'assert';
+
 
 /** @typedef {ReturnType<Echo['createTransaction']>} Transaction */
 
@@ -29,9 +30,10 @@ describe('asset issue', () => {
 				blacklist_authorities: [],
 				description: '',
 			},
-		}).addSigner(privateKey).broadcast().then((txRes) => txRes[0].trx.operation_results[0][1]);
+		}).addSigner(privateKey).broadcast()
+			.then((txRes) => txRes[0].trx.operation_results[0][1]);
 	});
-	after(async () => await echo.disconnect());
+	after(async () => echo.disconnect());
 	describe('when should succeed', () => {
 		const value = 123;
 		/** @type {Transaction} */

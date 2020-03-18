@@ -6,7 +6,7 @@ import { Echo, OPERATIONS_IDS, constants } from '../../../';
 describe('checkERC20Token', () => {
 	/** @type {import("../../../types").Echo} */
 	const echo = new Echo();
-	before(async () => await echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS, }));
+	before(async () => echo.connect(url, { apis: constants.WS_CONSTANTS.CHAIN_APIS }));
 	describe('when contract id with invalid format provided', () => {
 		shouldReject(async () => {
 			await echo.api.checkERC20Token('invalid contract id format');
@@ -16,7 +16,7 @@ describe('checkERC20Token', () => {
 	describe.skip('when contract with provided id is not a ERC20 token.', () => {
 		/** @type {string} */
 		let contractId;
-		before(async function () {
+		before(async () => {
 			this.timeout(25e3);
 			const tx = echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 				registrar: accountId,
@@ -31,16 +31,16 @@ describe('checkERC20Token', () => {
 			const opResId = broadcastingRes[0].trx.operation_results[0][1];
 			const opRes = await echo.api.getObject(opResId);
 
-			contractId = opRes.contracts_id[0];
+			[contractId] = opRes.contracts_id;
 		});
 		/** @type {boolean} */
 		let res;
 		it('should not rejects', async () => { res = await echo.api.checkERC20Token(contractId); });
-		it('should returns boolean', function () {
+		it('should returns boolean', () => {
 			if (res === undefined) this.skip();
 			else ok(typeof res === 'boolean');
 		});
-		it('should equals to "false"', function () {
+		it('should equals to "false"', () => {
 			if (typeof res !== 'boolean') this.skip();
 			else strictEqual(res, false);
 		});
@@ -49,7 +49,7 @@ describe('checkERC20Token', () => {
 	describe.skip('when nonexistent contract id provided', () => {
 		/** @type {string} */
 		let nonexistentContractId;
-		before(async function () {
+		before(async () => {
 			this.timeout(7e3);
 			const broadcastingRes = await echo.createTransaction().addOperation(OPERATIONS_IDS.CONTRACT_CREATE, {
 				registrar: accountId,
@@ -63,10 +63,10 @@ describe('checkERC20Token', () => {
 			nonexistentContractId = [
 				constants.CHAIN_TYPES.RESERVED_SPACE_ID.PROTOCOL,
 				constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT,
-				Number.parseInt(contractId.split('.')[2]) + 1,
+				Number.parseInt(contractId.split('.')[2], 10) + 1,
 			].join('.');
 			console.log(nonexistentContractId);
 		});
-		shouldReject(async () => await echo.api.checkERC20Token('1.9.3213213213'), '');
+		shouldReject(async () => echo.api.checkERC20Token('1.9.3213213213'), '');
 	});
 });

@@ -1,9 +1,9 @@
 import { ok, strictEqual } from 'assert';
 import { expect } from 'chai';
+import BigNumber from 'bignumber.js';
 import { decodeUnsignedInteger } from '../../../src/contract/decoders';
 import bitsCountTests from './_bitsCount.test';
 import valueTests from './_value.test';
-import BigNumber from 'bignumber.js';
 
 describe('unsigned integer', () => {
 	describe('failure', () => {

@@ -1,10 +1,10 @@
-import "mocha";
-import { ok } from "assert";
+import 'mocha';
+import { ok } from 'assert';
 
-import { Echo, constants, PrivateKey, PublicKey } from "../../";
+import { Echo, constants, PrivateKey } from '../../';
 import { ED25519 } from '../../src/crypto';
 
-import { privateKey, accountId, url } from "../_test-data";
+import { privateKey, accountId, url } from '../_test-data';
 import { ACCOUNT } from '../../src/constants/object-types';
 
 const { OPERATIONS_IDS } = constants;
@@ -35,17 +35,17 @@ describe('account create operation', () => {
 					key_auths: [[
 						publicKey,
 						1,
-					]]
+					]],
 				},
 				echorand_key: publicKey,
 				options: {
-					delegating_account: `1.${ACCOUNT}.3`,					
+					delegating_account: `1.${ACCOUNT}.3`,
 					delegate_share: 0,
 				},
 				extensions: [],
 			})
 			.addSigner(privateKey).broadcast();
-			
+
 		ok(result instanceof Array);
 		ok(!!result[0].id);
 

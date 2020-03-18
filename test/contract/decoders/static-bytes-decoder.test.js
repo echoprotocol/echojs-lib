@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
-import decode, { decodeStaticBytes } from '../../../src/contract/decoders';
 import { ok, strictEqual } from 'assert';
+import decode, { decodeStaticBytes } from '../../../src/contract/decoders';
 import bytesCountTest from '../_bytesCount.test';
 
 describe('static bytes', () => {

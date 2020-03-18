@@ -1,8 +1,8 @@
 import 'mocha';
 import { expect } from 'chai';
-import decode from '../../../src/contract/decoders';
 import { ok, strictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
+import decode from '../../../src/contract/decoders';
 
 describe('string', () => {
 	describe('failure', () => {

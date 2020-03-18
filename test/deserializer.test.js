@@ -1,5 +1,5 @@
 import { shouldReject } from './_test-utils';
-import { serializers } from '../'
+import { serializers } from '../';
 
 describe('deserializer', () => {
 	describe('when first argument is not a buffer', () => {

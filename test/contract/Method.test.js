@@ -2,10 +2,10 @@ import 'mocha';
 import { strictEqual, ok, fail, deepStrictEqual } from 'assert';
 import BigNumber from 'bignumber.js';
 import $c from 'comprehension';
-import { Echo, Contract } from '../../';
 import checkContractIdTests from './_checkContractId.test';
 import { abi, bytecode as code } from '../operations/_contract.test';
 import { url, privateKey, accountId } from '../_test-data';
+import { Echo, Contract } from '../../';
 
 describe('Method', () => {
 
@@ -49,7 +49,7 @@ describe('Method', () => {
 	describe('code getter', () => {
 		it('get code method', () => {
 			/** @type {Abi} */
-			const abi = [{
+			const newAbi = [{
 				contract: false,
 				inputs: [
 					{ type: 'bytes24[3]', name: 'bytes72' },
@@ -62,8 +62,8 @@ describe('Method', () => {
 				stateMutability: 'nonpayable',
 				type: 'function',
 			}];
-			const contract = new Contract(abi);
-			const methodInstance = contract.methods.qwe(
+			const newContract = new Contract(newAbi);
+			const methodInstance = newContract.methods.qwe(
 				[
 					Buffer.from($c(24, (i) => i)),
 					{ value: 'dead', align: 'left' },
@@ -110,7 +110,7 @@ describe('Method', () => {
 	describe('broadcast', () => {
 		it('successful', async () => {
 			const res = await contract.methods.setVariable(123)
-				.broadcast({ privateKey: privateKey, registrar: accountId });
+				.broadcast({ privateKey, registrar: accountId });
 			deepStrictEqual(new Set(Object.keys(res.contractResult)), new Set(['exec_res', 'tr_receipt']));
 			ok(BigNumber.isBigNumber(res.decodedResult));
 			ok(res.decodedResult.eq(123));
@@ -121,7 +121,7 @@ describe('Method', () => {
 				new Set(Object.keys(res.transactionResult[0])),
 				new Set(['id', 'block_num', 'trx_num', 'trx']),
 			);
-			ok(await contract.methods.getVariable().call().then((/** @type {BigNumber} */res) => res.eq(123)));
+			ok(await contract.methods.getVariable().call().then((/** @type {BigNumber} */result) => result.eq(123)));
 		}).timeout(10e3);
 	});
 });

@@ -1,12 +1,11 @@
-import { Echo } from "../../src";
-import { url, accountId } from "../_test-data";
-import { OPERATIONS_IDS } from "../../src/constants";
-import { fail, ok, strictEqual } from "assert";
+import { fail, ok, strictEqual } from 'assert';
+import { Echo, OPERATIONS_IDS } from '../../';
+import { url, accountId } from '../_test-data';
 
 describe('update asset feed producers', () => {
 	const echo = new Echo();
-	before(async () => await echo.connect(url));
-	after(async () => await echo.disconnect());
+	before(async () => echo.connect(url));
+	after(async () => echo.disconnect());
 	describe('when element of "new_feed_producers" is not a string', () => {
 		/** @type {Error} */
 		let serializationError;

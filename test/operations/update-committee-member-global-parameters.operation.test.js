@@ -1,11 +1,11 @@
-import { Echo, OPERATIONS_IDS } from "../../src";
-import { fail, strictEqual, ok } from "assert";
-import { url } from "../_test-data";
+import { fail, strictEqual, ok } from 'assert';
+import { Echo, OPERATIONS_IDS } from '../../';
+import { url } from '../_test-data';
 
 describe('update committee member global parameters', () => {
 	const echo = new Echo();
-	before(async () => await echo.connect(url));
-	after(async () => await echo.disconnect());
+	before(async () => echo.connect(url));
+	after(async () => echo.disconnect());
 	describe('when fee schedule parameters element value is invalid', () => {
 		/** @type {Error} */
 		let serializationError;
@@ -58,7 +58,7 @@ describe('update committee member global parameters', () => {
 							price: 0,
 							gas_amount: 0,
 						},
-					}
+					},
 				});
 			} catch (error) {
 				serializationError = error;

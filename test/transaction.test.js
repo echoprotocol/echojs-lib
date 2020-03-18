@@ -1,13 +1,13 @@
 import 'mocha';
-import { expect } from 'chai';
-import { Echo } from '../src';
-import Transaction from '../src/echo/transaction';
-import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
+// import { expect } from 'chai';
+import { Echo } from '../';
+// import Transaction from '../src/echo/transaction';
+// import { strictEqual, notStrictEqual, deepStrictEqual, fail, ok } from 'assert';
 import { TRANSFER } from '../src/constants/operations-ids';
-import PrivateKey from '../src/crypto/private-key';
+// import PrivateKey from '../';
 
 import { url } from './_test-data';
-import { ACCOUNT, ASSET} from '../src/constants/object-types';
+import { ACCOUNT, ASSET } from '../src/constants/object-types';
 
 
 const echo = new Echo();
@@ -131,7 +131,7 @@ describe.skip('Transaction', () => {
 
 	describe('get potential signatures', () => {
 		it('asd', async () => {
-			const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
+			// const pk = '5KPT6sFAgx8sEiNyuF2QijsNCAPAvs4r6MV9Vn26z4NuTv86mfd';
 			const transaction = echo.createTransaction();
 			transaction.addOperation(TRANSFER, {
 				from: `1.${ACCOUNT}.6`,
@@ -140,7 +140,7 @@ describe.skip('Transaction', () => {
 			});
 			// await transaction.sign(PrivateKey.fromWif(pk));
 			// console.log(await transaction.broadcast(console.log));
-			console.log(await transaction.getPotentialSignatures());
+			// console.log(await transaction.getPotentialSignatures());
 		}).timeout(12e3);
 	});
 

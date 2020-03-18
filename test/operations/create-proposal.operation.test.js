@@ -1,12 +1,12 @@
-import { Echo, OPERATIONS_IDS } from "../../src";
-import { url, accountId } from "../_test-data";
-import { fail, ok, strictEqual } from "assert";
-import { ECHO_ASSET_ID } from "../../src/constants";
+import { fail, ok, strictEqual } from 'assert';
+import { Echo, OPERATIONS_IDS } from '../../';
+import { url, accountId } from '../_test-data';
+import { ECHO_ASSET_ID } from '../../src/constants';
 
 describe('create proposal', () => {
 	const echo = new Echo();
-	before(async () => await echo.connect(url));
-	after(async () => await echo.disconnect());
+	before(async () => echo.connect(url));
+	after(async () => echo.disconnect());
 
 	describe('when element of "proposed_ops" field is not an object', () => {
 		/** @type {Error} */

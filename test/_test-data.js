@@ -1,4 +1,4 @@
-import { PrivateKey, constants } from "../";
+import { PrivateKey, constants } from '../';
 
 export const privateKey = PrivateKey.fromWif('5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
 export const accountName = 'nathan';

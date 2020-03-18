@@ -1,5 +1,5 @@
-import { strictEqual, ok, fail } from "assert";
-import { inspect } from "util";
+import { strictEqual, ok, fail } from 'assert';
+import { inspect } from 'util';
 
 /**
  * @param {() => Promise<any> | any} f

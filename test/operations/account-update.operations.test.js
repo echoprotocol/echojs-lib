@@ -1,9 +1,9 @@
 import 'mocha';
+import { fail, ok, strictEqual } from 'assert';
 
-import { constants, Echo, PublicKey, OPERATIONS_IDS } from '../../';
+import { constants, Echo, OPERATIONS_IDS } from '../../';
 
 import { privateKey, accountId, url } from '../_test-data';
-import { fail, ok, strictEqual } from 'assert';
 
 import { ASSET } from '../../src/constants/object-types';
 
@@ -18,7 +18,7 @@ describe('account update', () => {
 
 	describe('account update', () => {
 		it('successful', async () => {
-			const result = await echo.createTransaction()
+			await echo.createTransaction()
 				.addOperation(constants.OPERATIONS_IDS.ACCOUNT_UPDATE, {
 					fee: { asset_id: `1.${ASSET}.0` },
 					account: accountId,
@@ -28,7 +28,7 @@ describe('account update', () => {
 						account_auths: [],
 						key_auths: [[
 							privateKey.toPublicKey().toString(),
-							1
+							1,
 						]],
 					},
 				})
