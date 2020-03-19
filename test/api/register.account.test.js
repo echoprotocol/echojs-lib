@@ -28,7 +28,7 @@ describe('API register account POW', () => {
 				null,
 				() => isResolved = true,
 			);
-			await new Promise((resolve) => setTimeout(() => resolve(), 1000));
+			await new Promise((resolve) => setTimeout(() => resolve(), 100));
 			await echo.api.getAccountCount();
 			ok(!isResolved);
 			const result = await promise;
