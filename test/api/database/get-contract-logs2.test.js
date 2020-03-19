@@ -47,7 +47,7 @@ describe("getContractLogs", () => {
 		});
 		it("should return empty array", function () {
 			if (result === undefined) this.skip();
-			else deepStrictEqual(result, [[]]);
+			else deepStrictEqual(result, []);
 		});
 	});
 });

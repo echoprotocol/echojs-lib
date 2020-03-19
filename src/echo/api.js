@@ -1969,7 +1969,9 @@ class API {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
 		return new Promise((resolve) => {
-			const cb = (logs) => resolve(logs);
+			const cb = (logs) => {
+				resolve(logs[0].map(([, log]) => log));
+			};
 			this.wsApi.database.getContractLogs(cb, {
 				contracts: opts.contracts,
 				topics,
