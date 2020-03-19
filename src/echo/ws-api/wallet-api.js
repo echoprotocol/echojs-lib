@@ -9,7 +9,6 @@ import {
 	isAccountName,
 	isContractResultId,
 	validateUrl,
-	isOldPrivateKey,
 	isOperationPrototypeExists,
 	isNotEmptyString,
 	isAssetName,
@@ -188,17 +187,6 @@ class WalletAPI {
 	 * @returns {Promise<[string, string][]>} a map containing the private keys, indexed by their public key
 	 */
 	dumpPrivateKeys() { return this.wsRpc.call([0, 'dump_private_keys', []]); }
-
-	/**
-	 * Dumps private key from old b58 format to new WIF.
-	 * The keys are printed in WIF format. You can import these key into another wallet using `import_key()`.
-	 * @param {string} accountPrivateKey old b58 format eddsa private_key
-	 * @returns {Promise<string>} string new in WIF eddsa private key
-	 */
-	oldKeyToWif(accountPrivateKey) {
-		if (!isOldPrivateKey(accountPrivateKey)) return Promise.reject(new Error('Invalid private key'));
-		return this.wsRpc.call([0, 'old_key_to_wif', [string.toRaw(accountPrivateKey)]]);
-	}
 
 	/**
 	 * Imports the private key for an existing account.
@@ -432,13 +420,14 @@ class WalletAPI {
 	 * @see {@link WalletAPI['registerAccount']}
 	 * @param {string} brainKey the brain key used for generating the account's private keys
 	 * @param {string} accountName the name of the account, must be unique on the blockchain.
+	 * @param {string|null} evmAddress the name of the account, must be unique on the blockchain.
 	 * Shorter names are more expensive to register; the rules are still in flux,
 	 * but in general names of more than 8 characters with at least one digit will be cheap
 	 * @param {string} accountNameOrId the account which will pay the fee to register the user
 	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
 	 */
-	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, shouldDoBroadcastToNetwork) {
+	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, evmAddress, shouldDoBroadcastToNetwork) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Name should be string and valid'));
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
@@ -447,6 +436,7 @@ class WalletAPI {
 			string.toRaw(brainKey),
 			string.toRaw(accountName),
 			string.toRaw(accountNameOrId),
+			evmAddress,
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}
@@ -1027,7 +1017,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsRpc.call([0, 'generate_eth_address', [
+		return this.wsRpc.call([0, 'create_eth_address', [
 			string.toRaw(accountIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
@@ -1699,14 +1689,15 @@ class WalletAPI {
 	 * @param {String} name
 	 * @param {String} activeKey
 	 * @param {String} echorandKey
+	 * @param {String|null} evmAddress
 	 * @returns {Promise<void>}
 	 */
-	registerAccountWithApi(name, activeKey, echorandKey) {
+	registerAccountWithApi(name, activeKey, echorandKey, evmAddress) {
 		if (!isAccountName(name)) return Promise.reject(new Error('new account name is invalid'));
 		if (!isPublicKey(activeKey)) return Promise.reject(new Error('active key is invalid'));
 		if (!isPublicKey(echorandKey)) return Promise.reject(new Error('echorand key is invalid'));
 
-		return this.wsRpc.call([0, 'register_account_with_api', [name, activeKey, echorandKey]]);
+		return this.wsRpc.call([0, 'register_account_with_api', [name, activeKey, echorandKey, evmAddress]]);
 	}
 
 	/**

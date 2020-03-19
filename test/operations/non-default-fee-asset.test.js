@@ -25,7 +25,7 @@ describe("Non default fee asset", () => {
 				description: "",
 				extensions: [],
 				flags: 0,
-				issuer_permissions: 79,
+				issuer_permissions: 15,
 				max_supply: 1e15,
 				whitelist_authorities: [],
 			},

@@ -253,7 +253,6 @@ describe('API', () => {
 						const api = new API(cache, wsApi);
 
 						const chainId = await api.getChainId();
-
 						expect(chainId)
 							.to
 							.be

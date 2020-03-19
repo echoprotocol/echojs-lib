@@ -497,15 +497,16 @@ class DatabaseAPI {
 
 	/**
 	 * @method getContractLogs
+	 * @param  {Function} callback
 	 * @param {Object} opts
 	 * @param {string[]} [opts.contracts]
 	 * @param {(string | string[])[]} [opts.topics]
 	 * @param {number} [opts.from_block]
 	 * @param {number} [opts.to_block]
-	 * @returns {Promise<unknown[]>}
+	 * @returns {Promise<null>}
 	 */
-	getContractLogs(opts) {
-		return this.db.exec('get_contract_logs', [opts]);
+	getContractLogs(callback, opts) {
+		return this.db.exec('get_contract_logs', [callback, opts]);
 	}
 
 	/**

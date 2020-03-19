@@ -26,13 +26,14 @@ class RegistrationAPI {
 	 * 	@param {String} name
 	 * 	@param {String} activeKey
 	 * 	@param {String} echorandKey
-	 * 	@param {Number} nounce
+	 * 	@param {String} evmAddress
+	 * 	@param {Number} nonce
 	 * 	@param {Number} randNum
 	 *
  	 *  @return {Promise}
 	 */
-	submitRegistrationSolution(callback, name, activeKey, echorandKey, nonce, randNum) {
-		return this.db.exec('submit_registration_solution', [callback, name, activeKey, echorandKey, nonce, randNum]);
+	submitRegistrationSolution(callback, name, activeKey, echorandKey, evmAddress, nonce, randNum) {
+		return this.db.exec('submit_registration_solution', [callback, name, activeKey, echorandKey, evmAddress, nonce, randNum]);
 	}
 
 	/**

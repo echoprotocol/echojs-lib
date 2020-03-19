@@ -231,6 +231,14 @@ class WS extends EventEmitter {
 		return this._network_node;
 	}
 
+	/**
+	 * echorand API
+	 * @returns {EchoApi}
+	 */
+	echorandApi() {
+		return this._echorand;
+	}
+
 }
 
 export default WS;

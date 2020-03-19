@@ -105,7 +105,7 @@ try {
 <dd></dd>
 <dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getContractLogs">getContractLogs(contractId, topics, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
+<dt><a href="#getContractLogs">getContractLogs(opts: { contracts, topics, fromBlock, toBlock })</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
 <dd></dd>
@@ -627,12 +627,12 @@ try {
 
 <a name="getContractLogs"></a>
 
-## getContractLogs(contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
+## getContractLogs(opts: { contracts, topics, fromBlock, toBlock }) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
-| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| contracts | <code>Array.&lt;String&gt;</code> | [Ids of the contracts to retrieve] |
 | topics | <code>Array.&lt;String&gt;</code> | [Array of topics] |
 | fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
 | toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
@@ -1316,7 +1316,9 @@ try {
 {
     address:String,
     log:Array.<String>,
-    data:String
+    data:String,
+    trx_num:Number,
+    op_num:Number
 }
 ```
 ## ContractResult : <code>Object</code>

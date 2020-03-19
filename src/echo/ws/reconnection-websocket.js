@@ -71,6 +71,7 @@ class ReconnectionWebSocket {
 		this._cbId = 0;
 		this._responseCbId = 0;
 		this._cbs = {};
+		this._cbLogs = [];
 		this._subs = [];
 		this._unsub = {};
 
@@ -210,8 +211,8 @@ class ReconnectionWebSocket {
 
 		if (method === 'set_subscribe_callback' ||
 			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
-			method === 'set_block_applied_callback' || method === 'set_consensus_message_callback' ||
-			method === 'subscribe_contract_logs' || method === 'submit_registration_solution'
+			method === 'set_block_applied_callback' || method === 'set_echorand_message_callback' ||
+			method === 'subscribe_contract_logs' || method === 'submit_registration_solution' || method === 'get_contract_logs'
 		) {
 			// Store callback in subs map
 			this._subs[this._cbId] = {
@@ -220,6 +221,10 @@ class ReconnectionWebSocket {
 
 			// Replace callback with the callback id
 			params[2][0] = this._cbId;
+
+			if (method === 'get_contract_logs') {
+				this._cbLogs.push(this._cbId);
+			}
 		}
 
 		if (method === 'unsubscribe_from_accounts') {
@@ -303,6 +308,12 @@ class ReconnectionWebSocket {
 
 		} else if (callback && sub) {
 			callback(response.params[1]);
+			if (this._cbLogs.includes(response.id)) {
+				delete this._subs[response.id];
+				const indexCb = this._cbLogs.indexOf(response.id);
+				this._cbLogs.splice(indexCb);
+			}
+
 		} else {
 			this._debugLog('[ReconnectionWebSocket] >---- warning ---->   Unknown websocket response', response);
 		}

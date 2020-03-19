@@ -2,7 +2,7 @@
 import BN from 'bignumber.js';
 import bs58 from 'bs58';
 
-import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
+import { ADDRESS_PREFIX, LENGTH_DECODE_PRIVATE_KEY, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY } from '../constants';
 import { walletAPIMethodsArray, operationPrototypeArray } from './methods-operations-data';
@@ -341,7 +341,6 @@ export const isOperationPrototypeExists = (v) => operationPrototypeArray.include
 export const isNotEmptyString = (v) => isString(v) && !!v.trim();
 
 export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0);
-
 
 export const isOldPrivateKey = (v) => isString(v) && bs58.decode(v).length === LENGTH_DECODE_PRIVATE_KEY;
 

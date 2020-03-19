@@ -8,8 +8,6 @@ import BlockHeader from '../interfaces/BlockHeader';
 import TransactionObject from '../interfaces/TransactionObject';
 import Block from '../interfaces/Block';
 import Committee from '../interfaces/Committee';
-import Vote from '../interfaces/Vote';
-import CommitteeFrozenBalance from '../interfaces/CommitteeFrozenBalance'
 import ContractLogs from '../interfaces/ContractLogs';
 import AccountHistory from '../interfaces/AccountHistory';
 import FullAccount from '../interfaces/FullAccount';
@@ -84,7 +82,7 @@ export default class Api {
 		topics?: Array<null | string | Buffer | Array<string | Buffer>>,
 		fromBlock?: number | BigNumber,
 		toBlock?: number | BigNumber,
-	}): Promise<unknown[]>;
+	}): Promise<Array<ContractLogs>>;
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;
@@ -129,6 +127,7 @@ export default class Api {
 		name: string,
 		activeKey: string,
 		echoRandKey: string,
+		evmAddress: string,
 		wasBroadcastedCallback?: () => any,
 	): Promise<[{ block_num: number, tx_id: string }]>;
 

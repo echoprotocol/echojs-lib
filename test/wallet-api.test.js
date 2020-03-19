@@ -204,16 +204,6 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#oldKeyToWif()', () => {
-		it('Should dumps private key from old b58 format to new WIF', async () => {
-			const result = await echo.walletApi.oldKeyToWif(ED_PRIVATE);
-			expect(result)
-				.to
-				.be
-				.an('string');
-		}).timeout(5000);
-	});
-
 	describe('#importKey()', () => {
 		it('Should imports the private key for an existing account', async () => {
 			const result = await echo.walletApi.importKey('1.2.11', '5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2');
@@ -511,11 +501,19 @@ describe('WALLET API', () => {
 
 	describe('#createAccountWithBrainKey()', () => {
 		it('should creates a new account and registers it', async () => {
-			const accountName = 'ales';
+			const isLockedWallet = await echo.walletApi.isLocked();
+			if (isLockedWallet) {
+				const newPassword = 'new_password';
+				await echo.walletApi.setPassword(newPassword);
+				await echo.walletApi.unlock(newPassword);
+			}
+
+			const newAccountName = `lozita${Date.now()}`;
 			const result = await echo.walletApi.createAccountWithBrainKey(
 				brainKey,
+				newAccountName,
 				accountName,
-				accountId,
+				null,
 				shouldDoBroadcastToNetwork
 			);
 			expect(result)
@@ -539,7 +537,7 @@ describe('WALLET API', () => {
 				useEthereumAssetAccuracy,
 				shouldSaveToWallet,
 			);
-			
+
 			contractResultId = result.operation_results[0][1];
 			expect(result)
 				.to
@@ -1048,7 +1046,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('#listAssets()', () => {
 		it('Should get lists of all assets registered', async () => {
 			const result = await echo.walletApi.listAssets(
@@ -1269,7 +1267,7 @@ describe('WALLET API', () => {
 				}
 			}).timeout(5000);
 		});
-	
+
 	describe.skip('#issueAsset()', () => {
 		it('Should do issue new shares of an asset', async () => {
 			try {
@@ -1554,7 +1552,7 @@ describe('WALLET API', () => {
 			}
 		}).timeout(5000);
 	});
-			
+
 	describe.skip('#proposeParameterChange()', () => {
 		it('Should creates a transaction to propose a parameter change', async () => {
 			try {
@@ -1859,7 +1857,7 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	
+
 	describe('TRANSACTION BUILDER', () => {
 
 		beforeEach(async () => await echo.walletApi.beginBuilderTransaction());
@@ -2094,7 +2092,7 @@ describe('WALLET API', () => {
 					const name = `cookiezi-${Date.now()}`;
 					const pubKey = 'ECHOBMZ6kgpeij9zWpAXxQHkRRrQzVf7DmKnX8rQJxBtcMrs';
 
-					await echo.walletApi.registerAccountWithApi(name, pubKey, pubKey);
+					await echo.walletApi.registerAccountWithApi(name, pubKey, pubKey, null);
 				} catch(e) {
 					console.log(e);
 					throw e;
@@ -2114,7 +2112,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;	
+						.an('object').that.is.not.empty;
 				} catch (e) {
 					console.log(e);
 					throw e;
@@ -2179,7 +2177,7 @@ describe('WALLET API', () => {
 				expect(result[0].extensions)
 					.to
 					.be
-					.an('array');	
+					.an('array');
 				} catch (e) {
 					console.log(e);
 					throw e;
