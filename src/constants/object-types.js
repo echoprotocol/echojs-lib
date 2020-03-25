@@ -22,4 +22,5 @@ export const BTC_INTERMEDIATE_DEPOSIT = 20;
 export const BTC_DEPOSIT = 21;
 export const BTC_WITHDRAW = 22;
 export const BTC_AGGREGATING = 23;
+export const EVM_ADDRESS = 24;
 

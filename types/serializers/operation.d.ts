@@ -44,15 +44,20 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_ETH_CREATE_ADDRESS]: typeof protocol.sidechain.eth.createAddress,
 	[OperationId.SIDECHAIN_ETH_APPROVE_ADDRESS]: typeof protocol.sidechain.eth.approveAddress,
 	[OperationId.SIDECHAIN_ETH_DEPOSIT]: typeof protocol.sidechain.eth.deposit,
+	[OperationId.SIDECHAIN_ETH_SEND_DEPOSIT]: typeof protocol.sidechain.eth.sendDeposit,
 	[OperationId.SIDECHAIN_ETH_WITHDRAW]: typeof protocol.sidechain.eth.withdraw,
+	[OperationId.SIDECHAIN_ETH_SEND_WITHDRAW]: typeof protocol.sidechain.eth.sendWithdraw,
 	[OperationId.SIDECHAIN_ETH_APPROVE_WITHDRAW]: typeof protocol.sidechain.eth.approveWithdraw,
+	[OperationId.SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS]: typeof protocol.sidechain.eth.updateContractAddress,
 	[OperationId.CONTRACT_FUND_POOL]: typeof protocol.contract.fundPool,
 	[OperationId.CONTRACT_WHITELIST]: typeof protocol.contract.whitelist,
 	[OperationId.SIDECHAIN_ISSUE]: typeof protocol.sidechain.issue,
 	[OperationId.SIDECHAIN_BURN]: typeof protocol.sidechain.burn,
 	[OperationId.SIDECHAIN_ERC20_REGISTER_TOKEN]: typeof protocol.sidechain.erc20.registerToken,
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof protocol.sidechain.erc20.depositToken,
+	[OperationId.SIDECHAIN_ERC20_SEND_DEPOSIT_TOKEN]: typeof protocol.sidechain.erc20.sendDepositToken,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof protocol.sidechain.erc20.withdrawToken,
+	[OperationId.SIDECHAIN_ERC20_SEND_WITHDRAW_TOKEN]: typeof protocol.sidechain.erc20.withdrawToken,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof protocol.sidechain.erc20.approveTokenWithdraw,
 	[OperationId.SIDECHAIN_ERC20_ISSUE]: typeof protocol.sidechain.erc20.issue,
 	[OperationId.SIDECHAIN_ERC20_BURN]: typeof protocol.sidechain.erc20.burn,
@@ -64,6 +69,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof protocol.sidechain.btc.aggregate,
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof protocol.sidechain.btc.approveAggregate,
 	[OperationId.BLOCK_REWARD]: typeof protocol.blockReward,
+	[OperationId.EVM_ADDRESS_REGISTER]: typeof protocol.evmAddress,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;

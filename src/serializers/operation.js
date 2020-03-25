@@ -44,15 +44,20 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_ETH_CREATE_ADDRESS]: protocol.sidechain.eth.createAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_ADDRESS]: protocol.sidechain.eth.approveAddress,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_DEPOSIT]: protocol.sidechain.eth.deposit,
+	[OPERATIONS_IDS.SIDECHAIN_ETH_SEND_DEPOSIT]: protocol.sidechain.eth.sendDeposit,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_WITHDRAW]: protocol.sidechain.eth.withdraw,
+	[OPERATIONS_IDS.SIDECHAIN_ETH_SEND_WITHDRAW]: protocol.sidechain.eth.sendWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ETH_APPROVE_WITHDRAW]: protocol.sidechain.eth.approveWithdraw,
+	[OPERATIONS_IDS.SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS]: protocol.sidechain.eth.updateContractAddress,
 	[OPERATIONS_IDS.CONTRACT_FUND_POOL]: protocol.contract.fundPool,
 	[OPERATIONS_IDS.CONTRACT_WHITELIST]: protocol.contract.whitelist,
 	[OPERATIONS_IDS.SIDECHAIN_ISSUE]: protocol.sidechain.issue,
 	[OPERATIONS_IDS.SIDECHAIN_BURN]: protocol.sidechain.burn,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: protocol.sidechain.erc20.registerToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: protocol.sidechain.erc20.depositToken,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_DEPOSIT_TOKEN]: protocol.sidechain.erc20.sendDepositToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: protocol.sidechain.erc20.withdrawToken,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_WITHDRAW_TOKEN]: protocol.sidechain.erc20.sendWithdrawToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: protocol.sidechain.erc20.approveTokenWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_ISSUE]: protocol.sidechain.erc20.issue,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_BURN]: protocol.sidechain.erc20.burn,
@@ -64,6 +69,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: protocol.sidechain.btc.aggregate,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_AGGREGATE]: protocol.sidechain.btc.approveAggregate,
 	[OPERATIONS_IDS.BLOCK_REWARD]: protocol.blockReward,
+	[OPERATIONS_IDS.EVM_ADDRESS_REGISTER]: protocol.evmAddress,
 };
 
 const operationSerializer = staticVariant(operationProps);
