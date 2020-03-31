@@ -1,3 +1,7 @@
+## Table of contents
+
+- [Connection](#connection)
+
 ### Connection
 
 #### Before use echo instances you should connect to node.

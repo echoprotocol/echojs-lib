@@ -1,3 +1,7 @@
+## Table of contents
+
+- [Redux](#redux)
+
 ### Redux
 We provide redux store update automatically.
 

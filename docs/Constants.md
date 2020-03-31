@@ -1,10 +1,30 @@
+## Table of contents
+
+- [Constants](#constants)
+    - [Chain types](#chain-types)
+    - [Chain config](#chain-config)
+    - [WS constants](#ws-constants)
+    - [Start operation id](#start-operation-id)
+    - [Core asset id](#core-asset-id)
+    - [Echorand types](#echorand-types)
+    - [Cancel limit order](#cancel-limit-order)
+    - [Update call order](#update-call-order)
+    - [Close call order](#close-call-order)
+    - [Bitasset update](#bitasset-update)
+    - [Cache maps](#cache-maps)
+    - [Operations ids](#operations-ids)
+
 ### Constants
 
 List of constants which we provide
 
- ```javascript
+```javascript
  import { constants } from 'echojs-lib';
+```
 
+#### Chain types
+
+```javascript
 console.log(constants.CHAIN_TYPES) // information about ids
 
 /*
@@ -38,7 +58,11 @@ console.log(constants.CHAIN_TYPES) // information about ids
     },
 }
 */
+```
 
+#### Chain config
+
+```javascript
 console.log(constants.CHAIN_CONFIG) // Generai information about chain
 
 /*
@@ -57,7 +81,11 @@ console.log(constants.CHAIN_CONFIG) // Generai information about chain
     }
 }
 */
-
+```
+ 
+#### WS constants
+ 
+```javascript
 console.log(constants.WS_CONSTANTS) // websocket constants
 
 /*
@@ -97,19 +125,31 @@ console.log(constants.WS_CONSTANTS) // websocket constants
     STATUS: { OPEN: 'OPEN', ERROR: 'ERROR', CLOSE: 'CLOSE' },
 }
 */
+```
 
+#### Start operation id
+
+```javascript
 console.log(constants.START_OPERATION_ID) // start operation id
 
 /*
     1.10.0
 */
+```
 
+#### Core asset id
+
+```javascript
 console.log(constants.CORE_ASSET_ID) // core asset id
 
 /*
     1.3.0
 */
+```
 
+#### Echorand types
+
+```javascript
 console.log(constants.ECHORAND_TYPES)
 
 /*
@@ -118,32 +158,51 @@ console.log(constants.ECHORAND_TYPES)
     BLOCK_NOTIFICATION: 2,
 }
 */
+```
 
+#### Cancel limit order
+
+```javascript
 console.log(constants.CANCEL_LIMIT_ORDER)
 
 /*
     cancel-limit-order
 */
+```
 
+#### Update call order
+
+```javascript
 console.log(constants.UPDATE_CALL_ORDER)
 
 /*
     update-call-order
 */
+```
 
+#### Close call order
+
+```javascript
 console.log(constants.CLOSE_CALL_ORDER)
 
 /*
     close-call-order
 */
+```
 
+#### Bitasset update
+
+```javascript
 console.log(constants.BITASSET_UPDATE)
 
 /*
     bitasset-update
 */
+```
 
+#### Cache maps
 
+```javascript
 console.log(constants.CACHE_MAPS) // cache maps
 
 /*
@@ -183,7 +242,11 @@ console.log(constants.CACHE_MAPS) // cache maps
     DYNAMIC_GLOBAL_PROPERTIES: 'dynamicGlobalProperties',
 }
 */
+```
 
+#### Operations ids
+
+```javascript
 console.log(constants.OPERATIONS_IDS); // operation id
 
 /*
