@@ -1,3 +1,10 @@
+# Table of contents
+
+- [Api](#api)
+- [Classes](#classes)
+- [Functions](#functions)
+- [Typedefs](#typedefs)
+
 ### Api
 This library provides api blockchain methods.
 
@@ -16,7 +23,7 @@ try {
 ## Classes
 
 <dl>
-<dt><a href="#API">API</a></dt>
+<dt><a href="#APIInstance">API instance</a></dt>
 <dd></dd>
 </dl>
 
@@ -228,9 +235,9 @@ try {
 <dd></dd>
 </dl>
 
-<a name="API"></a>
+<a name="APIInstance"></a>
 
-## API
+## API instance
 **Kind**: global class
 <a name="new_API_new"></a>
 
