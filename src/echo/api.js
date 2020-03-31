@@ -430,6 +430,8 @@ import { PublicKey } from '../crypto';
 *  		address:String,
 *  		log:Array.<String>,
 *  		data:String
+ *  	trx_num:Number,
+ *  	op_num:Number
 *  	}
 *  	} ContractLogs */
 
@@ -1935,9 +1937,9 @@ class API {
 	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
 	 * @param {number | BigNumber} [opts.fromBlock]
 	 * @param {number | BigNumber} [opts.toBlock]
-	 * @returns {Promise<unknown[]>}
+	 * @returns {Promise<Array<ContractLogs>>}
 	 */
-	async getContractLogs(opts = {}) {
+	async getContractLogs(opts = { }) {
 		if (opts.contracts !== undefined) {
 			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
 			for (const contractId of opts.contracts) ok(isContractId(contractId));
@@ -1966,11 +1968,16 @@ class API {
 		for (const field of ['fromBlock', 'toBlock']) {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
-		return this.wsApi.database.getContractLogs({
-			contracts: opts.contracts,
-			topics,
-			from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
-			to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+		return new Promise((resolve) => {
+			const cb = (logs) => {
+				resolve(logs[0].map(([, log]) => log));
+			};
+			this.wsApi.database.getContractLogs(cb, {
+				contracts: opts.contracts,
+				topics,
+				from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
+				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+			});
 		});
 	}
 
@@ -2064,6 +2071,32 @@ class API {
 	}
 
 	/**
+	 *  @method getContractPoolWhitelist
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getContractPoolWhitelist(contractId) {
+		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+
+		return this.wsApi.database.getContractPoolWhitelist(contractId);
+	}
+
+	/**
+	 *  @method getContractPoolBalance
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise.<Object>}
+	 */
+	async getContractPoolBalance(contractId) {
+		if (!isContractId(contractId)) throw new Error('ContractId is invalid');
+
+		return this.wsApi.database.getContractPoolBalance(contractId);
+	}
+
+	/**
 	 *  @method getRecentTransactionById
 	 *
 	 *  @param  {String} transactionId
@@ -2114,10 +2147,11 @@ class API {
 	 * @param {string} name
 	 * @param {string} activeKey
 	 * @param {string} echoRandKey
+	 * @param {string} evmAddress
 	 * @param {() => any} [wasBroadcastedCallback]
 	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
-	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
+	async registerAccount(name, activeKey, echoRandKey, evmAddress, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
@@ -2131,6 +2165,7 @@ class API {
 					name,
 					activeKey,
 					echoRandKey,
+					evmAddress,
 					nonce,
 					randNum,
 				);
@@ -2283,19 +2318,31 @@ class API {
 			}
 		}
 
-		const [contract, balances, history] = await Promise.all([
+		const [contract, balances, history, poolBalance, lists] = await Promise.all([
 			this.getContract(contractId, force),
 			this.getContractBalances(contractId),
 			this.getContractHistory(contractId),
+			this.getContractPoolBalance(contractId),
+			this.getContractPoolWhitelist(contractId)
+				.catch((err) => {
+					if (err.message === 'Assert Exception: itr != index.end(): Contract pool object not found') {
+						return [];
+					}
+					throw err;
+				}),
 		]);
 
 		this.cache.setInMap(
 			CACHE_MAPS.FULL_CONTRACTS_BY_CONTRACT_ID,
 			contractId,
-			fromJS({ contract, history, balances }),
+			fromJS({
+				contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
+			}),
 		);
 
-		return { contract, history, balances };
+		return {
+			contract, history, balances, poolBalance, whitelist: lists.whitelist, blacklist: lists.blacklist,
+		};
 	}
 
 	/**
@@ -2547,17 +2594,18 @@ class API {
 	 * 	@param {String} name
 	 * 	@param {String} activeKey
 	 * 	@param {String} echorandKey
+	 * 	@param {String} evmAddress
 	 * 	@param {Number} nounce
 	 * 	@param {Number} randNum
 	 * 	@param {Function} wasBroadcastedCallback
 	 *
  	 *  @return {Promise<Boolean>}
 	 */
-	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+	submitRegistrationSolution(name, activeKey, echorandKey, evmAddress, nounce, randNum, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution((res) =>
-					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+					resolve(res), name, activeKey, echorandKey, evmAddress, nounce, randNum);
 			} catch (error) {
 				reject(error);
 			}

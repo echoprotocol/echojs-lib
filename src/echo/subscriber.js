@@ -25,6 +25,7 @@ import {
 	isAccountAddressId,
 	isEthAddressId,
 	isBtcAddressId,
+	isContractPoolId,
 } from '../utils/validators';
 
 import {
@@ -81,7 +82,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 
 		if (this.subscriptions.block) {
@@ -475,7 +476,7 @@ class Subscriber extends EventEmitter {
 			});
 		}
 
-		if (isContractHistoryId(object.id)) {
+		if (isContractHistoryId(object.id) || isContractPoolId(object.id)) {
 			this._notifyContractSubscribers(obj);
 			this._api.getFullContract(object.contract, true).catch(handleConnectionClosedError);
 		}
@@ -542,12 +543,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _setConsensusMessageCallback
+	 *  @method _setEchorandMessageCallback
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async _setConsensusMessageCallback() {
-		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+	async _setEchorandMessageCallback() {
+		await this._wsApi.echorand.setEchorandMessageCallback(this._echorandUpdate.bind(this));
 		this.subscriptions.echorand = true;
 	}
 
@@ -566,7 +567,7 @@ class Subscriber extends EventEmitter {
 		this.subscribers.echorand.push(callback);
 
 		if (!this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 	}
 
@@ -917,7 +918,7 @@ class Subscriber extends EventEmitter {
 	/**
 	 *  @method _subscribeToContractLogs
 	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
+	 *  {Map<String, Array<String>} contractLogsMap
 	 *
 	 *  @return {undefined}
 	 */
@@ -941,25 +942,26 @@ class Subscriber extends EventEmitter {
 	async setContractLogsSubscribe(contractTopicsMap, callback, fromBlock, toBlock) {
 		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
 
-		const contractsToSubscribe = [];
+		const contractsToSubscribe = {};
 
 		await Promise.all(contractTopicsMap.map((topicsItem) =>
 			(async () => {
 				const [contractId, topics] = topicsItem;
 				if (fromBlock) {
-					const logs = await this._wsApi.database.getContractLog(
-						contractId,
-						topics,
-						fromBlock,
-						toBlock || globalInfo.head_block_number,
+					await this._wsApi.database.getContractLogs(
+						callback,
+						{
+							contracts: [contractId],
+							topics,
+							from_block: fromBlock,
+							to_block: toBlock || globalInfo.head_block_number,
+						},
 					);
-					callback(logs);
 				}
-
 				// set subscriber from current block
 				if (!this.subscribers.logs[contractId]) {
 					this.subscribers.logs[contractId] = [];
-					contractsToSubscribe.push(topicsItem);
+					contractsToSubscribe[contractId] = topics;
 				}
 
 				this.subscribers.logs[contractId].push(callback);
@@ -969,7 +971,7 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method removeMarketSubscribe
+	 *  @method removeContractLogsSubscribe
 	 *
 	 *  @param  {String} contractId
 	 *  @param  {Function} callback

@@ -104,6 +104,7 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         ASSET_API: 'asset',
         LOGIN_API: 'login',
         NETWORK_NODE_API: 'network_node',
+        ECHORAND_API: 'echorand'
     },
     CHAIN_APIS: [
         CHAIN_API.DATABASE_API,
@@ -113,6 +114,7 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         CHAIN_API.ASSET_API,
         CHAIN_API.LOGIN_API,
         CHAIN_API.NETWORK_NODE_API,
+        CHAIN_API.ECHORAND_API
     ],
     DEFAULT_CHAIN_APIS: [
         CHAIN_API.DATABASE_API,

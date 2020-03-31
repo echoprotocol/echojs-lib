@@ -7,8 +7,12 @@ import ChainApi from "../interfaces/ChainApi";
 export interface EchoOptions {
 	cache?: CacheOptions;
 	apis?: ChainApi[];
-	debug?: boolean;
 	registration?: { batch?: number, timeout?: number };
+	connectionTimeout?: number;
+	maxRetries?: number;
+	pingTimeout?: number;
+	pingDelay?: number;
+	debug?: boolean;
 }
 
 export default class Echo {

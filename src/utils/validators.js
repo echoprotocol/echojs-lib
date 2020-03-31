@@ -2,7 +2,7 @@
 import BN from 'bignumber.js';
 import bs58 from 'bs58';
 
-import { ADDRESS_PREFIX, LENGTH_DECODE_PUBLIC_KEY, LENGTH_DECODE_PRIVATE_KEY } from '../config/chain-config';
+import { ADDRESS_PREFIX, LENGTH_DECODE_PRIVATE_KEY, LENGTH_DECODE_PUBLIC_KEY } from '../config/chain-config';
 import { CHAIN_APIS } from '../constants/ws-constants';
 import { PROTOCOL_OBJECT_TYPE_ID, CHAIN_TYPES, AMOUNT_MAX_NUMBER, ECHO_MAX_SHARE_SUPPLY } from '../constants';
 import { walletAPIMethodsArray, operationPrototypeArray } from './methods-operations-data';
@@ -64,6 +64,7 @@ const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEM
 const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.BLOCK_SUMMARY);
 const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_TRANSACTION_HISTORY);
 const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.CONTRACT_HISTORY);
+const contractPoolIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.CONTRACT_POOL);
 const accountAddressRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_ADDRESS);
 
 const hexRegex = /^[0-9a-fA-F]+/;
@@ -195,6 +196,7 @@ export const isAccountTransactionHistoryId = (v) => (
 	isString(v) && accountTransactionHistoryIdRegex.test(v)
 );
 export const isContractHistoryId = (v) => isString(v) && contractHistoryIdRegex.test(v);
+export const isContractPoolId = (v) => isString(v) && contractPoolIdRegex.test(v);
 export const isDynamicGlobalObjectId = (v) => isString(v) && dynamicGlobalObjectIdRegex.test(v);
 
 export const isPublicKey = (v, addressPrefix = ADDRESS_PREFIX) => {
@@ -339,7 +341,6 @@ export const isOperationPrototypeExists = (v) => operationPrototypeArray.include
 export const isNotEmptyString = (v) => isString(v) && !!v.trim();
 
 export const isContractCode = (v) => v === '' || (isHex(v) && v.length % 2 === 0);
-
 
 export const isOldPrivateKey = (v) => isString(v) && bs58.decode(v).length === LENGTH_DECODE_PRIVATE_KEY;
 

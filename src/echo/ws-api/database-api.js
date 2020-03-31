@@ -497,15 +497,16 @@ class DatabaseAPI {
 
 	/**
 	 * @method getContractLogs
+	 * @param  {Function} callback
 	 * @param {Object} opts
 	 * @param {string[]} [opts.contracts]
 	 * @param {(string | string[])[]} [opts.topics]
 	 * @param {number} [opts.from_block]
 	 * @param {number} [opts.to_block]
-	 * @returns {Promise<unknown[]>}
+	 * @returns {Promise<null>}
 	 */
-	getContractLogs(opts) {
-		return this.db.exec('get_contract_logs', [opts]);
+	getContractLogs(callback, opts) {
+		return this.db.exec('get_contract_logs', [callback, opts]);
 	}
 
 	/**
@@ -577,6 +578,17 @@ class DatabaseAPI {
 	}
 
 	/**
+	 *  @method getContractPoolWhitelist
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise}
+	 */
+	getContractPoolWhitelist(contractId) {
+		return this.db.exec('get_contract_pool_whitelist', [contractId]);
+	}
+
+	/**
 	 *  @method subscribeContracts
 	 *
 	 *  @param  {Array<String>} contractIds
@@ -585,6 +597,17 @@ class DatabaseAPI {
 	 */
 	subscribeContracts(contractIds) {
 		return this.db.exec('subscribe_contracts', [contractIds]);
+	}
+
+	/**
+	 *  @method getContractPoolBalance
+	 *
+	 *  @param  {String} contractId
+	 *
+	 *  @return {Promise}
+	 */
+	getContractPoolBalance(contractId) {
+		return this.db.exec('get_contract_pool_balance', [contractId]);
 	}
 
 	/**

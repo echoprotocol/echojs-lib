@@ -17,7 +17,6 @@ const walletAPIMethodsArray = [
 	'is_locked',
 	'lock', 'unlock', 'set_password',
 	'dump_private_keys',
-	'old_key_to_wif',
 	'list_my_accounts',
 	'list_accounts',
 	'list_account_balances',
