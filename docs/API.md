@@ -1216,7 +1216,8 @@ try {
     block_num:Number,
     trx_in_block:Number,
     op_in_block:Number,
-    virtual_op:Number
+    virtual_op:Number,
+    proposal_hist_id: Number|undefined,
 }
 ```
 ## FullAccount : <code>Object</code>
@@ -1399,6 +1400,7 @@ or
    result: [0, {}],
    trx_in_block:Number,
    virtual_op:Number,
+   proposal_hist_id: Number
 }
 ```
 
