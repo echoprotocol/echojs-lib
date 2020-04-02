@@ -1943,13 +1943,13 @@ class API {
 	 */
 	async getContractLogs(opts = { }) {
 		if (opts.contracts !== undefined) {
-			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
-			for (const contractId of opts.contracts) ok(isContractId(contractId));
+			ok(Array.isArray(opts.contracts), 'contracts: vector is not an array');
+			for (const contractId of opts.contracts) ok(isContractId(contractId), 'invalid object type id');
 		}
 		/** @type {typeof opts["topics"]} */
 		let topics;
 		if (opts.topics !== undefined) {
-			ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			ok(Array.isArray(opts.topics), '`topics` is not an array');
 			topics = new Array(opts.topics.length).fill(null);
 			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
 				let topicVariants = opts.topics[topicIndex];

@@ -24,7 +24,7 @@ describe("getContractLogs", () => {
 	describe('when `contracts` first element is not a contract id', () => {
 		shouldReject(async () => {
 			await echo.api.getContractLogs({ contracts: ['1.10.1'] });
-		}, 'contracts: vector element with index 0: invalid object type id');
+		}, 'invalid object type id');
 	});
 
 	describe('when `topics` is not an `set_t`', () => {
@@ -65,11 +65,11 @@ describe("getContractLogs", () => {
 			});
 			it('with all logs of contract', function () {
 				if (events === undefined) this.skip();
-				assert.ok(events.every(([_, { address }]) => address === contractAddress));
+				assert.ok(events.every(({ address }) => address === contractAddress));
 			});
 			it('with different blocks', function () {
 				if (events === undefined) this.skip();
-				assert.ok(events[0][1].block_num !== events[1][1].block_num);
+				assert.ok(events[0].block_num !== events[1].block_num);
 			});
 		});
 		describe('when there are another contract with the same logs', () => {
@@ -102,11 +102,11 @@ describe("getContractLogs", () => {
 				});
 				it('with all logs of contract', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 2) this.skip();
-					assert.ok(res.every(([_, { address }]) => address === contractAddress));
+					assert.ok(res.every(({ address }) => address === contractAddress));
 				});
 				it('with different blocks', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 2) this.skip();
-					assert.ok(res[0][1].block_num !== res[1][1].block_num);
+					assert.ok(res[0].block_num !== res[1].block_num);
 				});
 			});
 			describe('when both contracts are provided in `contracts` filter', () => {
@@ -126,7 +126,7 @@ describe("getContractLogs", () => {
 				});
 				it('with all logs of both contracts', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 4) this.skip();
-					assert.deepStrictEqual(res.map(([_, { address }]) => {
+					assert.deepStrictEqual(res.map(({ address }) => {
 						return address;
 					}), [contractAddress, contractAddress, anotherContractAddress, anotherContractAddress]);
 				});
