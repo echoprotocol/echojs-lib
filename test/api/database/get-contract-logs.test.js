@@ -21,14 +21,6 @@ describe("getContractLogs", () => {
 		}, 'contracts: vector is not an array');
 	});
 
-	describe('when `contracts` has duplicates', () => {
-		shouldReject(
-			async () => await echo.api.getContractLogs({ contracts: ['1.11.1', '1.11.1'] }),
-			'contracts element with index 1 is equals to the other one with index 0',
-			'with indexes of duplicated elements',
-		);
-	});
-
 	describe('when `contracts` first element is not a contract id', () => {
 		shouldReject(async () => {
 			await echo.api.getContractLogs({ contracts: ['1.10.1'] });
@@ -39,24 +31,6 @@ describe("getContractLogs", () => {
 		shouldReject(async () => {
 			await echo.api.getContractLogs({ topics: 'not an array' });
 		}, '`topics` is not an array');
-	});
-
-	describe('when `fromBlock` is negative', () => {
-		shouldReject(async () => {
-			await echo.api.getContractLogs({ fromBlock: -1 });
-		}, '`fromBlock` must be greater than or equal to zero');
-	});
-
-	describe('when `toBlock` is negative', () => {
-		shouldReject(async () => {
-			await echo.api.getContractLogs({ toBlock: -1 });
-		}, '`toBlock` must be greater than zero');
-	});
-
-	describe('when `toBlock` is equals to zero', () => {
-		shouldReject(async () => {
-			await echo.api.getContractLogs({ toBlock: 0 });
-		}, '`toBlock` must be greater than zero');
 	});
 
 	describe('when different events are emitted in different blocks', () => {

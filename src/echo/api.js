@@ -1,5 +1,6 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
 import * as assert from 'assert';
+import { ok } from 'assert';
 import { Map, List, fromJS } from 'immutable';
 import BigNumber from 'bignumber.js';
 import {
@@ -1942,13 +1943,13 @@ class API {
 	 */
 	async getContractLogs(opts = { }) {
 		if (opts.contracts !== undefined) {
-			assert.ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
-			for (const contractId of opts.contracts) assert.ok(isContractId(contractId));
+			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
+			for (const contractId of opts.contracts) ok(isContractId(contractId));
 		}
 		/** @type {typeof opts["topics"]} */
 		let topics;
 		if (opts.topics !== undefined) {
-			assert.ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			ok(Array.isArray(opts.topics), '"topics" option is not an array');
 			topics = new Array(opts.topics.length).fill(null);
 			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
 				let topicVariants = opts.topics[topicIndex];
@@ -1958,16 +1959,16 @@ class API {
 				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
 					let variant = topicVariants[variantIndex];
 					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
-					assert.ok(typeof variant === 'string', 'invalid "topic" option type');
+					ok(typeof variant === 'string', 'invalid "topic" option type');
 					if (variant.startsWith('0x')) variant = variant.slice(2);
-					assert.ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
-					assert.ok(variant.length === 64, 'invalid "topic" length');
+					ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
+					ok(variant.length === 64, 'invalid "topic" length');
 					topics[topicIndex][variantIndex] = variant;
 				}
 			}
 		}
 		for (const field of ['fromBlock', 'toBlock']) {
-			assert.ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
+			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
 		return new Promise((resolve) => {
 			const cb = (logs) => {
