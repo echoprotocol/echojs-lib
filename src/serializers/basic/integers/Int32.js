@@ -9,20 +9,20 @@ import IIntSerializer from './IIntSerializer';
  * @typedef {import("../../ISerializer").SerializerInput<T>} SerializerInput
  */
 
-/** @augments {IIntSerializer<number | string>} */
-export default class Int64Serializer extends IIntSerializer {
+/** @augments {IIntSerializer<number>} */
+export default class Int32Serializer extends IIntSerializer {
 
 	constructor() {
-		super(64);
+		super(32);
 	}
 
 	/**
-	 * @param {SerializerInput<Int64Serializer>} value
+	 * @param {SerializerInput<Int32Serializer>} value
 	 * @param {ByteBuffer} bytebuffer
 	 */
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
-		bytebuffer.writeInt64(raw);
+		bytebuffer.writeInt32(raw);
 	}
 
 }

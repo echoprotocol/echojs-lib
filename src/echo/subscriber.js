@@ -38,6 +38,8 @@ import {
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
 
+/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
+
 class Subscriber extends EventEmitter {
 
 	/**
@@ -183,7 +185,7 @@ class Subscriber extends EventEmitter {
 	 *  @return {null}
 	 */
 	_updateObject(object) {
-		// check is id param exists -> if no - check settle order params
+		// transaction.js is id param exists -> if no - transaction.js settle order params
 		if (!object.id) {
 			if (object.balance && object.owner && object.settlement_date) {
 				this.emit('settle-order-update', object);
@@ -204,7 +206,7 @@ class Subscriber extends EventEmitter {
 			[],
 		);
 
-		// check interested by id type
+		// transaction.js interested by id type
 		if (isTransactionId(object.id)) {
 			return null;
 		}
@@ -286,7 +288,7 @@ class Subscriber extends EventEmitter {
 			return null;
 		}
 
-		// check if dynamic global object
+		// transaction.js if dynamic global object
 		if (isDynamicGlobalObjectId(object.id)) {
 			const dynamicGlobalObject = new Map(object);
 
@@ -495,7 +497,7 @@ class Subscriber extends EventEmitter {
 		const orders = [];
 
 		const updates = messages.filter((msg) => {
-			// check is object id
+			// transaction.js is object id
 			if (isObjectId(msg)) {
 				return false;
 			}
@@ -897,8 +899,7 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _contractLogsUpdate
-	 *
+	 * @method _contractLogsUpdate
 	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
 	 *  @param  {*} result
 	 *
@@ -970,18 +971,6 @@ class Subscriber extends EventEmitter {
 		await this._subscribeToContractLogs(contractsToSubscribe);
 	}
 
-	/**
-	 *  @method removeContractLogsSubscribe
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	removeContractLogsSubscribe(contractId, callback) {
-		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
-			.filter((c) => (c !== callback));
-	}
 
 	/**
 	 *  @method _subscribeCache

@@ -33,6 +33,8 @@ export default class Transaction {
 	readonly transactionObject: any;
 	readonly operations: SerializerOutput<OperationSerializer>[];
 
+	expiration: number;
+
 	addOperation<T extends OperationId>(
 		operationId: T,
 		props?: TOperationInput<T, true>[1],
@@ -44,4 +46,5 @@ export default class Transaction {
 	broadcast(wasBroadcastedCallback?: () => any): Promise<[BroadcastingResult]>;
 	setRequiredFees(assetId?: string): Promise<void>;
 	serialize(): Buffer;
+	signedTransactionSerializer(): Buffer;
 }

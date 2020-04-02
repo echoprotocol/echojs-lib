@@ -1,8 +1,8 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
+import * as assert from 'assert';
 import { ok } from 'assert';
-import BigNumber from 'bignumber.js';
 import { Map, List, fromJS } from 'immutable';
-
+import BigNumber from 'bignumber.js';
 import {
 	isNumber,
 	isArray,
@@ -27,10 +27,9 @@ import {
 	isOperationId,
 	isDynamicGlobalObjectId,
 	isBtcAddressId,
-	isUInt32,
 	isObject,
 	isInt64,
-	validateSidechainType,
+	validateSidechainType, isUInt32,
 } from '../utils/validators';
 
 import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
@@ -38,10 +37,14 @@ import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow
 /** @typedef {import('./ws-api').default} WSAPI */
 
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
-import { transaction, signedTransaction, operation, basic } from '../serializers';
+import { transaction, signedTransaction, operation, basic, chain } from '../serializers';
 import { PublicKey } from '../crypto';
+import { toRawContractLogsFilterOptions } from '../utils/converters';
 
+/** @typedef {import("bignumber.js").default} BigNumber */
+/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
+/** @typedef {typeof basic.integers["uint64"]["__TInput__"]} UInt64 */
 
 /** @typedef {
 *	{
@@ -108,9 +111,6 @@ import { PublicKey } from '../crypto';
 *	{
 *  		id:String,
 *  		chain_id:String,
-*  		immutable_parameters:{
-*  			min_committee_member_count:Number
-*  		}
 *  	}
 * 	} ChainProperties */
 
@@ -156,6 +156,7 @@ import { PublicKey } from '../crypto';
 * 	 				eth_gen_address_method:{method:String,gas:Number},
 * 	 				eth_withdraw_method:{method:String,gas:Number},
 * 	 				eth_update_addr_method:{method:String,gas:Number},
+* 	 				eth_update_contract_address:{method:String,gas:Number},
 * 	 				eth_withdraw_token_method:{method:String,gas:Number},
 * 	 				eth_collect_tokens_method:{method:String,gas:Number},
 * 	 				eth_committee_updated_topic:String,
@@ -165,14 +166,13 @@ import { PublicKey } from '../crypto';
 * 	 				erc20_deposit_topic:String,
 * 	 				erc20_withdraw_topic:String,
 * 	 				ETH_asset_id:String,
-* 	 				waiting_eth_blocks:Number,
-* 	 				fines:{generate_eth_address:Number},
-* 	 				waiting_blocks:Number,
 * 	 				BTC_asset_id:String,
-* 	 				waiting_btc_blocks:Number,
+* 	 				fines:{generate_eth_address:Number|String},
+* 	 				gas_price:Number|String,
 * 	 				satoshis_per_byte:Number,
-* 	 				echo_blocks_per_aggregation:Number,
-* 	 				gas_price:String,
+* 	 				coefficient_waiting_blocks:Number,
+* 	 				btc_deposit_withdrawal_min:Number|String,
+* 	 				btc_deposit_withdrawal_fee:Number|String,
 * 	 			},
 * 	 			gas_price:{
 * 	 				price:Number|String,
@@ -1943,13 +1943,13 @@ class API {
 	 */
 	async getContractLogs(opts = { }) {
 		if (opts.contracts !== undefined) {
-			ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
-			for (const contractId of opts.contracts) ok(isContractId(contractId));
+			ok(Array.isArray(opts.contracts), 'contracts: vector is not an array');
+			for (const contractId of opts.contracts) ok(isContractId(contractId), 'invalid object type id');
 		}
 		/** @type {typeof opts["topics"]} */
 		let topics;
 		if (opts.topics !== undefined) {
-			ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			ok(Array.isArray(opts.topics), '`topics` is not an array');
 			topics = new Array(opts.topics.length).fill(null);
 			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
 				let topicVariants = opts.topics[topicIndex];
@@ -1981,6 +1981,24 @@ class API {
 				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
 			});
 		});
+	}
+
+	/**
+	 * @param {(result: Log[]) => any} callback
+	 * @param {ContractLogsFilterOptions_t} [opts]
+	 * @returns {Promise<Log[]>}
+	 */
+	async subscribeContractLogs(callback, opts = {}) {
+		return this.wsApi.database.subscribeContractLogs((result) => {
+			assert.ok(Array.isArray(result));
+			assert.strictEqual(result.length, 1);
+			callback(result[0]);
+		}, toRawContractLogsFilterOptions(opts));
+	}
+
+	/** @param {UInt64} subscribeId */
+	async unsubscribeContractLogs(subscribeId) {
+		return this.wsApi.database.unsubscribeContractLogs(basic.integers.uint64.toRaw(subscribeId));
 	}
 
 	/**
@@ -2302,6 +2320,22 @@ class API {
 	}
 
 	/**
+	 * @param {typeof chain.ids["protocol"]["contractId"]["__TInput__"]} contract
+	 * @param {Object} [options]
+	 * @param {typeof basic.integers["uint64"]["__TInput__"]} [options.stop]
+	 * @param {typeof basic.integers["uint32"]["__TInput__"]} [options.limit]
+	 * @param {typeof basic.integers["uint64"]["__TInput__"]} [options.start]
+	 */
+	async getRelativeContractHistory(contract, options = {}) {
+		contract = chain.ids.protocol.contractId.toRaw(contract);
+		const stop = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.stop);
+		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
+		const start = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
+		if (limit > 100) throw new Error('Limit is greater than 100');
+		return this.wsApi.history.getRelativeContractHistory(contract, stop, limit, start);
+	}
+
+	/**
 	 *  @method getFullContract
 	 *  Get contract info.
 	 *
@@ -2464,15 +2498,6 @@ class API {
 		if (!isArray(keys)) return Promise.reject(new Error('Invalid keys'));
 
 		return this.wsApi.database.getBalanceObjects(keys);
-	}
-
-	/**
-	 * @method getBlockRewards
-	 * @param {typeof uint32["__TInput__"]} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.wsApi.database.getBlockRewards(basic.integers.uint32.toRaw(blockNum));
 	}
 
 	/**

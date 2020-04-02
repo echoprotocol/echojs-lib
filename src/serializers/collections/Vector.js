@@ -45,15 +45,15 @@ export default class VectorSerializer extends ISerializer {
 	 * @param {TInput<T>} value
 	 * @returns {TOutput<T>}
 	 */
-	toRaw(value) {
-		if (!Array.isArray(value)) throw new Error('value is not an array');
+	toRaw(value, errorField = 'vector') {
+		if (!Array.isArray(value)) throw new Error(`${errorField} is not an array`);
 		const raw = new Array(value.length);
 		for (let i = 0; i < value.length; i += 1) {
 			try {
 				const element = value[i];
 				raw[i] = this.serializer.toRaw(element);
 			} catch (error) {
-				throw new Error(`vector element with index ${i}: ${error.message}`);
+				throw new Error(`${errorField} element with index ${i}: ${error.message}`);
 			}
 		}
 		return raw;

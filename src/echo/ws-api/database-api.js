@@ -1,3 +1,5 @@
+/** @typedef {import("../../../types/interfaces/vm/types").Log} Log */
+
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
 class DatabaseAPI {
@@ -510,16 +512,14 @@ class DatabaseAPI {
 	}
 
 	/**
-	 *  @method subscribeContractLogs
-	 *
-	 *  @param  {Function} callback
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
-	 *
-	 *  @return {Promise}
+	 * @param {(result: Log[]) => any} cb
+	 * @param {ContractLogsFilterOptionsRaw} options
+	 * @returns {Promise<number|string>}
 	 */
-	subscribeContractLogs(callback, contractTopicsMap) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
-	}
+	subscribeContractLogs(cb, options) { return this.db.exec('subscribe_contract_logs', [cb, options]); }
+
+	/** @param {number|string} cbId */
+	unsubscribeContractLogs(cbId) { return this.db.exec('unsubscribe_contract_logs', [cbId]); }
 
 	/**
 	 *  @method getContractResult
@@ -630,15 +630,6 @@ class DatabaseAPI {
 	 */
 	getBalanceObjects(keys) {
 		return this.db.exec('get_balance_objects', [keys]);
-	}
-
-	/**
-	 * @method getBlockRewards
-	 * @param {number} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.db.exec('get_block_rewards', [blockNum]);
 	}
 
 	/**

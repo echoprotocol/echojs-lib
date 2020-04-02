@@ -1,5 +1,9 @@
 import { START_OPERATION_ID } from '../../constants';
 
+/** @typedef {import("../../../types/interfaces/chain").OperationHistoryObject} OperationHistoryObject */
+/** @typedef {import("../../serializers/basic/integers")} Integer_t */
+/** @typedef {import("../../serializers/chain/id/protocol")["contractId"]["__TOutput__"]} ContractId */
+
 class HistoryAPI {
 
 	/**
@@ -76,6 +80,17 @@ class HistoryAPI {
 		stop = START_OPERATION_ID, limit = 100, start = START_OPERATION_ID,
 	) {
 		return this.db.exec('get_contract_history', [contractId, stop, limit, start]);
+	}
+
+	/**
+	 * @param {ContractId} contract
+	 * @param {Integer_t["uint64"]["__TOutput__"]} stop
+	 * @param {Integer_t["uint32"]["__TOutput__"]} limit
+	 * @param {Integer_t["uint64"]["__TOutput__"]} start
+	 * @returns {Promise<OperationHistoryObject[]>}
+	 */
+	getRelativeContractHistory(contract, stop, limit, start) {
+		return this.db.exec('get_relative_contract_history', [contract, stop, limit, start]);
 	}
 
 }

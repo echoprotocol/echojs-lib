@@ -1,6 +1,6 @@
 import { struct, vector } from './collections';
 import { uint16, uint32, int64 } from './basic/integers';
-import { timePointSec, bytes } from './basic';
+import { timePointSec, bytes, bool } from './basic';
 import { extensions } from './chain';
 import OperationSerializer from './operation';
 import OperationResultSerializer from './operation_result';
@@ -17,6 +17,7 @@ export default transactionSerializer;
 export const signedTransactionSerializer = struct({
 	...transactionSerializer.serializers,
 	signatures: vector(bytes(64)),
+	signed_with_echorand_key: bool,
 });
 
 export const processedTransactionSerializer = struct({

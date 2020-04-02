@@ -107,6 +107,7 @@
 			"eth_update_addr_method": { "method": "7ff203ab", "gas": 1000000 },
 			"eth_withdraw_token_method": { "method": "1c69c0e2", "gas": 1000000 },
 			"eth_collect_tokens_method": { "method": "5940a240", "gas": 1000000 },
+			"eth_update_contract_address": { "method": "3659cfe6", "gas": 1000000 },
 			"eth_committee_updated_topic": "514bf7702a7d2aca90dcf3d947158aad29563a17c1dbdc76d2eae84c22420142",
 			"eth_gen_address_topic": "1855f12530a368418f19b2b15227f19225915b8113c7e17d4c276e2a10225039",
 			"eth_deposit_topic": "77227a376c41a7533c952ebde8d7b44ee36c7a6cec0d3448f1a1e4231398356f",
@@ -217,6 +218,5 @@
 		"eth_address": "298915A83Bd8a0D536aDBe300F12cA1e4388C3BA",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}],
-	"initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21",
-	"immutable_parameters": { "min_committee_member_count": 5 }
+	"initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21"
 }

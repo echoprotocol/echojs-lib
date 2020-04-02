@@ -13,7 +13,7 @@ import { validateUnsignedSafeInteger } from '../utils/validators';
  */
 export function deterministicGenerateK(curve, hash, d, checkSig, nonce) {
 	if (nonce) hash = sha256(Buffer.concat([hash, Buffer.alloc(nonce)]));
-	// sanity check
+	// sanity transaction.js
 	if (hash.length !== 32) throw new Error('invalid sha256 hash length');
 	const x = d.toBuffer(32);
 	let k = Buffer.alloc(32);

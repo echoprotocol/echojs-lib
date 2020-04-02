@@ -191,6 +191,7 @@ describe('cache', () => {
             });
 
             it('should not clean more often then minCleaningTime', async () => {
+				let tickTimeoutId;
                 try {
                     const promises = [];
                     const expirationTime = 100;
@@ -204,7 +205,8 @@ describe('cache', () => {
                             res();
                         } else {
                             if (currentCacheSize !== 0) {
-                                setTimeout(() => {
+                                tickTimeoutId = setTimeout(() => {
+									tickTimeoutId = undefined;
                                     tick(res, callCount + 1, currentCacheSize);
                                 }, tickInterval);
                             }
@@ -238,6 +240,7 @@ describe('cache', () => {
                     });
 
                 } catch (e) {
+					if (tickTimeoutId !== undefined) clearTimeout(tickTimeoutId);
                     throw(e);
                 }
             })

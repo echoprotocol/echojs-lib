@@ -1,7 +1,8 @@
 import ethAddress from "../ethAddress";
 import { uint64 } from "../../basic/integers";
 import { asset, extensions } from "../../chain";
-import { accountId, depositId } from "../../chain/id/protocol";
+
+import {accountId, ethDepositId, ethWithdrawId} from "../../chain/id/protocol";
 import { VectorSerializer, StructSerializer } from "../../collections";
 
 export declare const sidechainEthCreateAddressOperationPropsSerializer: StructSerializer<{
@@ -31,7 +32,7 @@ export declare const sidechainEthDepositOperationPropsSerializer: StructSerializ
 export declare const sidechainEthSendDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
-	deposit_id: typeof depositId,
+	deposit_id: typeof ethDepositId,
 	extensions: typeof extensions,
 }>;
 
@@ -46,7 +47,7 @@ export declare const sidechainEthWithdrawOperationPropsSerializer: StructSeriali
 export declare const sidechainEthSendWithdrawOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
-	deposit_id: typeof depositId,
+	withdraw_id: typeof ethWithdrawId,
 	extensions: typeof extensions,
 }>;
 
@@ -62,6 +63,3 @@ export declare const sidechainEthUpdateContractAddressOperationPropsSerializer: 
 	new_addr: typeof ethAddress,
 	extensions: typeof extensions,
 }>;
-
-
-
