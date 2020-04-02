@@ -93,7 +93,7 @@ export const assetPublishFeedOperationPropsSerializer = struct({
 	fee: asset,
 	publisher: accountId,
 	asset_id: assetId,
-	feed: priceFeedSerializer,
+	core_exchange_rate: priceSerializer,
 	extensions,
 });
 
