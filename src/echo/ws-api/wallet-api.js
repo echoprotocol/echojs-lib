@@ -30,7 +30,7 @@ const {
 	ripemd160,
 } = serializers.chain;
 const { options, bitassetOptions } = serializers.protocol.asset;
-const { priceFeed } = serializers.protocol;
+const { price } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
 const { anyObjectId } = serializers.chain.ids;
 
@@ -1223,11 +1223,11 @@ class WalletAPI {
 	 *
 	 * @param {string} accountIdOrName the account publishing the price feed
 	 * @param {string} assetIdOrName the name or id of the asset whose feed we're publishing
-	 * @param {any} priceOfFeed object containing the three prices making up the feed
+	 * @param {any} coreEchangeRate object containing the three prices making up the feed
 	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
 	 * @returns {Promise<SignedTransaction>} the signed transaction updating the price feed for the given asset
 	 */
-	publishAssetFeed(accountIdOrName, assetIdOrName, priceOfFeed, shouldDoBroadcastToNetwork) {
+	publishAssetFeed(accountIdOrName, assetIdOrName, coreEchangeRate, shouldDoBroadcastToNetwork) {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
@@ -1237,7 +1237,7 @@ class WalletAPI {
 		return this.wsRpc.call([0, 'publish_asset_feed', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(assetIdOrName),
-			priceFeed.toRaw(priceOfFeed),
+			price.toRaw(coreEchangeRate),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 		]]);
 	}
