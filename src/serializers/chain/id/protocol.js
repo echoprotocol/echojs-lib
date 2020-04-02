@@ -48,3 +48,4 @@ export const btcAggregatingId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.BTC_AGGREGATING,
 );
 
+export const evmAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.EVM_ADDRESS);

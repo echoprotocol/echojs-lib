@@ -1,10 +1,30 @@
+## Table of contents
+
+- [Constants](#constants)
+    - [Chain types](#chain-types)
+    - [Chain config](#chain-config)
+    - [WS constants](#ws-constants)
+    - [Start operation id](#start-operation-id)
+    - [Core asset id](#core-asset-id)
+    - [Echorand types](#echorand-types)
+    - [Cancel limit order](#cancel-limit-order)
+    - [Update call order](#update-call-order)
+    - [Close call order](#close-call-order)
+    - [Bitasset update](#bitasset-update)
+    - [Cache maps](#cache-maps)
+    - [Operations ids](#operations-ids)
+
 ### Constants
 
 List of constants which we provide
 
- ```javascript
+```javascript
  import { constants } from 'echojs-lib';
+```
 
+#### Chain types
+
+```javascript
 console.log(constants.CHAIN_TYPES) // information about ids
 
 /*
@@ -38,7 +58,11 @@ console.log(constants.CHAIN_TYPES) // information about ids
     },
 }
 */
+```
 
+#### Chain config
+
+```javascript
 console.log(constants.CHAIN_CONFIG) // Generai information about chain
 
 /*
@@ -57,7 +81,11 @@ console.log(constants.CHAIN_CONFIG) // Generai information about chain
     }
 }
 */
-
+```
+ 
+#### WS constants
+ 
+```javascript
 console.log(constants.WS_CONSTANTS) // websocket constants
 
 /*
@@ -76,6 +104,7 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         ASSET_API: 'asset',
         LOGIN_API: 'login',
         NETWORK_NODE_API: 'network_node',
+        ECHORAND_API: 'echorand'
     },
     CHAIN_APIS: [
         CHAIN_API.DATABASE_API,
@@ -85,6 +114,7 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         CHAIN_API.ASSET_API,
         CHAIN_API.LOGIN_API,
         CHAIN_API.NETWORK_NODE_API,
+        CHAIN_API.ECHORAND_API
     ],
     DEFAULT_CHAIN_APIS: [
         CHAIN_API.DATABASE_API,
@@ -95,19 +125,31 @@ console.log(constants.WS_CONSTANTS) // websocket constants
     STATUS: { OPEN: 'OPEN', ERROR: 'ERROR', CLOSE: 'CLOSE' },
 }
 */
+```
 
+#### Start operation id
+
+```javascript
 console.log(constants.START_OPERATION_ID) // start operation id
 
 /*
     1.10.0
 */
+```
 
+#### Core asset id
+
+```javascript
 console.log(constants.CORE_ASSET_ID) // core asset id
 
 /*
     1.3.0
 */
+```
 
+#### Echorand types
+
+```javascript
 console.log(constants.ECHORAND_TYPES)
 
 /*
@@ -116,32 +158,51 @@ console.log(constants.ECHORAND_TYPES)
     BLOCK_NOTIFICATION: 2,
 }
 */
+```
 
+#### Cancel limit order
+
+```javascript
 console.log(constants.CANCEL_LIMIT_ORDER)
 
 /*
     cancel-limit-order
 */
+```
 
+#### Update call order
+
+```javascript
 console.log(constants.UPDATE_CALL_ORDER)
 
 /*
     update-call-order
 */
+```
 
+#### Close call order
+
+```javascript
 console.log(constants.CLOSE_CALL_ORDER)
 
 /*
     close-call-order
 */
+```
 
+#### Bitasset update
+
+```javascript
 console.log(constants.BITASSET_UPDATE)
 
 /*
     bitasset-update
 */
+```
 
+#### Cache maps
 
+```javascript
 console.log(constants.CACHE_MAPS) // cache maps
 
 /*
@@ -181,7 +242,11 @@ console.log(constants.CACHE_MAPS) // cache maps
     DYNAMIC_GLOBAL_PROPERTIES: 'dynamicGlobalProperties',
 }
 */
+```
 
+#### Operations ids
+
+```javascript
 console.log(constants.OPERATIONS_IDS); // operation id
 
 /*
@@ -228,29 +293,30 @@ console.log(constants.OPERATIONS_IDS); // operation id
     SIDECHAIN_ETH_CREATE_ADDRESS: 39,
     SIDECHAIN_ETH_APPROVE_ADDRESS: 40,
     SIDECHAIN_ETH_DEPOSIT: 41,
-    SIDECHAIN_ETH_SEND_DEPOSIT: 42,
-    SIDECHAIN_ETH_WITHDRAW: 43,
-    SIDECHAIN_ETH_SEND_WITHDRAW: 44,
-    SIDECHAIN_ETH_APPROVE_WITHDRAW: 45,
-    SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS: 46,
-    SIDECHAIN_ISSUE: 47, // VIRTUAL
-    SIDECHAIN_BURN: 48, // VIRTUAL
-    SIDECHAIN_ERC20_REGISTER_TOKEN: 49,
-    SIDECHAIN_ERC20_DEPOSIT_TOKEN: 50,
-    SIDECHAIN_ERC20_SEND_DEPOSIT: 51,
-    SIDECHAIN_ERC20_WITHDRAW_TOKEN: 52,
-    SIDECHAIN_ERC20_SEND_WITHDRAW: 53,
-    SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW: 54,
-    SIDECHAIN_ERC20_ISSUE: 55, // VIRTUAL
-    SIDECHAIN_ERC20_BURN: 56, // VIRTUAL
-    SIDECHAIN_BTC_CREATE_ADDRESS: 57,
-    SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT: 58,
-    SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT: 59,
-    SIDECHAIN_BTC_DEPOSIT: 60,
-    SIDECHAIN_BTC_WITHDRAW: 61,
-    SIDECHAIN_BTC_AGGREGATE: 62,
-    SIDECHAIN_BTC_APPROVE_AGGREGATE: 63,
-    BLOCK_REWARD: 64, // VIRTUAL
-}
+    SIDECHAIN_ETH_SEND_DEPOSIT = 42;
+    SIDECHAIN_ETH_WITHDRAW = 43;
+    SIDECHAIN_ETH_SEND_WITHDRAW = 44;
+    SIDECHAIN_ETH_APPROVE_WITHDRAW = 45;
+    SIDECHAIN_ETH_UPDATE_CONTRACT_ADDRESS = 46;
+    SIDECHAIN_ISSUE = 47; // VIRTUAL
+    SIDECHAIN_BURN = 48; // VIRTUAL
+    SIDECHAIN_ERC20_REGISTER_TOKEN = 49;
+    SIDECHAIN_ERC20_DEPOSIT_TOKEN = 50;
+    SIDECHAIN_ERC20_SEND_DEPOSIT_TOKEN = 51;
+    SIDECHAIN_ERC20_WITHDRAW_TOKEN = 52;
+    SIDECHAIN_ERC20_SEND_WITHDRAW_TOKEN = 53;
+    SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW = 54;
+    SIDECHAIN_ERC20_ISSUE = 55; // VIRTUAL
+    SIDECHAIN_ERC20_BURN = 56; // VIRTUAL
+    SIDECHAIN_BTC_CREATE_ADDRESS = 57;
+    SIDECHAIN_BTC_CREATE_INTERMEDIATE_DEPOSIT = 58;
+    SIDECHAIN_BTC_INTERMEDIATE_DEPOSIT = 59;
+    SIDECHAIN_BTC_DEPOSIT = 60;
+    SIDECHAIN_BTC_WITHDRAW = 61;
+    SIDECHAIN_BTC_AGGREGATE = 62;
+    SIDECHAIN_BTC_APPROVE_AGGREGATE = 63;
+    BLOCK_REWARD = 64;// VIRTUAL
+    EVM_ADDRESS_REGISTER = 65;
+    }
 */
  ```

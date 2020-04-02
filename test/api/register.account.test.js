@@ -25,6 +25,7 @@ describe('API register account POW', () => {
 				'kokoko'+ Date.now(),
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
 				'ECHODvHDsAfk2M8LhYcxLZTbrNJRWT3UH5zxdaWimWc6uZkH',
+				null,
 				() => isResolved = true,
 			);
 			await new Promise((resolve) => setTimeout(() => resolve(), 100));

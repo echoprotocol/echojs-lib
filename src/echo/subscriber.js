@@ -37,7 +37,6 @@ import {
 
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
-import { toRawContractLogsFilterOptions } from '../utils/converters';
 
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 
@@ -85,7 +84,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 
 		if (this.subscriptions.block) {
@@ -546,12 +545,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _setConsensusMessageCallback
+	 *  @method _setEchorandMessageCallback
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async _setConsensusMessageCallback() {
-		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+	async _setEchorandMessageCallback() {
+		await this._wsApi.echorand.setEchorandMessageCallback(this._echorandUpdate.bind(this));
 		this.subscriptions.echorand = true;
 	}
 
@@ -570,7 +569,7 @@ class Subscriber extends EventEmitter {
 		this.subscribers.echorand.push(callback);
 
 		if (!this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 	}
 
@@ -900,14 +899,78 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 * @method setContractLogsSubscribe
-	 * @param {(result: Log[]) => any} callback
-	 * @param {import('./api').ContractLogsFilterOptions_t} [options]
-	 * @return {Promise<number|string>}
+	 * @method _contractLogsUpdate
+	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
+	 *  @param  {*} result
+	 *
+	 *  @return {undefined}
 	 */
-	async setContractLogsSubscribe(callback, options = {}) {
-		return this._wsApi.database.subscribeContractLogs(callback, toRawContractLogsFilterOptions(options));
+	_contractLogsUpdate(contractTopicsMap, result) {
+		let callbacks = [];
+		contractTopicsMap.forEach((topicMap) => {
+			const [contractId] = topicMap;
+
+			callbacks = callbacks.concat(this.subscribers.logs[contractId]);
+		});
+
+		callbacks.forEach((callback) => callback(result));
 	}
+
+	/**
+	 *  @method _subscribeToContractLogs
+	 *
+	 *  {Map<String, Array<String>} contractLogsMap
+	 *
+	 *  @return {undefined}
+	 */
+	async _subscribeToContractLogs(contractTopicsMap) {
+		await this._wsApi.database.subscribeContractLogs(
+			this._contractLogsUpdate.bind(this, contractTopicsMap),
+			contractTopicsMap,
+		);
+	}
+
+	/**
+	 *  @method setContractLogsSubscribe
+	 *
+	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
+	 *  @param  {Function} callback
+	 *  @param  {Number} [fromBlock]
+	 *  @param  {Number} [toBlock]
+	 *
+	 *  @return {undefined}
+	 */
+	async setContractLogsSubscribe(contractTopicsMap, callback, fromBlock, toBlock) {
+		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
+
+		const contractsToSubscribe = {};
+
+		await Promise.all(contractTopicsMap.map((topicsItem) =>
+			(async () => {
+				const [contractId, topics] = topicsItem;
+				if (fromBlock) {
+					await this._wsApi.database.getContractLogs(
+						callback,
+						{
+							contracts: [contractId],
+							topics,
+							from_block: fromBlock,
+							to_block: toBlock || globalInfo.head_block_number,
+						},
+					);
+				}
+				// set subscriber from current block
+				if (!this.subscribers.logs[contractId]) {
+					this.subscribers.logs[contractId] = [];
+					contractsToSubscribe[contractId] = topics;
+				}
+
+				this.subscribers.logs[contractId].push(callback);
+			})()));
+
+		await this._subscribeToContractLogs(contractsToSubscribe);
+	}
+
 
 	/**
 	 *  @method _subscribeCache

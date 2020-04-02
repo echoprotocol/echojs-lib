@@ -79,6 +79,8 @@ export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './acc
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
 
+export { evmAddressRegisterOperationPropsSerializer as evmAddress } from './evm_address';
+
 export declare const account: {
 	options: typeof accountOptionsSerializer,
 	create: typeof accountCreateOperationPropsSerializer,

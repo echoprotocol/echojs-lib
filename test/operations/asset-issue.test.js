@@ -19,7 +19,7 @@ describe('asset issue', () => {
 			precision: 4,
 			common_options: {
 				max_supply: '1e15',
-				issuer_permissions: 79,
+				issuer_permissions: 15,
 				flags: 0,
 				core_exchange_rate: {
 					base: { amount: 10, asset_id: `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0` },

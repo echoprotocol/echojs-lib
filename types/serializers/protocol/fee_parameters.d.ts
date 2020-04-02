@@ -71,9 +71,9 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BURN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_REGISTER_TOKEN]: StructSerializer<{ fee: typeof uint64, pool_fee: typeof uint64 }>,
 	[OperationId.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_ERC20_SEND_DEPOSIT]: typeof defaultFeeParametersSerializer,
+	[OperationId.SIDECHAIN_ERC20_SEND_DEPOSIT_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_ERC20_SEND_WITHDRAW]: typeof defaultFeeParametersSerializer,
+	[OperationId.SIDECHAIN_ERC20_SEND_WITHDRAW_TOKEN]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_ISSUE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_ERC20_BURN]: typeof defaultFeeParametersSerializer,
@@ -85,6 +85,7 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.BLOCK_REWARD]: typeof defaultFeeParametersSerializer,
+	[OperationId.EVM_ADDRESS_REGISTER]: typeof defaultFeeParametersSerializer,
 }[T];
 
 declare const feeParametersSerializer: StaticVariantSerializer<{

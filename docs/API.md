@@ -1,3 +1,10 @@
+# Table of contents
+
+- [Api](#api)
+- [Classes](#classes)
+- [Functions](#functions)
+- [Typedefs](#typedefs)
+
 ### Api
 This library provides api blockchain methods.
 
@@ -16,7 +23,7 @@ try {
 ## Classes
 
 <dl>
-<dt><a href="#API">API</a></dt>
+<dt><a href="#APIInstance">API instance</a></dt>
 <dd></dd>
 </dl>
 
@@ -105,7 +112,7 @@ try {
 <dd></dd>
 <dt><a href="#getProposedTransactions">getProposedTransactions(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getContractLogs">getContractLogs(contractId, topics, fromBlock, toBlock)</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
+<dt><a href="#getContractLogs">getContractLogs(opts: { contracts, topics, fromBlock, toBlock })</a> ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getContractResult">getContractResult(resultContractId, force)</a> ⇒ <code><a href="#ContractResult">Promise.&lt;ContractResult&gt;</a></code></dt>
 <dd></dd>
@@ -228,9 +235,9 @@ try {
 <dd></dd>
 </dl>
 
-<a name="API"></a>
+<a name="APIInstance"></a>
 
-## API
+## API instance
 **Kind**: global class
 <a name="new_API_new"></a>
 
@@ -627,12 +634,12 @@ try {
 
 <a name="getContractLogs"></a>
 
-## getContractLogs(contractId, topics, fromBlock, toBlock) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
+## getContractLogs(opts: { contracts, topics, fromBlock, toBlock }) ⇒ <code>Promise.&lt;Array.&lt;ContractLogs&gt;&gt;</code>
 **Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
-| contractId | <code>String</code> | [Id of the contract to retrieve] |
+| contracts | <code>Array.&lt;String&gt;</code> | [Ids of the contracts to retrieve] |
 | topics | <code>Array.&lt;String&gt;</code> | [Array of topics] |
 | fromBlock | <code>Number</code> | [Block number from which to retrieve (non negative integer)] |
 | toBlock | <code>Number</code> | [Block number to which retrieve (non negative integer)] |
@@ -1213,7 +1220,8 @@ try {
     block_num:Number,
     trx_in_block:Number,
     op_in_block:Number,
-    virtual_op:Number
+    virtual_op:Number,
+    proposal_hist_id: Number|undefined,
 }
 ```
 ## FullAccount : <code>Object</code>
@@ -1313,7 +1321,9 @@ try {
 {
     address:String,
     log:Array.<String>,
-    data:String
+    data:String,
+    trx_num:Number,
+    op_num:Number
 }
 ```
 ## ContractResult : <code>Object</code>
@@ -1394,6 +1404,7 @@ or
    result: [0, {}],
    trx_in_block:Number,
    virtual_op:Number,
+   proposal_hist_id: Number
 }
 ```
 

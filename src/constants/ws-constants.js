@@ -1,4 +1,4 @@
-export const CONNECTION_TIMEOUT = 5 * 1000;
+export const CONNECTION_TIMEOUT = 30e3;
 export const MAX_RETRIES = 1000;
 export const PING_TIMEOUT = 10 * 1000;
 export const PING_DELAY = 10 * 1000;
@@ -13,6 +13,7 @@ export const CHAIN_API = {
 	ASSET_API: 'asset',
 	LOGIN_API: 'login',
 	NETWORK_NODE_API: 'network_node',
+	ECHORAND_API: 'echorand',
 };
 
 export const CHAIN_APIS = [
@@ -23,6 +24,7 @@ export const CHAIN_APIS = [
 	CHAIN_API.ASSET_API,
 	CHAIN_API.LOGIN_API,
 	CHAIN_API.NETWORK_NODE_API,
+	CHAIN_API.ECHORAND_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
 	CHAIN_API.DATABASE_API,

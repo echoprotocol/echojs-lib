@@ -1,7 +1,7 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
 import * as assert from 'assert';
 import { Map, List, fromJS } from 'immutable';
-
+import BigNumber from 'bignumber.js';
 import {
 	isNumber,
 	isArray,
@@ -28,7 +28,7 @@ import {
 	isBtcAddressId,
 	isObject,
 	isInt64,
-	validateSidechainType,
+	validateSidechainType, isUInt32,
 } from '../utils/validators';
 
 import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
@@ -333,7 +333,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 * 			block_num:Number,
 * 			trx_in_block:Number,
 * 			op_in_block:Number,
-* 			virtual_op:Number
+* 			virtual_op:Number,
+* 			proposal_hist_id: Number|undefined
 *  		}
 *  	} AccountHistory */
 
@@ -429,6 +430,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		address:String,
 *  		log:Array.<String>,
 *  		data:String
+ *  	trx_num:Number,
+ *  	op_num:Number
 *  	}
 *  	} ContractLogs */
 
@@ -476,7 +479,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		op_in_trx:Number,
 *		result: [0, {}],
 *  		trx_in_block:Number,
-*  		virtual_op:Number
+*  		virtual_op:Number,
+*  		proposal_hist_id: Number
 *  	}
 * 	} ContractHistory */
 
@@ -1929,16 +1933,52 @@ class API {
 	}
 
 	/**
-	 * @param {ContractLogsFilterOptions_t} [opts]
-	 * @returns {Promise<Log[]>}
+	 * @param {Object} [opts]
+	 * @param {string[]} [opts.contracts]
+	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
+	 * @param {number | BigNumber} [opts.fromBlock]
+	 * @param {number | BigNumber} [opts.toBlock]
+	 * @returns {Promise<Array<ContractLogs>>}
 	 */
-	async getContractLogs(opts = {}) {
+	async getContractLogs(opts = { }) {
+		if (opts.contracts !== undefined) {
+			assert.ok(Array.isArray(opts.contracts), '"contracts" option is not an array');
+			for (const contractId of opts.contracts) assert.ok(isContractId(contractId));
+		}
+		/** @type {typeof opts["topics"]} */
+		let topics;
+		if (opts.topics !== undefined) {
+			assert.ok(Array.isArray(opts.topics), '"topics" option is not an array');
+			topics = new Array(opts.topics.length).fill(null);
+			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
+				let topicVariants = opts.topics[topicIndex];
+				if (topicVariants === null) topicVariants = [];
+				else if (typeof topicVariants === 'string') topicVariants = [topicVariants];
+				topics[topicIndex] = new Array(topicVariants.length).fill(null);
+				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
+					let variant = topicVariants[variantIndex];
+					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
+					assert.ok(typeof variant === 'string', 'invalid "topic" option type');
+					if (variant.startsWith('0x')) variant = variant.slice(2);
+					assert.ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
+					assert.ok(variant.length === 64, 'invalid "topic" length');
+					topics[topicIndex][variantIndex] = variant;
+				}
+			}
+		}
+		for (const field of ['fromBlock', 'toBlock']) {
+			assert.ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
+		}
 		return new Promise((resolve) => {
-			this.wsApi.database.getContractLogs((res) => resolve(res), toRawContractLogsFilterOptions(opts));
-		}).then((res) => {
-			assert.ok(Array.isArray(res));
-			assert.strictEqual(res.length, 1);
-			return res[0];
+			const cb = (logs) => {
+				resolve(logs[0].map(([, log]) => log));
+			};
+			this.wsApi.database.getContractLogs(cb, {
+				contracts: opts.contracts,
+				topics,
+				from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
+				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
+			});
 		});
 	}
 
@@ -2126,10 +2166,11 @@ class API {
 	 * @param {string} name
 	 * @param {string} activeKey
 	 * @param {string} echoRandKey
+	 * @param {string} evmAddress
 	 * @param {() => any} [wasBroadcastedCallback]
 	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
-	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
+	async registerAccount(name, activeKey, echoRandKey, evmAddress, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
@@ -2143,6 +2184,7 @@ class API {
 					name,
 					activeKey,
 					echoRandKey,
+					evmAddress,
 					nonce,
 					randNum,
 				);
@@ -2578,17 +2620,18 @@ class API {
 	 * 	@param {String} name
 	 * 	@param {String} activeKey
 	 * 	@param {String} echorandKey
+	 * 	@param {String} evmAddress
 	 * 	@param {Number} nounce
 	 * 	@param {Number} randNum
 	 * 	@param {Function} wasBroadcastedCallback
 	 *
  	 *  @return {Promise<Boolean>}
 	 */
-	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+	submitRegistrationSolution(name, activeKey, echorandKey, evmAddress, nounce, randNum, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution((res) =>
-					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+					resolve(res), name, activeKey, echorandKey, evmAddress, nounce, randNum);
 			} catch (error) {
 				reject(error);
 			}

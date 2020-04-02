@@ -5,5 +5,6 @@ export default interface AccountHistory {
 	block_num: number,
 	trx_in_block: number,
 	op_in_block: number,
-	virtual_op: number
+	virtual_op: number,
+	proposal_hist_id: number|undefined,
 }
