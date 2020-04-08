@@ -33,7 +33,15 @@ class RegistrationAPI {
  	 *  @return {Promise}
 	 */
 	submitRegistrationSolution(callback, name, activeKey, echorandKey, evmAddress, nonce, randNum) {
-		return this.db.exec('submit_registration_solution', [callback, name, activeKey, echorandKey, evmAddress, nonce, randNum]);
+		return this.db.exec('submit_registration_solution', [
+			callback,
+			name,
+			activeKey,
+			echorandKey,
+			evmAddress,
+			nonce,
+			randNum,
+		]);
 	}
 
 	/**

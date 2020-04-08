@@ -28,7 +28,7 @@ export const assetCreateOperationPropsSerializer = struct({
 	fee: asset,
 	issuer: accountId,
 	symbol: stringSerializer,
-	precision: uint8,
+	precision: uint32,
 	common_options: assetOptionsSerializer,
 	bitasset_options: optional(bitassetOptionsSerializer),
 	extensions,

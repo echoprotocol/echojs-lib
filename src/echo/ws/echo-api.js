@@ -1,13 +1,20 @@
+import { ConnectionType } from '../providers';
+
+/** @typedef {import("../providers").WSProvider} WSProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+
 class EchoApi {
 
 	/**
 	 *
-	 * @param {ReconnectionWebSocket} wsRpc
+	 * @param {HttpProvider | WSProvider} provider
 	 * @param {String} apiName
 	 */
-	constructor(wsRpc, apiName) {
-		this.ws_rpc = wsRpc;
-		this.api_name = apiName;
+	constructor(provider, apiName) {
+		this.provider = provider;
+		this.apiName = apiName;
+		/** @type {number | undefined} */
+		this.apiId = undefined;
 	}
 
 	/**
@@ -15,12 +22,10 @@ class EchoApi {
 	 * @returns {Promise}
 	 */
 	async init() {
-		try {
-			this.api_id = await this.ws_rpc.call([1, this.api_name, []]);
-			return this;
-		} catch (e) {
-			throw e;
-		}
+		if (this.provider.connectionType === ConnectionType.WS) {
+			this.apiId = await this.provider.call(1, this.apiName, []);
+		} else this.apiId = 0;
+		return this;
 	}
 
 	/**
@@ -30,14 +35,13 @@ class EchoApi {
 	 * @returns {Promise}
 	 */
 	exec(method, params) {
-		if (!this.api_id) {
-			const errMessage = [
-				`${this.api_name} API is not available`,
-				'try to specify this in connection option called "apis"',
-			].join(', ');
-			return Promise.reject(new Error(errMessage));
-		}
-		return this.ws_rpc.call([this.api_id, method, params]);
+		if (this.provider.connectionType === ConnectionType.HTTP) return this.provider.call(method, params);
+		if (this.apiId !== undefined) return this.provider.call(this.apiId, method, params);
+		const errMessage = [
+			`${this.apiName} API is not available`,
+			'try to specify this in connection option called "apis"',
+		].join(', ');
+		return Promise.reject(new Error(errMessage));
 	}
 
 }

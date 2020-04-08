@@ -1,4 +1,3 @@
-/* eslint-disable max-len,no-empty */
 import WebSocket from 'isomorphic-ws';
 
 import {
@@ -11,8 +10,11 @@ import {
 } from '../../constants/ws-constants';
 
 import { isVoid } from '../../utils/validators';
+import * as ConnectionType from './connection-types';
 
-class ReconnectionWebSocket {
+export default class WSProvider {
+
+	get connectionType() { return ConnectionType.WS; }
 
 	constructor() {
 		this.onOpen = null;
@@ -32,28 +34,23 @@ class ReconnectionWebSocket {
 
 	/**
 	 * init params and connect to chain
-	 * @param {String} url - remote node address,
+	 *
+	 * @param {string} url remote node address,
 	 * should be (http|https|ws|wws)://(domain|ipv4|ipv6):port(?)/resource(?)?param=param(?).
-	 * @param {Object} options - connection params.
-	 * @param {Number} options.connectionTimeout - delay in ms between reconnection requests, default call delay before reject it.
-	 * @param {Number} options.maxRetries - max count retries before close socket.
-	 * @param {Number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
-	 * @param {Number} options.pingDelay - delay between last recived message and start checking connection.
-	 * @param {Boolean} options.debug - debug mode status.
-	 * @returns {Promise}
+	 *
+	 * @param {Object} options connection params.
+	 *
+	 * @param {number} options.connectionTimeout
+	 * delay in ms between reconnection requests, default call delay before reject it.
+	 *
+	 * @param {number} options.maxRetries - max count retries before close socket.
+	 * @param {number} options.pingTimeout - delay time in ms between ping request and socket disconnect.
+	 * @param {number} options.pingDelay - delay between last recived message and start checking connection.
+	 * @param {boolean} options.debug - debug mode status.
+	 * @returns {Promise<void>}
 	 */
-	async connect(
-		url,
-		options = {},
-	) {
-		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-			try {
-				await this.close();
-			} catch (error) {
-				throw error;
-			}
-		}
-
+	async connect(url, options = {}) {
+		if (this.ws && this.ws.readyState === WebSocket.OPEN) await this.close();
 		this._options = {
 			connectionTimeout: isVoid(options.connectionTimeout) ? CONNECTION_TIMEOUT : options.connectionTimeout,
 			maxRetries: isVoid(options.maxRetries) ? MAX_RETRIES : options.maxRetries,
@@ -80,7 +77,7 @@ class ReconnectionWebSocket {
 
 	/**
 	 * inner connection method
-	 * @returns {Promise}
+	 * @returns {Promise<void>}
 	 */
 	_connect() {
 
@@ -491,5 +488,3 @@ class ReconnectionWebSocket {
 	}
 
 }
-
-export default ReconnectionWebSocket;
