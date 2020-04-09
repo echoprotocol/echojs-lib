@@ -1,14 +1,18 @@
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
+
+/** @typedef {import("../providers").WSProvider} WSProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
-class DatabaseAPI {
+class DatabaseAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *
-	 *  @param {EchoApi} db
+	 * @constructor
+	 * @param {} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.DATABASE_API);
 	}
 
 	/**
@@ -17,7 +21,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getObjects(objectIds) {
-		return this.db.exec('get_objects', [objectIds]);
+		return this.exec('get_objects', [objectIds]);
 	}
 
 	/**
@@ -25,7 +29,7 @@ class DatabaseAPI {
 	 * @returns {Promise<boolean>}
 	 */
 	checkERC20Token(contractId) {
-		return this.db.exec('check_erc20_token', [contractId]);
+		return this.exec('check_erc20_token', [contractId]);
 	}
 
 	/**
@@ -36,7 +40,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	setSubscribeCallback(callback, notifyRemoveCreate) {
-		return this.db.exec('set_subscribe_callback', [callback, notifyRemoveCreate]);
+		return this.exec('set_subscribe_callback', [callback, notifyRemoveCreate]);
 	}
 
 	/**
@@ -46,7 +50,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	setPendingTransactionCallback(callback) {
-		return this.db.exec('set_pending_transaction_callback', [callback]);
+		return this.exec('set_pending_transaction_callback', [callback]);
 	}
 
 	/**
@@ -56,7 +60,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	setBlockAppliedCallback(callback) {
-		return this.db.exec('set_block_applied_callback', [callback]);
+		return this.exec('set_block_applied_callback', [callback]);
 	}
 
 	/**
@@ -65,7 +69,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	cancelAllSubscriptions() {
-		return this.db.exec('cancel_all_subscriptions', []);
+		return this.exec('cancel_all_subscriptions', []);
 	}
 
 	/**
@@ -75,7 +79,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getBlockHeader(blockNum) {
-		return this.db.exec('get_block_header', [blockNum]);
+		return this.exec('get_block_header', [blockNum]);
 	}
 
 	/**
@@ -85,7 +89,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getBlock(blockNum) {
-		return this.db.exec('get_block', [blockNum]);
+		return this.exec('get_block', [blockNum]);
 	}
 
 	/**
@@ -96,7 +100,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getTransaction(blockNum, transactionIndex) {
-		return this.db.exec('get_transaction', [blockNum, transactionIndex]);
+		return this.exec('get_transaction', [blockNum, transactionIndex]);
 	}
 
 	/**
@@ -105,7 +109,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getChainProperties() {
-		return this.db.exec('get_chain_properties', []);
+		return this.exec('get_chain_properties', []);
 	}
 
 	/**
@@ -114,7 +118,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getGlobalProperties() {
-		return this.db.exec('get_global_properties', []);
+		return this.exec('get_global_properties', []);
 	}
 
 	/**
@@ -123,7 +127,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getConfig() {
-		return this.db.exec('get_config', []);
+		return this.exec('get_config', []);
 	}
 
 	/**
@@ -132,7 +136,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getChainId() {
-		return this.db.exec('get_chain_id', []);
+		return this.exec('get_chain_id', []);
 	}
 
 	/**
@@ -141,7 +145,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getDynamicGlobalProperties() {
-		return this.db.exec('get_dynamic_global_properties', []);
+		return this.exec('get_dynamic_global_properties', []);
 	}
 
 	/**
@@ -151,7 +155,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getKeyReferences(keys) {
-		return this.db.exec('get_key_references', [keys]);
+		return this.exec('get_key_references', [keys]);
 	}
 
 	/**
@@ -161,7 +165,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccounts(accountIds) {
-		return this.db.exec('get_accounts', [accountIds]);
+		return this.exec('get_accounts', [accountIds]);
 	}
 
 	/**
@@ -172,7 +176,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getFullAccounts(accountNamesOrIds, subscribe) {
-		return this.db.exec('get_full_accounts', [accountNamesOrIds, subscribe]);
+		return this.exec('get_full_accounts', [accountNamesOrIds, subscribe]);
 	}
 
 	/**
@@ -182,7 +186,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountByName(accountName) {
-		return this.db.exec('get_account_by_name', [accountName]);
+		return this.exec('get_account_by_name', [accountName]);
 	}
 
 	/**
@@ -192,7 +196,7 @@ class DatabaseAPI {
 	 * @returns {Promise<unknown>}
 	 */
 	getAccountDeposits(account, type) {
-		return this.db.exec('get_account_deposits', [account, type]);
+		return this.exec('get_account_deposits', [account, type]);
 	}
 
 	/**
@@ -202,7 +206,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountReferences(accountId) {
-		return this.db.exec('get_account_references', [accountId]);
+		return this.exec('get_account_references', [accountId]);
 	}
 
 	/**
@@ -212,7 +216,7 @@ class DatabaseAPI {
 	 * @returns {Promise<unknown>}
 	 */
 	getAccountWithdrawals(account, type) {
-		return this.db.exec('get_account_withdrawals', [account, type]);
+		return this.exec('get_account_withdrawals', [account, type]);
 	}
 
 	/**
@@ -222,7 +226,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	lookupAccountNames(accountNames) {
-		return this.db.exec('lookup_account_names', [accountNames]);
+		return this.exec('lookup_account_names', [accountNames]);
 	}
 
 	/**
@@ -233,7 +237,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	lookupAccounts(lowerBoundName, limit) {
-		return this.db.exec('lookup_accounts', [lowerBoundName, limit]);
+		return this.exec('lookup_accounts', [lowerBoundName, limit]);
 	}
 
 	/**
@@ -242,7 +246,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountCount() {
-		return this.db.exec('get_account_count', []);
+		return this.exec('get_account_count', []);
 	}
 
 	/**
@@ -253,7 +257,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountBalances(accountId, assetIds) {
-		return this.db.exec('get_account_balances', [accountId, assetIds]);
+		return this.exec('get_account_balances', [accountId, assetIds]);
 	}
 
 	/**
@@ -264,7 +268,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getNamedAccountBalances(accountName, assetIds) {
-		return this.db.exec('get_named_account_balances', [accountName, assetIds]);
+		return this.exec('get_named_account_balances', [accountName, assetIds]);
 	}
 
 	/**
@@ -274,7 +278,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getVestedBalances(objectIds) {
-		return this.db.exec('get_vested_balances', [objectIds]);
+		return this.exec('get_vested_balances', [objectIds]);
 	}
 
 	/**
@@ -284,7 +288,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getVestingBalances(accountId) {
-		return this.db.exec('get_vesting_balances', [accountId]);
+		return this.exec('get_vesting_balances', [accountId]);
 	}
 
 	/**
@@ -294,7 +298,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAssets(assetIds) {
-		return this.db.exec('get_assets', [assetIds]);
+		return this.exec('get_assets', [assetIds]);
 	}
 
 	/**
@@ -305,7 +309,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	listAssets(lowerBoundSymbol, limit) {
-		return this.db.exec('list_assets', [lowerBoundSymbol, limit]);
+		return this.exec('list_assets', [lowerBoundSymbol, limit]);
 	}
 
 	/**
@@ -315,7 +319,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	lookupAssetSymbols(symbolsOrIds) {
-		return this.db.exec('lookup_asset_symbols', [symbolsOrIds]);
+		return this.exec('lookup_asset_symbols', [symbolsOrIds]);
 	}
 
 	/**
@@ -325,7 +329,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getMarginPositions(accountId) {
-		return this.db.exec('get_margin_positions', [accountId]);
+		return this.exec('get_margin_positions', [accountId]);
 	}
 
 	/**
@@ -337,7 +341,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getTicker(baseAssetName, quoteAssetName) {
-		return this.db.exec('get_ticker', [baseAssetName, quoteAssetName]);
+		return this.exec('get_ticker', [baseAssetName, quoteAssetName]);
 	}
 
 	/**
@@ -349,7 +353,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	get24Volume(baseAssetName, quoteAssetName) {
-		return this.db.exec('get_24_volume', [baseAssetName, quoteAssetName]);
+		return this.exec('get_24_volume', [baseAssetName, quoteAssetName]);
 	}
 
 	/**
@@ -364,7 +368,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getTradeHistory(baseAssetName, quoteAssetName, start, stop, limit = 100) {
-		return this.db.exec('get_trade_history', [baseAssetName, quoteAssetName, start, stop, limit]);
+		return this.exec('get_trade_history', [baseAssetName, quoteAssetName, start, stop, limit]);
 	}
 
 	/**
@@ -375,7 +379,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getCommitteeMembers(committeeMemberIds) {
-		return this.db.exec('get_committee_members', [committeeMemberIds]);
+		return this.exec('get_committee_members', [committeeMemberIds]);
 	}
 
 	/**
@@ -386,7 +390,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getCommitteeMemberByAccount(accountId) {
-		return this.db.exec('get_committee_member_by_account', [accountId]);
+		return this.exec('get_committee_member_by_account', [accountId]);
 	}
 
 	/**
@@ -398,7 +402,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	lookupCommitteeMemberAccounts(lowerBoundName, limit) {
-		return this.db.exec('lookup_committee_member_accounts', [lowerBoundName, limit]);
+		return this.exec('lookup_committee_member_accounts', [lowerBoundName, limit]);
 	}
 
 	/**
@@ -410,7 +414,7 @@ class DatabaseAPI {
 	 */
 	getTransactionHex(transaction) {
 		// transaction is signed
-		return this.db.exec('get_transaction_hex', [transaction]);
+		return this.exec('get_transaction_hex', [transaction]);
 	}
 
 	/**
@@ -422,7 +426,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getRequiredSignatures(transaction, availableKeys) {
-		return this.db.exec('get_required_signatures', [transaction, availableKeys]);
+		return this.exec('get_required_signatures', [transaction, availableKeys]);
 	}
 
 	/**
@@ -433,7 +437,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getPotentialSignatures(transaction) {
-		return this.db.exec('get_potential_signatures', [transaction]);
+		return this.exec('get_potential_signatures', [transaction]);
 	}
 
 	/**
@@ -444,7 +448,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	verifyAuthority(transaction) {
-		return this.db.exec('verify_authority', [transaction]);
+		return this.exec('verify_authority', [transaction]);
 	}
 
 	/**
@@ -457,7 +461,7 @@ class DatabaseAPI {
 	 */
 	verifyAccountAuthority(accountNameOrId, signers) {
 		// signers - set of public keys
-		return this.db.exec('verify_account_authority', [accountNameOrId, signers]);
+		return this.exec('verify_account_authority', [accountNameOrId, signers]);
 	}
 
 	/**
@@ -469,7 +473,7 @@ class DatabaseAPI {
 	 */
 	validateTransaction(transaction) {
 		// signed transaction
-		return this.db.exec('validate_transaction', [transaction]);
+		return this.exec('validate_transaction', [transaction]);
 	}
 
 	/**
@@ -481,7 +485,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getRequiredFees(operations, assetId) {
-		return this.db.exec('get_required_fees', [operations, assetId]);
+		return this.exec('get_required_fees', [operations, assetId]);
 	}
 
 	/**
@@ -492,7 +496,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getProposedTransactions(accountNameOrId) {
-		return this.db.exec('get_proposed_transactions', [accountNameOrId]);
+		return this.exec('get_proposed_transactions', [accountNameOrId]);
 	}
 
 	/**
@@ -506,7 +510,7 @@ class DatabaseAPI {
 	 * @returns {Promise<null>}
 	 */
 	getContractLogs(callback, opts) {
-		return this.db.exec('get_contract_logs', [callback, opts]);
+		return this.exec('get_contract_logs', [callback, opts]);
 	}
 
 	/**
@@ -518,7 +522,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	subscribeContractLogs(callback, contractTopicsMap) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
+		return this.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
 	}
 
 	/**
@@ -529,7 +533,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContractResult(resultContractId) {
-		return this.db.exec('get_contract_result', [resultContractId]);
+		return this.exec('get_contract_result', [resultContractId]);
 	}
 
 	/**
@@ -540,7 +544,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContract(contractId) {
-		return this.db.exec('get_contract', [contractId]);
+		return this.exec('get_contract', [contractId]);
 	}
 
 	/**
@@ -552,7 +556,7 @@ class DatabaseAPI {
 	 * @return {Promise<string>}
 	 */
 	callContractNoChangingState(contractId, caller, asset, code) {
-		return this.db.exec('call_contract_no_changing_state', [contractId, caller, asset, code]);
+		return this.exec('call_contract_no_changing_state', [contractId, caller, asset, code]);
 	}
 
 	/**
@@ -563,7 +567,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContracts(contractIds) {
-		return this.db.exec('get_contracts', [contractIds]);
+		return this.exec('get_contracts', [contractIds]);
 	}
 
 	/**
@@ -574,7 +578,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContractBalances(contractId) {
-		return this.db.exec('get_contract_balances', [contractId]);
+		return this.exec('get_contract_balances', [contractId]);
 	}
 
 	/**
@@ -585,7 +589,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContractPoolWhitelist(contractId) {
-		return this.db.exec('get_contract_pool_whitelist', [contractId]);
+		return this.exec('get_contract_pool_whitelist', [contractId]);
 	}
 
 	/**
@@ -596,7 +600,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	subscribeContracts(contractIds) {
-		return this.db.exec('subscribe_contracts', [contractIds]);
+		return this.exec('subscribe_contracts', [contractIds]);
 	}
 
 	/**
@@ -607,7 +611,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getContractPoolBalance(contractId) {
-		return this.db.exec('get_contract_pool_balance', [contractId]);
+		return this.exec('get_contract_pool_balance', [contractId]);
 	}
 
 	/**
@@ -618,7 +622,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getRecentTransactionById(transactionId) {
-		return this.db.exec('get_recent_transaction_by_id', [transactionId]);
+		return this.exec('get_recent_transaction_by_id', [transactionId]);
 	}
 
 	/**
@@ -629,7 +633,7 @@ class DatabaseAPI {
 	 * 	@return {Promise}
 	 */
 	getBalanceObjects(keys) {
-		return this.db.exec('get_balance_objects', [keys]);
+		return this.exec('get_balance_objects', [keys]);
 	}
 
 	/**
@@ -638,7 +642,7 @@ class DatabaseAPI {
 	 * @returns {Promise<unknown>}
 	 */
 	getBlockRewards(blockNum) {
-		return this.db.exec('get_block_rewards', [blockNum]);
+		return this.exec('get_block_rewards', [blockNum]);
 	}
 
 	/**
@@ -649,7 +653,7 @@ class DatabaseAPI {
 	 * 	@return {Promise}
 	 */
 	getBlockVirtualOperations(blockNum) {
-		return this.db.exec('get_block_virtual_ops', [blockNum]);
+		return this.exec('get_block_virtual_ops', [blockNum]);
 	}
 
 	/**
@@ -659,7 +663,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getFrozenBalances(accountId) {
-		return this.db.exec('get_frozen_balances', [accountId]);
+		return this.exec('get_frozen_balances', [accountId]);
 	}
 
 	/**
@@ -669,7 +673,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getBtcAddress(accountId) {
-		return this.db.exec('get_btc_address', [accountId]);
+		return this.exec('get_btc_address', [accountId]);
 	}
 
 	/**
@@ -679,7 +683,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getBtcDepositScript(btcDepositId) {
-		return this.db.exec('get_btc_deposit_script', [btcDepositId]);
+		return this.exec('get_btc_deposit_script', [btcDepositId]);
 	}
 
 	/**
@@ -689,7 +693,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getCommitteeFrozenBalance(committeeMemberId) {
-		return this.db.exec('get_committee_frozen_balance', [committeeMemberId]);
+		return this.exec('get_committee_frozen_balance', [committeeMemberId]);
 	}
 
 	/**
@@ -701,7 +705,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountAddresses(id, from, limit) {
-		return this.db.exec('get_account_addresses', [id, from, limit]);
+		return this.exec('get_account_addresses', [id, from, limit]);
 	}
 
 	/**
@@ -711,7 +715,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getEthAddress(id) {
-		return this.db.exec('get_eth_address', [id]);
+		return this.exec('get_eth_address', [id]);
 	}
 
 	/**
@@ -721,7 +725,7 @@ class DatabaseAPI {
 	 *  @return {Promise}
 	 */
 	getAccountByAddress(address) {
-		return this.db.exec('get_account_by_address', [address]);
+		return this.exec('get_account_by_address', [address]);
 	}
 
 }

@@ -6,6 +6,6 @@ export default class EchoApiEngine {
 	public readonly availableApis: readonly ChainApi[];
 	public readonly api: Readonly<{ [apiName in ChainApi]: EchoApi }>;
 	public readonly provider: HttpProvider | WsProvider;
-	constructor(apis: readonly ChainApi[]);
+	constructor(apis: readonly ChainApi[], provider: HttpProvider | WsProvider);
 	public init(): Promise<void>;
 }

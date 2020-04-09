@@ -12,8 +12,9 @@ import {
 import { isVoid } from '../../utils/validators';
 import * as ConnectionType from './connection-types';
 
-export default class WSProvider {
+export default class WsProvider {
 
+	get connected() { return this.ws && this.ws.readyState === WebSocket.OPEN; }
 	get connectionType() { return ConnectionType.WS; }
 
 	constructor() {
@@ -50,7 +51,7 @@ export default class WSProvider {
 	 * @returns {Promise<void>}
 	 */
 	async connect(url, options = {}) {
-		if (this.ws && this.ws.readyState === WebSocket.OPEN) await this.close();
+		if (this.connected) await this.close();
 		this._options = {
 			connectionTimeout: isVoid(options.connectionTimeout) ? CONNECTION_TIMEOUT : options.connectionTimeout,
 			maxRetries: isVoid(options.maxRetries) ? MAX_RETRIES : options.maxRetries,
@@ -436,10 +437,10 @@ export default class WSProvider {
 		this.ws = null;
 
 		if (ws) {
-			ws.onopen = () => { };
-			ws.onclose = () => { };
-			ws.onerror = () => { };
-			ws.onmessage = () => { };
+			ws.onopen = () => {};
+			ws.onclose = () => {};
+			ws.onerror = () => {};
+			ws.onmessage = () => {};
 			ws.close();
 		}
 

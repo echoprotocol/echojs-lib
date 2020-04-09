@@ -1,6 +1,7 @@
 import { HttpProvider, WsProvider } from "./providers";
 
 export default class EchoApi {
+	public readonly apiId: number | null;
 	public readonly apiName: string;
 	public readonly provider: HttpProvider | WsProvider;
 	constructor(provider: HttpProvider | WsProvider, apiName: string);

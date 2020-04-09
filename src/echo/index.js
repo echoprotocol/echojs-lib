@@ -1,12 +1,11 @@
-import WS from './ws';
-import WSAPI from './ws-api';
-
 import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS } from '../constants/ws-constants';
-import WalletAPI from './ws-api/wallet-api';
+import { STATUS, DEFAULT_CHAIN_APIS } from '../constants/ws-constants';
+import { WalletApi } from './apis';
+import EchoApiEngine from './engine';
+import { ConnectionType, WsProvider, HttpProvider } from './providers';
 
 /** @typedef {{ batch?: number, timeout?: number }} RegistrationOptions */
 
@@ -15,15 +14,17 @@ import WalletAPI from './ws-api/wallet-api';
 class Echo {
 
 	constructor() {
-		this._ws = new WS();
-		this.subscriber = new Subscriber(this._ws);
+		/** @type {EchoApiEngine | null} */
+		this.engine = null;
 		this._isInitModules = false;
 		this.initEchoApi = this.initEchoApi.bind(this);
-		this.walletApi = new WalletAPI();
+		this.walletApi = new WalletApi();
 	}
 
 	get isConnected() {
-		return this._ws._connected;
+		if (this.engine === null) return false;
+		if (this.engine.provider.connectionType === ConnectionType.HTTP) return true;
+		return this.engine.provider.connected;
 	}
 
 	/**
@@ -38,11 +39,10 @@ class Echo {
 	 * @private
 	 */
 	async _connectToNode(address, options) {
-		await this._ws.connect(address, options);
-
-		if (this._isInitModules) {
-			return;
-		}
+		const provider = address.startsWith('ws') ? new WsProvider() : new HttpProvider(address);
+		if (provider.connectionType === ConnectionType.WS) await provider.connect(address, options);
+		this.engine = new EchoApiEngine(options.apis || DEFAULT_CHAIN_APIS, provider);
+		if (this._isInitModules) return;
 
 		await this._initModules(options);
 
@@ -51,6 +51,7 @@ class Echo {
 		}
 
 		this.cache.setOptions(options);
+		this.subscriber = new Subscriber(this.engine);
 		this.subscriber.setOptions(options);
 	}
 
@@ -59,40 +60,31 @@ class Echo {
 	 * @param {Options} options
 	 */
 	async connect(address, options = {}) {
-		if (this._ws._connected) {
-			throw new Error('Connected');
-		}
-
-		try {
-			await Promise.all([
-				...address ? [this._connectToNode(address, options)] : [],
-				...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
-			]);
-		} catch (e) {
-			throw e;
-		}
-
+		if (this.isConnected) throw new Error('Connected');
+		await Promise.all([
+			...address ? [this._connectToNode(address, options)] : [],
+			...options.wallet ? [this.walletApi.connect(options.wallet, options)] : [],
+		]);
 	}
 
 	/** @param {Options} options */
 	async _initModules(options) {
 		this._isInitModules = true;
 
-		this._wsApi = new WSAPI(this._ws);
-
 		this.cache = new Cache(options.cache);
-		this.api = new API(this.cache, this._wsApi, options.registration);
-		await this.subscriber.init(this.cache, this._wsApi, this.api);
-		this._ws.on(STATUS.OPEN, this.initEchoApi);
+		this.api = new API(this.cache, this.engine, options.registration);
+		await this.engine.init();
+		// await this.subscriber.init(this.cache, this.engine, this.api);
+		// this._ws.on(STATUS.OPEN, this.initEchoApi);
 	}
 
 	async initEchoApi() {
 		await this._ws.initEchoApi();
-		await this.subscriber.init(this.cache, this._wsApi, this.api);
+		// await this.subscriber.init(this.cache, this.engine, this.api);
 	}
 
 	syncCacheWithStore(store) {
-		if (this._ws._connected) {
+		if (this.isConnected) {
 			this.cache.setStore({ store });
 		}
 		this.store = store;
@@ -102,7 +94,6 @@ class Echo {
 		this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
 		await this._ws.reconnect();
 		await this.initEchoApi();
-		this._ws.on(STATUS.OPEN, this.initEchoApi);
 	}
 
 	async disconnect() {

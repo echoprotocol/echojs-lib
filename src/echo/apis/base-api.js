@@ -3,22 +3,21 @@ import { ConnectionType } from '../providers';
 /** @typedef {import("../providers").WSProvider} WSProvider */
 /** @typedef {import("../providers").HttpProvider} HttpProvider */
 
-class EchoApi {
+export default class BaseEchoApi {
 
 	/**
 	 *
 	 * @param {HttpProvider | WSProvider} provider
-	 * @param {String} apiName
+	 * @param {string} apiName
 	 */
 	constructor(provider, apiName) {
 		this.provider = provider;
 		this.apiName = apiName;
-		/** @type {number | undefined} */
-		this.apiId = undefined;
+		/** @type {number | null} */
+		this.apiId = null;
 	}
 
 	/**
-	 *
 	 * @returns {Promise}
 	 */
 	async init() {
@@ -30,20 +29,20 @@ class EchoApi {
 
 	/**
 	 * execute API method with params
-	 * @param {String} method name
-	 * @param {Array<any>} params
+	 * @param {string} method name
+	 * @param {any[]} params
 	 * @returns {Promise}
 	 */
 	exec(method, params) {
+		if (this.apiId === null) {
+			const errMessage = [
+				`${this.apiName} API is not available`,
+				'try to specify this in connection option called "apis"',
+			].join(', ');
+			return Promise.reject(new Error(errMessage));
+		}
 		if (this.provider.connectionType === ConnectionType.HTTP) return this.provider.call(method, params);
-		if (this.apiId !== undefined) return this.provider.call(this.apiId, method, params);
-		const errMessage = [
-			`${this.apiName} API is not available`,
-			'try to specify this in connection option called "apis"',
-		].join(', ');
-		return Promise.reject(new Error(errMessage));
+		return this.provider.call(this.apiId, method, params);
 	}
 
 }
-
-export default EchoApi;

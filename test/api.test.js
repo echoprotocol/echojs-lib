@@ -11,7 +11,7 @@ import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
 
-describe('API', () => {
+describe.only('API', () => {
 	describe('API CONNECTION', () => {
 		describe('when apis are provided', () => {
 			const apis = [CHAIN_API.DATABASE_API, CHAIN_API.ASSET_API];
