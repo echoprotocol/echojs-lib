@@ -1,7 +1,7 @@
 import { CHAIN_API } from '../../constants/ws-constants';
 import BaseEchoApi from './base-api';
 
-/** @typedef {import("../providers").WSProvider} WSProvider */
+/** @typedef {import("../providers").WsProvider} WsProvider */
 /** @typedef {import("../providers").HttpProvider} HttpProvider */
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
@@ -9,7 +9,7 @@ class DatabaseAPI extends BaseEchoApi {
 
 	/**
 	 * @constructor
-	 * @param {} provider
+	 * @param {WsProvider | HttpProvider} provider
 	 */
 	constructor(provider) {
 		super(provider, CHAIN_API.DATABASE_API);

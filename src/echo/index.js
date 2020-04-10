@@ -1,6 +1,6 @@
 import Cache from './cache';
 import API from './api';
-import Subscriber from './subscriber';
+// import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS, DEFAULT_CHAIN_APIS } from '../constants/ws-constants';
 import { WalletApi } from './apis';
@@ -31,7 +31,7 @@ class Echo {
 	 * @readonly
 	 * @type {Set<string>}
 	 */
-	get apis() { return new Set(this._ws.apis); }
+	get apis() { return new Set(this.engine.apis); }
 
 	/**
 	 * @param {string} address
@@ -51,8 +51,8 @@ class Echo {
 		}
 
 		this.cache.setOptions(options);
-		this.subscriber = new Subscriber(this.engine);
-		this.subscriber.setOptions(options);
+		// this.subscriber = new Subscriber(this.engine);
+		// this.subscriber.setOptions(options);
 	}
 
 	/**
@@ -97,13 +97,13 @@ class Echo {
 	}
 
 	async disconnect() {
-		this.subscriber.callCbOnDisconnect();
-		this.subscriber.reset();
+		// this.subscriber.callCbOnDisconnect();
+		// this.subscriber.reset();
 		this.cache.reset();
-		await this._ws.close();
+		if (this.engine.provider.connectionType === ConnectionType.WS) await this.engine.provider.close();
 		this.onOpen = null;
 		this._isInitModules = false;
-		this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
+		// this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
 	}
 
 	/** @returns {Transaction} */

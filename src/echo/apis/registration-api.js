@@ -1,13 +1,18 @@
-/* eslint-disable max-len */
-class RegistrationAPI {
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
+
+/** @typedef {import("../providers").WsProvider} WsProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
+class RegistrationAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *
-	 *  @param {EchoApi} db [register api]
+	 * @constructor
+	 * @param {WsProvider | HttpProvider} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.REGISTRATION_API);
 	}
 
 	/**
@@ -16,7 +21,7 @@ class RegistrationAPI {
 	 *  @return {Promise.<{block_id: String, rand_num: string, difficulty: number}>}
 	 */
 	requestRegistrationTask() {
-		return this.db.exec('request_registration_task', []);
+		return this.exec('request_registration_task', []);
 	}
 
 	/**
@@ -33,7 +38,7 @@ class RegistrationAPI {
  	 *  @return {Promise}
 	 */
 	submitRegistrationSolution(callback, name, activeKey, echorandKey, evmAddress, nonce, randNum) {
-		return this.db.exec('submit_registration_solution', [
+		return this.exec('submit_registration_solution', [
 			callback,
 			name,
 			activeKey,
@@ -50,7 +55,7 @@ class RegistrationAPI {
  	 *  @return {Promise}
 	 */
 	getRegistrar() {
-		return this.db.exec('get_registrar', []);
+		return this.exec('get_registrar', []);
 	}
 
 }

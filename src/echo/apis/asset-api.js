@@ -1,12 +1,18 @@
-class AssetAPI {
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
+
+/** @typedef {import("../providers").WsProvider} WsProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
+class AssetAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *
-	 *  @param {EchoApi} db [asset api]
+	 * @constructor
+	 * @param {WsProvider | HttpProvider} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.ASSET_API);
 	}
 
 	/**
@@ -21,7 +27,7 @@ class AssetAPI {
 	 *  [ { name: 'init0', account_id: '1.2.6', amount: '100000039900000' } ]
 	 */
 	getAssetHolders(assetId, start, limit) {
-		return this.db.exec('get_asset_holders', [assetId, start, limit]);
+		return this.exec('get_asset_holders', [assetId, start, limit]);
 	}
 
 	/**
@@ -33,7 +39,7 @@ class AssetAPI {
 	 *  @return {Promise.<Number>} result - 8
 	 */
 	getAssetHoldersCount(assetId) {
-		return this.db.exec('get_asset_holders_count', [assetId]);
+		return this.exec('get_asset_holders_count', [assetId]);
 	}
 
 	/**
@@ -44,7 +50,7 @@ class AssetAPI {
 	 * 	[ { asset_id: '1.3.0', count: 8 } ]
 	 */
 	getAllAssetHolders() {
-		return this.db.exec('get_all_asset_holders', []);
+		return this.exec('get_all_asset_holders', []);
 	}
 
 }

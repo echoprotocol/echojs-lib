@@ -1,3 +1,10 @@
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
+
+/** @typedef {import("../providers").WsProvider} WsProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
 /** @typedef {
 	import("../../constants/net/peer-database").e_POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION
 } e_POTENTIAL_PEER_LAST_CONNECTION_DISPOSITION */
@@ -41,28 +48,27 @@
  * @property {unknown} [last_error]
  */
 
-class NetworkNodeAPI {
+class NetworkNodeAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *
-	 *  @param {EchoApi} db [network node api]
+	 * @constructor
+	 * @param {WsProvider | HttpProvider} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.NETWORK_NODE_API);
 	}
 
 	/**
 	 * @method getConnectedPeers
 	 * @return {Promise<Array<{ version: number, host: string, info: PeerDetails }>>}
 	 */
-	getConnectedPeers() { return this.db.exec('get_connected_peers', []); }
+	getConnectedPeers() { return this.exec('get_connected_peers', []); }
 
 	/**
 	 * @method getPotentialPeers
 	 * @return {Promise<PotentialPeerRecord[]>}
 	 */
-	getPotentialPeers() { return this.db.exec('get_potential_peers', []); }
+	getPotentialPeers() { return this.exec('get_potential_peers', []); }
 
 }
 

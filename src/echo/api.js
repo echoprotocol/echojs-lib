@@ -40,6 +40,7 @@ import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow
 import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, API_CONFIG, CACHE_MAPS } from '../constants';
 import { transaction, signedTransaction, operation, basic } from '../serializers';
 import { PublicKey } from '../crypto';
+import { CHAIN_API } from '../constants/ws-constants';
 
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
 
@@ -2130,7 +2131,7 @@ class API {
 	broadcastTransactionWithCallback(signedTransactionObject, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				await this.engine.network.broadcastTransactionWithCallback(
+				await this.engine[CHAIN_API.NETWORK_BROADCAST_API].broadcastTransactionWithCallback(
 					(res) => resolve(res),
 					signedTransactionObject,
 				);
@@ -2366,7 +2367,7 @@ class API {
 			return Promise.reject(new Error('Invalid transaction'));
 		}
 
-		return this.engine.network.broadcastTransaction(tr);
+		return this.engine[CHAIN_API.NETWORK_BROADCAST_API].broadcastTransaction(tr);
 	}
 
 	/**
@@ -2396,7 +2397,7 @@ class API {
 			return Promise.reject(new Error('Invalid block'));
 		}
 
-		return this.engine.network.broadcastBlock(block);
+		return this.engine[CHAIN_API.NETWORK_BROADCAST_API].broadcastBlock(block);
 	}
 
 	/**

@@ -1,13 +1,19 @@
 import { START_OPERATION_ID } from '../../constants';
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
 
-class HistoryAPI {
+/** @typedef {import("../providers").WsProvider} WsProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
+class HistoryAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *  @param {EchoApi} db [history api]
+	 * @constructor
+	 * @param {WsProvider | HttpProvider} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.HISTORY_API);
 	}
 
 	/**
@@ -22,7 +28,7 @@ class HistoryAPI {
 	 *  @return {Promise}
 	 */
 	getAccountHistory(accountId, stop = START_OPERATION_ID, limit = 100, start = START_OPERATION_ID) {
-		return this.db.exec('get_account_history', [accountId, stop, limit, start]);
+		return this.exec('get_account_history', [accountId, stop, limit, start]);
 	}
 
 	/**
@@ -38,7 +44,7 @@ class HistoryAPI {
 	 *  @return {Promise}
 	 */
 	getRelativeAccountHistory(accountId, stop = 0, limit = 100, start = 0) {
-		return this.db.exec('get_relative_account_history', [accountId, stop, limit, start]);
+		return this.exec('get_relative_account_history', [accountId, stop, limit, start]);
 	}
 
 	/**
@@ -57,7 +63,7 @@ class HistoryAPI {
 		accountId, operationId,
 		start = START_OPERATION_ID, stop = START_OPERATION_ID, limit = 100,
 	) {
-		return this.db.exec('get_account_history_operations', [accountId, operationId, start, stop, limit]);
+		return this.exec('get_account_history_operations', [accountId, operationId, start, stop, limit]);
 	}
 
 	/**
@@ -75,7 +81,7 @@ class HistoryAPI {
 		contractId,
 		stop = START_OPERATION_ID, limit = 100, start = START_OPERATION_ID,
 	) {
-		return this.db.exec('get_contract_history', [contractId, stop, limit, start]);
+		return this.exec('get_contract_history', [contractId, stop, limit, start]);
 	}
 
 }

@@ -1,4 +1,5 @@
 import { ConnectionType } from '../providers';
+import { CHAIN_API } from '../../constants/ws-constants';
 
 /** @typedef {import("../providers").WSProvider} WSProvider */
 /** @typedef {import("../providers").HttpProvider} HttpProvider */
@@ -22,7 +23,8 @@ export default class BaseEchoApi {
 	 */
 	async init() {
 		if (this.provider.connectionType === ConnectionType.WS) {
-			this.apiId = await this.provider.call(1, this.apiName, []);
+			if (this.apiName === CHAIN_API.LOGIN_API) this.apiId = 1;
+			else this.apiId = await this.provider.call([1, this.apiName, []]);
 		} else this.apiId = 0;
 		return this;
 	}
@@ -42,7 +44,7 @@ export default class BaseEchoApi {
 			return Promise.reject(new Error(errMessage));
 		}
 		if (this.provider.connectionType === ConnectionType.HTTP) return this.provider.call(method, params);
-		return this.provider.call(this.apiId, method, params);
+		return this.provider.call([this.apiId, method, params]);
 	}
 
 }
