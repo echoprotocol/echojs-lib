@@ -7,7 +7,7 @@ const prepare = async () => {
 		maxRetries: 5,
 		pingTimeout: 3000,
 		pingDelay: 10000,
-		debug: false,
+		debug: true,
 		apis: constants.WS_CONSTANTS.CHAIN_APIS,
 	});
 	const balanceObject = await echo.api.getObject(`1.${constants.PROTOCOL_OBJECT_TYPE_ID.BALANCE}.0`);
