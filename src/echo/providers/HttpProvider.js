@@ -10,10 +10,10 @@ export default class HttpProvider {
 		this.url = url;
 	}
 
-	call(method, params) {
+	async call(method, params) {
 		return Axios.post(this.url, {
 			jsonrpc: '2.0', id: 0, method, params,
-		});
+		}).then((res) => res.data.result);
 	}
 
 }
