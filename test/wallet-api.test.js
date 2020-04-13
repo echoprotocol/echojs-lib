@@ -19,7 +19,7 @@ import { TRANSFER } from '../src/constants/operations-ids';
 import PrivateKey from '../src/crypto/private-key';
 import { bytecode } from './operations/_contract.test';
 
-describe('WALLET API', () => {
+describe.skip('WALLET API', () => {
 
 	const shouldDoBroadcastToNetwork = false;
 	const brainKey = 'some key12';

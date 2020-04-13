@@ -1990,7 +1990,7 @@ class API {
 	 * @returns {Promise<Log[]>}
 	 */
 	async subscribeContractLogs(callback, opts = {}) {
-		return this.wsApi.database.subscribeContractLogs((result) => {
+		return this.engine.database.subscribeContractLogs((result) => {
 			assert.ok(Array.isArray(result));
 			assert.strictEqual(result.length, 1);
 			callback(result[0]);
@@ -1999,7 +1999,7 @@ class API {
 
 	/** @param {UInt64} subscribeId */
 	async unsubscribeContractLogs(subscribeId) {
-		return this.wsApi.database.unsubscribeContractLogs(basic.integers.uint64.toRaw(subscribeId));
+		return this.engine.database.unsubscribeContractLogs(basic.integers.uint64.toRaw(subscribeId));
 	}
 
 	/**
@@ -2333,7 +2333,7 @@ class API {
 		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
 		const start = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
-		return this.wsApi.history.getRelativeContractHistory(contract, stop, limit, start);
+		return this.engine.history.getRelativeContractHistory(contract, stop, limit, start);
 	}
 
 	/**
