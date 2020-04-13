@@ -215,12 +215,7 @@ export default class ReconnectionWebSocket {
 			method === 'submit_registration_solution' ||
 			method === 'get_contract_logs'
 		) {
-			// Store callback in subs map
-			this._subs[this._cbId] = {
-				callback: params[2][0],
-			};
-
-			// Replace callback with the callback id
+			this._subs[this._cbId] = { callback: params[2][0] };
 			params[2][0] = this._cbId;
 
 			if (method === 'get_contract_logs') {
@@ -258,7 +253,7 @@ export default class ReconnectionWebSocket {
 
 			this._cbs[this._cbId] = {
 				time: new Date(),
-				resolve,
+				resolve: method === 'subscribe_contract_logs' ? () => resolve(params[2][0]) : resolve,
 				reject,
 				timeoutId,
 			};
@@ -383,7 +378,7 @@ export default class ReconnectionWebSocket {
 	}
 
 	/**
-	 * make call for check connection
+	 * make call for transaction.js connection
 	 * @private
 	 */
 	async _ping() {

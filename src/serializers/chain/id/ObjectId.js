@@ -32,7 +32,7 @@ const _objectTypeIds = {
 
 /**
  * @template {ReservedSpaceId} T
- * @augments {ISerializer<string, string>}
+ * @augments {ISerializer<TInput, string>}
  */
 export default class ObjectIdSerializer extends ISerializer {
 

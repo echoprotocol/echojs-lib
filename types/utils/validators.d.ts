@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export declare function validateUrl(value?: any): boolean;
 export declare function isString(value?: any): boolean;
 export declare function isEmpty(value?: any): boolean;
@@ -32,6 +34,7 @@ export declare function isContractResultId(value?: any): boolean;
 export declare function isAccountBalanceId(value?: any): boolean;
 export declare function isOperationId(value?: any): boolean;
 export declare function isVoteId(value?: any): boolean;
+export declare function isERC20TokenId(value?: string): boolean;
 export declare function isObjectId(value?: any): boolean;
 
 export declare function isBuffer(value?: any): boolean;
@@ -58,3 +61,5 @@ export declare function checkAccountName(value?: any): boolean;
 export declare function checkCheapName(value?: any): boolean;
 export declare function validateOptionsError(value?: any): boolean;
 export declare function isTimePointSec(value?: any): boolean;
+
+export declare function validateAmount(value: number|BigNumber|string): string;

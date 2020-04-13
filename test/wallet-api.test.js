@@ -55,7 +55,7 @@ describe('WALLET API', () => {
 	before(async () => {
 		await echo.connect(url,
 			{
-				connectionTimeout: 10000,
+				connectionTimeout: 1000,
                 apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: walletURL,
 			}
@@ -1007,9 +1007,9 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#generateEthAddress()', () => {
+	describe('#createEthAddress()', () => {
 		it('Should generate eth address', async () => {
-			const result = await echo.walletApi.generateEthAddress(accountId, shouldDoBroadcastToNetwork);
+			const result = await echo.walletApi.createEthAddress(accountId, shouldDoBroadcastToNetwork);
 			expect(result)
 				.to
 				.be
@@ -1192,34 +1192,20 @@ describe('WALLET API', () => {
 
 	describe('#publishAssetFeed()', () => {
 		it('Should publishes a price feed for the named asset', async () => {
-			const priceFeed = {
-				"settlement_price": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
+			const core_exchange_rate = {
+				"base": {
+					"amount": 1,
+					"asset_id": '1.3.0',
 				},
-				"core_exchange_rate": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
+				"quote": {
+					"amount": 1,
+					"asset_id": '1.3.1',
 				},
-				"maintenance_collateral_ratio": 32e3,
-				"maximum_short_squeeze_ratio": 32e3,
 			};
 			const result = await echo.walletApi.publishAssetFeed(
 				accountId,
 				constants.ECHO_ASSET_ID,
-				priceFeed,
+				core_exchange_rate,
 				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
@@ -1337,34 +1323,20 @@ describe('WALLET API', () => {
 
 	describe('#publishAssetFeed()', () => {
 		it('Should publishes a price feed for the named asset', async () => {
-			const priceFeed = {
-				"settlement_price": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
+			const core_exchange_rate = {
+				"base": {
+					"amount": 1,
+					"asset_id": '1.3.0',
 				},
-				"core_exchange_rate": {
-					"base": {
-						"amount": 1,
-						"asset_id": "1.3.0",
-					},
-					"quote": {
-						"amount": 1,
-						"asset_id": "1.3.1",
-					},
+				"quote": {
+					"amount": 1,
+					"asset_id": '1.3.1',
 				},
-				"maintenance_collateral_ratio": 32e3,
-				"maximum_short_squeeze_ratio": 32e3,
 			};
 			const result = await echo.walletApi.publishAssetFeed(
 				accountId,
 				constants.ECHO_ASSET_ID,
-				priceFeed,
+				core_exchange_rate,
 				shouldDoBroadcastToNetwork,
 			);
 			expect(result)
@@ -1408,7 +1380,7 @@ describe('WALLET API', () => {
 					bitassetOpts,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('check', check.operations[0][1]);
+				console.log('transaction.js.js', check.operations[0][1]);
 				const bitasset = '1.3.0';
 				const result = await echo.walletApi.getBitassetData(bitasset);
 				expect(result)

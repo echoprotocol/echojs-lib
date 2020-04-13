@@ -331,8 +331,8 @@ Available protocol object id serializers:
 * `vestingBalanceId`
 * `balanceId`
 * `contractId`
-* `depositId`
-* `withdrawId`
+* `ethDepositId`
+* `ethWithdrawId`
 * `erc20TokenId`
 
 Example:
@@ -434,6 +434,7 @@ console.log(s.serialize(input).toString('hex'));
 |eth_gen_address_method|[`eth method`](#eth-method)|
 |eth_withdraw_method|[`eth method`](#eth-method)|
 |eth_update_addr_method|[`eth method`](#eth-method)|
+|eth_update_contract_address|[`eth method`](#eth-method)|
 |eth_withdraw_token_method|[`eth method`](#eth-method)|
 |eth_collect_tokens_method|[`eth method`](#eth-method)|
 |eth_committee_updated_topic|[`eth topic`](#eth-topic)|
@@ -443,13 +444,13 @@ console.log(s.serialize(input).toString('hex'));
 |erc20_deposit_topic|[`eth topic`](#eth-topic)|
 |erc20_withdraw_topic|[`eth topic`](#eth-topic)|
 |ETH_asset_id|[`assetId`](#protocol-object-id)|
-|waiting_eth_blocks|[`uint32`](#integers)|
-|fines|[`fines`](#fines)|
-|waiting_blocks|[`uint32`](#integers)|
 |BTC_asset_id|[`assetId`](#protocol-object-id)|
-|waiting_btc_blocks|[`uint32`](#integers)|
+|fines|[`fines`](#fines)|: typeof sidechainFinesSerializer,
+|gas_price|[`uint64`](#integers)|
 |satoshis_per_byte|[`uint32`](#integers)|
-|echo_blocks_per_aggregation|[`uint32`](#integers)|
+|coefficient_waiting_blocks|[`uint32`](#integers)|
+|btc_deposit_withdrawal_min|[`uint64`](#integers)|
+|btc_deposit_withdrawal_fee|[`uint64`](#integers)|
 
 #### ERC20 config
 

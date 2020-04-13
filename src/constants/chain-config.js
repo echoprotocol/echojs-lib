@@ -3,6 +3,7 @@ export const ADDRESS_PREFIX = 'ECHO';
 export const EXPIRE_IN_SECONDS = 15;
 export const EXPIRE_IN_SECONDS_PROPOSAL = 24 * 60 * 60;
 export const REVIEW_IN_SECONDS_COMMITTEE = 24 * 60 * 60;
+export const CHAIN_ID_LENGTH = 64;
 
 export const NETWORKS = {
 	ECHO_DEV: {

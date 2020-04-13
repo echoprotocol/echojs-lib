@@ -1,3 +1,4 @@
+import { ok } from 'assert';
 import VectorSerializer from './Vector';
 
 /** @typedef {import("bytebuffer")} ByteBuffer */
@@ -27,7 +28,8 @@ export default class SetSerializer extends VectorSerializer {
 	 * @param {TInput<T>} value
 	 * @returns {SerializerOutput<VectorSerializer<T>>}
 	 */
-	toRaw(value) {
+	toRaw(value, errorField = 'set') {
+		ok(typeof errorField === 'string');
 		if (value === undefined) value = [];
 		if (value instanceof Set) value = [...value];
 		/** @type {ReturnType<VectorSerializer<T>['toRaw']>} */
@@ -35,7 +37,7 @@ export default class SetSerializer extends VectorSerializer {
 		try {
 			raw = super.toRaw(value);
 		} catch (error) {
-			throw new Error(`set: ${error.message}`);
+			throw new Error(`${errorField}: ${error.message}`);
 		}
 		/** @type {string[]} */
 		const serializedElements = new Array(raw.length);
@@ -43,7 +45,7 @@ export default class SetSerializer extends VectorSerializer {
 			serializedElements[i] = this.serializer.serialize(raw[i]).toString('hex');
 			for (let j = 0; j < i; j += 1) {
 				if (serializedElements[i] === serializedElements[j]) {
-					throw new Error(`set element with index ${i} is equals to the other one with index ${j}`);
+					throw new Error(`${errorField} element with index ${i} is equals to the other one with index ${j}`);
 				}
 			}
 		}
@@ -57,7 +59,7 @@ export default class SetSerializer extends VectorSerializer {
 	 */
 	readFromBuffer(buffer, offset = 0) {
 		const { res, newOffset } = super.readFromBuffer(buffer, offset);
-		// `this.toRaw` is used here to check duplicates
+		// `this.toRaw` is used here to transaction.js duplicates
 		return { res: this.toRaw(res), newOffset };
 	}
 

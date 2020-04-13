@@ -3,6 +3,8 @@ import BaseEchoApi from './base-api';
 
 /** @typedef {import("../providers").WsProvider} WsProvider */
 /** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {import("../../../types/interfaces/vm/types").Log} Log */
+
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
 class DatabaseAPI extends BaseEchoApi {
@@ -514,16 +516,14 @@ class DatabaseAPI extends BaseEchoApi {
 	}
 
 	/**
-	 *  @method subscribeContractLogs
-	 *
-	 *  @param  {Function} callback
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
-	 *
-	 *  @return {Promise}
+	 * @param {(result: Log[]) => any} cb
+	 * @param {ContractLogsFilterOptionsRaw} options
+	 * @returns {Promise<number|string>}
 	 */
-	subscribeContractLogs(callback, contractTopicsMap) {
-		return this.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
-	}
+	subscribeContractLogs(cb, options) { return this.exec('subscribe_contract_logs', [cb, options]); }
+
+	/** @param {number|string} cbId */
+	unsubscribeContractLogs(cbId) { return this.exec('unsubscribe_contract_logs', [cbId]); }
 
 	/**
 	 *  @method getContractResult
@@ -634,15 +634,6 @@ class DatabaseAPI extends BaseEchoApi {
 	 */
 	getBalanceObjects(keys) {
 		return this.exec('get_balance_objects', [keys]);
-	}
-
-	/**
-	 * @method getBlockRewards
-	 * @param {number} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.exec('get_block_rewards', [blockNum]);
 	}
 
 	/**

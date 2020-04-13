@@ -988,9 +988,6 @@ try {
 {
     id:String,
     chain_id:String,
-    immutable_parameters:{
-        min_committee_member_count:Number
-    }
 }
 ```
 
@@ -1039,6 +1036,7 @@ try {
            eth_gen_address_method:{method:String,gas:Number},
            eth_withdraw_method:{method:String,gas:Number},
            eth_update_addr_method:{method:String,gas:Number},
+           eth_update_contract_address:{method:String,gas:Number},
            eth_withdraw_token_method:{method:String,gas:Number},
            eth_collect_tokens_method:{method:String,gas:Number},
            eth_committee_updated_topic:String,
@@ -1048,14 +1046,13 @@ try {
            erc20_deposit_topic:String,
            erc20_withdraw_topic:String,
            ETH_asset_id:String,
-           waiting_eth_blocks:Number,
-           fines:{generate_eth_address:Number},
-           waiting_blocks:Number,
            BTC_asset_id:String,
-           waiting_btc_blocks:Number,
+           fines:{generate_eth_address:Number|String},
+           gas_price:Number|String,
            satoshis_per_byte:Number,
-           echo_blocks_per_aggregation:Number,
-           gas_price:String,
+           coefficient_waiting_blocks:Number,
+           btc_deposit_withdrawal_min:Number|String,
+           btc_deposit_withdrawal_fee:Number|String,
        },
        gas_price:{
            price:Number|String,
@@ -1223,7 +1220,8 @@ try {
     block_num:Number,
     trx_in_block:Number,
     op_in_block:Number,
-    virtual_op:Number
+    virtual_op:Number,
+    proposal_hist_id: Number|undefined,
 }
 ```
 ## FullAccount : <code>Object</code>
@@ -1406,6 +1404,7 @@ or
    result: [0, {}],
    trx_in_block:Number,
    virtual_op:Number,
+   proposal_hist_id: Number
 }
 ```
 

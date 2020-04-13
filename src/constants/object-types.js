@@ -15,11 +15,12 @@ export const ETH_ADDRESS = 13;
 export const SIDECHAIN_ETH_DEPOSIT = 14;
 export const SIDECHAIN_ETH_WITHDRAW = 15;
 export const ERC20_TOKEN = 16;
-export const SIDECHAIN_ERC20_DEPOSIT_TOKEN = 17;
-export const SIDECHAIN_ERC20_WITHDRAW_TOKEN = 18;
+export const ERC20_DEPOSIT_TOKEN = 17;
+export const ERC20_WITHDRAW_TOKEN = 18;
 export const BTC_ADDRESS = 19;
 export const BTC_INTERMEDIATE_DEPOSIT = 20;
 export const BTC_DEPOSIT = 21;
 export const BTC_WITHDRAW = 22;
 export const BTC_AGGREGATING = 23;
+export const EVM_ADDRESS = 24;
 

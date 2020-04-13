@@ -9,7 +9,7 @@ import IIntSerializer from './IIntSerializer';
  * @typedef {import("../../ISerializer").SerializerInput<T>} SerializerInput
  */
 
-/** @augments {IIntSerializer<string>} */
+/** @augments {IIntSerializer<number | string>} */
 export default class Int64Serializer extends IIntSerializer {
 
 	constructor() {
