@@ -2639,18 +2639,8 @@ class API {
 		return this.engine.registration.getRegistrar();
 	}
 
-	/**
-	 * @method getConnectedPeers
-	 * @return {ReturnType<API["engine"]["networkNode"]["getConnectedPeers"]>}
-	 */
-	getConnectedPeers() { return this.engine.networkNode.getConnectedPeers(); }
-
-	/**
-	 * @method getPotentialPeers
-	 * @return {Promise<API["engine"]["networkNode"]["getPotentialPeers"]>}
-	 */
-	getPotentialPeers() { return this.engine.networkNode.getPotentialPeers(); }
-
+	getConnectedPeers() { return this.engine[CHAIN_API.NETWORK_NODE_API].getConnectedPeers(); }
+	getPotentialPeers() { return this.engine[CHAIN_API.NETWORK_NODE_API].getPotentialPeers(); }
 	setOptions() { }
 
 }

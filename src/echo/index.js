@@ -1,11 +1,13 @@
+/* global window */
 import Cache from './cache';
 import API from './api';
-// import Subscriber from './subscriber';
+import Subscriber from './subscriber';
 import Transaction from './transaction';
 import { STATUS, DEFAULT_CHAIN_APIS } from '../constants/ws-constants';
 import { WalletApi } from './apis';
 import EchoApiEngine from './engine';
 import { ConnectionType, WsProvider, HttpProvider } from './providers';
+import { validateUrl, validateOptionsError } from '../utils/validators';
 
 /** @typedef {{ batch?: number, timeout?: number }} RegistrationOptions */
 
@@ -19,6 +21,7 @@ class Echo {
 		this._isInitModules = false;
 		this.initEchoApi = this.initEchoApi.bind(this);
 		this.walletApi = new WalletApi();
+		this.subscriber = new Subscriber();
 	}
 
 	get isConnected() {
@@ -39,11 +42,23 @@ class Echo {
 	 * @private
 	 */
 	async _connectToNode(address, options) {
+		if (!validateUrl(address)) throw new Error(`Invalid address ${address}`);
+		if (
+			typeof window !== 'undefined' &&
+			window.location &&
+			window.location.protocol === 'https:' &&
+			!address.startsWith('wss://') &&
+			!address.startsWith('https://')
+		) {
+			throw new Error('Secure domains require wss/https connection');
+		}
+		const optionError = validateOptionsError(options);
+		if (optionError) throw new Error(optionError);
 		const provider = address.startsWith('ws') ? new WsProvider() : new HttpProvider(address);
 		if (provider.connectionType === ConnectionType.WS) await provider.connect(address, options);
 		this.engine = new EchoApiEngine(options.apis || DEFAULT_CHAIN_APIS, provider);
 		if (this._isInitModules) return;
-
+		this.subscriber.setOptions(options);
 		await this._initModules(options);
 
 		if (!options.store && this.store) {
@@ -51,8 +66,6 @@ class Echo {
 		}
 
 		this.cache.setOptions(options);
-		// this.subscriber = new Subscriber(this.engine);
-		// this.subscriber.setOptions(options);
 	}
 
 	/**
@@ -73,14 +86,17 @@ class Echo {
 
 		this.cache = new Cache(options.cache);
 		this.api = new API(this.cache, this.engine, options.registration);
-		await this.engine.init();
-		// await this.subscriber.init(this.cache, this.engine, this.api);
-		// this._ws.on(STATUS.OPEN, this.initEchoApi);
+		await this.initEchoApi();
+		if (this.engine.provider.connectionType === ConnectionType.WS) {
+			this.engine.provider.on(STATUS.OPEN, this.initEchoApi);
+		}
 	}
 
 	async initEchoApi() {
-		await this._ws.initEchoApi();
-		// await this.subscriber.init(this.cache, this.engine, this.api);
+		await this.engine.init();
+		if (this.engine.provider.connectionType === ConnectionType.WS) {
+			await this.subscriber.init(this.cache, this.engine, this.api);
+		}
 	}
 
 	syncCacheWithStore(store) {
@@ -91,19 +107,27 @@ class Echo {
 	}
 
 	async reconnect() {
-		this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
-		await this._ws.reconnect();
+		if (this.engine === null) throw new Error('Not connected');
+		if (this.engine.provider.connectionType === ConnectionType.HTTP) return;
+		this.engine.provider.removeListener(STATUS.OPEN, this.initEchoApi);
+		await this.engine.provider.reconnect();
 		await this.initEchoApi();
+		this.engine.provider.on(STATUS.OPEN, this.initEchoApi);
 	}
 
 	async disconnect() {
-		// this.subscriber.callCbOnDisconnect();
-		// this.subscriber.reset();
+		if (this.engine === null) throw new Error('Not connected');
+		if (this.engine.provider.connectionType === ConnectionType.WS) {
+			this.subscriber.callCbOnDisconnect();
+			this.subscriber.reset();
+		}
 		this.cache.reset();
 		if (this.engine.provider.connectionType === ConnectionType.WS) await this.engine.provider.close();
 		this.onOpen = null;
 		this._isInitModules = false;
-		// this._ws.removeListener(STATUS.OPEN, this.initEchoApi);
+		if (this.engine.provider.connectionType === ConnectionType.WS) {
+			this.engine.provider.removeListener(STATUS.OPEN, this.initEchoApi);
+		}
 	}
 
 	/** @returns {Transaction} */
