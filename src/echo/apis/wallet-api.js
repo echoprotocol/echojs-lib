@@ -1,6 +1,5 @@
 import * as serializers from '../../serializers';
 import { API_CONFIG } from '../../constants';
-import WsProvider from '../providers/WsProvider';
 import {
 	isAccountId,
 	isAccountIdOrName,
@@ -21,6 +20,7 @@ import {
 	isCommitteeMemberId,
 	validateAmount,
 } from '../../utils/validators';
+import { HttpProvider, WsProvider, ConnectionType } from '../providers';
 
 const { ethAddress, accountListing } = serializers.protocol;
 const { vector, optional } = serializers.collections;
@@ -80,7 +80,17 @@ const {
 
 class WalletAPI {
 
-	constructor() { this.wsProvider = new WsProvider(); }
+	get provider() {
+		if (this._provider === null) throw new Error('Wallet api not connected');
+		return this._provider;
+	}
+
+	constructor() { this._provider = null; }
+
+	async _call(method, params) {
+		if (this.provider.connectionType === ConnectionType.WS) return this.provider.call([0, method, params]);
+		return this.provider.call(method, params);
+	}
 
 	/**
 	 * Init params and connect to chain.
@@ -88,13 +98,19 @@ class WalletAPI {
 	 * @param {Parameters<WsProvider['connect']>1} connectionOptions connection params.
 	 * @returns {Promise<void>}
 	 */
-	async connect(url, connectionOptions) { await this.wsProvider.connect(url, connectionOptions); }
+	async connect(url, connectionOptions) {
+		if (url.startsWith('ws')) {
+			this._provider = new WsProvider();
+			await this.provider.connect(url, connectionOptions);
+		} else if (url.startsWith('http')) this._provider = new HttpProvider(url);
+		else throw new Error('invalid url format');
+	}
 
 	/**
 	 * Exit from current wallet.
 	 * @returns {Promise<never>}
 	 */
-	exit() { return this.wsProvider.call([0, 'exit', []]); }
+	exit() { return this._call('exit', []); }
 
 	/**
 	 * Returns a list of all commands supported by the wallet API.
@@ -102,7 +118,7 @@ class WalletAPI {
 	 * For more detailed help on a single command, use `get_help()`
 	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
 	 */
-	help() { return this.wsProvider.call([0, 'help', []]); }
+	help() { return this._call('help', []); }
 
 	/**
 	 * Returns detailed help on a single API command.
@@ -111,7 +127,7 @@ class WalletAPI {
 	 */
 	helpMethod(method) {
 		if (!isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
-		return this.wsProvider.call([0, 'help_method', [string.toRaw(method)]]);
+		return this._call('help_method', [string.toRaw(method)]);
 	}
 
 	/**
@@ -119,46 +135,46 @@ class WalletAPI {
 	 * current active witnesses and committee members.
 	 * @returns {Promise<any>} runtime info about the blockchain
 	 */
-	info() { return this.wsProvider.call([0, 'info', []]); }
+	info() { return this._call('info', []); }
 
 	/**
 	 * Returns info such as client version, git version of graphene/fc, version of boost, openssl.
 	 * @returns {Promise<any>} compile time info and client and dependencies versions
 	 */
-	about() { return this.wsProvider.call([0, 'about', []]); }
+	about() { return this._call('about', []); }
 
 	/**
 	 * Add nodes to the network
 	 * @param {string} nodes nodes for adding
 	 * @returns {Promise<void>}
 	 */
-	networkAddNodes(nodes) { return this.wsProvider.call([0, 'network_add_nodes', [vector(string).toRaw(nodes)]]); }
+	networkAddNodes(nodes) { return this._call('network_add_nodes', [vector(string).toRaw(nodes)]); }
 
 	/**
 	 * Get peers connected to network.
 	 * @returns {Promise<any[]>} peers connected to network
 	 */
-	networkGetConnectedPeers() { return this.wsProvider.call([0, 'network_get_connected_peers', []]); }
+	networkGetConnectedPeers() { return this._call('network_get_connected_peers', []); }
 
 	/**
 	 * Checks whether the wallet has just been created and has not yet had a password set.
 	 * Calling `set_password` will transition the wallet to the locked state.
 	 * @returns {Promise<boolean>} true if the wallet is new
 	 */
-	isNew() { return this.wsProvider.call([0, 'is_new', []]); }
+	isNew() { return this._call('is_new', []); }
 
 	/**
 	 * Checks whether the wallet is locked (is unable to use its private keys).
 	 * This state can be changed by calling `lock()` or `unlock()`.
 	 * @returns {Promise<boolean>} true if the wallet is locked
 	 */
-	isLocked() { return this.wsProvider.call([0, 'is_locked', []]); }
+	isLocked() { return this._call('is_locked', []); }
 
 	/**
 	 * Locks the wallet immediately.
 	 * @returns {Promise<void>}
 	 */
-	lock() { return this.wsProvider.call([0, 'lock', []]); }
+	lock() { return this._call('lock', []); }
 
 	/**
 	 * Unlocks the wallet.
@@ -167,7 +183,7 @@ class WalletAPI {
 	 * in the wallet it should be input interactively
 	 * @returns {Promise<void>}
 	 */
-	unlock(password) { return this.wsProvider.call([0, 'unlock', [string.toRaw(password)]]); }
+	unlock(password) { return this._call('unlock', [string.toRaw(password)]); }
 
 	/**
 	 * Sets a new password on the wallet.
@@ -175,20 +191,20 @@ class WalletAPI {
 	 * @param {string} password the password, should be input automatically in the wallet
 	 * @returns {Promise<void>}
 	 */
-	setPassword(password) { return this.wsProvider.call([0, 'set_password', [string.toRaw(password)]]); }
+	setPassword(password) { return this._call('set_password', [string.toRaw(password)]); }
 
 	/**
 	 * Create new EdDSA keypair encoded in base58.
 	 * @returns {Promise<[string, string]>} new private and public key
 	 */
-	createEddsaKeypair() { return this.wsProvider.call([0, 'create_eddsa_keypair', []]); }
+	createEddsaKeypair() { return this._call('create_eddsa_keypair', []); }
 
 	/**
 	 * Dumps all private keys owned by the wallet.
 	 * The keys are printed in WIF format. You can import these keys into another wallet using `import_key()`
 	 * @returns {Promise<[string, string][]>} a map containing the private keys, indexed by their public key
 	 */
-	dumpPrivateKeys() { return this.wsProvider.call([0, 'dump_private_keys', []]); }
+	dumpPrivateKeys() { return this._call('dump_private_keys', []); }
 
 	/**
 	 * Imports the private key for an existing account.
@@ -202,7 +218,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
+		return this._call('import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]);
 	}
 
 	/**
@@ -212,7 +228,7 @@ class WalletAPI {
 	 * @returns {[string, boolean][]} a map containing the accounts found and whether imported
 	 */
 	importAccounts(filename, password) {
-		return this.wsProvider.call([0, 'import_accounts', [string.toRaw(filename), string.toRaw(password)]]);
+		return this._call('import_accounts', [string.toRaw(filename), string.toRaw(password)]);
 	}
 
 	/**
@@ -233,12 +249,12 @@ class WalletAPI {
 		if (!isAccountName(destAccountName)) {
 			return Promise.reject(new Error('destAccount name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'import_account_keys', [
+		return this._call('import_account_keys', [
 			string.toRaw(filename),
 			string.toRaw(password),
 			string.toRaw(srcAccountName),
 			string.toRaw(destAccountName),
-		]]);
+		]);
 	}
 
 	/**
@@ -253,11 +269,11 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'import_balance', [
+		return this._call('import_balance', [
 			string.toRaw(accountNameOrId),
 			bool.toRaw(shouldDoBroadcastToNetwork),
 			vector(privateKey).toRaw(wifKeys),
-		]]);
+		]);
 	}
 
 	/**
@@ -267,7 +283,7 @@ class WalletAPI {
 	 * (and, with effort, memorize).
 	 * @returns {Promise<any>} a suggested brain_key
 	 */
-	suggestBrainKey() { return this.wsProvider.call([0, 'suggest_brain_key', []]); }
+	suggestBrainKey() { return this._call('suggest_brain_key', []); }
 
 	/**
 	 * Derive any number of *possible* owner keys from a given brain key.
@@ -280,10 +296,10 @@ class WalletAPI {
 	 */
 	deriveKeysFromBrainKey(brainKey, numberOfDesiredKeys) {
 		if (numberOfDesiredKeys < 1) return Promise.reject(new Error('Number should be positive integer'));
-		return this.wsProvider.call([0, 'derive_keys_from_brain_key', [
+		return this._call('derive_keys_from_brain_key', [
 			string.toRaw(brainKey),
 			int64.toRaw(numberOfDesiredKeys),
-		]]);
+		]);
 	}
 
 	/**
@@ -293,7 +309,7 @@ class WalletAPI {
 	 * @returns {Promise<boolean>} Whether a public key is known
 	 */
 	isPublicKeyRegistered(accountPublicKey) {
-		return this.wsProvider.call([0, 'is_public_key_registered', [publicKey.toRaw(accountPublicKey)]]);
+		return this._call('is_public_key_registered', [publicKey.toRaw(accountPublicKey)]);
 	}
 
 	/**
@@ -301,7 +317,7 @@ class WalletAPI {
 	 * @param {any} tr the singed transaction
 	 * @returns {Promise<TransactionIdType>} transaction id string
 	 */
-	getTransactionId(tr) { return this.wsProvider.call([0, 'get_transaction_id', [signedTransaction.toRaw(tr)]]); }
+	getTransactionId(tr) { return this._call('get_transaction_id', [signedTransaction.toRaw(tr)]); }
 
 	/**
 	 * Get the WIF private key corresponding to a public key. The private key must already be in the wallet.
@@ -309,7 +325,7 @@ class WalletAPI {
 	 * @returns {Promise<string>} private key of this account
 	 */
 	getPrivateKey(accountPublicKey) {
-		return this.wsProvider.call([0, 'get_private_key', [publicKey.toRaw(accountPublicKey)]]);
+		return this._call('get_private_key', [publicKey.toRaw(accountPublicKey)]);
 	}
 
 	/**
@@ -321,7 +337,7 @@ class WalletAPI {
 	 * If `wallet_filename` is empty, it reloads the existing wallet file
 	 * @returns {Promise<boolean>} true if the specified wallet is loaded
 	 */
-	loadWalletFile(walletFilename) { return this.wsProvider.call([0, 'load_wallet_file', [string.toRaw(walletFilename)]]); }
+	loadWalletFile(walletFilename) { return this._call('load_wallet_file', [string.toRaw(walletFilename)]); }
 
 	/**
 	 * Transforms a brain key to reduce the chance of errors when re-entering the key from memory.
@@ -330,7 +346,7 @@ class WalletAPI {
 	 * @param {string} brainKey the brain key as supplied by the user
 	 * @returns {Promise<string>} the brain key in its normalized form
 	 */
-	normalizeBrainKey(brainKey) { return this.wsProvider.call([0, 'normalize_brain_key', [string.toRaw(brainKey)]]); }
+	normalizeBrainKey(brainKey) { return this._call('normalize_brain_key', [string.toRaw(brainKey)]); }
 
 	/**
 	 * Saves the current wallet to the given filename.
@@ -342,14 +358,14 @@ class WalletAPI {
 	 * If `wallet_filename` is empty, save to the current filename
 	 * @returns {Promise<void>}
 	 */
-	saveWalletFile(walletFilename) { return this.wsProvider.call([0, 'save_wallet_file', [string.toRaw(walletFilename)]]); }
+	saveWalletFile(walletFilename) { return this._call('save_wallet_file', [string.toRaw(walletFilename)]); }
 
 	/**
 	 * Lists all accounts controlled by this wallet.
 	 * This returns a list of the full account objects for all accounts whose private keys we possess.
 	 * @returns {Promise<any[]>} a list of account objects
 	 */
-	listMyAccounts() { return this.wsProvider.call([0, 'list_my_accounts', []]); }
+	listMyAccounts() { return this._call('list_my_accounts', []); }
 
 	/**
 	 * Lists all accounts registered in the blockchain.
@@ -367,7 +383,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.LIST_ACCOUNTS_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'list_accounts', [string.toRaw(lowerbound), uint32.toRaw(limit)]]);
+		return this._call('list_accounts', [string.toRaw(lowerbound), uint32.toRaw(limit)]);
 	}
 
 	/**
@@ -379,7 +395,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'list_account_balances', [string.toRaw(accountNameOrId)]]);
+		return this._call('list_account_balances', [string.toRaw(accountNameOrId)]);
 	}
 
 	/**
@@ -387,7 +403,7 @@ class WalletAPI {
 	 * @param {string} idOfAccount id the id of either an account or a contract
 	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
-	listIdBalances(idOfAccount) { return this.wsProvider.call([0, 'list_id_balances', [accountId.toRaw(idOfAccount)]]); }
+	listIdBalances(idOfAccount) { return this._call('list_id_balances', [accountId.toRaw(idOfAccount)]); }
 
 	/**
 	 * Registers a third party's account on the blockckain.
@@ -408,12 +424,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'register_account', [
+		return this._call('register_account', [
 			string.toRaw(name),
 			publicKey.toRaw(activeKey),
 			string.toRaw(accountNameOrId),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -434,13 +450,13 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'create_account_with_brain_key', [
+		return this._call('create_account_with_brain_key', [
 			string.toRaw(brainKey),
 			string.toRaw(accountName),
 			string.toRaw(accountNameOrId),
 			evmAddress,
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -468,7 +484,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
 		amount = validateAmount(amount);
-		return this.wsProvider.call([0, 'create_contract', [
+		return this._call('create_contract', [
 			string.toRaw(accountNameOrId),
 			string.toRaw(contractCode),
 			string.toRaw(amount),
@@ -476,7 +492,7 @@ class WalletAPI {
 			assetId.toRaw(supportedAssetId),
 			bool.toRaw(useEthereumAssetAccuracy),
 			bool.toRaw(shouldSaveToWallet),
-		]]);
+		]);
 	}
 
 	/**
@@ -500,14 +516,14 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
 		amount = validateAmount(amount);
-		return this.wsProvider.call([0, 'call_contract', [
+		return this._call('call_contract', [
 			string.toRaw(accountNameOrId),
 			contractId.toRaw(idOfContract),
 			string.toRaw(contractCode),
 			string.toRaw(amount),
 			assetId.toRaw(assetType),
 			bool.toRaw(shouldSaveToWallet),
-		]]);
+		]);
 	}
 
 	/**
@@ -522,12 +538,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'contract_fund_fee_pool', [
+		return this._call('contract_fund_fee_pool', [
 			string.toRaw(accountNameOrId),
 			contractId.toRaw(idOfContract),
 			uint64.toRaw(amount),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -539,7 +555,7 @@ class WalletAPI {
 		if (!isContractResultId(contractResultId)) {
 			return Promise.reject(new Error('Contract resultId should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_contract_result', [string.toRaw(contractResultId)]]);
+		return this._call('get_contract_result', [string.toRaw(contractResultId)]);
 	}
 
 	/**
@@ -551,7 +567,7 @@ class WalletAPI {
 	 * @returns {Promise<unknown[]>} a list of accounts mapping account names to account ids
 	 */
 	async getContractHistory(_contractId, limit) {
-		return this.wsProvider.call([0, 'get_contract_history', [contractId.toRaw(_contractId), uint32.toRaw(limit)]]);
+		return this._call('get_contract_history', [contractId.toRaw(_contractId), uint32.toRaw(limit)]);
 	}
 
 	/**
@@ -563,12 +579,12 @@ class WalletAPI {
 	 * @returns {Promise<unknown[]>} a list of operation history objects
 	 */
 	async getRelativeContractHistory(_contractId, stop, limit, start) {
-		return this.wsProvider.call([0, 'get_relative_contract_history', [
+		return this._call('get_relative_contract_history', [
 			contractId.toRaw(_contractId),
 			uint32.toRaw(stop),
 			uint32.toRaw(limit),
 			uint32.toRaw(start),
-		]]);
+		]);
 	}
 
 	/**
@@ -591,13 +607,13 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'transfer', [
+		return this._call('transfer', [
 			string.toRaw(fromAccountNameOrId),
 			string.toRaw(toAccountNameOrId),
 			string.toRaw(amount),
 			string.toRaw(assetIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -620,12 +636,12 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'transfer2', [
+		return this._call('transfer2', [
 			string.toRaw(fromAccountNameOrId),
 			string.toRaw(toAccountNameOrId),
 			string.toRaw(amount),
 			string.toRaw(assetIdOrName),
-		]]);
+		]);
 	}
 
 	/**
@@ -654,12 +670,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountToList)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'whitelist_account', [
+		return this._call('whitelist_account', [
 			string.toRaw(authorizingAccount),
 			string.toRaw(accountToList),
 			accountListing.toRaw(newListingStatus),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -671,7 +687,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_vesting_balances', [string.toRaw(accountNameOrId)]]);
+		return this._call('get_vesting_balances', [string.toRaw(accountNameOrId)]);
 	}
 
 	/**
@@ -690,12 +706,12 @@ class WalletAPI {
 		if (!isValidAmount(amount)) {
 			return Promise.reject(new Error('Invalid amount'));
 		}
-		return this.wsProvider.call([0, 'withdraw_vesting', [
+		return this._call('withdraw_vesting', [
 			string.toRaw(witnessAccountNameOrId),
 			string.toRaw(amount),
 			string.toRaw(assetSymbol),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -707,7 +723,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_account', [string.toRaw(accountNameOrId)]]);
+		return this._call('get_account', [string.toRaw(accountNameOrId)]);
 	}
 
 	/**
@@ -717,7 +733,7 @@ class WalletAPI {
 	 */
 	getAccountId(accountName) {
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Account name should be string and valid'));
-		return this.wsProvider.call([0, 'get_account_id', [string.toRaw(accountName)]]);
+		return this._call('get_account_id', [string.toRaw(accountName)]);
 	}
 
 	/**
@@ -734,7 +750,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'get_account_history', [string.toRaw(accountIdOrName),	int64.toRaw(limit)]]);
+		return this._call('get_account_history', [string.toRaw(accountIdOrName),	int64.toRaw(limit)]);
 	}
 
 	/**
@@ -757,11 +773,11 @@ class WalletAPI {
 		if (!limit > API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be less ${API_CONFIG.RELATIVE_ACCOUNT_HISTORY_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'get_relative_account_history', [
+		return this._call('get_relative_account_history', [
 			string.toRaw(accountIdOrName),
 			uint64.toRaw(stop),
 			int64.toRaw(limit),	uint64.toRaw(start),
-		]]);
+		]);
 	}
 
 	/**
@@ -770,7 +786,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} the contract object
 	 */
 	getContractObject(idOfContract) {
-		return this.wsProvider.call([0, 'get_contract_object', [contractId.toRaw(idOfContract)]]);
+		return this._call('get_contract_object', [contractId.toRaw(idOfContract)]);
 	}
 
 	/**
@@ -778,7 +794,7 @@ class WalletAPI {
 	 * @param {string} idOfContract id of the contract
 	 * @returns {Promise<any>} the contract information
 	 */
-	getContract(idOfContract) { return this.wsProvider.call([0, 'get_contract', [contractId.toRaw(idOfContract)]]); }
+	getContract(idOfContract) { return this._call('get_contract', [contractId.toRaw(idOfContract)]); }
 
 	/**
 	 * Whitelist or blacklist contract pool.
@@ -805,7 +821,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'whitelist_contract_pool', [
+		return this._call('whitelist_contract_pool', [
 			string.toRaw(accountIdOrName),
 			contractId.toRaw(idOfContract),
 			vector(accountId).toRaw(addToWhitelist),
@@ -813,7 +829,7 @@ class WalletAPI {
 			vector(accountId).toRaw(removeFromWhitelist),
 			vector(accountId).toRaw(removeFromBlacklist),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -832,13 +848,13 @@ class WalletAPI {
 		if (!isContractCode(codeOfTheContract)) {
 			return Promise.reject(new Error('Byte code should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'call_contract_no_changing_state', [
+		return this._call('call_contract_no_changing_state', [
 			contractId.toRaw(idOfContract),
 			string.toRaw(caller),
 			string.toRaw(amount),
 			string.toRaw(assetType),
 			string.toRaw(codeOfTheContract),
-		]]);
+		]);
 	}
 
 	/**
@@ -847,7 +863,7 @@ class WalletAPI {
 	 * @returns {Promise<Asset>} contract's feepool balance
 	 */
 	getContractPoolBalance(idOfContract) {
-		return this.wsProvider.call([0, 'get_contract_pool_balance', [contractId.toRaw(idOfContract)]]);
+		return this._call('get_contract_pool_balance', [contractId.toRaw(idOfContract)]);
 	}
 
 	/**
@@ -856,7 +872,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} whitelist and blacklist of contract pool object
 	 */
 	getContractPoolWhitelist(idOfContract) {
-		return this.wsProvider.call([0, 'get_contract_pool_whitelist', [contractId.toRaw(idOfContract)]]);
+		return this._call('get_contract_pool_whitelist', [contractId.toRaw(idOfContract)]);
 	}
 
 	/**
@@ -864,7 +880,7 @@ class WalletAPI {
 	 * @param {string} idOfAccount the id of the account to provide information about
 	 * @returns {Promise<string | undefined>} the public eth address data stored in the blockchain
 	 */
-	getEthAddress(idOfAccount) { return this.wsProvider.call([0, 'get_eth_address', [accountId.toRaw(idOfAccount)]]); }
+	getEthAddress(idOfAccount) { return this._call('get_eth_address', [accountId.toRaw(idOfAccount)]); }
 
 	/**
 	 * Returns all approved deposits, for the given account id.
@@ -873,7 +889,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} the all public deposits data stored in the blockchain
 	 */
 	getAccountDeposits(idOfAccount, type) {
-		return this.wsProvider.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount), type]]);
+		return this._call('get_account_deposits', [accountId.toRaw(idOfAccount), type]);
 	}
 
 	/**
@@ -899,14 +915,14 @@ class WalletAPI {
 		}
 		if (!isNotEmptyString(tokenName)) return Promise.reject(new Error('Name should be string and valid'));
 		if (!isNotEmptyString(tokenSymbol)) return Promise.reject(new Error('Name should be string and valid'));
-		return this.wsProvider.call([0, 'register_erc20_token', [
+		return this._call('register_erc20_token', [
 			string.toRaw(accountIdOrName),
 			ethAddress.toRaw(ethereumTokenAddress),
 			string.toRaw(tokenName),
 			string.toRaw(tokenSymbol),
 			uint8.toRaw(decimals),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -915,7 +931,7 @@ class WalletAPI {
 	 * @returns {Promise<any | undefined>} the public erc20 token data stored in the blockchain
 	 */
 	getErc20Token(ethereumTokenAddress) {
-		return this.wsProvider.call([0, 'get_erc20_token', [ethAddress.toRaw(ethereumTokenAddress)]]);
+		return this._call('get_erc20_token', [ethAddress.toRaw(ethereumTokenAddress)]);
 	}
 
 	/**
@@ -924,7 +940,7 @@ class WalletAPI {
 	 * @returns {Promise<boolean>} true if erc20 token data stored in the blockchain, else false
 	 */
 	checkErc20Token(idOfContract) {
-		return this.wsProvider.call([0, 'check_erc20_token', [contractId.toRaw(idOfContract)]]);
+		return this._call('check_erc20_token', [contractId.toRaw(idOfContract)]);
 	}
 
 	/**
@@ -933,7 +949,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} the all public erc20 deposits data stored in the blockchain
 	 */
 	getErc20AccountDeposits(idOfAccount) {
-		return this.wsProvider.call([0, 'get_erc20_account_deposits', [accountId.toRaw(idOfAccount)]]);
+		return this._call('get_erc20_account_deposits', [accountId.toRaw(idOfAccount)]);
 	}
 
 	/**
@@ -942,7 +958,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} the all public erc20 withdrawals data stored in the blockchain
 	 */
 	getErc20AccountWithdrawals(idOfAccount) {
-		return this.wsProvider.call([0, 'get_erc20_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
+		return this._call('get_erc20_account_withdrawals', [accountId.toRaw(idOfAccount)]);
 	}
 
 	/**
@@ -958,13 +974,13 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'withdraw_erc20_token', [
+		return this._call('withdraw_erc20_token', [
 			string.toRaw(accountIdOrName),
 			ethAddress.toRaw(toEthereumAddress),
 			erc20TokenId.toRaw(idOferc20Token),
 			uint256.toRaw(withdrawAmount),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -979,11 +995,11 @@ class WalletAPI {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isNotEmptyString(label)) return Promise.reject(new Error('Label should be string and valid'));
-		return this.wsProvider.call([0, 'generate_account_address', [
+		return this._call('generate_account_address', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(label),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -994,11 +1010,11 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} Addresses owned by account in specified ids interval
 	 */
 	getAccountAddresses(idOfAccount, startFrom, limit) {
-		return this.wsProvider.call([0, 'get_account_addresses', [
+		return this._call('get_account_addresses', [
 			accountId.toRaw(idOfAccount),
 			uint64.toRaw(startFrom),
 			uint64.toRaw(limit),
-		]]);
+		]);
 	}
 
 	/**
@@ -1006,7 +1022,7 @@ class WalletAPI {
 	 * @param {string} address address in form of ripemd160 hash
 	 * @returns {Promise<string | undefined>} Account id of owner
 	 */
-	getAccountByAddress(address) { return this.wsProvider.call([0, 'get_account_by_address', [ripemd160.toRaw(address)]]); }
+	getAccountByAddress(address) { return this._call('get_account_by_address', [ripemd160.toRaw(address)]); }
 
 	/**
 	 * Returns all approved withdrawals, for the given account id.
@@ -1015,7 +1031,7 @@ class WalletAPI {
 	 * @returns {Promise<any[]>} the all public withdrawals data stored in the blockchain
 	 */
 	getAccountWithdrawals(idOfAccount, type) {
-		return this.wsProvider.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount), type]]);
+		return this._call('get_account_withdrawals', [accountId.toRaw(idOfAccount), type]);
 	}
 
 	/**
@@ -1028,12 +1044,12 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	approveProposal(feePayingAccountId, idOfProposal, delta, shouldDoBroadcastToNetwork) {
-		return this.wsProvider.call([0, 'approve_proposal', [
+		return this._call('approve_proposal', [
 			accountId.toRaw(feePayingAccountId),
 			proposalId.toRaw(idOfProposal),
 			wallet.approvalDelta.toRaw(delta),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1046,10 +1062,10 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'create_eth_address', [
+		return this._call('create_eth_address', [
 			string.toRaw(accountIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1064,12 +1080,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'withdraw_eth', [
+		return this._call('withdraw_eth', [
 			string.toRaw(accountIdOrName),
 			ethAddress.toRaw(ethOfAddress),
 			uint64.toRaw(value),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1079,10 +1095,10 @@ class WalletAPI {
 	 * @returns {Promise<void>}
 	 */
 	floodNetwork(prefix, numberOfTransactions) {
-		return this.wsProvider.call([0, 'flood_network', [
+		return this._call('flood_network', [
 			string.toRaw(prefix),
 			uint32.toRaw(numberOfTransactions),
-		]]);
+		]);
 	}
 
 	/**
@@ -1097,7 +1113,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.LIST_ASSETS_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.LIST_ASSETS_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'list_assets', [assetId.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]]);
+		return this._call('list_assets', [assetId.toRaw(lowerBoundSymbol), uint32.toRaw(limit)]);
 	}
 
 	/**
@@ -1123,14 +1139,14 @@ class WalletAPI {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isAssetName(symbol)) return Promise.reject(new Error('Assets symbol should be string and valid'));
-		return this.wsProvider.call([0, 'create_asset', [
+		return this._call('create_asset', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(symbol),
 			uint8.toRaw(precision),
 			options.toRaw(assetOption),
 			optional(bitassetOptions).toRaw(bitassetOpts),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1154,12 +1170,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(newIssuerIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'update_asset', [
+		return this._call('update_asset', [
 			string.toRaw(assetIdOrName),
 			string.toRaw(newIssuerIdOrName),
 			options.toRaw(newOptions),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1176,11 +1192,11 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'update_bitasset', [
+		return this._call('update_bitasset', [
 			string.toRaw(assetIdOrName),
 			bitassetOptions.toRaw(newBitasset),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1200,11 +1216,11 @@ class WalletAPI {
 		if (!newFeedProducers.every((idOrName) => !!isAccountIdOrName(idOrName))) {
 			return Promise.reject(new Error('Accounts should contain valid account names or ids'));
 		}
-		return this.wsProvider.call([0, 'update_asset_feed_producers', [
+		return this._call('update_asset_feed_producers', [
 			string.toRaw(assetIdOrName),
 			vector(string).toRaw(newFeedProducers),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1234,12 +1250,12 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'publish_asset_feed', [
+		return this._call('publish_asset_feed', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(assetIdOrName),
 			price.toRaw(coreEchangeRate),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1255,12 +1271,12 @@ class WalletAPI {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
 		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
-		return this.wsProvider.call([0, 'issue_asset', [
+		return this._call('issue_asset', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(amount),
 			string.toRaw(assetTicker),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1272,7 +1288,7 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_asset', [string.toRaw(assetIdOrName)]]);
+		return this._call('get_asset', [string.toRaw(assetIdOrName)]);
 	}
 
 	/**
@@ -1286,7 +1302,7 @@ class WalletAPI {
 		if (!isAssetIdOrName(bitassetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_bitasset_data', [string.toRaw(bitassetIdOrName)]]);
+		return this._call('get_bitasset_data', [string.toRaw(bitassetIdOrName)]);
 	}
 
 	/**
@@ -1307,12 +1323,12 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'fund_asset_fee_pool', [
+		return this._call('fund_asset_fee_pool', [
 			string.toRaw(fromAccountIdOrName),
 			string.toRaw(assetIdOrName),
 			string.toRaw(amount),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1335,12 +1351,12 @@ class WalletAPI {
 		if (!isAssetIdOrName(assetIdOrName)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'reserve_asset', [
+		return this._call('reserve_asset', [
 			string.toRaw(accountIdOrName),
 			string.toRaw(amount),
 			string.toRaw(assetIdOrName),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1353,7 +1369,7 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'get_committee_member', [string.toRaw(accountIdOrName)]]);
+		return this._call('get_committee_member', [string.toRaw(accountIdOrName)]);
 	}
 
 	/**
@@ -1374,7 +1390,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be less ${API_CONFIG.COMMITTEE_MEMBER_ACCOUNTS_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'list_committee_members', [string.toRaw(lowerBoundName), uint64.toRaw(limit)]]);
+		return this._call('list_committee_members', [string.toRaw(lowerBoundName), uint64.toRaw(limit)]);
 	}
 
 	/**
@@ -1390,12 +1406,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'propose_parameter_change', [
+		return this._call('propose_parameter_change', [
 			string.toRaw(accountIdOrName),
 			timePointSec.toRaw(expirationTime),
 			variantObject.toRaw(changeValues),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1411,12 +1427,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'propose_fee_change', [
+		return this._call('propose_fee_change', [
 			string.toRaw(accountIdOrName),
 			timePointSec.toRaw(expirationTime),
 			variantObject.toRaw(changedValues),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1430,11 +1446,11 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'change_sidechain_config', [
+		return this._call('change_sidechain_config', [
 			string.toRaw(accountIdOrName),
 			config.toRaw(changedValues),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1442,20 +1458,20 @@ class WalletAPI {
 	 * @param {number} blockNum height of the block to retrieve
 	 * @return {Promise<any | undefined>} info about the block, or undefined if not found
 	 */
-	getBlock(blockNum) { return this.wsProvider.call([0, 'get_block', [uint32.toRaw(blockNum)]]); }
+	getBlock(blockNum) { return this._call('get_block', [uint32.toRaw(blockNum)]); }
 
 	/**
 	 * Returns block virtual ops by number
 	 * @param {number} blockNum height of the block to retrieve
 	 * @return {Promise<any[]>} info about operation history object
 	 */
-	getBlockVirtualOps(blockNum) { return this.wsProvider.call([0, 'get_block_virtual_ops', [uint32.toRaw(blockNum)]]); }
+	getBlockVirtualOps(blockNum) { return this._call('get_block_virtual_ops', [uint32.toRaw(blockNum)]); }
 
 	/**
 	 * Returns the number of accounts registered on the blockchain.
 	 * @return {Promise<number | string>} the number of registered accounts
 	 */
-	getAccountCount() { return this.wsProvider.call([0, 'get_account_count', []]); }
+	getAccountCount() { return this._call('get_account_count', []); }
 
 	/**
 	 * Returns the block chain's slowly-changing settings.
@@ -1464,7 +1480,7 @@ class WalletAPI {
 	 * @see {@link WalletAPI['getDynamicGlobalProperties']} for frequently changing properties
 	 * @return {Promise<any>} the global properties
 	 */
-	getGlobalProperties() { return this.wsProvider.call([0, 'get_global_properties', []]); }
+	getGlobalProperties() { return this._call('get_global_properties', []); }
 
 	/**
 	 * Returns the block chain's rapidly-changing properties.
@@ -1473,7 +1489,7 @@ class WalletAPI {
 	 * @see {@link WalletAPI['getGlobalProperties']} for less-frequently changing properties
 	 * @return {Promise<any>} the dynamic global properties
 	 */
-	getDynamicGlobalProperties() { return this.wsProvider.call([0, 'get_dynamic_global_properties', []]); }
+	getDynamicGlobalProperties() { return this._call('get_dynamic_global_properties', []); }
 
 	/**
 	 * Returns the blockchain object corresponding to the given id.
@@ -1481,13 +1497,13 @@ class WalletAPI {
 	 * @param {string} objectId the id of the object to return
 	 * @returns {Promise<any>} the requested object
 	 */
-	getObject(objectId) { return this.wsProvider.call([0, 'get_object', [anyObjectId.toRaw(objectId)]]); }
+	getObject(objectId) { return this._call('get_object', [anyObjectId.toRaw(objectId)]); }
 
 	/**
 	 * Create a new transaction builder.
 	 * @returns {Promise<number>} handle of the new transaction builder
 	 */
-	beginBuilderTransaction() { return this.wsProvider.call([0, 'begin_builder_transaction', []]); }
+	beginBuilderTransaction() { return this._call('begin_builder_transaction', []); }
 
 	/**
 	 * Append a new operation to a transaction builder.
@@ -1496,10 +1512,10 @@ class WalletAPI {
 	 * @returns {Promise<void>}
 	 */
 	addOperationToBuilderTransaction(transactionTypeHandle, newOperation) {
-		return this.wsProvider.call([0, 'add_operation_to_builder_transaction', [
+		return this._call('add_operation_to_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			operation.toRaw(newOperation),
-		]]);
+		]);
 	}
 
 	/**
@@ -1510,11 +1526,11 @@ class WalletAPI {
 	 * @returns {Promise<void>}
 	 */
 	replaceOperationInBuilderTransaction(transactionTypeHandle, unsignedOperation, newOperation) {
-		return this.wsProvider.call([0, 'replace_operation_in_builder_transaction', [
+		return this._call('replace_operation_in_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			uint64.toRaw(unsignedOperation),
 			operation.toRaw(newOperation),
-		]]);
+		]);
 	}
 
 	/**
@@ -1527,10 +1543,10 @@ class WalletAPI {
 		if (!isAssetIdOrName(feeAsset)) {
 			return Promise.reject(new Error('Assets id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'set_fees_on_builder_transaction', [
+		return this._call('set_fees_on_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			string.toRaw(feeAsset),
-		]]);
+		]);
 	}
 
 	/**
@@ -1539,7 +1555,7 @@ class WalletAPI {
 	 * @returns {Promise<any>} a transaction
 	 */
 	previewBuilderTransaction(transactionTypeHandle) {
-		return this.wsProvider.call([0, 'preview_builder_transaction', [uint64.toRaw(transactionTypeHandle)]]);
+		return this._call('preview_builder_transaction', [uint64.toRaw(transactionTypeHandle)]);
 	}
 
 	/**
@@ -1549,10 +1565,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} a signed transaction
 	 */
 	signBuilderTransaction(transactionTypeHandle, shouldDoBroadcastToNetwork) {
-		return this.wsProvider.call([0, 'sign_builder_transaction', [
+		return this._call('sign_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1566,12 +1582,12 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} a signed transaction
 	 */
 	proposeBuilderTransaction(transactionTypeHandle, expirationTime, reviewPeriod, shouldDoBroadcastToNetwork) {
-		return this.wsProvider.call([0, 'propose_builder_transaction', [
+		return this._call('propose_builder_transaction', [
 			uint16.toRaw(transactionTypeHandle),
 			timePointSec.toRaw(expirationTime),
 			uint32.toRaw(reviewPeriod),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1595,13 +1611,13 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'propose_builder_transaction2', [
+		return this._call('propose_builder_transaction2', [
 			uint16.toRaw(transactionTypeHandle),
 			string.toRaw(accountIdOrName),
 			timePointSec.toRaw(expirationTime),
 			uint32.toRaw(reviewPeriod),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1610,7 +1626,7 @@ class WalletAPI {
 	 * @returns {Promise<void>}
 	 */
 	removeBuilderTransaction(transactionTypeHandle) {
-		return this.wsProvider.call([0, 'remove_builder_transaction', [uint16.toRaw(transactionTypeHandle)]]);
+		return this._call('remove_builder_transaction', [uint16.toRaw(transactionTypeHandle)]);
 	}
 
 	/**
@@ -1619,7 +1635,7 @@ class WalletAPI {
 	 * @returns {Promise<String>} the binary form of the transaction. It will not be hex encoded,
 	 * this returns a raw string that may have null characters embedded in it
 	 */
-	serializeTransaction(tr) { return this.wsProvider.call([0, 'serialize_transaction', [signedTransaction.toRaw(tr)]]); }
+	serializeTransaction(tr) { return this._call('serialize_transaction', [signedTransaction.toRaw(tr)]); }
 
 	/**
 	 * Signs a transaction.
@@ -1630,10 +1646,10 @@ class WalletAPI {
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
 	signTransaction(tr, shouldDoBroadcastToNetwork) {
-		return this.wsProvider.call([0, 'sign_transaction', [
+		return this._call('sign_transaction', [
 			transaction.toRaw(tr),
 			bool.toRaw(shouldDoBroadcastToNetwork),
-		]]);
+		]);
 	}
 
 	/**
@@ -1650,7 +1666,7 @@ class WalletAPI {
 		if (!isOperationPrototypeExists(operationType)) {
 			return Promise.reject(new Error('This operation does not exists'));
 		}
-		return this.wsProvider.call([0, 'get_prototype_operation', [string.toRaw(operationType)]]);
+		return this._call('get_prototype_operation', [string.toRaw(operationType)]);
 	}
 
 	/*
@@ -1667,9 +1683,7 @@ class WalletAPI {
 
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
 
-		return this.wsProvider.call([0, 'generate_btc_deposit_address',
-			[accountIdOrName, backupAddress, shouldDoBroadcastToNetwork],
-		]);
+		return this._call('generate_btc_deposit_address', [accountIdOrName, backupAddress, shouldDoBroadcastToNetwork]);
 	}
 
 	/**
@@ -1680,7 +1694,7 @@ class WalletAPI {
 	getBtcAddress(account) {
 		if (!isAccountId(account) || !isAccountName(account)) throw new Error('account should be valid');
 
-		return this.wsProvider.call([0, 'get_btc_address', [account]]);
+		return this._call('get_btc_address', [account]);
 	}
 
 	/**
@@ -1689,7 +1703,7 @@ class WalletAPI {
 	 * @returns {Promise<String>}
 	 */
 	getBtcDepositScript(btcDepositAddress) {
-		return this.wsProvider.call([0, 'get_btc_deposit_script', [btcDepositAddress]]);
+		return this._call('get_btc_deposit_script', [btcDepositAddress]);
 	}
 
 	/**
@@ -1708,9 +1722,7 @@ class WalletAPI {
 		if (!isUInt64(amount)) return Promise.reject(new Error('amount should be a non negative integer'));
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('broadcast should be a boolean'));
 
-		return this.wsProvider.call([0, 'withdraw_btc',
-			[accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork],
-		]);
+		return this._call('withdraw_btc', [accountIdOrName, addressToWithdraw, amount, shouldDoBroadcastToNetwork]);
 	}
 
 	/*
@@ -1726,7 +1738,7 @@ class WalletAPI {
 		if (!isPublicKey(activeKey)) return Promise.reject(new Error('active key is invalid'));
 		if (!isPublicKey(echorandKey)) return Promise.reject(new Error('echorand key is invalid'));
 
-		return this.wsProvider.call([0, 'register_account_with_api', [name, activeKey, echorandKey, evmAddress]]);
+		return this._call('register_account_with_api', [name, activeKey, echorandKey, evmAddress]);
 	}
 
 	/**
@@ -1739,7 +1751,7 @@ class WalletAPI {
 			return Promise.reject(new Error('Account name or id is invalid'));
 		}
 
-		return this.wsProvider.call([0, 'list_frozen_balances', [accountNameOrId]]);
+		return this._call('list_frozen_balances', [accountNameOrId]);
 	}
 
 	/**
@@ -1765,8 +1777,12 @@ class WalletAPI {
 		if (!isUInt64(duration)) return Promise.reject(new Error('duration should be a non negative integer'));
 		if (!isBoolean(shouldDoBroadcastToNetwork)) return Promise.reject(new Error('Broadcast should be a boolean'));
 
-		return this.wsProvider.call([0, 'freeze_balance',
-			[fromAccountNameOrId, amount, assetIdOrName, duration, shouldDoBroadcastToNetwork],
+		return this._call('freeze_balance', [
+			fromAccountNameOrId,
+			amount,
+			assetIdOrName,
+			duration,
+			shouldDoBroadcastToNetwork,
 		]);
 	}
 
@@ -1780,7 +1796,7 @@ class WalletAPI {
 			return Promise.reject(new Error('Account name or id is invalid'));
 		}
 
-		return this.wsProvider.call([0, 'get_committee_frozen_balance', [string.toRaw(ownerAccount)]]);
+		return this._call('get_committee_frozen_balance', [string.toRaw(ownerAccount)]);
 	}
 
 
@@ -1795,11 +1811,11 @@ class WalletAPI {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
 
-		return this.wsProvider.call([0, 'committee_freeze_balance', [
+		return this._call('committee_freeze_balance', [
 			string.toRaw(ownerAccount),
 			string.toRaw(amount),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 	/**
@@ -1813,11 +1829,11 @@ class WalletAPI {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
 
-		return this.wsProvider.call([0, 'committee_withdraw_balance', [
+		return this._call('committee_withdraw_balance', [
 			string.toRaw(ownerAccount),
 			string.toRaw(amount),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 	/**
@@ -1832,12 +1848,12 @@ class WalletAPI {
 		if (!isAccountIdOrName(sender)) return Promise.reject(new Error('Account name or id is invalid'));
 		if (!isCommitteeMemberId(committeeToActivate)) return Promise.reject(new Error('Invalid committee member id'));
 
-		return this.wsProvider.call([0, 'create_activate_committee_member_proposal', [
+		return this._call('create_activate_committee_member_proposal', [
 			accountId.toRaw(sender),
 			committeeMemberId.toRaw(committeeToActivate),
 			timePointSec.toRaw(expirationTime),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 	/**
@@ -1854,12 +1870,12 @@ class WalletAPI {
 			return Promise.reject(new Error('Invalid committee member id'));
 		}
 
-		return this.wsProvider.call([0, 'create_deactivate_committee_member_proposal', [
+		return this._call('create_deactivate_committee_member_proposal', [
 			accountId.toRaw(sender),
 			committeeMemberId.toRaw(committeeTodeactivate),
 			timePointSec.toRaw(expirationTime),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 	/**
@@ -1877,13 +1893,13 @@ class WalletAPI {
 			return Promise.reject(new Error('Url should be string and valid'));
 		}
 
-		return this.wsProvider.call([0, 'update_committee_member', [
+		return this._call('update_committee_member', [
 			accountId.toRaw(ownerAccount),
 			string.toRaw(newUrl),
 			string.toRaw(newEthAddress),
 			string.toRaw(newBtcPublicKey),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 	/**
@@ -1902,14 +1918,14 @@ class WalletAPI {
 		}
 		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
 
-		return this.wsProvider.call([0, 'create_committee_member', [
+		return this._call('create_committee_member', [
 			accountId.toRaw(ownerAccount),
 			string.toRaw(url),
 			string.toRaw(amount),
 			string.toRaw(ethereumAddress),
 			string.toRaw(btcPublicKey),
 			bool.toRaw(broadcast),
-		]]);
+		]);
 	}
 
 }
