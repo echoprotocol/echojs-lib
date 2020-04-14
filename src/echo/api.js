@@ -1971,7 +1971,7 @@ class API {
 		for (const field of ['fromBlock', 'toBlock']) {
 			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
 		}
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			const cb = (logs) => {
 				resolve(logs[0].map(([, log]) => log));
 			};
@@ -1980,7 +1980,7 @@ class API {
 				topics,
 				from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
 				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
-			});
+			}).catch((err) => reject(err));
 		});
 	}
 

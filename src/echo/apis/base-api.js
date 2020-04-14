@@ -36,13 +36,13 @@ export default class BaseEchoApi {
 	 * @param {any[]} params
 	 * @returns {Promise}
 	 */
-	exec(method, params) {
+	async exec(method, params) {
 		if (this.apiId === null) {
 			const errMessage = [
 				`${this.apiName} API is not available`,
 				'try to specify this in connection option called "apis"',
 			].join(', ');
-			return Promise.reject(new Error(errMessage));
+			throw new Error(errMessage);
 		}
 		if (this.provider.connectionType === ConnectionType.HTTP) return this.provider.call(method, params);
 		return this.provider.call([this.apiId, method, params]);
