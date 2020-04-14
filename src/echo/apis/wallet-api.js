@@ -202,7 +202,10 @@ class WalletAPI {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
-		return this.wsProvider.call([0, 'import_key', [string.toRaw(accountNameOrId), privateKey.toRaw(privateKeyWif)]]);
+		return this.wsProvider.call([0, 'import_key', [
+			string.toRaw(accountNameOrId),
+			privateKey.toRaw(privateKeyWif),
+		]]);
 	}
 
 	/**
@@ -321,7 +324,9 @@ class WalletAPI {
 	 * If `wallet_filename` is empty, it reloads the existing wallet file
 	 * @returns {Promise<boolean>} true if the specified wallet is loaded
 	 */
-	loadWalletFile(walletFilename) { return this.wsProvider.call([0, 'load_wallet_file', [string.toRaw(walletFilename)]]); }
+	loadWalletFile(walletFilename) {
+		return this.wsProvider.call([0, 'load_wallet_file', [string.toRaw(walletFilename)]]);
+	}
 
 	/**
 	 * Transforms a brain key to reduce the chance of errors when re-entering the key from memory.
@@ -342,7 +347,9 @@ class WalletAPI {
 	 * If `wallet_filename` is empty, save to the current filename
 	 * @returns {Promise<void>}
 	 */
-	saveWalletFile(walletFilename) { return this.wsProvider.call([0, 'save_wallet_file', [string.toRaw(walletFilename)]]); }
+	saveWalletFile(walletFilename) {
+		return this.wsProvider.call([0, 'save_wallet_file', [string.toRaw(walletFilename)]]);
+	}
 
 	/**
 	 * Lists all accounts controlled by this wallet.
@@ -387,7 +394,9 @@ class WalletAPI {
 	 * @param {string} idOfAccount id the id of either an account or a contract
 	 * @returns {Promise<Asset[]>} a list of the given account/contract balances
 	 */
-	listIdBalances(idOfAccount) { return this.wsProvider.call([0, 'list_id_balances', [accountId.toRaw(idOfAccount)]]); }
+	listIdBalances(idOfAccount) {
+		return this.wsProvider.call([0, 'list_id_balances', [accountId.toRaw(idOfAccount)]]);
+	}
 
 	/**
 	 * Registers a third party's account on the blockckain.
@@ -1006,7 +1015,9 @@ class WalletAPI {
 	 * @param {string} address address in form of ripemd160 hash
 	 * @returns {Promise<string | undefined>} Account id of owner
 	 */
-	getAccountByAddress(address) { return this.wsProvider.call([0, 'get_account_by_address', [ripemd160.toRaw(address)]]); }
+	getAccountByAddress(address) {
+		return this.wsProvider.call([0, 'get_account_by_address', [ripemd160.toRaw(address)]]);
+	}
 
 	/**
 	 * Returns all approved withdrawals, for the given account id.
@@ -1449,7 +1460,9 @@ class WalletAPI {
 	 * @param {number} blockNum height of the block to retrieve
 	 * @return {Promise<any[]>} info about operation history object
 	 */
-	getBlockVirtualOps(blockNum) { return this.wsProvider.call([0, 'get_block_virtual_ops', [uint32.toRaw(blockNum)]]); }
+	getBlockVirtualOps(blockNum) {
+		return this.wsProvider.call([0, 'get_block_virtual_ops', [uint32.toRaw(blockNum)]]);
+	}
 
 	/**
 	 * Returns the number of accounts registered on the blockchain.
@@ -1619,7 +1632,9 @@ class WalletAPI {
 	 * @returns {Promise<String>} the binary form of the transaction. It will not be hex encoded,
 	 * this returns a raw string that may have null characters embedded in it
 	 */
-	serializeTransaction(tr) { return this.wsProvider.call([0, 'serialize_transaction', [signedTransaction.toRaw(tr)]]); }
+	serializeTransaction(tr) {
+		return this.wsProvider.call([0, 'serialize_transaction', [signedTransaction.toRaw(tr)]]);
+	}
 
 	/**
 	 * Signs a transaction.
