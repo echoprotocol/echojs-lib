@@ -25,7 +25,8 @@ export default class BaseEchoApi {
 		if (this.provider.connectionType === ConnectionType.WS) {
 			if (this.apiName === CHAIN_API.LOGIN_API) this.apiId = 1;
 			else this.apiId = await this.provider.call([1, this.apiName, []]);
-		} else this.apiId = 0;
+		} else if (this.apiName === CHAIN_API.DATABASE_API) this.apiId = 0;
+		else throw new Error(`${this.apiName} not available through http connection`);
 		return this;
 	}
 
