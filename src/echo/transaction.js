@@ -2,11 +2,17 @@ import BigNumber from 'bignumber.js';
 import { cloneDeep } from 'lodash';
 
 import Api from './api';
-import { isObject, validateUnsignedSafeInteger } from '../utils/validators';
+import {
+	isObject,
+	validateUnsignedSafeInteger,
+	validatePositiveSafeInteger,
+	isHex,
+	isUInt32,
+} from '../utils/validators';
 import PrivateKey from '../crypto/private-key';
 import PublicKey from '../crypto/public-key';
 import Signature from '../crypto/signature';
-import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID } from '../constants';
+import { ECHO_ASSET_ID, DYNAMIC_GLOBAL_OBJECT_ID, CHAIN_CONFIG } from '../constants';
 import { EXPIRATION_SECONDS } from '../constants/api-config';
 import { transaction, signedTransaction, operation } from '../serializers';
 
@@ -17,12 +23,17 @@ import { transaction, signedTransaction, operation } from '../serializers';
 class Transaction {
 
 	/**
-	 * @readonly
 	 * @type {number}
 	 */
 	get refBlockNum() {
-		this.checkFinalized();
 		return this._refBlockNum;
+	}
+
+	/** @param {number|undefined} value */
+	set refBlockNum(value) {
+		validatePositiveSafeInteger(value);
+		if ((value > 0xffff)) throw new Error('number is not safe');
+		this._refBlockNum = value;
 	}
 
 	/**
@@ -30,9 +41,36 @@ class Transaction {
 	 * @type {number}
 	 */
 	get refBlockPrefix() {
-		this.checkFinalized();
 		return this._refBlockPrefix;
 	}
+
+	/** @param {string|number|undefined} value */
+	set refBlockPrefix(value) {
+		if (isHex(value)) {
+			this._refBlockPrefix = Buffer.from(value, 'hex').readUInt32LE(4);
+			return;
+		}
+		if (isUInt32(value)) {
+			this._refBlockPrefix = value;
+			return;
+		}
+		throw new Error('invalid refBlockPrefix format');
+	}
+
+	/** @param {string|undefined} value */
+	set chainId(value) {
+		if (isHex(value) && value.length === CHAIN_CONFIG.CHAIN_ID_LENGTH) {
+			this._chainId = value;
+			return;
+		}
+		throw new Error('invalid chainId format or length');
+	}
+
+	/**
+	 * @readonly
+	 * @type {string}
+	 */
+	get chainId() {	return this._chainId; }
 
 	/**
 	 * @readonly
@@ -44,14 +82,20 @@ class Transaction {
 	 * @readonly
 	 * @type {boolean}
 	 */
-	get finalized() { return this._finalized; }
+	get finalized() {
+		return this._refBlockNum !== undefined &&
+		this._refBlockPrefix !== undefined && !!this._chainId && this.hasAllFees;
+	}
 
 	/** @type {Api} */
-	get api() { return this._api; }
+	get api() {
+		if (!this._api) throw new Error('Api instance does not exist, check your connection');
+		return this._api;
+	}
 
 	/** @param {Api} value */
 	set api(value) {
-		if (!(value instanceof Api)) throw new Error('value is not a Api instance');
+		if (value && !(value instanceof Api)) throw new Error('value is not a Api instance');
 		/**
 		 * @private
 		 * @type {Api}
@@ -100,11 +144,6 @@ class Transaction {
 		this._signatures = [];
 		/**
 		 * @private
-		 * @type {boolean}
-		 */
-		this._finalized = false;
-		/**
-		 * @private
 		 * @type {number}
 		 */
 		this._expiration = undefined;
@@ -112,6 +151,14 @@ class Transaction {
 
 	checkNotFinalized() { if (this.finalized) throw new Error('already finalized'); }
 	checkFinalized() { if (!this.finalized) throw new Error('transaction is not finalized'); }
+
+	async getGlobalChainData() {
+		if (this.refBlockPrefix && this.refBlockNum) {
+			return { refBlockNum: this.refBlockNum, refBlockPrefix: this.refBlockPrefix };
+		}
+		const globalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+		return { refBlockNum: globalChainData.head_block_number, refBlockPrefix: globalChainData.head_block_id };
+	}
 
 	/**
 	 * @param {OperationId} operationId
@@ -200,7 +247,6 @@ class Transaction {
 	 * @returns {Transaction}
 	 */
 	addSigner(privateKey, publicKey = privateKey.toPublicKey()) {
-		this.checkNotFinalized();
 		if (Buffer.isBuffer(privateKey)) privateKey = PrivateKey.fromBuffer(privateKey);
 		if (!(privateKey instanceof PrivateKey)) throw new Error('private key is not instance of PrivateKey class');
 		if (!(publicKey instanceof PublicKey)) throw new Error('public key is not instance of PublicKey class');
@@ -216,26 +262,24 @@ class Transaction {
 	 * @param {PrivateKey=} _privateKey
 	 */
 	async sign(_privateKey) {
-		this.checkNotFinalized();
 		if (_privateKey !== undefined) this.addSigner(_privateKey);
-		if (!this.hasAllFees) await this.setRequiredFees();
-		const dynamicGlobalChainData = await this.api.getObject(DYNAMIC_GLOBAL_OBJECT_ID, true);
+
+		if (!this.finalized) {
+			const { refBlockNum, refBlockPrefix } = await this.getGlobalChainData();
+
+			if (!this.hasAllFees) await this.setRequiredFees();
+			if (!this.refBlockNum) {
+				this.refBlockNum = refBlockNum;
+			}
+			if (!this.refBlockPrefix) {
+				this.refBlockPrefix = refBlockPrefix;
+			}
+			if (!this.chainId) {
+				this.chainId = await this.api.getChainId();
+			}
+		}
 		if (this.expiration === undefined) this.expiration = Math.ceil(Date.now() / 1e3) + EXPIRATION_SECONDS;
-		const chainId = await this.api.getChainId();
-		// one more check to avoid that the sign method was called several times
-		// without waiting for the first call to be executed
-		this.checkNotFinalized();
-		this._finalized = true;
-		/**
-		 * @private
-		 * @type {number|undefined}
-		 */
-		this._refBlockNum = dynamicGlobalChainData.head_block_number & 0xffff; // eslint-disable-line no-bitwise
-		/**
-		 * @private
-		 * @type {number|undefined}
-		 */
-		this._refBlockPrefix = Buffer.from(dynamicGlobalChainData.head_block_id, 'hex').readUInt32LE(4);
+
 		const transactionBuffer = transaction.serialize({
 			ref_block_num: this.refBlockNum,
 			ref_block_prefix: this.refBlockPrefix,
@@ -244,7 +288,7 @@ class Transaction {
 			extensions: [],
 		});
 
-		const chainBuffer = Buffer.from(chainId, 'hex');
+		const chainBuffer = Buffer.from(this.chainId, 'hex');
 		const bufferToSign = Buffer.concat([chainBuffer, Buffer.from(transactionBuffer)]);
 		this._signatures = this._signers.map(({ privateKey }) => Signature.signBuffer(bufferToSign, privateKey));
 	}
@@ -277,11 +321,16 @@ class Transaction {
 			operations: this.operations,
 			extensions: [],
 			signatures: this._signatures.map((signature) => signature.toBuffer()),
+			signed_with_echorand_key: false,
 		});
 	}
 
 	serialize() {
 		return transaction.serialize(this.transactionObject);
+	}
+
+	signedTransactionSerializer() {
+		return signedTransaction.serialize(this.transactionObject);
 	}
 
 	/**

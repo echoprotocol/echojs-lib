@@ -1408,7 +1408,7 @@ describe('WALLET API', () => {
 					bitassetOpts,
 					shouldDoBroadcastToNetwork,
 				);
-				console.log('check', check.operations[0][1]);
+				console.log('transaction.js.js', check.operations[0][1]);
 				const bitasset = '1.3.0';
 				const result = await echo.walletApi.getBitassetData(bitasset);
 				expect(result)

@@ -380,7 +380,7 @@ class ReconnectionWebSocket {
 	}
 
 	/**
-	 * make call for check connection
+	 * make call for transaction.js connection
 	 * @private
 	 */
 	async _ping() {
