@@ -429,6 +429,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		address:String,
 *  		log:Array.<String>,
 *  		data:String
+ *  	trx_num:Number,
+ *  	op_num:Number
 *  	}
 *  	} ContractLogs */
 
@@ -1933,8 +1935,9 @@ class API {
 	 * @returns {Promise<Log[]>}
 	 */
 	async getContractLogs(opts = {}) {
-		return new Promise((resolve) => {
-			this.wsApi.database.getContractLogs((res) => resolve(res), toRawContractLogsFilterOptions(opts));
+		return new Promise((resolve, reject) => {
+			this.wsApi.database.getContractLogs((res) => resolve(res), toRawContractLogsFilterOptions(opts))
+				.catch((err) => reject(err));
 		}).then((res) => {
 			assert.ok(Array.isArray(res));
 			assert.strictEqual(res.length, 1);
@@ -2126,10 +2129,11 @@ class API {
 	 * @param {string} name
 	 * @param {string} activeKey
 	 * @param {string} echoRandKey
+	 * @param {string} evmAddress
 	 * @param {() => any} [wasBroadcastedCallback]
 	 * @return {Promise<[{ block_num: number, tx_id: string }]>}
 	 */
-	async registerAccount(name, activeKey, echoRandKey, wasBroadcastedCallback) {
+	async registerAccount(name, activeKey, echoRandKey, evmAddress, wasBroadcastedCallback) {
 		if (!isAccountName(name)) throw new Error('Name is invalid');
 		if (!isPublicKey(activeKey)) throw new Error('Active public key is invalid');
 		if (!isEchoRandKey(echoRandKey)) throw new Error('Echo rand key is invalid');
@@ -2143,6 +2147,7 @@ class API {
 					name,
 					activeKey,
 					echoRandKey,
+					evmAddress,
 					nonce,
 					randNum,
 				);
@@ -2578,17 +2583,18 @@ class API {
 	 * 	@param {String} name
 	 * 	@param {String} activeKey
 	 * 	@param {String} echorandKey
+	 * 	@param {String} evmAddress
 	 * 	@param {Number} nounce
 	 * 	@param {Number} randNum
 	 * 	@param {Function} wasBroadcastedCallback
 	 *
  	 *  @return {Promise<Boolean>}
 	 */
-	submitRegistrationSolution(name, activeKey, echorandKey, nounce, randNum, wasBroadcastedCallback) {
+	submitRegistrationSolution(name, activeKey, echorandKey, evmAddress, nounce, randNum, wasBroadcastedCallback) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.wsApi.registration.submitRegistrationSolution((res) =>
-					resolve(res), name, activeKey, echorandKey, nounce, randNum);
+					resolve(res), name, activeKey, echorandKey, evmAddress, nounce, randNum);
 			} catch (error) {
 				reject(error);
 			}

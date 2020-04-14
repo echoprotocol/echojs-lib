@@ -116,7 +116,7 @@
 			"erc20_withdraw_topic": "ec7288d868c54d049bda9254803b6ddaaf0317b76e81601c0af91a480592b272",
 			"ETH_asset_id": "1.3.1",
 			"BTC_asset_id": "1.3.2",
-			"fines": { "generate_eth_address": -10 },
+			"fines": { "create_eth_address": -10 },
 			"gas_price": 10000000000,
 			"satoshis_per_byte": 23,
 			"coefficient_waiting_blocks": 100

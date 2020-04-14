@@ -1,3 +1,7 @@
+## Table of contents
+
+- [Connection](#connection)
+
 ### Connection
 
 #### Before use echo instances you should connect to node.
@@ -17,6 +21,7 @@ const {
             ASSET_API,
             LOGIN_API,
             NETWORK_NODE_API,
+            ECHORAND_API
         }
     } 
 } = constants; // access to different APIs
@@ -36,6 +41,7 @@ const options = {
         ASSET_API,
         LOGIN_API,
         NETWORK_NODE_API,
+        ECHORAND_API
     ]
 };
 

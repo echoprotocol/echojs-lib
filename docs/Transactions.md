@@ -1,3 +1,14 @@
+## Table of contents
+
+- [Transactions](#transactions)
+    - [Transfer](#transfer)
+    - [Account create](#account-create)
+    - [Create contract operation](#create-contract-operation)
+    - [Call contract operation](#call-contract-operation)
+    - [Create asset operation](#create-asset-operation)
+    - [Issue asset](#issue-asset)
+    - [Account update operation](#account-update-operation)
+
 ### Transactions
 Using transaction builder you can build and broadcast transaction.
 
