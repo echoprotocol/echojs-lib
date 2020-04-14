@@ -1,8 +1,6 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
 import * as assert from 'assert';
-import { ok } from 'assert';
 import { Map, List, fromJS } from 'immutable';
-import BigNumber from 'bignumber.js';
 import {
 	isNumber,
 	isArray,
@@ -29,7 +27,7 @@ import {
 	isBtcAddressId,
 	isObject,
 	isInt64,
-	validateSidechainType, isUInt32,
+	validateSidechainType,
 } from '../utils/validators';
 
 import { solveRegistrationTask, validateRegistrationOptions } from '../utils/pow-solver';
@@ -1935,52 +1933,17 @@ class API {
 	}
 
 	/**
-	 * @param {Object} [opts]
-	 * @param {string[]} [opts.contracts]
-	 * @param {(null | string | Buffer | (string | Buffer)[])[]} [opts.topics]
-	 * @param {number | BigNumber} [opts.fromBlock]
-	 * @param {number | BigNumber} [opts.toBlock]
-	 * @returns {Promise<Array<ContractLogs>>}
+	 * @param {ContractLogsFilterOptions_t} [opts]
+	 * @returns {Promise<Log[]>}
 	 */
-	async getContractLogs(opts = { }) {
-		if (opts.contracts !== undefined) {
-			ok(Array.isArray(opts.contracts), 'contracts: vector is not an array');
-			for (const contractId of opts.contracts) ok(isContractId(contractId), 'invalid object type id');
-		}
-		/** @type {typeof opts["topics"]} */
-		let topics;
-		if (opts.topics !== undefined) {
-			ok(Array.isArray(opts.topics), '`topics` is not an array');
-			topics = new Array(opts.topics.length).fill(null);
-			for (let topicIndex = 0; topicIndex < opts.topics.length; topicIndex += 1) {
-				let topicVariants = opts.topics[topicIndex];
-				if (topicVariants === null) topicVariants = [];
-				else if (typeof topicVariants === 'string') topicVariants = [topicVariants];
-				topics[topicIndex] = new Array(topicVariants.length).fill(null);
-				for (let variantIndex = 0; variantIndex < topicVariants.length; variantIndex += 1) {
-					let variant = topicVariants[variantIndex];
-					if (Buffer.isBuffer(variant)) variant = variant.toString('hex');
-					ok(typeof variant === 'string', 'invalid "topic" option type');
-					if (variant.startsWith('0x')) variant = variant.slice(2);
-					ok(/^([\da-fA-F]{2})+$/.test(variant), '"topic" is not a hex');
-					ok(variant.length === 64, 'invalid "topic" length');
-					topics[topicIndex][variantIndex] = variant;
-				}
-			}
-		}
-		for (const field of ['fromBlock', 'toBlock']) {
-			ok(opts[field] === undefined || isUInt32(opts[field]), `"${field}" option is not uint32`);
-		}
+	async getContractLogs(opts = {}) {
 		return new Promise((resolve, reject) => {
-			const cb = (logs) => {
-				resolve(logs[0].map(([, log]) => log));
-			};
-			this.engine.database.getContractLogs(cb, {
-				contracts: opts.contracts,
-				topics,
-				from_block: BigNumber.isBigNumber(opts.fromBlock) ? opts.fromBlock.toNumber() : opts.fromBlock,
-				to_block: BigNumber.isBigNumber(opts.toBlock) ? opts.toBlock.toNumber() : opts.toBlock,
-			}).catch((err) => reject(err));
+			this.engine.database.getContractLogs((res) => resolve(res), toRawContractLogsFilterOptions(opts))
+				.catch((err) => reject(err));
+		}).then((res) => {
+			assert.ok(Array.isArray(res));
+			assert.strictEqual(res.length, 1);
+			return res[0];
 		});
 	}
 
