@@ -3,7 +3,7 @@ import Cache from './cache';
 import API from './api';
 import Subscriber from './subscriber';
 import Transaction from './transaction';
-import { STATUS, DEFAULT_CHAIN_APIS } from '../constants/ws-constants';
+import { STATUS, DEFAULT_CHAIN_APIS, CHAIN_API } from '../constants/ws-constants';
 import { WalletApi } from './apis';
 import EchoApiEngine from './engine';
 import { ConnectionType, WsProvider, HttpProvider } from './providers';
@@ -56,7 +56,9 @@ class Echo {
 		if (optionError) throw new Error(optionError);
 		const provider = address.startsWith('ws') ? new WsProvider() : new HttpProvider(address);
 		if (provider.connectionType === ConnectionType.WS) await provider.connect(address, options);
-		this.engine = new EchoApiEngine(options.apis || DEFAULT_CHAIN_APIS, provider);
+		const apis = options.apis ||
+			(provider.connectionType === ConnectionType.WS ? DEFAULT_CHAIN_APIS : [CHAIN_API.DATABASE_API]);
+		this.engine = new EchoApiEngine(apis, provider);
 		if (this._isInitModules) return;
 		this.subscriber.setOptions(options);
 		await this._initModules(options);
