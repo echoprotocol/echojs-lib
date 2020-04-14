@@ -85,7 +85,7 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 
 		if (this.subscriptions.block) {
@@ -546,12 +546,12 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _setConsensusMessageCallback
+	 *  @method _setEchorandMessageCallback
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async _setConsensusMessageCallback() {
-		await this._wsApi.networkNode.setConsensusMessageCallback(this._echorandUpdate.bind(this));
+	async _setEchorandMessageCallback() {
+		await this._wsApi.echorand.setEchorandMessageCallback(this._echorandUpdate.bind(this));
 		this.subscriptions.echorand = true;
 	}
 
@@ -570,7 +570,7 @@ class Subscriber extends EventEmitter {
 		this.subscribers.echorand.push(callback);
 
 		if (!this.subscriptions.echorand) {
-			await this._setConsensusMessageCallback();
+			await this._setEchorandMessageCallback();
 		}
 	}
 
