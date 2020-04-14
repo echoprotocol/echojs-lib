@@ -94,7 +94,7 @@ export declare const assetPublishFeedOperationPropsSerializer: StructSerializer<
 	fee: typeof asset,
 	publisher: typeof accountId,
 	asset_id: typeof assetId,
-	feed: typeof priceFeedSerializer,
+	core_exchange_rate: typeof priceSerializer,
 	extensions: typeof extensions,
 }>;
 

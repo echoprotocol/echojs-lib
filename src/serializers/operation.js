@@ -55,9 +55,9 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BURN]: protocol.sidechain.burn,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_REGISTER_TOKEN]: protocol.sidechain.erc20.registerToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_DEPOSIT_TOKEN]: protocol.sidechain.erc20.depositToken,
-	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_DEPOSIT]: protocol.sidechain.erc20.sendDeposit,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_DEPOSIT_TOKEN]: protocol.sidechain.erc20.sendDepositToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_WITHDRAW_TOKEN]: protocol.sidechain.erc20.withdrawToken,
-	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_WITHDRAW]: protocol.sidechain.erc20.sendWithdraw,
+	[OPERATIONS_IDS.SIDECHAIN_ERC20_SEND_WITHDRAW_TOKEN]: protocol.sidechain.erc20.sendWithdrawToken,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_APPROVE_TOKEN_WITHDRAW]: protocol.sidechain.erc20.approveTokenWithdraw,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_ISSUE]: protocol.sidechain.erc20.issue,
 	[OPERATIONS_IDS.SIDECHAIN_ERC20_BURN]: protocol.sidechain.erc20.burn,
@@ -69,6 +69,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: protocol.sidechain.btc.aggregate,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_AGGREGATE]: protocol.sidechain.btc.approveAggregate,
 	[OPERATIONS_IDS.BLOCK_REWARD]: protocol.blockReward,
+	[OPERATIONS_IDS.EVM_ADDRESS_REGISTER]: protocol.evmAddress,
 };
 
 const operationSerializer = staticVariant(operationProps);

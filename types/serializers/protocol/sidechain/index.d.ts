@@ -24,9 +24,9 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 export declare const erc20: {
 	registerToken: typeof _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
-	sendDeposit: typeof _erc20.sidechainERC20SendDepositOperationPropsSerializer,
+	sendDepositToken: typeof _erc20.sidechainERC20SendDepositTokenOperationPropsSerializer,
 	withdrawToken: typeof _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
-	sendWithdraw: typeof _erc20.sidechainERC20SendWithdrawOperationPropsSerializer,
+	sendWithdrawToken: typeof _erc20.sidechainERC20SendWithdrawTokenOperationPropsSerializer,
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
 	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,

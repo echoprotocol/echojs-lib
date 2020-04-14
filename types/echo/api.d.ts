@@ -140,7 +140,6 @@ export default class Api {
 	 * @returns The contracts logs from specified blocks interval
 	 */
 	getContractLogs(opts?: ContractLogsFilterOptions): Promise<Log[]>;
-
 	getContractPoolBalance(resultContractId: string, force?: boolean): Promise<{asset_id: string, amount: number}>;
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;

@@ -1,7 +1,6 @@
 /* eslint-disable no-continue,no-await-in-loop,camelcase,no-restricted-syntax */
 import * as assert from 'assert';
 import { Map, List, fromJS } from 'immutable';
-
 import {
 	isNumber,
 	isArray,
@@ -333,7 +332,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 * 			block_num:Number,
 * 			trx_in_block:Number,
 * 			op_in_block:Number,
-* 			virtual_op:Number
+* 			virtual_op:Number,
+* 			proposal_hist_id: Number|undefined
 *  		}
 *  	} AccountHistory */
 
@@ -478,7 +478,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		op_in_trx:Number,
 *		result: [0, {}],
 *  		trx_in_block:Number,
-*  		virtual_op:Number
+*  		virtual_op:Number,
+*  		proposal_hist_id: Number
 *  	}
 * 	} ContractHistory */
 

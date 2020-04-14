@@ -75,6 +75,8 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
+import evmAddress from './evm_address';
+
 export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
 
 export const account = {
@@ -173,3 +175,5 @@ export const voteId = new VoteIdSerializer();
 export { VoteIdSerializer };
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
+
+export { evmAddress };

@@ -6,4 +6,5 @@ export default interface ContractHistory {
 	result: [0, {}],
 	trx_in_block: number,
 	virtual_op: number,
+	proposal_hist_id: number|undefined;
 }

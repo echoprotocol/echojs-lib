@@ -41,6 +41,8 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 
+/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
+
 class Subscriber extends EventEmitter {
 
 	/**
