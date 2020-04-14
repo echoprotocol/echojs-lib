@@ -209,20 +209,23 @@ class ReconnectionWebSocket {
 
 		this._cbId += 1;
 
-		if (method === 'set_subscribe_callback' ||
-			method === 'broadcast_transaction_with_callback' || method === 'set_pending_transaction_callback' ||
-			method === 'set_block_applied_callback' || method === 'set_echorand_message_callback' ||
-			method === 'subscribe_contract_logs' || method === 'submit_registration_solution' || method === 'get_contract_logs'
+		if (
+			method === 'set_subscribe_callback' ||
+			method === 'broadcast_transaction_with_callback' ||
+			method === 'set_pending_transaction_callback' ||
+			method === 'set_block_applied_callback' ||
+			method === 'set_consensus_message_callback' ||
+			method === 'submit_registration_solution' ||
+			method === 'get_contract_logs' ||
+			method === 'subscribe_contract_logs' ||
+			method === 'set_echorand_message_callback'
 		) {
 			this._subs[this._cbId] = { callback: params[2][0] };
 			params[2][0] = this._cbId;
-
 			if (method === 'get_contract_logs') {
 				this._cbLogs.push(this._cbId);
 			}
-		}
-
-		if (method === 'unsubscribe_from_accounts') {
+		} else if (method === 'unsubscribe_from_accounts') {
 			if (typeof params[2][0] !== 'function') {
 				throw new Error('First parameter of unsub must be the original callback');
 			}

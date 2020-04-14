@@ -21,16 +21,42 @@ describe("getContractLogs", () => {
 		}, 'contracts: vector is not an array');
 	});
 
+	describe('when `contracts` has duplicates', () => {
+		shouldReject(
+			async () => await echo.api.getContractLogs({ contracts: ['1.11.1', '1.11.1'] }),
+			'contracts element with index 1 is equals to the other one with index 0',
+			'with indexes of duplicated elements',
+		);
+	});
+
 	describe('when `contracts` first element is not a contract id', () => {
 		shouldReject(async () => {
 			await echo.api.getContractLogs({ contracts: ['1.10.1'] });
-		}, 'invalid object type id');
+		}, 'contracts: vector element with index 0: invalid object type id');
 	});
 
 	describe('when `topics` is not an `set_t`', () => {
 		shouldReject(async () => {
 			await echo.api.getContractLogs({ topics: 'not an array' });
 		}, '`topics` is not an array');
+	});
+
+	describe('when `fromBlock` is negative', () => {
+		shouldReject(async () => {
+			await echo.api.getContractLogs({ fromBlock: -1 });
+		}, '`fromBlock` must be greater than or equal to zero');
+	});
+
+	describe('when `toBlock` is negative', () => {
+		shouldReject(async () => {
+			await echo.api.getContractLogs({ toBlock: -1 });
+		}, '`toBlock` must be greater than zero');
+	});
+
+	describe('when `toBlock` is equals to zero', () => {
+		shouldReject(async () => {
+			await echo.api.getContractLogs({ toBlock: 0 });
+		}, '`toBlock` must be greater than zero');
 	});
 
 	describe('when different events are emitted in different blocks', () => {
@@ -65,11 +91,11 @@ describe("getContractLogs", () => {
 			});
 			it('with all logs of contract', function () {
 				if (events === undefined) this.skip();
-				assert.ok(events.every(({ address }) => address === contractAddress));
+				assert.ok(events.every(([_, { address }]) => address === contractAddress));
 			});
 			it('with different blocks', function () {
 				if (events === undefined) this.skip();
-				assert.ok(events[0].block_num !== events[1].block_num);
+				assert.ok(events[0][1].block_num !== events[1][1].block_num);
 			});
 		});
 		describe('when there are another contract with the same logs', () => {
@@ -102,11 +128,11 @@ describe("getContractLogs", () => {
 				});
 				it('with all logs of contract', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 2) this.skip();
-					assert.ok(res.every(({ address }) => address === contractAddress));
+					assert.ok(res.every(([_, { address }]) => address === contractAddress));
 				});
 				it('with different blocks', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 2) this.skip();
-					assert.ok(res[0].block_num !== res[1].block_num);
+					assert.ok(res[0][1].block_num !== res[1][1].block_num);
 				});
 			});
 			describe('when both contracts are provided in `contracts` filter', () => {
@@ -126,7 +152,7 @@ describe("getContractLogs", () => {
 				});
 				it('with all logs of both contracts', function () {
 					if (res === undefined || !Array.isArray(res) || res.length < 4) this.skip();
-					assert.deepStrictEqual(res.map(({ address }) => {
+					assert.deepStrictEqual(res.map(([_, { address }]) => {
 						return address;
 					}), [contractAddress, contractAddress, anotherContractAddress, anotherContractAddress]);
 				});
