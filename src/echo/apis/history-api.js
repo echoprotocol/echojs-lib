@@ -96,7 +96,7 @@ class HistoryAPI extends BaseEchoApi {
 	 * @returns {Promise<OperationHistoryObject[]>}
 	 */
 	getRelativeContractHistory(contract, stop, limit, start) {
-		return this.db.exec('get_relative_contract_history', [contract, stop, limit, start]);
+		return this.exec('get_relative_contract_history', [contract, stop, limit, start]);
 	}
 
 }
