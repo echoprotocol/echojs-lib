@@ -38,6 +38,7 @@ import {
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
 import { ConnectionType } from './providers';
+import { toRawContractLogsFilterOptions } from '../utils/converters';
 
 /** @typedef {import("./engine").default} EchoApiEngine */
 
