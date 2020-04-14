@@ -1,3 +1,5 @@
+/** @typedef {import("../../../types/interfaces/vm/types").Log} Log */
+
 /** @typedef {"" | "eth" | "btc"} SidechainType */
 
 class DatabaseAPI {
@@ -496,30 +498,20 @@ class DatabaseAPI {
 	}
 
 	/**
-	 * @method getContractLogs
-	 * @param  {Function} callback
-	 * @param {Object} opts
-	 * @param {string[]} [opts.contracts]
-	 * @param {(string | string[])[]} [opts.topics]
-	 * @param {number} [opts.from_block]
-	 * @param {number} [opts.to_block]
-	 * @returns {Promise<null>}
+	 * @param {(result: Log[]) => any} cb
+	 * @param {ContractLogsFilterOptionsRaw} opts
 	 */
-	getContractLogs(callback, opts) {
-		return this.db.exec('get_contract_logs', [callback, opts]);
-	}
+	getContractLogs(cb, opts) { return this.db.exec('get_contract_logs', [cb, opts]); }
 
 	/**
-	 *  @method subscribeContractLogs
-	 *
-	 *  @param  {Function} callback
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
-	 *
-	 *  @return {Promise}
+	 * @param {(result: Log[]) => any} cb
+	 * @param {ContractLogsFilterOptionsRaw} options
+	 * @returns {Promise<number|string>}
 	 */
-	subscribeContractLogs(callback, contractTopicsMap) {
-		return this.db.exec('subscribe_contract_logs', [callback, contractTopicsMap]);
-	}
+	subscribeContractLogs(cb, options) { return this.db.exec('subscribe_contract_logs', [cb, options]); }
+
+	/** @param {number|string} cbId */
+	unsubscribeContractLogs(cbId) { return this.db.exec('unsubscribe_contract_logs', [cbId]); }
 
 	/**
 	 *  @method getContractResult
@@ -630,15 +622,6 @@ class DatabaseAPI {
 	 */
 	getBalanceObjects(keys) {
 		return this.db.exec('get_balance_objects', [keys]);
-	}
-
-	/**
-	 * @method getBlockRewards
-	 * @param {number} blockNum
-	 * @returns {Promise<unknown>}
-	 */
-	getBlockRewards(blockNum) {
-		return this.db.exec('get_block_rewards', [blockNum]);
 	}
 
 	/**

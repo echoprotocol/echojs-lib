@@ -26,12 +26,26 @@ export declare const sidechainERC20DepositTokenOperationPropsSerializer: StructS
 	extensions: typeof extensions,
 }>;
 
+export const sidechainERC20SendDepositOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	deposit_id: typeof depositErc20TokenId,
+	extensions: typeof extensions,
+}>;
+
 export declare const sidechainERC20WithdrawTokenOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
 	to: typeof ethAddress,
 	erc20_token: typeof erc20TokenId,
 	value: StringSerializer,
+	extensions: typeof extensions,
+}>;
+
+export const sidechainERC20SendWithdrawOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	withdraw_id: typeof withdrawErc20TokenId,
 	extensions: typeof extensions,
 }>;
 

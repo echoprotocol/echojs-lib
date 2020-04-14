@@ -37,6 +37,9 @@ import {
 
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
+import { toRawContractLogsFilterOptions } from '../utils/converters';
+
+/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 
 class Subscriber extends EventEmitter {
 
@@ -897,90 +900,13 @@ class Subscriber extends EventEmitter {
 	}
 
 	/**
-	 *  @method _contractLogsUpdate
-	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractLogsMap
-	 *  @param  {*} result
-	 *
-	 *  @return {undefined}
+	 * @method setContractLogsSubscribe
+	 * @param {(result: Log[]) => any} callback
+	 * @param {import('./api').ContractLogsFilterOptions_t} [options]
+	 * @return {Promise<number|string>}
 	 */
-	_contractLogsUpdate(contractTopicsMap, result) {
-		let callbacks = [];
-		contractTopicsMap.forEach((topicMap) => {
-			const [contractId] = topicMap;
-
-			callbacks = callbacks.concat(this.subscribers.logs[contractId]);
-		});
-
-		callbacks.forEach((callback) => callback(result));
-	}
-
-	/**
-	 *  @method _subscribeToContractLogs
-	 *
-	 *  {Map<String, Array<String>} contractLogsMap
-	 *
-	 *  @return {undefined}
-	 */
-	async _subscribeToContractLogs(contractTopicsMap) {
-		await this._wsApi.database.subscribeContractLogs(
-			this._contractLogsUpdate.bind(this, contractTopicsMap),
-			contractTopicsMap,
-		);
-	}
-
-	/**
-	 *  @method setContractLogsSubscribe
-	 *
-	 *  @param  {Array<Array<String, Array<String>>} contractTopicsMap
-	 *  @param  {Function} callback
-	 *  @param  {Number} [fromBlock]
-	 *  @param  {Number} [toBlock]
-	 *
-	 *  @return {undefined}
-	 */
-	async setContractLogsSubscribe(contractTopicsMap, callback, fromBlock, toBlock) {
-		const globalInfo = await this._wsApi.database.getDynamicGlobalProperties();
-
-		const contractsToSubscribe = {};
-
-		await Promise.all(contractTopicsMap.map((topicsItem) =>
-			(async () => {
-				const [contractId, topics] = topicsItem;
-				if (fromBlock) {
-					await this._wsApi.database.getContractLogs(
-						callback,
-						{
-							contracts: [contractId],
-							topics,
-							from_block: fromBlock,
-							to_block: toBlock || globalInfo.head_block_number,
-						},
-					);
-				}
-				// set subscriber from current block
-				if (!this.subscribers.logs[contractId]) {
-					this.subscribers.logs[contractId] = [];
-					contractsToSubscribe[contractId] = topics;
-				}
-
-				this.subscribers.logs[contractId].push(callback);
-			})()));
-
-		await this._subscribeToContractLogs(contractsToSubscribe);
-	}
-
-	/**
-	 *  @method removeContractLogsSubscribe
-	 *
-	 *  @param  {String} contractId
-	 *  @param  {Function} callback
-	 *
-	 *  @return {undefined}
-	 */
-	removeContractLogsSubscribe(contractId, callback) {
-		this.subscribers.logs[contractId] = this.subscribers.logs[contractId]
-			.filter((c) => (c !== callback));
+	async setContractLogsSubscribe(callback, options = {}) {
+		return this._wsApi.database.subscribeContractLogs(callback, toRawContractLogsFilterOptions(options));
 	}
 
 	/**

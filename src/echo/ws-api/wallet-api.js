@@ -19,6 +19,7 @@ import {
 	isPublicKey,
 	isUInt64,
 	isCommitteeMemberId,
+	validateAmount,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -65,6 +66,7 @@ const {
 	committeeMemberId,
 } = serializers.chain.ids.protocol;
 
+/** @typedef {import("bignumber.js").BigNumber} BigNumber */
 /**
  * @typedef {typeof import("../../serializers/transaction")['signedTransactionSerializer']} SignedTransactionSerializer
  */
@@ -445,7 +447,7 @@ class WalletAPI {
 	 * Upload/Create a contract.
 	 * @param {string} accountNameOrId name of the account creating the contract
 	 * @param {string} contractCode code of the contract
-	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {number|string|BigNumber} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
 	 * @param {string} supportedAssetId the asset that can be used to create/call the contract
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-supported-asset)
@@ -454,7 +456,7 @@ class WalletAPI {
 	 * @param {boolean} shouldSaveToWallet whether to save the contract to the wallet
 	 * @returns {Promise<any>} the signed transaction creating the contract
 	 */
-	createContract(
+	async createContract(
 		accountNameOrId,
 		contractCode,
 		amount,
@@ -463,14 +465,13 @@ class WalletAPI {
 		useEthereumAssetAccuracy,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+		amount = validateAmount(amount);
 		return this.wsRpc.call([0, 'create_contract', [
 			string.toRaw(accountNameOrId),
 			string.toRaw(contractCode),
-			uint64.toRaw(amount),
+			string.toRaw(amount),
 			assetId.toRaw(assetType),
 			assetId.toRaw(supportedAssetId),
 			bool.toRaw(useEthereumAssetAccuracy),
@@ -483,12 +484,12 @@ class WalletAPI {
 	 * @param {string} accountNameOrId name of the account calling the contract
 	 * @param {string} idOfContract the id of the contract to call
 	 * @param {string} contractCode the hash of the method to call
-	 * @param {number} amount the amount of asset transferred to the contract
+	 * @param {number|BigNumber|string} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
 	 * @param {boolean} shouldSaveToWallet whether to save the contract call to the wallet
 	 * @returns {Promise<any>} the signed transaction calling the contract
 	 */
-	callContract(
+	async callContract(
 		accountNameOrId,
 		idOfContract,
 		contractCode,
@@ -496,15 +497,14 @@ class WalletAPI {
 		assetType,
 		shouldSaveToWallet,
 	) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
-		if (!isContractCode(contractCode)) return Promise.reject(new Error('Byte code should be string and valid'));
+		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
+		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
+		amount = validateAmount(amount);
 		return this.wsRpc.call([0, 'call_contract', [
 			string.toRaw(accountNameOrId),
 			contractId.toRaw(idOfContract),
 			string.toRaw(contractCode),
-			uint64.toRaw(amount),
+			string.toRaw(amount),
 			assetId.toRaw(assetType),
 			bool.toRaw(shouldSaveToWallet),
 		]]);
@@ -540,6 +540,35 @@ class WalletAPI {
 			return Promise.reject(new Error('Contract resultId should be string and valid'));
 		}
 		return this.wsRpc.call([0, 'get_contract_result', [string.toRaw(contractResultId)]]);
+	}
+
+	/**
+	 * Returns the most recent operations on the contract id.
+	 *
+	 * This returns a list of operation history objects, which describe activity on the contract.
+	 * @param {typeof contractId["__TInput__"]} _contractId the ID of the contract
+	 * @param {typeof uint32["__TInput__"]} limit the number of entries to return (starting from the most recent)
+	 * @returns {Promise<unknown[]>} a list of accounts mapping account names to account ids
+	 */
+	async getContractHistory(_contractId, limit) {
+		return this.wsRpc.call([0, 'get_contract_history', [contractId.toRaw(_contractId), uint32.toRaw(limit)]]);
+	}
+
+	/**
+	 * Returns the relative operations on the id contract from start number
+	 * @param {typeof contractId["__TInput__"]} _contractId the ID of the contract
+	 * @param {typeof uint32["__TInput__"]} stop Sequence number of earliest operation
+	 * @param {typeof uint32["__TInput__"]} limit the number of entries to return
+	 * @param {typeof uint32["__TInput__"]} start the sequence number where to start looping back throw the history
+	 * @returns {Promise<unknown[]>} a list of operation history objects
+	 */
+	async getRelativeContractHistory(_contractId, stop, limit, start) {
+		return this.wsRpc.call([0, 'get_relative_contract_history', [
+			contractId.toRaw(_contractId),
+			uint32.toRaw(stop),
+			uint32.toRaw(limit),
+			uint32.toRaw(start),
+		]]);
 	}
 
 	/**
@@ -1013,7 +1042,7 @@ class WalletAPI {
 	 * @param {boolean} shouldDoBroadcastToNetwork true if you wish to broadcast the transaction
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	generateEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
+	createEthAddress(accountIdOrName, shouldDoBroadcastToNetwork) {
 		if (!isAccountIdOrName(accountIdOrName)) {
 			return Promise.reject(new Error('Accounts id or name should be string and valid'));
 		}
@@ -1645,13 +1674,13 @@ class WalletAPI {
 
 	/**
 	 * @method getBtcAddress
-	 * @param {String} accountId
-	 * @returns {Promise<Array>}
+	 * @param {string} account
+	 * @returns {Promise<unknown[]>}
 	 */
-	getBtcAddress(accountIdValue) {
-		if (!isAccountId(accountIdValue)) throw new Error('account should be valid');
+	getBtcAddress(account) {
+		if (!isAccountId(account) || !isAccountName(account)) throw new Error('account should be valid');
 
-		return this.wsRpc.call([0, 'get_btc_address', [accountIdValue]]);
+		return this.wsRpc.call([0, 'get_btc_address', [account]]);
 	}
 
 	/**

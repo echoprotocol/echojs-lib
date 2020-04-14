@@ -2,14 +2,14 @@ import * as _erc20 from './erc20';
 import * as _eth from './eth';
 import * as _btc from './btc';
 import { asset, extensions } from '../../chain';
-import { accountId, depositId, withdrawId } from '../../chain/id/protocol';
+import { accountId, ethDepositId, ethWithdrawId } from '../../chain/id/protocol';
 import { StructSerializer } from '../../collections';
 
 export declare const sidechainIssueOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	value: typeof asset,
 	account: typeof accountId,
-	deposit_id: typeof depositId,
+	deposit_id: typeof ethDepositId,
 	extensions: typeof extensions,
 }>;
 
@@ -17,14 +17,16 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	value: typeof asset,
 	account: typeof accountId,
-	withdraw_id: typeof withdrawId,
+	withdraw_id: typeof ethWithdrawId,
 	extensions: typeof extensions,
 }>;
 
 export declare const erc20: {
 	registerToken: typeof _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
+	sendDeposit: typeof _erc20.sidechainERC20SendDepositOperationPropsSerializer,
 	withdrawToken: typeof _erc20.sidechainERC20WithdrawTokenOperationPropsSerializer,
+	sendWithdraw: typeof _erc20.sidechainERC20SendWithdrawOperationPropsSerializer,
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
 	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,
@@ -34,8 +36,11 @@ export declare const eth: {
 	createAddress: typeof _eth.sidechainEthCreateAddressOperationPropsSerializer,
 	approveAddress: typeof _eth.sidechainEthApproveAddressOperationPropsSerializer,
 	deposit: typeof _eth.sidechainEthDepositOperationPropsSerializer,
+	sendDeposit: typeof _eth.sidechainEthSendDepositOperationPropsSerializer,
 	withdraw: typeof _eth.sidechainEthWithdrawOperationPropsSerializer,
+	sendWithdraw: typeof _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
+	updateContractAddress: typeof _eth.sidechainEthUpdateContractAddressOperationPropsSerializer,
 };
 
 export declare const btc: {
