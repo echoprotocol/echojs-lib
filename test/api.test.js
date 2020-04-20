@@ -1,6 +1,4 @@
 import { expect } from 'chai';
-import WS from '../src/echo/ws';
-import WSAPI from '../src/echo/ws-api';
 import Cache from '../src/echo/cache';
 import API from '../src/echo/api';
 
@@ -10,6 +8,8 @@ import { DEFAULT_CHAIN_APIS, CHAIN_API } from '../src/constants/ws-constants';
 import { url, accountId } from './_test-data';
 import { deepStrictEqual } from 'assert';
 import { shouldReject } from './_test-utils';
+import { WsProvider } from '../src/echo/providers';
+import EchoApiEngine from '../src/echo/engine';
 
 describe('API', () => {
 	describe('API CONNECTION', () => {
@@ -164,24 +164,25 @@ describe('API', () => {
 	});
 
 	describe('database', () => {
-		const ws = new WS();
+		const wsProvider = new WsProvider();
 		beforeEach(async () => {
-			await ws.connect(url, {
+			await wsProvider.connect(url, {
 				debug: false,
 				apis: constants.WS_CONSTANTS.CHAIN_APIS
 			});
 		});
 		afterEach(async () => {
-			await ws.close();
+			await wsProvider.close();
 		});
 
 		describe('configs', () => {
 			describe('#getChainProperties()', () => {
 				it('should get chain properties', async () => {
 					try {
-						const wsApi = new WSAPI(ws);
+						const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+						await engine.init();
 						const cache = new Cache();
-						const api = new API(cache, wsApi);
+						const api = new API(cache, engine);
 
 						const chainProperties = await api.getChainProperties();
 
@@ -202,9 +203,10 @@ describe('API', () => {
 			describe('#getGlobalProperties()', () => {
 				it('should get global properties', async () => {
 					try {
-						const wsApi = new WSAPI(ws);
+						const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+						await engine.init();
 						const cache = new Cache();
-						const api = new API(cache, wsApi);
+						const api = new API(cache, engine);
 
 						const globalProperties = await api.getGlobalProperties();
 
@@ -225,9 +227,10 @@ describe('API', () => {
 			describe('#getConfig()', () => {
 				it('should get config properties', async () => {
 					try {
-						const wsApi = new WSAPI(ws);
+						const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+						await engine.init();
 						const cache = new Cache();
-						const api = new API(cache, wsApi);
+						const api = new API(cache, engine);
 
 						const config = await api.getConfig();
 
@@ -248,9 +251,10 @@ describe('API', () => {
 			describe('#getChainId()', () => {
 				it('should get chain id', async () => {
 					try {
-						const wsApi = new WSAPI(ws);
+						const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+						await engine.init();
 						const cache = new Cache();
-						const api = new API(cache, wsApi);
+						const api = new API(cache, engine);
 
 						const chainId = await api.getChainId();
 						expect(chainId)
@@ -266,9 +270,10 @@ describe('API', () => {
 			describe('#getDynamicGlobalProperties()', () => {
 				it('should get dynamic global properties', async () => {
 					try {
-						const wsApi = new WSAPI(ws);
+						const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+						await engine.init();
 						const cache = new Cache();
-						const api = new API(cache, wsApi);
+						const api = new API(cache, engine);
 
 						const dynamicGlobalProperties = await api.getDynamicGlobalProperties();
 
@@ -291,9 +296,10 @@ describe('API', () => {
 		describe('#getBlock()', () => {
 			it('should get block and save it to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 					const blockNumber = 2;
 					const block = await api.getBlock(blockNumber);
 
@@ -311,9 +317,10 @@ describe('API', () => {
 		describe.skip('#getTransaction()', () => {
 			it('should get transaction and save it to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 					const blockNumber = 205378;
 					const transactionIndex = 0;
 					const transaction = await api.getTransaction(blockNumber, transactionIndex);
@@ -332,9 +339,10 @@ describe('API', () => {
 		describe('#getAccounts()', () => {
 			it('should get accounts and save it to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 					const accountId1 = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.5`;
 					const accountId2 = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 					const accounts = await api.getAccounts([accountId1, accountId2]);
@@ -373,9 +381,10 @@ describe('API', () => {
 		describe('#getFullAccounts()', () => {
 			it('should get accounts and save it to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.HISTORY_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 					const accountId1 = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.5`;
 					const accountId2 = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
@@ -422,9 +431,10 @@ describe('API', () => {
 		describe('#getAccountCount()', () => {
 			it('should get account count', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountCount = await api.getAccountCount();
 
@@ -441,9 +451,10 @@ describe('API', () => {
 		describe('#lookupAssetSymbols()', () => {
 			it('should get asset by symbol and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const assetKey = 'ECHO';
 					const assetId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
@@ -478,9 +489,10 @@ describe('API', () => {
 		describe('#getAssets()', () => {
 			it('should get assets by id and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const assetId1 = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
 
@@ -509,9 +521,10 @@ describe('API', () => {
 		describe('#getObjects()', () => {
 			it('should get objects by id and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 					const assetId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
@@ -563,9 +576,10 @@ describe('API', () => {
 		describe('#getObjects()', () => {
 			it('should get objects by id and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 					const assetId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ASSET}.0`;
@@ -617,9 +631,10 @@ describe('API', () => {
 		describe('#getCommitteeMembers()', () => {
 			it('should get committee member by id and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const committeeMember = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER}.1`;
 
@@ -648,9 +663,10 @@ describe('API', () => {
 		describe('#getAccountByName()', () => {
 			it('should get account by name and save it in multi caches', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountName = 'relaxed-committee-account';
 
@@ -682,9 +698,10 @@ describe('API', () => {
 		describe('#lookupAccounts()', () => {
 			it('should get account by name and limit', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const lowerBoundName = 't';
 
@@ -702,9 +719,10 @@ describe('API', () => {
 		describe('#listAssets()', () => {
 			it('should get assets by name and limit', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const lowerBoundSymbol = 'E';
 
@@ -722,9 +740,10 @@ describe('API', () => {
 		describe('#getBlockHeader()', () => {
 			it('should get block header by block number', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const blockNumber = 2;
 					const blockHeader = await api.getBlockHeader(blockNumber);
@@ -743,9 +762,10 @@ describe('API', () => {
 		describe.skip('#getFullContract()', () => {
 			it('should get contract', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const contractId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.0`;
 					const contract = await api.getFullContract(contractId);
@@ -764,9 +784,10 @@ describe('API', () => {
 		describe.skip('#getContracts()', () => {
 			it('should get contracts', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const contractId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.0`;
 					const contracts = await api.getContracts([contractId]);
@@ -784,9 +805,10 @@ describe('API', () => {
 		describe('#requestRegistrationTask', () => {
 			it('should get registration task', async() => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.REGISTRATION_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const task = await api.requestRegistrationTask();
 
@@ -803,9 +825,10 @@ describe('API', () => {
 		describe('#getCommitteeMembers()', () => {
 			it('should get committee by id and save to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const id = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER}.1`;
 
@@ -848,9 +871,10 @@ describe('API', () => {
 		describe('#getCommitteeMemberByAccount()', () => {
 			it('should get committee by account id and save to cache', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
@@ -893,9 +917,10 @@ describe('API', () => {
 		describe('#getCommitteeFrozenBalance()', () =>{
 			it('should get committee frozen balance by committee member id', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const committeeMemberId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER}.1`;
 
@@ -925,9 +950,10 @@ describe('API', () => {
 		describe('#getBtcAddress()', () => {
 			it('should get btc address by account id', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.6`;
 
@@ -951,9 +977,10 @@ describe('API', () => {
 		describe.skip('#getBtcDepositScript()', () => {
 			it('should get null because script with this deposit id does not exist', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const btcAddressId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS}.1`;
 
@@ -972,19 +999,22 @@ describe('API', () => {
 	});
 
 	describe('history', () => {
-		const ws = new WS();
+		const wsProvider = new WsProvider();
 		beforeEach(async () => {
-			await ws.connect(url, { apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login'] });
+			await wsProvider.connect(url, {
+				apis: ['database', 'network_broadcast', 'history', 'registration', 'asset', 'login'],
+			});
 		});
 		afterEach(async () => {
-			await ws.close();
+			await wsProvider.close();
 		});
 		describe('#getAccountHistory()', () => {
 			it('should get account history', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.HISTORY_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.2`;
 
@@ -1002,9 +1032,10 @@ describe('API', () => {
 		describe('#getRelativeAccountHistory()', () => {
 			it('should get relative account history', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.HISTORY_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
 					const start = 0;
@@ -1025,9 +1056,10 @@ describe('API', () => {
 		describe('#getAccountHistoryOperations()', () => {
 			it('should get account history operations', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.HISTORY_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.0`;
 					const operationId = 0;
@@ -1049,9 +1081,10 @@ describe('API', () => {
 		describe.skip('#getContractHistory()', () => {
 			it('should get contract history', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const contractId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.1`;
 					const start = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY}.0`;
@@ -1072,9 +1105,10 @@ describe('API', () => {
 		describe('#getRegistrar()', () => {
 			it('should get registrarId', async () => {
 				try {
-					const wsApi = new WSAPI(ws);
+					const engine = new EchoApiEngine([CHAIN_API.DATABASE_API, CHAIN_API.REGISTRATION_API], wsProvider);
+					await engine.init();
 					const cache = new Cache();
-					const api = new API(cache, wsApi);
+					const api = new API(cache, engine);
 
 					const registrar = await api.getRegistrar();
 					expect(registrar)

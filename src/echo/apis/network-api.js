@@ -1,12 +1,18 @@
-class NetworkAPI {
+import { CHAIN_API } from '../../constants/ws-constants';
+import BaseEchoApi from './base-api';
+
+/** @typedef {import("../providers").WsProvider} WsProvider */
+/** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {"" | "eth" | "btc"} SidechainType */
+
+class NetworkAPI extends BaseEchoApi {
 
 	/**
-	 *  @constructor
-	 *
-	 *  @param {EchoApi} db [network api]
+	 * @constructor
+	 * @param {WsProvider | HttpProvider} provider
 	 */
-	constructor(db) {
-		this.db = db;
+	constructor(provider) {
+		super(provider, CHAIN_API.NETWORK_BROADCAST_API);
 	}
 
 	/**
@@ -24,7 +30,7 @@ class NetworkAPI {
 	 *  @return {Promise}
 	 */
 	broadcastTransaction(signedTransaction) {
-		return this.db.exec('broadcast_transaction', [signedTransaction]);
+		return this.exec('broadcast_transaction', [signedTransaction]);
 	}
 
 	/**
@@ -48,7 +54,7 @@ class NetworkAPI {
 	 *  @return {Promise}
 	 */
 	broadcastBlock(signedBlock) {
-		return this.db.exec('broadcast_block', [signedBlock]);
+		return this.exec('broadcast_block', [signedBlock]);
 	}
 
 	/**
@@ -66,7 +72,7 @@ class NetworkAPI {
 	 *  @return {Promise}
 	 */
 	broadcastTransactionSynchronous(signedTransaction) {
-		return this.db.exec('broadcast_transaction_synchronous', [signedTransaction]);
+		return this.exec('broadcast_transaction_synchronous', [signedTransaction]);
 	}
 
 	/**
@@ -86,7 +92,7 @@ class NetworkAPI {
 	 *  @return {Promise}
 	 */
 	broadcastTransactionWithCallback(callback, signedTransaction) {
-		return this.db.exec('broadcast_transaction_with_callback', [callback, signedTransaction]);
+		return this.exec('broadcast_transaction_with_callback', [callback, signedTransaction]);
 	}
 
 }

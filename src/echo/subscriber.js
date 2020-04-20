@@ -37,9 +37,10 @@ import {
 
 import { handleConnectionClosedError } from '../utils/helpers';
 import { IMPLEMENTATION_OBJECT_TYPE_ID } from '../constants/chain-types';
+import { ConnectionType } from './providers';
 import { toRawContractLogsFilterOptions } from '../utils/converters';
 
-/** @typedef {import("../../types/interfaces/vm/types").Log} Log */
+/** @typedef {import("./engine").default} EchoApiEngine */
 
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 
@@ -47,11 +48,9 @@ class Subscriber extends EventEmitter {
 
 	/**
 	 *  @constructor
-	 *  @param {ws} ws
 	 */
-	constructor(ws) {
+	constructor() {
 		super();
-		this._ws = ws;
 
 		this.subscriptions = {
 			account: false,
@@ -61,24 +60,29 @@ class Subscriber extends EventEmitter {
 		};
 
 		this._clearSubscribers();
-		this._ws.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 	}
 
 	/**
 	 *  @method init
 	 *  @param {Cache} cache
-	 *  @param {WSAPI} wsApi
+	 *  @param {EchoApiEngine} engine
 	 *  @param {API} api
 	 *
 	 *  @return {Promise.<undefined>}
 	 */
-	async init(cache, wsApi, api) {
+	async init(cache, engine, api) {
+
+		this._engine = engine;
+		if (engine.provider.connectionType !== ConnectionType.WS) {
+			throw new Error('Subscriber can only be created for ws connection');
+		}
+		this._engine.provider.on(STATUS.CLOSE, () => this.callCbOnDisconnect());
 
 		this.cache = cache;
-		this._wsApi = wsApi;
+		this._wsApi = engine;
 		this._api = api;
 
-		const databaseApiAvailable = this._ws.apis.includes(CHAIN_API.DATABASE_API);
+		const databaseApiAvailable = this._engine.apis.includes(CHAIN_API.DATABASE_API);
 		if (databaseApiAvailable) await this._wsApi.database.setSubscribeCallback(this._onRespond.bind(this), true);
 		this.callCbOnConnect();
 		if (!databaseApiAvailable) {
@@ -124,11 +128,11 @@ class Subscriber extends EventEmitter {
 		};
 
 		this.subscribers.connect.forEach((cb) => {
-			this._ws.removeListener(STATUS.OPEN, cb);
+			this._engine.provider.removeListener(STATUS.OPEN, cb);
 		});
 
 		this.subscribers.disconnect.forEach((cb) => {
-			this._ws.removeListener(STATUS.CLOSE, cb);
+			this._engine.provider.removeListener(STATUS.CLOSE, cb);
 		});
 
 		this._clearSubscribers();
@@ -834,10 +838,14 @@ class Subscriber extends EventEmitter {
 		}
 
 		if (status === 'connect') {
-			this._ws.removeListener(STATUS.OPEN, callback);
+			if (this._engine.provider.connectionType === ConnectionType.WS) {
+				this._engine.provider.removeListener(STATUS.OPEN, callback);
+			}
 			this.subscribers.connect = this.subscribers.connect.filter((c) => c !== callback);
 		} else {
-			this._ws.removeListener(STATUS.CLOSE, callback);
+			if (this._engine.provider.connectionType === ConnectionType.WS) {
+				this._engine.provider.removeListener(STATUS.CLOSE, callback);
+			}
 			this.subscribers.disconnect = this.subscribers.disconnect.filter((c) => c !== callback);
 		}
 
