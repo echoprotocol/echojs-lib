@@ -14,6 +14,7 @@ export const CHAIN_API = {
 	LOGIN_API: 'login',
 	NETWORK_NODE_API: 'network_node',
 	ECHORAND_API: 'echorand',
+	DID_API: 'did',
 };
 
 export const CHAIN_APIS = [
@@ -25,6 +26,7 @@ export const CHAIN_APIS = [
 	CHAIN_API.LOGIN_API,
 	CHAIN_API.NETWORK_NODE_API,
 	CHAIN_API.ECHORAND_API,
+	CHAIN_API.DID_API,
 ];
 export const DEFAULT_CHAIN_APIS = [
 	CHAIN_API.DATABASE_API,

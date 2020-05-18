@@ -2,7 +2,7 @@ version: "2"
 
 services:
   echo:
-    image: echoprotocol/echo:0.18.0-rc.7
+    image: echoprotocol/echo:0.19.0-rc.1
     command:
       --start-echorand
       --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
@@ -24,7 +24,7 @@ services:
     container_name: echo
 
   echo-wallet:
-    image: echoprotocol/echo-wallet:0.18.0-rc.7
+    image: echoprotocol/echo-wallet:0.19.0-rc.1
     container_name: echo-wallet
     command:
       -s ws://echo:6311

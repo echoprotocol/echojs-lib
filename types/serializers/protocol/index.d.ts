@@ -75,6 +75,12 @@ import {
 
 import VoteIdSerializer from './VoteId';
 
+import {
+	didCreateOperationSerializer,
+	didUpdateOperationSerializer,
+	didDeleteOperationSerializer,
+} from './did';
+
 export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
@@ -177,3 +183,9 @@ export declare const vesting: {
 export declare const voteId: VoteIdSerializer;
 
 export { VoteIdSerializer };
+
+export declare const did: {
+	create: typeof didCreateOperationSerializer,
+	update: typeof didUpdateOperationSerializer,
+	delete: typeof didDeleteOperationSerializer,
+}

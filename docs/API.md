@@ -190,6 +190,12 @@ try {
 <dd></dd>
 <dt><a href="#getRegistrar">getRegistrar()</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
+<dt><a href="#getDidObject">getDidObject(id)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getKey">getKey(idString)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getKeys">getKeys(idString)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
 </dl>
 
 ## Typedefs
@@ -912,6 +918,45 @@ try {
 ## getRegistrar() ⇒ <code>Promise.&lt;String.&lt;'1.2.10'&gt;&gt;</code>
 **Kind**: global function
 **Returns**: <code>Promise.&lt;String.&lt;getRegistrar&gt;&gt;</code> - '1.2.10'
+
+
+<a name="lookupCommitteeMemberAccounts"></a>
+
+## lookupCommitteeMemberAccounts(lowerBoundName, limit) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| lowerBoundName | <code>String</code> |  [Name of the earliest committee member to retrieve] |
+| limit | <code>Number</code> | [count operations (max 1000)] |
+
+
+<a name="getDidObject"></a>
+
+## getDidObject(id) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>String</code> |  [Identifier for did object] |
+
+<a name="getKey"></a>
+
+## getKey(idString) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| idString | <code>String</code> |  [Key identifier] |
+
+<a name="getKeys"></a>
+
+## getKeys(idString) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| idString | <code>String</code> |  [Did identifier] |
 
 ## BlockHeader : <code>Object</code>
 <a name="BlockHeader"></a>

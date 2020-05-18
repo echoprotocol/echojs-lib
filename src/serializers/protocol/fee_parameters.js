@@ -76,5 +76,8 @@ const feeParametersSerializer = staticVariant({
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_AGGREGATE]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.BLOCK_REWARD]: defaultFeeParametersSerializer,
 	[OPERATIONS_IDS.EVM_ADDRESS_REGISTER]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.DID_CREATE_OPERATION]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.DID_UPDATE_OPERATION]: defaultFeeParametersSerializer,
+	[OPERATIONS_IDS.DID_DELETE_OPERATION]: defaultFeeParametersSerializer,
 });
 export default feeParametersSerializer;

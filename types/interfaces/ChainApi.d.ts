@@ -8,4 +8,5 @@ declare enum ChainApi {
 	LOGIN_API = 'login',
 	NETWORK_NODE_API = 'network_node',
 	ECHORAND_API = 'echorand',
+	DID_API = 'did',
 }

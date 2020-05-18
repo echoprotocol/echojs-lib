@@ -21,7 +21,8 @@ const {
             ASSET_API,
             LOGIN_API,
             NETWORK_NODE_API,
-            ECHORAND_API
+            ECHORAND_API,
+            DID_API
         }
     } 
 } = constants; // access to different APIs
@@ -41,7 +42,8 @@ const options = {
         ASSET_API,
         LOGIN_API,
         NETWORK_NODE_API,
-        ECHORAND_API
+        ECHORAND_API,
+        DID_API
     ]
 };
 

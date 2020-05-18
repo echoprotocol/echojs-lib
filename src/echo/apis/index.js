@@ -7,3 +7,4 @@ export { default as NetworkApi } from './network-api';
 export { default as NetworkNodeApi } from './network-node-api';
 export { default as RegistrationApi } from './registration-api';
 export { default as WalletApi } from './wallet-api';
+export { default as DidApi } from './did-api';

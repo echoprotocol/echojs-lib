@@ -104,7 +104,8 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         ASSET_API: 'asset',
         LOGIN_API: 'login',
         NETWORK_NODE_API: 'network_node',
-        ECHORAND_API: 'echorand'
+        ECHORAND_API: 'echorand',
+        DID_API: 'did'
     },
     CHAIN_APIS: [
         CHAIN_API.DATABASE_API,
@@ -114,7 +115,8 @@ console.log(constants.WS_CONSTANTS) // websocket constants
         CHAIN_API.ASSET_API,
         CHAIN_API.LOGIN_API,
         CHAIN_API.NETWORK_NODE_API,
-        CHAIN_API.ECHORAND_API
+        CHAIN_API.ECHORAND_API,
+        CHAIN_API.DID_API
     ],
     DEFAULT_CHAIN_APIS: [
         CHAIN_API.DATABASE_API,
@@ -317,6 +319,9 @@ console.log(constants.OPERATIONS_IDS); // operation id
     SIDECHAIN_BTC_APPROVE_AGGREGATE = 63,
     BLOCK_REWARD = 64,// VIRTUAL
     EVM_ADDRESS_REGISTER = 65,
+    DID_CREATE_OPERATION = 66,
+    DID_UPDATE_OPERATION = 67,
+    DID_DELETE_OPERATION = 68,
 }
 */
  ```

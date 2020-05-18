@@ -103,6 +103,9 @@ export default class Api {
 	getContract(contractId: string): Promise<Contract | null>;
 	getContractBalances(contractId: string, force?: boolean): Promise<unknown>;
 	getContractPoolWhitelist(contractId: string): Promise<unknown>;
+	getDidObject(id: string): Promise<unknown>;
+	getKey(idString: string): Promise<unknown>;
+	getKeys(idString: string): Promise<unknown>;
 
 	getContractHistory(
 		operationId: string,

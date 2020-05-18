@@ -86,6 +86,9 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.BLOCK_REWARD]: typeof defaultFeeParametersSerializer,
 	[OperationId.EVM_ADDRESS_REGISTER]: typeof defaultFeeParametersSerializer,
+	[OperationId.DID_CREATE_OPERATION]: typeof defaultFeeParametersSerializer,
+	[OperationId.DID_UPDATE_OPERATION]: typeof defaultFeeParametersSerializer,
+	[OperationId.DID_DELETE_OPERATION]: typeof defaultFeeParametersSerializer,
 }[T];
 
 declare const feeParametersSerializer: StaticVariantSerializer<{

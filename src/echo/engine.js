@@ -20,6 +20,7 @@ export default class EchoApiEngine {
 		this[CHAIN_API.LOGIN_API] = new Apis.LoginApi(this.provider);
 		this[CHAIN_API.NETWORK_NODE_API] = new Apis.NetworkNodeApi(this.provider);
 		this[CHAIN_API.ECHORAND_API] = new Apis.EchoRandApi(this.provider);
+		this[CHAIN_API.DID_API] = new Apis.EchoRandApi(this.provider);
 		this.apis = [...apis];
 	}
 

@@ -77,6 +77,12 @@ import VoteIdSerializer from './VoteId';
 
 import evmAddress from './evm_address';
 
+import {
+	didCreateOperationSerializer,
+	didUpdateOperationSerializer,
+	didDeleteOperationSerializer,
+} from './did';
+
 export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
 
 export const account = {
@@ -177,3 +183,9 @@ export { VoteIdSerializer };
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
 
 export { evmAddress };
+
+export const did = {
+	create: didCreateOperationSerializer,
+	update: didUpdateOperationSerializer,
+	delete: didDeleteOperationSerializer,
+};

@@ -2633,6 +2633,48 @@ class API {
 	getPotentialPeers() { return this.engine[CHAIN_API.NETWORK_NODE_API].getPotentialPeers(); }
 	setOptions() { }
 
+	/**
+     *  @method getDidObject
+     *
+     *  @param  {string} id
+     *
+     *  @return {*}
+     */
+	getDidObject(id) {
+		if (!isString(id)) {
+			return Promise.reject(new Error('Id should be valid string'));
+		}
+		return this.engine[CHAIN_API.DID_API].getDidObject(id);
+	}
+
+	/**
+     *  @method getKey
+     *
+     *  @param  {string} idString
+     *
+     *  @return {*}
+     */
+	getKey(idString) {
+		if (!isString(idString)) {
+			return Promise.reject(new Error('Id string should be valid string'));
+		}
+		return this.engine[CHAIN_API.DID_API].getKey(idString);
+	}
+
+	/**
+     *  @method getKeys
+     *
+     *  @param  {string} idString
+     *
+     *  @return {*}
+     */
+	getKeys(idString) {
+		if (!isString(idString)) {
+			return Promise.reject(new Error('Id string should be valid string'));
+		}
+		return this.engine[CHAIN_API.DID_API].getKeys(idString);
+	}
+
 }
 
 export default API;
