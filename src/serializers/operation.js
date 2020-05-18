@@ -70,6 +70,9 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_AGGREGATE]: protocol.sidechain.btc.approveAggregate,
 	[OPERATIONS_IDS.BLOCK_REWARD]: protocol.blockReward,
 	[OPERATIONS_IDS.EVM_ADDRESS_REGISTER]: protocol.evmAddress,
+	[OPERATIONS_IDS.DID_CREATE_OPERATION]: protocol.did.create,
+	[OPERATIONS_IDS.DID_UPDATE_OPERATION]: protocol.did.update,
+	[OPERATIONS_IDS.DID_DELETE_OPERATION]: protocol.did.delete,
 };
 
 const operationSerializer = staticVariant(operationProps);

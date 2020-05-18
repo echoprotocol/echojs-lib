@@ -64,3 +64,6 @@ export const SIDECHAIN_BTC_AGGREGATE = 62;
 export const SIDECHAIN_BTC_APPROVE_AGGREGATE = 63;
 export const BLOCK_REWARD = 64; // VIRTUAL
 export const EVM_ADDRESS_REGISTER = 65;
+export const DID_CREATE_OPERATION = 66;
+export const DID_UPDATE_OPERATION = 67;
+export const DID_DELETE_OPERATION = 68;

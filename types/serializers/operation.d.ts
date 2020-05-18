@@ -70,6 +70,9 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof protocol.sidechain.btc.approveAggregate,
 	[OperationId.BLOCK_REWARD]: typeof protocol.blockReward,
 	[OperationId.EVM_ADDRESS_REGISTER]: typeof protocol.evmAddress,
+	[OperationId.DID_CREATE_OPERATION]: typeof protocol.did.create,
+	[OperationId.DID_UPDATE_OPERATION]: typeof protocol.did.update,
+	[OperationId.DID_DELETE_OPERATION]: typeof protocol.did.delete,
 }[T];
 
 type OperationInput<T extends OperationId> = SerializerInput<OperationPropsSerializer<T>>;
