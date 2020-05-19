@@ -55,7 +55,6 @@ describe('WALLET API', () => {
 	before(async () => {
 		await echo.connect(url,
 			{
-				connectionTimeout: 1000,
                 apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: walletURL,
 			}

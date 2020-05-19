@@ -5,8 +5,13 @@ export const accountName = 'nathan';
 export const accountId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.ACCOUNT}.10`;
 export const contractId = `1.${constants.PROTOCOL_OBJECT_TYPE_ID.CONTRACT}.0`;
 
-export const url = 'ws://127.0.0.1:6311';
-export const walletURL = 'ws://127.0.0.1:6312';
+export const endpoint = '127.0.0.1:6311';
+export const url = `ws://${endpoint}`;
+export const httpUrl = `http://${endpoint}`;
+
+export const walletEndpoint = '127.0.0.1:6312';
+export const walletURL = `ws://${walletEndpoint}`;
+export const walletHttpURL = `http://${walletEndpoint}`;
 
 export const ED_PRIVATE = '5eePidTGLR7ecWiQB1b7osm1iMDfQo2HKAzfyN4QDma4';
 export const ED_PRIVATE_WITHOUT_PREFIX = '5eePidTGLR7ecWiQB1b7osm1iMDfQo2HKAzfyN4QDma4';
