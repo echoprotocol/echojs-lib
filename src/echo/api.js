@@ -2486,11 +2486,13 @@ class API {
 		return this.engine.database.getFrozenBalances(accountId);
 	}
 
-	/**
-	 * Returns all withdrawals, for the given account id.
-	 * @param {string} account the id of the account to provide information about
-	 * @returns {Promise<ERC20DepositTokenObject>} the all public erc20 deposits data stored in the blockchain
-	 */
+	/** @param {string} account */
+	async getERC20AccountDeposits(account) {
+		if (!isAccountId(account)) throw new Error('Invalid account id');
+		return this.engine.database.getERC20AccountDeposits(account);
+	}
+
+	/** @param {string} account */
 	async getERC20AccountWithdrawals(account) {
 		if (!isAccountId(account)) throw new Error('Invalid account id');
 		return this.engine.database.getERC20AccountWithdrawals(account);

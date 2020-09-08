@@ -21,7 +21,15 @@ import FrozenBalance from '../interfaces/FrozenBalance';
 import BtcAddress from '../interfaces/BtcAddress';
 import { OperationHistoryObject } from '../interfaces/chain';
 import { PotentialPeerRecord } from '../interfaces/net/peer-database';
-import { IObject, IAssetObject, IAccountObject, ERC20DepositTokenObject } from '../interfaces/objects';
+
+import {
+	IObject,
+	IAssetObject,
+	IAccountObject,
+	ERC20DepositTokenObject,
+	ERC20WithdrawTokenObject,
+} from '../interfaces/objects';
+
 import RegistrationTask from '../interfaces/RegistrationTask';
 import PeerDetails from '../interfaces/PeerDetails';
 import { Log } from '../interfaces/vm/types';
@@ -92,11 +100,18 @@ export default class Api {
 	getBlockVirtualOperations(blockNum: number): any;
 
 	/**
-	 * Returns all withdrawals, for the given account id.
+	 * Returns all deposits, for the given account id
 	 * @param account the id of the account to provide information about
 	 * @returns the all public erc20 deposits data stored in the blockchain
 	 */
-	getERC20AccountWithdrawals(account: string): Promise<ERC20DepositTokenObject>;
+	getErc20AccountDeposits(account: string): Promise<ERC20DepositTokenObject[]>;
+
+	/**
+	 * Returns all withdrawals, for the given account id
+	 * @param account the id of the account to provide information about
+	 * @returns the all public erc20 deposits data stored in the blockchain
+	 */
+	getERC20AccountWithdrawals(account: string): Promise<ERC20WithdrawTokenObject[]>;
 
 	getBtcAddress(accountId: string): Promise<Array<BtcAddress>>;
 	getAccountAddresses(accountId: string, from: number, limit: number): Promise<Array<AccountAddress>>;
