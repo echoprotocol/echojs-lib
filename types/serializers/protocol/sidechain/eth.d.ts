@@ -57,6 +57,7 @@ export declare const sidechainEthApproveWithdrawOperationPropsSerializer: Struct
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
 	withdraw_id: typeof uint64,
+	transaction_hash: typeof sha256,
 	extensions: typeof extensions,
 }>;
 
