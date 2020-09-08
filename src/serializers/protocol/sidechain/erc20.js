@@ -53,6 +53,7 @@ export const sidechainERC20ApproveTokenWithdrawOperationPropsSerializer = struct
 	fee: asset,
 	committee_member_id: accountId,
 	withdraw_id: uint64,
+	transaction_hash: sha256,
 	extensions,
 });
 
