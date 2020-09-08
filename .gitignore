@@ -71,3 +71,4 @@ apidoc
 dist/
 lib/
 client.js
+yarn.lock
