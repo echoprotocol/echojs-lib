@@ -2487,6 +2487,16 @@ class API {
 	}
 
 	/**
+	 * Returns all withdrawals, for the given account id.
+	 * @param {string} account the id of the account to provide information about
+	 * @returns {Promise<ERC20DepositTokenObject>} the all public erc20 deposits data stored in the blockchain
+	 */
+	async getERC20AccountWithdrawals(account) {
+		if (!isAccountId(account)) throw new Error('Invalid account id');
+		return this.engine.database.getERC20AccountWithdrawals(account);
+	}
+
+	/**
 	 *
 	 * @param {String} accountId
 	 * @return {*}

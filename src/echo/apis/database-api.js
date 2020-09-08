@@ -3,6 +3,7 @@ import BaseEchoApi from './base-api';
 
 /** @typedef {import("../providers").WsProvider} WsProvider */
 /** @typedef {import("../providers").HttpProvider} HttpProvider */
+/** @typedef {import("../../../types/interfaces/objects").ERC20DepositTokenObject} ERC20DepositTokenObject */
 /** @typedef {import("../../../types/interfaces/vm/types").Log} Log */
 
 /** @typedef {"" | "eth" | "btc"} SidechainType */
@@ -649,6 +650,15 @@ class DatabaseAPI extends BaseEchoApi {
 	 */
 	getFrozenBalances(accountId) {
 		return this.exec('get_frozen_balances', [accountId]);
+	}
+
+	/**
+	 * Returns all withdrawals, for the given account id.
+	 * @param {string} account the id of the account to provide information about
+	 * @returns {Promise<ERC20DepositTokenObject>} the all public erc20 deposits data stored in the blockchain
+	 */
+	getERC20AccountWithdrawals(account) {
+		return this.exec('get_erc20_account_withdrawals', [account]);
 	}
 
 	/**
