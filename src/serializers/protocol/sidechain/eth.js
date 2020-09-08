@@ -26,6 +26,7 @@ export const sidechainEthDepositOperationPropsSerializer = struct({
 	deposit_id: uint64,
 	account: accountId,
 	value: uint64,
+	transaction_hash: sha256,
 	extensions,
 });
 

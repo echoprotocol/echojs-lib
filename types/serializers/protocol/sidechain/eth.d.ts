@@ -27,6 +27,7 @@ export declare const sidechainEthDepositOperationPropsSerializer: StructSerializ
 	deposit_id: typeof uint64,
 	account: typeof accountId,
 	value: typeof uint64,
+	transaction_hash: typeof sha256,
 	extensions: typeof extensions,
 }>;
 
