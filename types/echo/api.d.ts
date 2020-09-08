@@ -170,6 +170,10 @@ export default class Api {
 	getContractResult(resultContractId: string, force?: boolean): Promise<ContractResult>;
 	getDynamicAssetData(dynamicAssetDataId: string, force?: boolean): Promise<object>;
 	getDynamicGlobalProperties(force?: boolean): Promise<DynamicGlobalProperties>;
+
+	/** Retrieve the current info about git revision of the project */
+	getGitRevision(): Promise<{ [key: string]: unknown }>;
+
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 

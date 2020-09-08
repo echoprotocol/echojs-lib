@@ -1048,6 +1048,10 @@ class API {
 		return this.getObject(DYNAMIC_GLOBAL_OBJECT_ID, force);
 	}
 
+	async getGitRevision() {
+		return this.engine.database.getGitRevision();
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String|PublicKey>} keys [public keys]

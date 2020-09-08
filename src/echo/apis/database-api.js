@@ -150,6 +150,10 @@ class DatabaseAPI extends BaseEchoApi {
 		return this.exec('get_dynamic_global_properties', []);
 	}
 
+	getGitRevision() {
+		return this.exec('get_git_revision', []);
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String>} keys [public keys]
