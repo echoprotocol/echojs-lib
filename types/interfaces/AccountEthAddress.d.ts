@@ -2,7 +2,8 @@ export default interface AccountEthAddress {
 	id: string,
 	account: string,
 	eth_addr: string,
+	transaction_hash: string,
 	is_approved: boolean,
-	approves: Array<any>,
-	extensions: Array<any>,
+	approves: Array<string>,
+	extensions: Array<unknown>,
 }
