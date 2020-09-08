@@ -462,7 +462,6 @@ class WalletAPI {
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-supported-asset)
 	 * @param {boolean} useEthereumAssetAccuracy whether to use the ethereum asset accuracy
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-using-ethereum-accuracy)
-	 * @param {boolean} shouldSaveToWallet whether to save the contract to the wallet
 	 * @returns {Promise<any>} the signed transaction creating the contract
 	 */
 	async createContract(
@@ -472,7 +471,6 @@ class WalletAPI {
 		assetType,
 		supportedAssetId,
 		useEthereumAssetAccuracy,
-		shouldSaveToWallet,
 	) {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
@@ -484,7 +482,6 @@ class WalletAPI {
 			assetId.toRaw(assetType),
 			assetId.toRaw(supportedAssetId),
 			bool.toRaw(useEthereumAssetAccuracy),
-			bool.toRaw(shouldSaveToWallet),
 		]]);
 	}
 
@@ -495,7 +492,6 @@ class WalletAPI {
 	 * @param {string} contractCode the hash of the method to call
 	 * @param {number|BigNumber|string} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
-	 * @param {boolean} shouldSaveToWallet whether to save the contract call to the wallet
 	 * @returns {Promise<any>} the signed transaction calling the contract
 	 */
 	async callContract(
@@ -504,7 +500,6 @@ class WalletAPI {
 		contractCode,
 		amount,
 		assetType,
-		shouldSaveToWallet,
 	) {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
@@ -515,7 +510,6 @@ class WalletAPI {
 			string.toRaw(contractCode),
 			string.toRaw(amount),
 			assetId.toRaw(assetType),
-			bool.toRaw(shouldSaveToWallet),
 		]]);
 	}
 
