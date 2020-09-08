@@ -1,6 +1,6 @@
 import ethAddress from '../ethAddress';
 import { uint64 } from '../../basic/integers';
-import { asset, extensions } from '../../chain';
+import { asset, extensions, sha256 } from '../../chain';
 import { accountId, ethDepositId, ethWithdrawId } from '../../chain/id/protocol';
 import { struct, vector } from '../../collections';
 
@@ -16,6 +16,7 @@ export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 	malicious_committeemen: vector(accountId),
 	account: accountId,
 	eth_addr: ethAddress,
+	transaction_hash: sha256,
 	extensions,
 });
 
