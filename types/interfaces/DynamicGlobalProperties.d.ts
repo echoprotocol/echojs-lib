@@ -6,8 +6,8 @@ export default interface DynamicGlobalProperties {
 	next_maintenance_time: string,
 	last_budget_time: string,
 	committee_budget: number,
-	accounts_registered_this_interval: number,
-	recent_slots_filled: string,
 	dynamic_flags: number,
 	last_irreversible_block_num: number,
+	last_block_of_previous_interval: number,
+	extensions: unknown[],
 }

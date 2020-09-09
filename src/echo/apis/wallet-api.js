@@ -20,6 +20,9 @@ import {
 	isUInt64,
 	isCommitteeMemberId,
 	validateAmount,
+	isFrozenBalanceId,
+	isEthAddressId,
+	isEthereumAddress,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -97,21 +100,18 @@ class WalletAPI {
 	exit() { return this.wsProvider.call([0, 'exit', []]); }
 
 	/**
-	 * Returns a list of all commands supported by the wallet API.
+	 * Returns a list of all commands supported by the wallet API or detailed help on a single API command.
+	 *
 	 * This lists each command, along with its arguments and return types.
-	 * For more detailed help on a single command, use `get_help()`
+	 * @param {string} [method] the name of the API command you want help with or empty if you want to get all commands
 	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
+	 * @example ```ts
+	 * echo.walletApi.help("network_add_nodes");
+	 * ```
 	 */
-	help() { return this.wsProvider.call([0, 'help', []]); }
-
-	/**
-	 * Returns detailed help on a single API command.
-	 * @param {string} method the name of the API command you want help with
-	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
-	 */
-	helpMethod(method) {
-		if (!isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
-		return this.wsProvider.call([0, 'help_method', [string.toRaw(method)]]);
+	async help(method) {
+		if (method !== undefined && !isMethodExists(method)) throw new Error('Method does not exists');
+		return this.wsProvider.call([0, 'help', method !== undefined ? [method] : []]);
 	}
 
 	/**
@@ -427,28 +427,43 @@ class WalletAPI {
 
 	/**
 	 * Creates a new account and registers it on the blockchain.
-	 * @see {@link WalletAPI['suggestBrainKey']}
-	 * @see {@link WalletAPI['registerAccount']}
+	 * @see WalletApi["suggestBrainKey"]
 	 * @param {string} brainKey the brain key used for generating the account's private keys
-	 * @param {string} accountName the name of the account, must be unique on the blockchain.
-	 * @param {string|null} evmAddress the name of the account, must be unique on the blockchain.
-	 * Shorter names are more expensive to register; the rules are still in flux,
-	 * but in general names of more than 8 characters with at least one digit will be cheap
-	 * @param {string} accountNameOrId the account which will pay the fee to register the user
-	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 *
+	 * @param {string} accountName
+	 * the name of the account, must be unique on the blockchain. Shorter names are more expensive to register; the
+	 * rules are still in flux, but in general names of more than 8 characters with at least one digit will be cheap.
+	 *
+	 * @param {string} registrarAccount the account which will pay the fee to register the user
+	 * @param {Object} [_optional]
+	 *
+	 * @param {string | null} [_optional.evmAddress]
+	 * the ethereum address of the account, enter null if you don't want to create
+	 *
+	 * @param {boolean} [_optional.broadcast] true to broadcast the transaction on the network
+	 * @param {boolean} [_optional.saveWallet] true to save in wallet
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
+	 *
+	 * @example
+	 * ```ts
+	 * echo.walletApi.createAccountWithBrainKey("brain_key", "new_acc", "nathan", {
+	 *   evmAddress: "E8fd4Db0C38d48493AD167A268683fAb7230a88A",
+	 *   broadcast: true,
+	 * });
+	 * ```
 	 */
-	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, evmAddress, shouldDoBroadcastToNetwork) {
+	async createAccountWithBrainKey(brainKey, accountName, registrarAccount, _optional = {}) {
+		const { evmAddress, broadcast, saveWallet } = _optional;
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Name should be string and valid'));
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
+		if (!isAccountIdOrName(registrarAccount)) throw new Error('Accounts id or name should be string and valid');
+		if (evmAddress && !isEthereumAddress(evmAddress)) throw new Error('Invalid evm address format');
 		return this.wsProvider.call([0, 'create_account_with_brain_key', [
-			string.toRaw(brainKey),
-			string.toRaw(accountName),
-			string.toRaw(accountNameOrId),
-			evmAddress,
-			bool.toRaw(shouldDoBroadcastToNetwork),
+			brainKey,
+			accountName,
+			registrarAccount,
+			evmAddress || null,
+			broadcast || null,
+			saveWallet || null,
 		]]);
 	}
 
@@ -462,7 +477,6 @@ class WalletAPI {
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-supported-asset)
 	 * @param {boolean} useEthereumAssetAccuracy whether to use the ethereum asset accuracy
 	 * (see https://echo-dev.io/developers/smart-contracts/solidity/introduction/#flag-of-using-ethereum-accuracy)
-	 * @param {boolean} shouldSaveToWallet whether to save the contract to the wallet
 	 * @returns {Promise<any>} the signed transaction creating the contract
 	 */
 	async createContract(
@@ -472,7 +486,6 @@ class WalletAPI {
 		assetType,
 		supportedAssetId,
 		useEthereumAssetAccuracy,
-		shouldSaveToWallet,
 	) {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
@@ -484,7 +497,6 @@ class WalletAPI {
 			assetId.toRaw(assetType),
 			assetId.toRaw(supportedAssetId),
 			bool.toRaw(useEthereumAssetAccuracy),
-			bool.toRaw(shouldSaveToWallet),
 		]]);
 	}
 
@@ -495,7 +507,6 @@ class WalletAPI {
 	 * @param {string} contractCode the hash of the method to call
 	 * @param {number|BigNumber|string} amount the amount of asset transferred to the contract
 	 * @param {string} assetType the type of the asset transferred to the contract
-	 * @param {boolean} shouldSaveToWallet whether to save the contract call to the wallet
 	 * @returns {Promise<any>} the signed transaction calling the contract
 	 */
 	async callContract(
@@ -504,7 +515,6 @@ class WalletAPI {
 		contractCode,
 		amount,
 		assetType,
-		shouldSaveToWallet,
 	) {
 		if (!isAccountIdOrName(accountNameOrId)) throw new Error('Accounts id or name should be string and valid');
 		if (!isContractCode(contractCode)) throw new Error('Byte code should be string and valid');
@@ -515,7 +525,6 @@ class WalletAPI {
 			string.toRaw(contractCode),
 			string.toRaw(amount),
 			assetId.toRaw(assetType),
-			bool.toRaw(shouldSaveToWallet),
 		]]);
 	}
 
@@ -743,7 +752,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'get_account_history', [string.toRaw(accountIdOrName),	int64.toRaw(limit)]]);
+		return this.wsProvider.call([0, 'get_account_history', [string.toRaw(accountIdOrName), int64.toRaw(limit)]]);
 	}
 
 	/**
@@ -769,7 +778,7 @@ class WalletAPI {
 		return this.wsProvider.call([0, 'get_relative_account_history', [
 			string.toRaw(accountIdOrName),
 			uint64.toRaw(stop),
-			int64.toRaw(limit),	uint64.toRaw(start),
+			int64.toRaw(limit), uint64.toRaw(start),
 		]]);
 	}
 
@@ -920,11 +929,15 @@ class WalletAPI {
 
 	/**
 	 * Returns information about erc20 token, if then exist.
-	 * @param {string} ethereumTokenAddress the ethereum address of token in Ethereum network
-	 * @returns {Promise<any | undefined>} the public erc20 token data stored in the blockchain
+	 * @param {string} ethAddrOrId the ethereum address or ID of token in Ethereum network or contract id in
+	 * Echo network
+	 * @returns {Promise<unknown | null>} the public erc20 token data stored in the blockchain
 	 */
-	getErc20Token(ethereumTokenAddress) {
-		return this.wsProvider.call([0, 'get_erc20_token', [ethAddress.toRaw(ethereumTokenAddress)]]);
+	async getErc20Token(ethAddrOrId) {
+		if (!isEthAddressId(ethAddrOrId) && !isEthereumAddress(ethAddrOrId)) {
+			throw new Error('Invalid ethereum address or address id format');
+		}
+		return this.wsProvider.call([0, 'get_erc20_token', [ethAddrOrId]]);
 	}
 
 	/**
@@ -1786,6 +1799,27 @@ class WalletAPI {
 	}
 
 	/**
+	 * Sends the request to unfreeze frozen balance
+	 * @param {string} account the name or id of the freeze balance holder
+	 * @param {string[]} objects_to_unfreeze the ids of the objects with frozen balance you want to unfreeze which you
+	 * can get from method `listFrozenBalances`
+	 * @param {boolean} [broadcast] true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction requesting unfreezeing frozen balance
+	 * @example ```ts
+	 * echo.walletApi.requestUnfreezeBalance('nathan', ['1.9.0', '1.9.1'], true);
+	 * ```
+	 */
+	async requestUnfreezeBalance(account, objectsToUnfreeze, broadcast = false) {
+		if (!isAccountIdOrName(account)) throw new Error('Invalid account id or name format');
+		if (!Array.isArray(objectsToUnfreeze)) throw new Error('Objects to unfreeze is not an array');
+		if (objectsToUnfreeze.some((id) => !isFrozenBalanceId(id))) {
+			throw new Error('Invalid object to unfreeze id format');
+		}
+		if (typeof broadcast !== 'boolean') throw new Error('Broadcast parameter should be boolean');
+		return this.wsProvider.call([0, 'request_unfreeze_balance', [account, objectsToUnfreeze, broadcast]]);
+	}
+
+	/**
 	 * @method getCommitteeFrozenBalance
 	 * @param {String} ownerAccount
 	 * @returns {Promise<CommitteeFrozenBalance>}
@@ -1808,7 +1842,7 @@ class WalletAPI {
 	 */
 	committeeFreezeBalance(ownerAccount, amount, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
 
 		return this.wsProvider.call([0, 'committee_freeze_balance', [
 			string.toRaw(ownerAccount),
@@ -1826,7 +1860,7 @@ class WalletAPI {
 	 */
 	committeeWithdrawBalance(ownerAccount, amount, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
 
 		return this.wsProvider.call([0, 'committee_withdraw_balance', [
 			string.toRaw(ownerAccount),

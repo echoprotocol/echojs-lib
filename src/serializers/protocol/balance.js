@@ -1,9 +1,8 @@
 import { asset, publicKey, extensions } from '../chain';
-import { accountId, balanceId } from '../chain/id/protocol';
-import { struct } from '../collections';
+import { accountId, balanceId, frozenBalanceId } from '../chain/id/protocol';
+import { struct, vector } from '../collections';
 import { uint16 } from '../basic/integers';
 
-// eslint-disable-next-line import/prefer-default-export
 export const balanceClaimOperationPropsSerializer = struct({
 	fee: asset,
 	deposit_to_account: accountId,
@@ -25,5 +24,12 @@ export const balanceUnfreezeOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
 	amount: asset,
+	extensions,
+});
+
+export const requestBalanceUnfreezeOperation = struct({
+	fee: asset,
+	account: accountId,
+	objects_to_unfreeze: vector(frozenBalanceId),
 	extensions,
 });

@@ -41,7 +41,7 @@ console.log(constants.CHAIN_TYPES) // information about ids
         ASSET_BITASSET_DATA: 3,
         ACCOUNT_BALANCE: 4,
         ACCOUNT_STATISTICS: 5,
-        TRANSACTION: 6,
+        TRANSACTION_DEDUPE: 6,
         BLOCK_SUMMARY: 7,
         ACCOUNT_TRANSACTION_HISTORY: 8,
         CHAIN_PROPERTY: 9,
@@ -52,6 +52,7 @@ console.log(constants.CHAIN_TYPES) // information about ids
         ACCOUNT_ADDRESS: 14,
         CONTRACT_POOL: 15,
         MALICIOUS_COMMITTEEMEN: 16,
+        REWARDS_POOL: 17,
     },
     VOTE_TYPE_ID: {
         COMMITTEE: 0,

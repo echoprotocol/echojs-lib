@@ -150,6 +150,10 @@ class DatabaseAPI extends BaseEchoApi {
 		return this.exec('get_dynamic_global_properties', []);
 	}
 
+	getGitRevision() {
+		return this.exec('get_git_revision', []);
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String>} keys [public keys]
@@ -649,6 +653,14 @@ class DatabaseAPI extends BaseEchoApi {
 	 */
 	getFrozenBalances(accountId) {
 		return this.exec('get_frozen_balances', [accountId]);
+	}
+
+	getERC20AccountWithdrawals(account) {
+		return this.exec('get_erc20_account_withdrawals', [account]);
+	}
+
+	getERC20AccountDeposits(account) {
+		return this.exec('get_erc20_account_deposits', [account]);
 	}
 
 	/**

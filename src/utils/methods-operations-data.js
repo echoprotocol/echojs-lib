@@ -1,4 +1,5 @@
 const walletAPIMethodsArray = [
+	// FIXME: actualize
 	'help',
 	'help_method',
 	'info',

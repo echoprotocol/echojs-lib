@@ -61,7 +61,7 @@ const dynamicAssetDataIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.I
 const bitAssetIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ASSET_BITASSET_DATA);
 const accountBalanceIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_BALANCE);
 const accountStatisticsIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_STATISTICS);
-const transactionIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.TRANSACTION);
+const transactionDedupeIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.TRANSACTION_DEDUPE);
 const blockSummaryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.BLOCK_SUMMARY);
 const accountTransactionHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.ACCOUNT_TRANSACTION_HISTORY);
 const contractHistoryIdRegex = generateProtocolImplObjectIdRegExp(CHAIN_TYPES.IMPLEMENTATION_OBJECT_TYPE_ID.CONTRACT_HISTORY);
@@ -192,7 +192,7 @@ export const isDynamicAssetDataId = (v) => isString(v) && dynamicAssetDataIdRege
 
 
 export const isAccountStatisticsId = (v) => isString(v) && accountStatisticsIdRegex.test(v);
-export const isTransactionId = (v) => isString(v) && transactionIdRegex.test(v);
+export const isTransactionId = (v) => isString(v) && transactionDedupeIdRegex.test(v);
 export const isBlockSummaryId = (v) => isString(v) && blockSummaryIdRegex.test(v);
 export const isAccountTransactionHistoryId = (v) => (
 	isString(v) && accountTransactionHistoryIdRegex.test(v)

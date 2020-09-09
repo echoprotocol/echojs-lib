@@ -24,6 +24,7 @@ import {
 	balanceClaimOperationPropsSerializer,
 	balanceFreezeOperationPropsSerializer,
 	balanceUnfreezeOperationPropsSerializer,
+	requestBalanceUnfreezeOperation,
 } from './balance';
 
 import {
@@ -50,6 +51,8 @@ import {
 	contractWhitelistOperationPropsSerializer,
 	contractUpdateOperationPropsSerializer,
 } from './contract';
+
+import * as economy from './economy';
 
 import {
 	proposalCreateOperationPropsSerializer,
@@ -115,6 +118,7 @@ export const balance = {
 	claim: balanceClaimOperationPropsSerializer,
 	freeze: balanceFreezeOperationPropsSerializer,
 	unfreeze: balanceUnfreezeOperationPropsSerializer,
+	requestUnfreeze: requestBalanceUnfreezeOperation,
 };
 
 export { default as chainParameters } from './chain_parameters';
@@ -182,10 +186,10 @@ export { VoteIdSerializer };
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
 
-export { evmAddress };
-
 export const did = {
 	create: didCreateOperationSerializer,
 	update: didUpdateOperationSerializer,
 	delete: didDeleteOperationSerializer,
 };
+
+export { economy, evmAddress };

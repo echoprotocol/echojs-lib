@@ -1048,6 +1048,10 @@ class API {
 		return this.getObject(DYNAMIC_GLOBAL_OBJECT_ID, force);
 	}
 
+	async getGitRevision() {
+		return this.engine.database.getGitRevision();
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String|PublicKey>} keys [public keys]
@@ -2484,6 +2488,18 @@ class API {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		return this.engine.database.getFrozenBalances(accountId);
+	}
+
+	/** @param {string} account */
+	async getERC20AccountDeposits(account) {
+		if (!isAccountId(account)) throw new Error('Invalid account id');
+		return this.engine.database.getERC20AccountDeposits(account);
+	}
+
+	/** @param {string} account */
+	async getERC20AccountWithdrawals(account) {
+		if (!isAccountId(account)) throw new Error('Invalid account id');
+		return this.engine.database.getERC20AccountWithdrawals(account);
 	}
 
 	/**

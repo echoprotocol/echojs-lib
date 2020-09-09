@@ -2,7 +2,7 @@ version: "2"
 
 services:
   echo:
-    image: echoprotocol/echo:0.18.0-rc.7
+    image: echoprotocol/echo:0.22-rc.1
     command:
       --start-echorand
       --account-info="[\"1.2.6\", \"5KkYp8qdQBaRmLqLz8WVrGjzkt7E13qVcr7cpdLowgJ1mjRyDx2\"]"
@@ -24,11 +24,11 @@ services:
     container_name: echo
 
   echo-wallet:
-    image: echoprotocol/echo-wallet:0.18.0-rc.7
+    image: echoprotocol/echo-wallet:0.22-rc.1
     container_name: echo-wallet
     command:
       -s ws://echo:6311
-      --chain-id="ae55e9cc332c46bdc8d4eac06e6e909ca51ad074150ce42775ee90345fdeff0e"
+      --chain-id="acd81c215a20e2b3281195362146215c82874d52783fbb4cb35924edd99c716c"
       --wallet-file="/echo/walletdata/wallet.json"
       --history-file="/echo/walletdata/history"
       -r 0.0.0.0:6312

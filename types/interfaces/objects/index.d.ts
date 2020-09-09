@@ -1,4 +1,6 @@
-import { protocol } from "../serializers";
+import { protocol } from "../../serializers";
+
+export * from "./eth_sidechain";
 
 export enum VMType {
 	EVM = 0,

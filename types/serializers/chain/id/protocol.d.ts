@@ -7,6 +7,7 @@ export declare const committeeMemberId: ObjectIdSerializer<RESERVED_SPACE_ID.PRO
 export declare const proposalId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const vestingBalanceId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const balanceId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
+export declare const frozenBalanceId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const contractId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const ethDepositId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const ethWithdrawId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;

@@ -24,6 +24,7 @@ import {
 	balanceClaimOperationPropsSerializer,
 	balanceFreezeOperationPropsSerializer,
 	balanceUnfreezeOperationPropsSerializer,
+	requestBalanceUnfreezeOperation,
 } from './balance';
 
 import {
@@ -117,6 +118,7 @@ export declare const balance: {
 	claim: typeof balanceClaimOperationPropsSerializer,
 	freeze: typeof balanceFreezeOperationPropsSerializer,
 	unfreeze: typeof balanceUnfreezeOperationPropsSerializer,
+	requestUnfreeze: typeof requestBalanceUnfreezeOperation,
 };
 
 export { default as btcPublicKey } from './btcPublicKey';
@@ -189,3 +191,5 @@ export declare const did: {
 	update: typeof didUpdateOperationSerializer,
 	delete: typeof didDeleteOperationSerializer,
 }
+
+export * as economy from './economy';
