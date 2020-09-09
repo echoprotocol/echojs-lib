@@ -52,6 +52,8 @@ import {
 	contractUpdateOperationPropsSerializer,
 } from './contract';
 
+import * as economy from './economy';
+
 import {
 	proposalCreateOperationPropsSerializer,
 	proposalUpdateOperationPropsSerializer,
@@ -184,10 +186,10 @@ export { VoteIdSerializer };
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
 
-export { evmAddress };
-
 export const did = {
 	create: didCreateOperationSerializer,
 	update: didUpdateOperationSerializer,
 	delete: didDeleteOperationSerializer,
 };
+
+export { economy, evmAddress };

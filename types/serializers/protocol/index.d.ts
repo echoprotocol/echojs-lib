@@ -191,3 +191,5 @@ export declare const did: {
 	update: typeof didUpdateOperationSerializer,
 	delete: typeof didDeleteOperationSerializer,
 }
+
+export * as economy from './economy';
