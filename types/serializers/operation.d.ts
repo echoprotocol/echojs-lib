@@ -31,6 +31,7 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.BALANCE_CLAIM]: typeof protocol.balance.claim,
 	[OperationId.BALANCE_FREEZE]: typeof protocol.balance.freeze,
 	[OperationId.BALANCE_UNFREEZE]: typeof protocol.balance.unfreeze,
+	[OperationId.REQUEST_BALANCE_UNFREEZE]: typeof protocol.balance.requestUnfreeze,
 	[OperationId.OVERRIDE_TRANSFER]: typeof protocol.transfer.override,
 	[OperationId.ASSET_CLAIM_FEES]: typeof protocol.asset.claimFees,
 	[OperationId.CONTRACT_CREATE]: typeof protocol.contract.create,

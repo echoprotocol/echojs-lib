@@ -1,7 +1,7 @@
 import { asset, publicKey, extensions } from '../chain';
-import { accountId, balanceId } from '../chain/id/protocol';
+import { accountId, balanceId, frozenBalanceId } from '../chain/id/protocol';
 import { uint16 } from '../basic/integers';
-import { StructSerializer } from '../collections';
+import { StructSerializer, VectorSerializer } from '../collections';
 
 export declare const balanceClaimOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
@@ -24,5 +24,12 @@ export declare const balanceUnfreezeOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
 	amount: typeof asset,
+	extensions: typeof extensions,
+}>;
+
+export declare const requestBalanceUnfreezeOperation: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	objects_to_unfreeze: VectorSerializer<typeof frozenBalanceId>,
 	extensions: typeof extensions,
 }>;

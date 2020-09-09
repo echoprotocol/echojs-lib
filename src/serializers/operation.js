@@ -31,6 +31,7 @@ const operationProps = {
 	[OPERATIONS_IDS.BALANCE_CLAIM]: protocol.balance.claim,
 	[OPERATIONS_IDS.BALANCE_FREEZE]: protocol.balance.freeze,
 	[OPERATIONS_IDS.BALANCE_UNFREEZE]: protocol.balance.unfreeze,
+	[OPERATIONS_IDS.REQUEST_BALANCE_UNFREEZE]: protocol.balance.requestUnfreeze,
 	[OPERATIONS_IDS.OVERRIDE_TRANSFER]: protocol.transfer.override,
 	[OPERATIONS_IDS.ASSET_CLAIM_FEES]: protocol.asset.claimFees,
 	[OPERATIONS_IDS.CONTRACT_CREATE]: protocol.contract.create,

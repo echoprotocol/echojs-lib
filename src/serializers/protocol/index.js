@@ -24,6 +24,7 @@ import {
 	balanceClaimOperationPropsSerializer,
 	balanceFreezeOperationPropsSerializer,
 	balanceUnfreezeOperationPropsSerializer,
+	requestBalanceUnfreezeOperation,
 } from './balance';
 
 import {
@@ -115,6 +116,7 @@ export const balance = {
 	claim: balanceClaimOperationPropsSerializer,
 	freeze: balanceFreezeOperationPropsSerializer,
 	unfreeze: balanceUnfreezeOperationPropsSerializer,
+	requestUnfreeze: requestBalanceUnfreezeOperation,
 };
 
 export { default as chainParameters } from './chain_parameters';
