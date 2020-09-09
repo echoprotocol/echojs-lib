@@ -21,6 +21,8 @@ import {
 	isCommitteeMemberId,
 	validateAmount,
 	isFrozenBalanceId,
+	isEthAddressId,
+	isEthereumAddress,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -915,11 +917,15 @@ class WalletAPI {
 
 	/**
 	 * Returns information about erc20 token, if then exist.
-	 * @param {string} ethereumTokenAddress the ethereum address of token in Ethereum network
-	 * @returns {Promise<any | undefined>} the public erc20 token data stored in the blockchain
+	 * @param {string} ethAddrOrId the ethereum address or ID of token in Ethereum network or contract id in
+	 * Echo network
+	 * @returns {Promise<unknown | null>} the public erc20 token data stored in the blockchain
 	 */
-	getErc20Token(ethereumTokenAddress) {
-		return this.wsProvider.call([0, 'get_erc20_token', [ethAddress.toRaw(ethereumTokenAddress)]]);
+	async getErc20Token(ethAddrOrId) {
+		if (!isEthAddressId(ethAddrOrId) && !isEthereumAddress(ethAddrOrId)) {
+			throw new Error('Invalid ethereum address or address id format');
+		}
+		return this.wsProvider.call([0, 'get_erc20_token', [ethAddrOrId]]);
 	}
 
 	/**
