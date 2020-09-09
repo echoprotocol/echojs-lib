@@ -100,21 +100,18 @@ class WalletAPI {
 	exit() { return this.wsProvider.call([0, 'exit', []]); }
 
 	/**
-	 * Returns a list of all commands supported by the wallet API.
+	 * Returns a list of all commands supported by the wallet API or detailed help on a single API command.
+	 *
 	 * This lists each command, along with its arguments and return types.
-	 * For more detailed help on a single command, use `get_help()`
+	 * @param {string} [method] the name of the API command you want help with or empty if you want to get all commands
 	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
+	 * @example ```ts
+	 * echo.walletApi.help("network_add_nodes");
+	 * ```
 	 */
-	help() { return this.wsProvider.call([0, 'help', []]); }
-
-	/**
-	 * Returns detailed help on a single API command.
-	 * @param {string} method the name of the API command you want help with
-	 * @returns {Promise<string>} a multi-line string suitable for displaying on a terminal
-	 */
-	helpMethod(method) {
-		if (!isMethodExists(method)) return Promise.reject(new Error('This method does not exists'));
-		return this.wsProvider.call([0, 'help_method', [string.toRaw(method)]]);
+	async help(method) {
+		if (method !== undefined && !isMethodExists(method)) throw new Error('Method does not exists');
+		return this.wsProvider.call([0, 'help', method !== undefined ? [method] : []]);
 	}
 
 	/**
