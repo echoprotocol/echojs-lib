@@ -1601,7 +1601,6 @@ describe('WALLET API', () => {
 			expect(result.amount)
 				.to
 				.be
-				.not
 				.equal(0);
 			expect(result.asset_id)
 				.to
@@ -2057,7 +2056,7 @@ describe('WALLET API', () => {
 					console.log(e);
 					throw e;
 				}
-			}).timeout(5000);
+			}).timeout(10e3);
 		});
 
 		describe('#freezeBalance()', () => {
