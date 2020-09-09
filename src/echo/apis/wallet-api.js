@@ -427,28 +427,43 @@ class WalletAPI {
 
 	/**
 	 * Creates a new account and registers it on the blockchain.
-	 * @see {@link WalletAPI['suggestBrainKey']}
-	 * @see {@link WalletAPI['registerAccount']}
+	 * @see WalletApi["suggestBrainKey"]
 	 * @param {string} brainKey the brain key used for generating the account's private keys
-	 * @param {string} accountName the name of the account, must be unique on the blockchain.
-	 * @param {string|null} evmAddress the name of the account, must be unique on the blockchain.
-	 * Shorter names are more expensive to register; the rules are still in flux,
-	 * but in general names of more than 8 characters with at least one digit will be cheap
-	 * @param {string} accountNameOrId the account which will pay the fee to register the user
-	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 *
+	 * @param {string} accountName
+	 * the name of the account, must be unique on the blockchain. Shorter names are more expensive to register; the
+	 * rules are still in flux, but in general names of more than 8 characters with at least one digit will be cheap.
+	 *
+	 * @param {string} registrarAccount the account which will pay the fee to register the user
+	 * @param {Object} [_optional]
+	 *
+	 * @param {string | null} [_optional.evmAddress]
+	 * the ethereum address of the account, enter null if you don't want to create
+	 *
+	 * @param {boolean} [_optional.broadcast] true to broadcast the transaction on the network
+	 * @param {boolean} [_optional.saveWallet] true to save in wallet
 	 * @returns {Promise<SignedTransaction>} the signed transaction registering the account
+	 *
+	 * @example
+	 * ```ts
+	 * echo.walletApi.createAccountWithBrainKey("brain_key", "new_acc", "nathan", {
+	 *   evmAddress: "E8fd4Db0C38d48493AD167A268683fAb7230a88A",
+	 *   broadcast: true,
+	 * });
+	 * ```
 	 */
-	createAccountWithBrainKey(brainKey, accountName, accountNameOrId, evmAddress, shouldDoBroadcastToNetwork) {
+	async createAccountWithBrainKey(brainKey, accountName, registrarAccount, _optional = {}) {
+		const { evmAddress, broadcast, saveWallet } = _optional;
 		if (!isAccountName(accountName)) return Promise.reject(new Error('Name should be string and valid'));
-		if (!isAccountIdOrName(accountNameOrId)) {
-			return Promise.reject(new Error('Accounts id or name should be string and valid'));
-		}
+		if (!isAccountIdOrName(registrarAccount)) throw new Error('Accounts id or name should be string and valid');
+		if (evmAddress && !isEthereumAddress(evmAddress)) throw new Error('Invalid evm address format');
 		return this.wsProvider.call([0, 'create_account_with_brain_key', [
-			string.toRaw(brainKey),
-			string.toRaw(accountName),
-			string.toRaw(accountNameOrId),
-			evmAddress,
-			bool.toRaw(shouldDoBroadcastToNetwork),
+			brainKey,
+			accountName,
+			registrarAccount,
+			evmAddress || null,
+			broadcast || null,
+			saveWallet || null,
 		]]);
 	}
 

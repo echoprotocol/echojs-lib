@@ -9,4 +9,5 @@ export default interface DynamicGlobalProperties {
 	dynamic_flags: number,
 	last_irreversible_block_num: number,
 	last_block_of_previous_interval: number,
+	extensions: unknown[],
 }

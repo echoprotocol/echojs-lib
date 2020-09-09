@@ -97,17 +97,6 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#helpMethod()', () => {
-		it('should get detailed help on a single API command', async () => {
-			const method = 'get_account_count';
-			const result = await echo.walletApi.helpMethod(method);
-			expect(result)
-				.to
-				.be
-				.an('string');
-		}).timeout(5000);
-	});
-
 	describe('#networkAddNodes()', () => {
 		it('should add new nodes to network', async () => {
 			const nodes = ["0.0.0.0:6311", "0.0.0.0:6310"];
@@ -513,8 +502,7 @@ describe('WALLET API', () => {
 				brainKey,
 				newAccountName,
 				accountName,
-				null,
-				shouldDoBroadcastToNetwork
+				{ evmAddress: null, broadcast: shouldDoBroadcastToNetwork },
 			);
 			expect(result)
 				.to
