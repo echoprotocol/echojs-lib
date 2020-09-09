@@ -20,6 +20,7 @@ import {
 	isUInt64,
 	isCommitteeMemberId,
 	validateAmount,
+	isFrozenBalanceId,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -737,7 +738,7 @@ class WalletAPI {
 		if (!limit > API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT) {
 			return Promise.reject(new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_MAX_LIMIT}`));
 		}
-		return this.wsProvider.call([0, 'get_account_history', [string.toRaw(accountIdOrName),	int64.toRaw(limit)]]);
+		return this.wsProvider.call([0, 'get_account_history', [string.toRaw(accountIdOrName), int64.toRaw(limit)]]);
 	}
 
 	/**
@@ -763,7 +764,7 @@ class WalletAPI {
 		return this.wsProvider.call([0, 'get_relative_account_history', [
 			string.toRaw(accountIdOrName),
 			uint64.toRaw(stop),
-			int64.toRaw(limit),	uint64.toRaw(start),
+			int64.toRaw(limit), uint64.toRaw(start),
 		]]);
 	}
 
@@ -1780,6 +1781,27 @@ class WalletAPI {
 	}
 
 	/**
+	 * Sends the request to unfreeze frozen balance
+	 * @param {string} account the name or id of the freeze balance holder
+	 * @param {string[]} objects_to_unfreeze the ids of the objects with frozen balance you want to unfreeze which you
+	 * can get from method `listFrozenBalances`
+	 * @param {boolean} [broadcast] true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction requesting unfreezeing frozen balance
+	 * @example ```ts
+	 * echo.walletApi.requestUnfreezeBalance('nathan', ['1.9.0', '1.9.1'], true);
+	 * ```
+	 */
+	async requestUnfreezeBalance(account, objectsToUnfreeze, broadcast = false) {
+		if (!isAccountIdOrName(account)) throw new Error('Invalid account id or name format');
+		if (!Array.isArray(objectsToUnfreeze)) throw new Error('Objects to unfreeze is not an array');
+		if (objectsToUnfreeze.some((id) => !isFrozenBalanceId(id))) {
+			throw new Error('Invalid object to unfreeze id format');
+		}
+		if (typeof broadcast !== 'boolean') throw new Error('Broadcast parameter should be boolean');
+		return this.wsProvider.call([0, 'request_unfreeze_balance', [account, objectsToUnfreeze, broadcast]]);
+	}
+
+	/**
 	 * @method getCommitteeFrozenBalance
 	 * @param {String} ownerAccount
 	 * @returns {Promise<CommitteeFrozenBalance>}
@@ -1802,7 +1824,7 @@ class WalletAPI {
 	 */
 	committeeFreezeBalance(ownerAccount, amount, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
 
 		return this.wsProvider.call([0, 'committee_freeze_balance', [
 			string.toRaw(ownerAccount),
@@ -1820,7 +1842,7 @@ class WalletAPI {
 	 */
 	committeeWithdrawBalance(ownerAccount, amount, broadcast = false) {
 		if (!isAccountIdOrName(ownerAccount)) return Promise.reject(new Error('Account name or id is invalid'));
-		if (!isValidAmount(amount))	return Promise.reject(new Error('Invalid amount'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
 
 		return this.wsProvider.call([0, 'committee_withdraw_balance', [
 			string.toRaw(ownerAccount),
