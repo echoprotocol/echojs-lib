@@ -5,6 +5,7 @@ import { uint16, uint8 } from '../../basic/integers';
 import { asset, publicKey, extensions } from '../../chain';
 import { accountId } from '../../chain/id/protocol';
 import { struct, optional } from '../../collections';
+import ethAddress from '../ethAddress';
 
 export { default as AccountListingSerializer, ACCOUNT_LISTING } from './account_listing';
 
@@ -22,6 +23,7 @@ export const accountCreateOperationPropsSerializer = struct({
 	name: stringSerializer,
 	active: authoritySerializer,
 	echorand_key: publicKey,
+	evm_address: optional(ethAddress),
 	options: accountOptionsSerializer,
 	// TODO: extensions serializer
 	extensions,
