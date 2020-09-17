@@ -52,6 +52,8 @@ import {
 	contractSelfdestructOperationPropsSerializer
 } from './contract';
 
+import * as economy from './economy';
+
 import {
 	proposalCreateOperationPropsSerializer,
 	proposalUpdateOperationPropsSerializer,
@@ -85,6 +87,8 @@ import {
 export { AccountListingSerializer, accountListing, ACCOUNT_LISTING } from './account';
 
 export { blockRewardOperationPropsSerializer as blockReward } from './block_reward';
+
+export { economy };
 
 export { evmAddressRegisterOperationPropsSerializer as evmAddress } from './evm_address';
 
@@ -191,5 +195,3 @@ export declare const did: {
 	update: typeof didUpdateOperationSerializer,
 	delete: typeof didDeleteOperationSerializer,
 }
-
-export * as economy from './economy';
