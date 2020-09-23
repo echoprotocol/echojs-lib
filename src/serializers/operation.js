@@ -69,6 +69,7 @@ const operationProps = {
 	[OPERATIONS_IDS.SIDECHAIN_BTC_WITHDRAW]: protocol.sidechain.btc.withdraw,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_AGGREGATE]: protocol.sidechain.btc.aggregate,
 	[OPERATIONS_IDS.SIDECHAIN_BTC_APPROVE_AGGREGATE]: protocol.sidechain.btc.approveAggregate,
+	[OPERATIONS_IDS.SIDECHAIN_BTC_BLOCK_PROCESS]: protocol.sidechain.btc.blockProcess,
 	[OPERATIONS_IDS.BLOCK_REWARD]: protocol.blockReward,
 	[OPERATIONS_IDS.EVM_ADDRESS_REGISTER]: protocol.evmAddress,
 	[OPERATIONS_IDS.DID_CREATE_OPERATION]: protocol.did.create,

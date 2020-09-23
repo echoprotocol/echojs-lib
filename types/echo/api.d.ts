@@ -174,6 +174,9 @@ export default class Api {
 	/** Retrieve the current info about git revision of the project */
 	getGitRevision(): Promise<{ [key: string]: unknown }>;
 
+	/** Retrieve the incentives info */
+	getIncentivesInfo(): Promise<{ [key: string]: unknown }>;
+
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 

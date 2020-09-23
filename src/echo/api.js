@@ -1052,6 +1052,10 @@ class API {
 		return this.engine.database.getGitRevision();
 	}
 
+	async getIncentivesInfo() {
+		return this.engine.database.getIncentivesInfo();
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String|PublicKey>} keys [public keys]
@@ -2675,6 +2679,20 @@ class API {
 			return Promise.reject(new Error('Id string should be valid string'));
 		}
 		return this.engine[CHAIN_API.DID_API].getKey(idString);
+	}
+
+	/**
+     *  @method getKeys
+     *
+     *  @param  {string} idString
+     *
+     *  @return {*}
+     */
+	getKeys(idString) {
+		if (!isString(idString)) {
+			return Promise.reject(new Error('Id string should be valid string'));
+		}
+		return this.engine[CHAIN_API.DID_API].getKeys(idString);
 	}
 
 	/**
