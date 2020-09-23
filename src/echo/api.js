@@ -2695,20 +2695,6 @@ class API {
 		return this.engine[CHAIN_API.DID_API].getKeys(idString);
 	}
 
-	/**
-     *  @method getKeys
-     *
-     *  @param  {string} idString
-     *
-     *  @return {*}
-     */
-	getKeys(idString) {
-		if (!isString(idString)) {
-			return Promise.reject(new Error('Id string should be valid string'));
-		}
-		return this.engine[CHAIN_API.DID_API].getKeys(idString);
-	}
-
 }
 
 export default API;
