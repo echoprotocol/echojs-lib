@@ -1052,6 +1052,10 @@ class API {
 		return this.engine.database.getGitRevision();
 	}
 
+	async getIncentivesInfo() {
+		return this.engine.database.getIncentivesInfo();
+	}
+
 	/**
 	 *  @method getKeyReferences
 	 *  @param  {Array<String|PublicKey>} keys [public keys]

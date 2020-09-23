@@ -150,8 +150,22 @@ class DatabaseAPI extends BaseEchoApi {
 		return this.exec('get_dynamic_global_properties', []);
 	}
 
+	/**
+	 *  @method getGitRevision
+	 *
+	 *  @return {Promise}
+	 */
 	getGitRevision() {
 		return this.exec('get_git_revision', []);
+	}
+
+	/**
+	 *  @method getIncentivesInfo
+	 *
+	 *  @return {Promise}
+	 */
+	getIncentivesInfo() {
+		return this.exec('get_incentives_info', []);
 	}
 
 	/**

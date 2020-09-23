@@ -23,6 +23,8 @@ import {
 	isFrozenBalanceId,
 	isEthAddressId,
 	isEthereumAddress,
+	isRipemd160,
+	isUInt32,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -33,7 +35,7 @@ const {
 	ripemd160,
 } = serializers.chain;
 const { options, bitassetOptions } = serializers.protocol.asset;
-const { price } = serializers.protocol;
+const { price, authority } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
 const { anyObjectId } = serializers.chain.ids;
 
@@ -619,6 +621,35 @@ class WalletAPI {
 	}
 
 	/**
+	 * Transfer an amount from one account to address.
+	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
+	 * @param {string} address address in form of ripemd160 hash
+	 * @param {string} amount the amount to send (in nominal units -- to send half of a BTS, specify 0.5)
+	 * @param {string} assetIdOrName the symbol or id of the asset to send
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @returns {Promise<SignedTransaction>} the signed transaction transferring funds
+	 */
+	transferToAddress(fromAccountNameOrId, address, amount, assetIdOrName, shouldDoBroadcastToNetwork) {
+		if (!isAccountIdOrName(fromAccountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isRipemd160(address)) {
+			return Promise.reject(new Error('Address should be ripemd160 hash'));
+		}
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid number'));
+		if (!isAssetIdOrName(assetIdOrName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'transfer_to_address', [
+			string.toRaw(fromAccountNameOrId),
+			ripemd160.toRaw(address),
+			string.toRaw(amount),
+			string.toRaw(assetIdOrName),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
 	 * This method works just like transfer, except it always broadcasts and
 	 * returns the transaction ID along with the signed transaction.
 	 * @param {string} fromAccountNameOrId the name or id of the account sending the funds
@@ -677,6 +708,31 @@ class WalletAPI {
 			string.toRaw(accountToList),
 			accountListing.toRaw(newListingStatus),
 			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+	 * @method updateAccount
+	 * @param {string} account Id or account name
+	 * @param {any} newOptions variant options
+	 * @param {boolean} shouldDoBroadcastToNetwork true to broadcast the transaction on the network
+	 * @param {any} newActive new active
+	 * @param {string} newEchorandKey new echorand key
+	 * @returns {Promise<SignedTransaction>} the signed transaction
+	 */
+	updateAccount(account, newOptions, shouldDoBroadcastToNetwork, newActive, newEchorandKey) {
+		if (!isAccountIdOrName(account)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		if (!isPublicKey(newEchorandKey)) {
+			return Promise.reject(new Error('New echorand key should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'update_account', [
+			string.toRaw(account),
+			variantObject.toRaw(newOptions),
+			bool.toRaw(shouldDoBroadcastToNetwork),
+			optional(authority).toRaw(newActive),
+			optional(publicKey).toRaw(newEchorandKey),
 		]]);
 	}
 
@@ -1501,6 +1557,10 @@ class WalletAPI {
 	 */
 	getDynamicGlobalProperties() { return this.wsProvider.call([0, 'get_dynamic_global_properties', []]); }
 
+	getGitVersion() { return this.wsProvider.call([0, 'get_git_revision', []]); }
+
+	getIncentivesInfo() { return this.wsProvider.call([0, 'get_incentives_info', []]); }
+
 	/**
 	 * Returns the blockchain object corresponding to the given id.
 	 * This generic function can be used to retrieve any object from the blockchain that is assigned an ID.
@@ -1865,6 +1925,89 @@ class WalletAPI {
 		return this.wsProvider.call([0, 'committee_withdraw_balance', [
 			string.toRaw(ownerAccount),
 			string.toRaw(amount),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * @method createVestingLinearPolicy
+	 * @param {String} creatorName name of the creator
+	 * @param {String} ownerName name of the owner
+	 * @param {string} amount the amount of vesting
+	 * @param {string} assetName the symbol of the asset
+	 * @param {number} vestingCliffSeconds vesting cliff in seconds
+	 * @param {number} vestingDurationSeconds vesting duration in seconds
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	createVestingLinearPolicy(
+		creatorName,
+		ownerName,
+		amount,
+		assetName,
+		vestingCliffSeconds,
+		vestingDurationSeconds,
+		broadcast = false,
+	) {
+		if (!isAccountName(creatorName)) return Promise.reject(new Error('creator account name is invalid'));
+		if (!isAccountName(ownerName)) return Promise.reject(new Error('owner account name is invalid'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
+		if (!isAssetName(assetName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		if (!isUInt32(vestingCliffSeconds)) {
+			return Promise.reject(new Error('Vesting cliff should be uint 32'));
+		}
+		if (!isUInt32(vestingDurationSeconds)) {
+			return Promise.reject(new Error('Vesting duration should be uint 32'));
+		}
+
+		return this.wsProvider.call([0, 'create_vesting_linear_policy', [
+			string.toRaw(creatorName),
+			string.toRaw(ownerName),
+			string.toRaw(amount),
+			string.toRaw(assetName),
+			uint32.toRaw(vestingCliffSeconds),
+			uint32.toRaw(vestingDurationSeconds),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * @method createVestingCddPolicy
+	 * @param {String} creatorName name of the creator
+	 * @param {String} ownerName name of the owner
+	 * @param {string} amount the amount of vesting
+	 * @param {string} assetName the symbol of the asset
+	 * @param {number} vestingCliffSeconds vesting cliff in seconds
+	 * @param {number} vestingDurationSeconds vesting duration in seconds
+	 * @param {Boolean} broadcast
+	 * @returns {Promise<SignedTransaction>}
+	 */
+	createVestingCddPolicy(
+		creatorName,
+		ownerName,
+		amount,
+		assetName,
+		vestingSeconds,
+		broadcast = false,
+	) {
+		if (!isAccountName(creatorName)) return Promise.reject(new Error('creator account name is invalid'));
+		if (!isAccountName(ownerName)) return Promise.reject(new Error('owner account name is invalid'));
+		if (!isValidAmount(amount)) return Promise.reject(new Error('Invalid amount'));
+		if (!isAssetName(assetName)) {
+			return Promise.reject(new Error('Assets id or name should be string and valid'));
+		}
+		if (!isUInt32(vestingSeconds)) {
+			return Promise.reject(new Error('Vesting seconds should be uint 32'));
+		}
+
+		return this.wsProvider.call([0, 'create_vesting_cdd_policy', [
+			string.toRaw(creatorName),
+			string.toRaw(ownerName),
+			string.toRaw(amount),
+			string.toRaw(assetName),
+			uint32.toRaw(vestingSeconds),
 			bool.toRaw(broadcast),
 		]]);
 	}
