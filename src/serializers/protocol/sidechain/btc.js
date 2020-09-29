@@ -17,6 +17,7 @@ export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
 	backup_address: stringSerializer,
+	extensions,
 });
 
 
