@@ -1052,10 +1052,20 @@ class API {
 		return this.engine.database.getGitRevision();
 	}
 
+	/**
+	 * @method getCurrentIncentivesInfo
+	 * @returns {Promise<unknown>}
+	 */
 	async getCurrentIncentivesInfo() {
 		return this.engine.database.getCurrentIncentivesInfo();
 	}
 
+	/**
+	 * @method getIncentivesInfo
+	 * @param {number} blockStart
+	 * @param {number} blockEnd
+	 * @returns {Promise<unknown>}
+	 */
 	async getIncentivesInfo(blockStart, blockEnd) {
 		if (!isNumber(blockStart)) {
 			throw new Error('Invalid start block number');
@@ -1070,6 +1080,12 @@ class API {
 		return this.engine.database.getIncentivesInfo(blockStart, blockEnd);
 	}
 
+	/**
+	 * @method getAccountAddressByLabel
+	 * @param {string} accountNameOrId
+	 * @param {string} label
+	 * @returns {Promise<unknown>}
+	 */
 	async getAccountAddressByLabel(accountNameOrId, label) {
 		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
 			throw new Error('AccountNameOrId is invalid');

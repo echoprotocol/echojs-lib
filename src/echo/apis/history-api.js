@@ -107,7 +107,7 @@ class HistoryAPI extends BaseEchoApi {
 	 * @returns {Promise}
 	 */
 	getAccountAddressHistory(address, stop, limit, start) {
-		return this.exec('get_account_address_history', [address, stop, start, limit]);
+		return this.exec('get_account_address_history', [address, start, stop, limit]);
 	}
 
 }
