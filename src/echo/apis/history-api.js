@@ -99,6 +99,17 @@ class HistoryAPI extends BaseEchoApi {
 		return this.exec('get_relative_contract_history', [contract, stop, limit, start]);
 	}
 
+	/**
+	 * @param {String} address
+	 * @param {Integer_t["uint64"]["__TOutput__"]} stop
+	 * @param {Integer_t["uint32"]["__TOutput__"]} limit
+	 * @param {Integer_t["uint64"]["__TOutput__"]} start
+	 * @returns {Promise}
+	 */
+	getAccountAddressHistory(address, stop, limit, start) {
+		return this.exec('get_account_address_history', [address, stop, start, limit]);
+	}
+
 }
 
 export default HistoryAPI;

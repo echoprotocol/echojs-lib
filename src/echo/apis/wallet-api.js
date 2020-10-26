@@ -25,6 +25,9 @@ import {
 	isEthereumAddress,
 	isRipemd160,
 	isUInt32,
+	isNumber,
+	isString,
+	isOperationHistoryId,
 } from '../../utils/validators';
 
 const { ethAddress, accountListing } = serializers.protocol;
@@ -1066,16 +1069,97 @@ class WalletAPI {
 
 	/**
 	 * Get addresses of specified account
-	 * @param {string} idOfAccount ID of the account
+	 * @param {string} accountNameOrId ID of the account
 	 * @param {number} startFrom number of block to start retrieve from
 	 * @param {number} limit maximum number of addresses to return
 	 * @returns {Promise<any[]>} Addresses owned by account in specified ids interval
 	 */
-	getAccountAddresses(idOfAccount, startFrom, limit) {
+	getAccountAddresses(accountNameOrId, startFrom, limit) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			throw new Error('Accounts id or name should be string and valid');
+		}
 		return this.wsProvider.call([0, 'get_account_addresses', [
-			accountId.toRaw(idOfAccount),
+			string.toRaw(accountNameOrId),
 			uint64.toRaw(startFrom),
 			uint64.toRaw(limit),
+		]]);
+	}
+
+	async getAccountAddressByLabel(accountNameOrId, label) {
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
+			throw new Error('AccountNameOrId is invalid');
+		}
+
+		if (!isString(label)) {
+			throw new Error('Label is invalid');
+		}
+
+		return this.wsProvider.call([0, 'get_account_address_by_label', [
+			string.toRaw(accountNameOrId),
+			string.toRaw(label),
+		]]);
+	}
+
+	/**
+	 * @param {String} address
+	 * @param {Integer_t["uint64"]["__TOutput__"]} stop
+	 * @param {Integer_t["uint32"]["__TOutput__"]} limit
+	 * @param {Integer_t["uint64"]["__TOutput__"]} start
+	 * @returns {Promise}
+	 */
+	getAccountAddressHistory(_address, _stop, _limit, _start) {
+		const address = serializers.chain.ripemd160.toRaw(_address);
+		const stop = _stop === undefined ? 0 : serializers.basic.integers.uint64.toRaw(_stop);
+		const limit = _limit === undefined ? 100 : serializers.basic.integers.uint32.toRaw(_limit);
+		const start = _start === undefined ? 0 : serializers.basic.integers.uint64.toRaw(_start);
+		if (limit > 100) throw new Error('Limit is greater than 100');
+
+		return this.wsProvider.call([0, 'get_account_address_history', [
+			address, start, stop, limit,
+		]]);
+	}
+
+	async getAccountHistoryOperations(
+		idOfAccount,
+		operationId,
+		start = API_CONFIG.START_OPERATION_HISTORY_ID,
+		stop = API_CONFIG.STOP_OPERATION_HISTORY_ID,
+		limit = API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT,
+	) {
+		if (!isAccountId(idOfAccount)) throw new Error('Account is invalid');
+		if (!isNumber(operationId)) throw new Error('Operation id invalid');
+		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
+		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
+		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) {
+			throw new Error(`Limit should be capped at ${API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT}`);
+		}
+
+		return this.wsProvider.call([0, 'get_account_history_operations', [
+			accountId.toRaw(idOfAccount),
+			anyObjectId.toRaw(start),
+			anyObjectId.toRaw(stop),
+			uint32.toRaw(limit),
+		]]);
+	}
+
+	getCurrentIncentivesInfo() {
+		return this.wsProvider.call([0, 'get_current_incentives_info', []]);
+	}
+
+	getIncentivesInfo(blockStart, blockEnd) {
+		if (!isNumber(blockStart)) {
+			throw new Error('Invalid start block number');
+		}
+		if (!isNumber(blockEnd)) {
+			throw new Error('Invalid end block number');
+		}
+		if (blockEnd < blockStart) {
+			throw new Error('Block start should be equal or more then block end');
+		}
+
+		return this.wsProvider.call([0, 'get_incentives_info', [
+			uint32.toRaw(blockStart),
+			uint32.toRaw(blockEnd),
 		]]);
 	}
 
@@ -1558,8 +1642,6 @@ class WalletAPI {
 	getDynamicGlobalProperties() { return this.wsProvider.call([0, 'get_dynamic_global_properties', []]); }
 
 	getGitVersion() { return this.wsProvider.call([0, 'get_git_revision', []]); }
-
-	getIncentivesInfo() { return this.wsProvider.call([0, 'get_incentives_info', []]); }
 
 	/**
 	 * Returns the blockchain object corresponding to the given id.

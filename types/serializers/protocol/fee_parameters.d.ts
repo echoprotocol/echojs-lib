@@ -84,7 +84,6 @@ export type FeeParametersSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof defaultFeeParametersSerializer,
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof defaultFeeParametersSerializer,
-	[OperationId.SIDECHAIN_BTC_BLOCK_PROCESS]: typeof defaultFeeParametersSerializer,
 	[OperationId.BLOCK_REWARD]: typeof defaultFeeParametersSerializer,
 	[OperationId.EVM_ADDRESS_REGISTER]: typeof defaultFeeParametersSerializer,
 	[OperationId.DID_CREATE_OPERATION]: typeof defaultFeeParametersSerializer,

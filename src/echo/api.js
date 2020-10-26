@@ -1052,8 +1052,34 @@ class API {
 		return this.engine.database.getGitRevision();
 	}
 
-	async getIncentivesInfo() {
-		return this.engine.database.getIncentivesInfo();
+	async getCurrentIncentivesInfo() {
+		return this.engine.database.getCurrentIncentivesInfo();
+	}
+
+	async getIncentivesInfo(blockStart, blockEnd) {
+		if (!isNumber(blockStart)) {
+			throw new Error('Invalid start block number');
+		}
+		if (!isNumber(blockEnd)) {
+			throw new Error('Invalid end block number');
+		}
+		if (blockEnd < blockStart) {
+			throw new Error('Block start should be equal or more then block end');
+		}
+
+		return this.engine.database.getIncentivesInfo(blockStart, blockEnd);
+	}
+
+	async getAccountAddressByLabel(accountNameOrId, label) {
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
+			throw new Error('AccountNameOrId is invalid');
+		}
+
+		if (!isString(label)) {
+			throw new Error('Label is invalid');
+		}
+
+		return this.engine.database.getAccountAddressByLabel(accountNameOrId, label);
 	}
 
 	/**
@@ -2305,6 +2331,22 @@ class API {
 		const start = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
 		return this.engine.history.getRelativeContractHistory(contract, stop, limit, start);
+	}
+
+	/**
+	 * @param {String} address
+	 * @param {Integer_t["uint64"]["__TOutput__"]} stop
+	 * @param {Integer_t["uint32"]["__TOutput__"]} limit
+	 * @param {Integer_t["uint64"]["__TOutput__"]} start
+	 * @returns {Promise}
+	 */
+	getAccountAddressHistory(_address, _stop, _limit, _start) {
+		const address = chain.ripemd160.toRaw(_address);
+		const stop = _stop === undefined ? 0 : basic.integers.uint64.toRaw(_stop);
+		const limit = _limit === undefined ? 100 : basic.integers.uint32.toRaw(_limit);
+		const start = _start === undefined ? 0 : basic.integers.uint64.toRaw(_start);
+		if (limit > 100) throw new Error('Limit is greater than 100');
+		return this.engine.history.getAccountAddressHistory(address, stop, limit, start);
 	}
 
 	/**

@@ -160,12 +160,36 @@ class DatabaseAPI extends BaseEchoApi {
 	}
 
 	/**
-	 *  @method getIncentivesInfo
+	 *  @method getCurrentIncentivesInfo
 	 *
 	 *  @return {Promise}
 	 */
-	getIncentivesInfo() {
-		return this.exec('get_incentives_info', []);
+	getCurrentIncentivesInfo() {
+		return this.exec('get_current_incentives_info', []);
+	}
+
+	/**
+	 *  @method getIncentivesInfo
+	 *  @param  {Number} blockStart
+	 *  @param  {Number} blockEnd
+	 *
+	 *
+	 *  @return {Promise}
+	 */
+	getIncentivesInfo(blockStart, blockEnd) {
+		return this.exec('get_incentives_info', [blockStart, blockEnd]);
+	}
+
+	/**
+	 *  @method getAccountAddressByLabel
+	 *  @param  {String} accountNameOrId
+	 *  @param  {String} label
+	 *
+	 *
+	 *  @return {Promise}
+	 */
+	getAccountAddressByLabel(accountNameOrId, label) {
+		return this.exec('get_account_address_by_label', [accountNameOrId, label]);
 	}
 
 	/**

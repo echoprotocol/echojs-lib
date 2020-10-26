@@ -69,7 +69,6 @@ export type OperationPropsSerializer<T extends OperationId> = {
 	[OperationId.SIDECHAIN_BTC_WITHDRAW]: typeof protocol.sidechain.btc.withdraw,
 	[OperationId.SIDECHAIN_BTC_AGGREGATE]: typeof protocol.sidechain.btc.aggregate,
 	[OperationId.SIDECHAIN_BTC_APPROVE_AGGREGATE]: typeof protocol.sidechain.btc.approveAggregate,
-	[OperationId.SIDECHAIN_BTC_BLOCK_PROCESS]: typeof protocol.sidechain.btc.blockProcess,
 	[OperationId.BLOCK_REWARD]: typeof protocol.blockReward,
 	[OperationId.EVM_ADDRESS_REGISTER]: typeof protocol.evmAddress,
 	[OperationId.DID_CREATE_OPERATION]: typeof protocol.did.create,
