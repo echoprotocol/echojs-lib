@@ -323,7 +323,7 @@ console.log(constants.OPERATIONS_IDS); // operation id
     EVM_ADDRESS_REGISTER = 66,
     DID_CREATE_OPERATION = 67,
     DID_UPDATE_OPERATION = 68,
-    DID_DELETE_OPERATION = 79,
+    DID_DELETE_OPERATION = 69,
 }
 */
  ```

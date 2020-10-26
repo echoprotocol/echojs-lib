@@ -1126,8 +1126,8 @@ class WalletAPI {
 		stop = API_CONFIG.STOP_OPERATION_HISTORY_ID,
 		limit = API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_DEFAULT_LIMIT,
 	) {
+		const operationNumber = uint64.toRaw(operationId);
 		if (!isAccountId(idOfAccount)) throw new Error('Account is invalid');
-		if (!isNumber(operationId)) throw new Error('Operation id invalid');
 		if (!isOperationHistoryId(start)) throw new Error('Start parameter is invalid');
 		if (!isOperationHistoryId(stop)) throw new Error('Stop parameter is invalid');
 		if (!isUInt64(limit) || limit > API_CONFIG.ACCOUNT_HISTORY_OPERATIONS_MAX_LIMIT) {
@@ -1136,6 +1136,7 @@ class WalletAPI {
 
 		return this.wsProvider.call([0, 'get_account_history_operations', [
 			accountId.toRaw(idOfAccount),
+			operationNumber,
 			anyObjectId.toRaw(start),
 			anyObjectId.toRaw(stop),
 			uint32.toRaw(limit),

@@ -2598,7 +2598,7 @@ class API {
 	 * @param {Number} limit
 	 * @return {*}
 	 */
-	getAccountAddresses(accountId, from, limit) {
+	async getAccountAddresses(accountId, from, limit) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		if (!isNumber(from)) {
