@@ -40,7 +40,7 @@ const {
 const { options, bitassetOptions } = serializers.protocol.asset;
 const { price, authority } = serializers.protocol;
 const { config } = serializers.plugins.echorand;
-const { anyObjectId } = serializers.chain.ids;
+const { anyObjectId, operationHistoryId } = serializers.chain.ids;
 
 const {
 	uint64,
@@ -1074,7 +1074,7 @@ class WalletAPI {
 	 * @param {number} limit maximum number of addresses to return
 	 * @returns {Promise<any[]>} Addresses owned by account in specified ids interval
 	 */
-	getAccountAddresses(accountNameOrId, startFrom, limit) {
+	async getAccountAddresses(accountNameOrId, startFrom, limit) {
 		if (!isAccountIdOrName(accountNameOrId)) {
 			throw new Error('Accounts id or name should be string and valid');
 		}
@@ -1109,9 +1109,9 @@ class WalletAPI {
 	 */
 	async getAccountAddressHistory(_address, _start, _stop, _limit) {
 		const address = serializers.chain.ripemd160.toRaw(_address);
-		const stop = _stop === undefined ? 0 : serializers.basic.integers.uint64.toRaw(_stop);
+		const stop = _stop === undefined ? API_CONFIG.STOP_OPERATION_HISTORY_ID : operationHistoryId.toRaw(_stop);
 		const limit = _limit === undefined ? 100 : serializers.basic.integers.uint32.toRaw(_limit);
-		const start = _start === undefined ? 0 : serializers.basic.integers.uint64.toRaw(_start);
+		const start = _start === undefined ? API_CONFIG.START_OPERATION_HISTORY_ID : operationHistoryId.toRaw(_start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
 
 		return this.wsProvider.call([0, 'get_account_address_history', [

@@ -40,6 +40,8 @@ import { PublicKey } from '../crypto';
 import { CHAIN_API } from '../constants/ws-constants';
 import { toRawContractLogsFilterOptions } from '../utils/converters';
 
+const { operationHistoryId } = chain.ids;
+
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
@@ -2358,9 +2360,13 @@ class API {
 	 */
 	async getAccountAddressHistory(_address, options = {}) {
 		const address = chain.ripemd160.toRaw(_address);
-		const stop = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.stop);
+		if (!isOperationHistoryId(options.start)) throw new Error('Start parameter is invalid');
+		if (!isOperationHistoryId(options.stop)) throw new Error('Stop parameter is invalid');
+		const stop = options.stop === undefined ?
+			API_CONFIG.STOP_OPERATION_HISTORY_ID : operationHistoryId.toRaw(options.stop);
 		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
-		const start = options.start === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
+		const start = options.start === undefined ?
+			API_CONFIG.START_OPERATION_HISTORY_ID : operationHistoryId.toRaw(options.start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
 		return this.engine.history.getAccountAddressHistory(address, start, stop, limit);
 	}

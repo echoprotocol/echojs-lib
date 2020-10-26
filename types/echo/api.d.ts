@@ -180,9 +180,9 @@ export default class Api {
 
 	getAccountAddressByLabel(accountNameOrId: string, label: string): Promise<{ [key: string]: unknown }>;
 	getAccountAddressHistory(address: string, options?: {
-		stop?: typeof uint64["__TInput__"],
+		stop?: string,
 		limit?: typeof uint64["__TInput__"],
-		start?: typeof uint64["__TInput__"],
+		start?: string,
 	}): Promise<{ [key: string]: unknown }>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;

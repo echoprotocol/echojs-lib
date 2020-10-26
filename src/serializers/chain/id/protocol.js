@@ -9,6 +9,10 @@ export const committeeMemberId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.COMMITTEE_MEMBER,
 );
 export const proposalId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.PROPOSAL);
+export const operationHistoryId = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.OPERATION_HISTORY,
+);
 export const vestingBalanceId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.VESTING_BALANCE,
