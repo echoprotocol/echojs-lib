@@ -175,11 +175,11 @@ export default class Api {
 	getGitRevision(): Promise<{ [key: string]: unknown }>;
 
 	/** Retrieve the incentives info */
-	getIncentivesInfo(blockStart: Number, blockEnd: Number): Promise<{ [key: string]: unknown }>;
+	getIncentivesInfo(blockStart: number, blockEnd: number): Promise<{ [key: string]: unknown }>;
 	getCurrentIncentivesInfo(): Promise<{ [key: string]: unknown }>;
 
-	getAccountAddressByLabel(accountNameOrId: String, label: String): Promise<{ [key: string]: unknown }>;
-	getAccountAddressHistory(address: String, stop: Number, linit: Number, start: Number): Promise<{ [key: string]: unknown }>;
+	getAccountAddressByLabel(accountNameOrId: string, label: string): Promise<{ [key: string]: unknown }>;
+	getAccountAddressHistory(address: string, start: number, linit: number, stop: number): Promise<{ [key: string]: unknown }>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 

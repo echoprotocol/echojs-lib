@@ -106,7 +106,7 @@ class HistoryAPI extends BaseEchoApi {
 	 * @param {Integer_t["uint64"]["__TOutput__"]} start
 	 * @returns {Promise}
 	 */
-	getAccountAddressHistory(address, stop, limit, start) {
+	getAccountAddressHistory(address, start, stop, limit) {
 		return this.exec('get_account_address_history', [address, start, stop, limit]);
 	}
 

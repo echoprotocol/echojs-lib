@@ -2356,13 +2356,13 @@ class API {
 	 * @param {Integer_t["uint64"]["__TOutput__"]} start
 	 * @returns {Promise}
 	 */
-	getAccountAddressHistory(_address, _stop, _limit, _start) {
+	getAccountAddressHistory(_address, _start, _stop, _limit) {
 		const address = chain.ripemd160.toRaw(_address);
 		const stop = _stop === undefined ? 0 : basic.integers.uint64.toRaw(_stop);
 		const limit = _limit === undefined ? 100 : basic.integers.uint32.toRaw(_limit);
 		const start = _start === undefined ? 0 : basic.integers.uint64.toRaw(_start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
-		return this.engine.history.getAccountAddressHistory(address, stop, limit, start);
+		return this.engine.history.getAccountAddressHistory(address, start, stop, limit);
 	}
 
 	/**
