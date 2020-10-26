@@ -2360,8 +2360,6 @@ class API {
 	 */
 	async getAccountAddressHistory(_address, options = {}) {
 		const address = chain.ripemd160.toRaw(_address);
-		if (!isOperationHistoryId(options.start)) throw new Error('Start parameter is invalid');
-		if (!isOperationHistoryId(options.stop)) throw new Error('Stop parameter is invalid');
 		const stop = options.stop === undefined ?
 			API_CONFIG.STOP_OPERATION_HISTORY_ID : operationHistoryId.toRaw(options.stop);
 		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
