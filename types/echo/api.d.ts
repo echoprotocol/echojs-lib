@@ -179,7 +179,11 @@ export default class Api {
 	getCurrentIncentivesInfo(): Promise<{ [key: string]: unknown }>;
 
 	getAccountAddressByLabel(accountNameOrId: string, label: string): Promise<{ [key: string]: unknown }>;
-	getAccountAddressHistory(address: string, start: number, stop: number, linit: number): Promise<{ [key: string]: unknown }>;
+	getAccountAddressHistory(address: string, options?: {
+		stop?: typeof uint64["__TInput__"],
+		limit?: typeof uint64["__TInput__"],
+		start?: typeof uint64["__TInput__"],
+	}): Promise<{ [key: string]: unknown }>;
 	getFeePool(assetId: string): Promise<BigNumber>;
 	getFrozenBalances(accountId: string): Promise<Array<FrozenBalance>>;
 

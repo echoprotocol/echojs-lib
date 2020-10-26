@@ -4,7 +4,7 @@ export default interface DynamicGlobalProperties {
 	head_block_id: string,
 	time: string,
 	next_maintenance_time: string,
-	last_budget_time: string,
+	last_maintenance_time: string,
 	committee_budget: number,
 	dynamic_flags: number,
 	last_irreversible_block_num: number,

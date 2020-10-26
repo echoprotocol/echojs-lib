@@ -1107,7 +1107,7 @@ class WalletAPI {
 	 * @param {Integer_t["uint64"]["__TOutput__"]} start
 	 * @returns {Promise}
 	 */
-	getAccountAddressHistory(_address, _start, _stop, _limit) {
+	async getAccountAddressHistory(_address, _start, _stop, _limit) {
 		const address = serializers.chain.ripemd160.toRaw(_address);
 		const stop = _stop === undefined ? 0 : serializers.basic.integers.uint64.toRaw(_stop);
 		const limit = _limit === undefined ? 100 : serializers.basic.integers.uint32.toRaw(_limit);

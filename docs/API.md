@@ -1191,7 +1191,7 @@ try {
     head_block_id:String,
     time:String,
     next_maintenance_time:String,
-    last_budget_time:String,
+    last_maintenance_time:String,
     committee_budget:Number,
     accounts_registered_this_interval:Number,
     recently_missed_count:Number,

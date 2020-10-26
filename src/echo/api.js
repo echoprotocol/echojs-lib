@@ -261,7 +261,7 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		head_block_id:String,
 *  		time:String,
 *  		next_maintenance_time:String,
-*  		last_budget_time:String,
+*  		last_maintenance_time:String,
 *  		committee_budget:Number,
 *  		accounts_registered_this_interval:Number,
 *  		recently_missed_count:Number,
@@ -1073,8 +1073,8 @@ class API {
 		if (!isNumber(blockEnd)) {
 			throw new Error('Invalid end block number');
 		}
-		if (blockEnd < blockStart) {
-			throw new Error('Block start should be equal or more then block end');
+		if (blockEnd <= blockStart) {
+			throw new Error('Block start should be less then block end');
 		}
 
 		return this.engine.database.getIncentivesInfo(blockStart, blockEnd);
@@ -2356,11 +2356,11 @@ class API {
 	 * @param {Integer_t["uint64"]["__TOutput__"]} start
 	 * @returns {Promise}
 	 */
-	getAccountAddressHistory(_address, _start, _stop, _limit) {
+	async getAccountAddressHistory(_address, options = {}) {
 		const address = chain.ripemd160.toRaw(_address);
-		const stop = _stop === undefined ? 0 : basic.integers.uint64.toRaw(_stop);
-		const limit = _limit === undefined ? 100 : basic.integers.uint32.toRaw(_limit);
-		const start = _start === undefined ? 0 : basic.integers.uint64.toRaw(_start);
+		const stop = options.stop === undefined ? 0 : basic.integers.uint64.toRaw(options.stop);
+		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
+		const start = options.start === undefined ? 0 : basic.integers.uint64.toRaw(options.start);
 		if (limit > 100) throw new Error('Limit is greater than 100');
 		return this.engine.history.getAccountAddressHistory(address, start, stop, limit);
 	}
