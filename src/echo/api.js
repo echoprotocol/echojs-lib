@@ -40,6 +40,8 @@ import { PublicKey } from '../crypto';
 import { CHAIN_API } from '../constants/ws-constants';
 import { toRawContractLogsFilterOptions } from '../utils/converters';
 
+const { operationHistoryId } = chain.ids;
+
 /** @typedef {import("bignumber.js").default} BigNumber */
 /** @typedef {import("../../types/interfaces/vm/types").Log} Log */
 /** @typedef {import("./ws-api/database-api").SidechainType} SidechainType */
@@ -261,7 +263,7 @@ import { toRawContractLogsFilterOptions } from '../utils/converters';
 *  		head_block_id:String,
 *  		time:String,
 *  		next_maintenance_time:String,
-*  		last_budget_time:String,
+*  		last_maintenance_time:String,
 *  		committee_budget:Number,
 *  		accounts_registered_this_interval:Number,
 *  		recently_missed_count:Number,
@@ -1052,8 +1054,50 @@ class API {
 		return this.engine.database.getGitRevision();
 	}
 
-	async getIncentivesInfo() {
-		return this.engine.database.getIncentivesInfo();
+	/**
+	 * @method getCurrentIncentivesInfo
+	 * @returns {Promise<unknown>}
+	 */
+	async getCurrentIncentivesInfo() {
+		return this.engine.database.getCurrentIncentivesInfo();
+	}
+
+	/**
+	 * @method getIncentivesInfo
+	 * @param {number} blockStart
+	 * @param {number} blockEnd
+	 * @returns {Promise<unknown>}
+	 */
+	async getIncentivesInfo(blockStart, blockEnd) {
+		if (!isNumber(blockStart)) {
+			throw new Error('Invalid start block number');
+		}
+		if (!isNumber(blockEnd)) {
+			throw new Error('Invalid end block number');
+		}
+		if (blockEnd <= blockStart) {
+			throw new Error('Block start should be less then block end');
+		}
+
+		return this.engine.database.getIncentivesInfo(blockStart, blockEnd);
+	}
+
+	/**
+	 * @method getAccountAddressByLabel
+	 * @param {string} accountNameOrId
+	 * @param {string} label
+	 * @returns {Promise<unknown>}
+	 */
+	async getAccountAddressByLabel(accountNameOrId, label) {
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
+			throw new Error('AccountNameOrId is invalid');
+		}
+
+		if (!isString(label)) {
+			throw new Error('Label is invalid');
+		}
+
+		return this.engine.database.getAccountAddressByLabel(accountNameOrId, label);
 	}
 
 	/**
@@ -2308,6 +2352,24 @@ class API {
 	}
 
 	/**
+	 * @param {String} address
+	 * @param {Integer_t["uint64"]["__TOutput__"]} stop
+	 * @param {Integer_t["uint32"]["__TOutput__"]} limit
+	 * @param {Integer_t["uint64"]["__TOutput__"]} start
+	 * @returns {Promise}
+	 */
+	async getAccountAddressHistory(_address, options = {}) {
+		const address = chain.ripemd160.toRaw(_address);
+		const stop = options.stop === undefined ?
+			API_CONFIG.STOP_OPERATION_HISTORY_ID : operationHistoryId.toRaw(options.stop);
+		const limit = options.limit === undefined ? 100 : basic.integers.uint32.toRaw(options.limit);
+		const start = options.start === undefined ?
+			API_CONFIG.START_OPERATION_HISTORY_ID : operationHistoryId.toRaw(options.start);
+		if (limit > 100) throw new Error('Limit is greater than 100');
+		return this.engine.history.getAccountAddressHistory(address, start, stop, limit);
+	}
+
+	/**
 	 *  @method getFullContract
 	 *  Get contract info.
 	 *
@@ -2540,7 +2602,7 @@ class API {
 	 * @param {Number} limit
 	 * @return {*}
 	 */
-	getAccountAddresses(accountId, from, limit) {
+	async getAccountAddresses(accountId, from, limit) {
 		if (!isAccountId(accountId)) return Promise.reject(new Error('Account id is invalid'));
 
 		if (!isNumber(from)) {
