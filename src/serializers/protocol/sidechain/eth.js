@@ -69,7 +69,7 @@ export const sidechainEthUpdateContractAddressOperationPropsSerializer = struct(
 export const sidechainStakeEthUpdateOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,
-	asset_id_type: assetId,
+	asset_id: assetId,
 	current_balance: uint64,
 	account: accountId,
 	transaction_hash: sha256,

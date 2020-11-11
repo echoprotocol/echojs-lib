@@ -70,7 +70,7 @@ export declare const sidechainEthUpdateContractAddressOperationPropsSerializer: 
 export declare const sidechainStakeEthUpdateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
-	asset_id_type: typeof assetId,
+	asset_id: typeof assetId,
 	current_balance: typeof uint64,
 	account: typeof accountId,
 	transaction_hash: typeof sha256,
