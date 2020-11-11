@@ -1879,9 +1879,13 @@ class WalletAPI {
 	 * @param {bool} broadcast
 	 * @returns {Promise<any>}
 	 */
-	createBtcStakeAddress(account, userPubkey, broadcast) {
+	createBtcStakeAddress(accountNameOrId, userPubkey, broadcast) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+
 		return this.wsProvider.call([0, 'create_btc_stake_address', [
-			string.toRaw(account),
+			string.toRaw(accountNameOrId),
 			string.toRaw(userPubkey),
 			bool.toRaw(broadcast),
 		]]);
@@ -1889,12 +1893,16 @@ class WalletAPI {
 
 	/**
 	 * @method getBtcStakeAddress
-	 * @param {string} account
+	 * @param {string} accountNameOrId
 	 * @returns {Promise<any>}
 	 */
-	getBtcStakeAddress(account) {
+	getBtcStakeAddress(accountNameOrId) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+
 		return this.wsProvider.call([0, 'get_btc_stake_address', [
-			string.toRaw(account),
+			string.toRaw(accountNameOrId),
 		]]);
 	}
 
