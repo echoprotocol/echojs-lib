@@ -313,7 +313,7 @@ class WalletAPI {
 
 	getTransactionById(trId) { return this.wsProvider.call([0, 'get_transaction_by_id', [ripemd160.toRaw(trId)]]); }
 
-	getTransaction(blockNumber, trIndex) { 
+	getTransaction(blockNumber, trIndex) {
 		return this.wsProvider.call([0, 'get_transaction', [
 			uint64.toRaw(blockNumber),
 			uint64.toRaw(trIndex),

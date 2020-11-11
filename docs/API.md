@@ -124,7 +124,9 @@ try {
 <dd></dd>
 <dt><a href="#getContractBalances">getContractBalances(contractId, force)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
 <dd></dd>
-<dt><a href="#getTransactionById">getRecentTransactionById(transactionId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dt><a href="#getTransactionById">getTransactionById(transactionId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd></dd>
+<dt><a href="#getBtcStakeAddress">getBtcStakeAddress(accountNameOrId)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
 <dd></dd>
 <dt><a href="#getFeePool">getFeePool(assetId)</a> ⇒ <code>Promise.&lt;BigNumber&gt;</code></dt>
 <dd></dd>
@@ -710,6 +712,15 @@ try {
 | Param | Type | Description |
 | --- | --- | --- |
 | transactionId | <code>String</code> | [Id of the transaction to retrieve] |
+
+<a name="getBtcStakeAddress"></a>
+
+## getBtcStakeAddress(accountNameOrId) ⇒ <code>Promise.&lt;\*&gt;</code>
+**Kind**: global function
+
+| Param | Type | Description |
+| --- | --- | --- |
+| accountNameOrId | <code>String</code> | [Id or name of account] |
 
 <a name="getFeePool"></a>
 
