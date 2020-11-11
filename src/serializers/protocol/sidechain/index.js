@@ -42,6 +42,7 @@ export const eth = {
 	sendWithdraw: _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 	updateContractAddress: _eth.sidechainEthUpdateContractAddressOperationPropsSerializer,
+	stakeUpdate: _eth.sidechainStakeEthUpdateOperationPropsSerializer,
 };
 
 export const btc = {
@@ -52,4 +53,6 @@ export const btc = {
 	withdraw: _btc.sidechainBtcWithdrawOperationPropsSerializer,
 	aggregate: _btc.sidechainBtcAggregateOperationPropsSerializer,
 	approveAggregate: _btc.sidechainBtcApproveAggregateOperationPropsSerializer,
+	createStakeScript: _btc.sidechainBtcCreateStakeScriptOperationPropsSerializer,
+	stakeUpdate: _btc.sidechainStakeBtcUpdateOperationPropsSerializer,
 };

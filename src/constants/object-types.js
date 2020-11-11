@@ -22,7 +22,8 @@ export const BTC_INTERMEDIATE_DEPOSIT = 20;
 export const BTC_DEPOSIT = 21;
 export const BTC_WITHDRAW = 22;
 export const BTC_AGGREGATING = 23;
-export const BTC_BLOCK = 24;
-export const EVM_ADDRESS = 25;
-export const DID_OBJECT = 26;
-
+export const EVM_ADDRESS = 24;
+export const DID_OBJECT = 25;
+export const STAKE_BTC_SCRIPT = 26;
+export const STAKE_BTC_VOUT = 27;
+export const STAKE_ETH_UPDATE = 28;

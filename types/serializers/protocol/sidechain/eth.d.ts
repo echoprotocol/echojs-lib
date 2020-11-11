@@ -2,7 +2,7 @@ import ethAddress from "../ethAddress";
 import { uint64 } from "../../basic/integers";
 import { asset, extensions, sha256 } from "../../chain";
 
-import {accountId, ethDepositId, ethWithdrawId} from "../../chain/id/protocol";
+import { accountId, ethDepositId, ethWithdrawId, assetId } from "../../chain/id/protocol";
 import { VectorSerializer, StructSerializer } from "../../collections";
 
 export declare const sidechainEthCreateAddressOperationPropsSerializer: StructSerializer<{
@@ -64,5 +64,15 @@ export declare const sidechainEthApproveWithdrawOperationPropsSerializer: Struct
 export declare const sidechainEthUpdateContractAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	new_addr: typeof ethAddress,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainStakeEthUpdateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	asset_id: typeof assetId,
+	current_balance: typeof uint64,
+	account: typeof accountId,
+	transaction_hash: typeof sha256,
 	extensions: typeof extensions,
 }>;

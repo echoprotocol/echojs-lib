@@ -311,6 +311,15 @@ class WalletAPI {
 	 */
 	getTransactionId(tr) { return this.wsProvider.call([0, 'get_transaction_id', [signedTransaction.toRaw(tr)]]); }
 
+	getTransactionById(trId) { return this.wsProvider.call([0, 'get_transaction_by_id', [ripemd160.toRaw(trId)]]); }
+
+	getTransaction(blockNumber, trIndex) {
+		return this.wsProvider.call([0, 'get_transaction', [
+			uint64.toRaw(blockNumber),
+			uint64.toRaw(trIndex),
+		]]);
+	}
+
 	/**
 	 * Get the WIF private key corresponding to a public key. The private key must already be in the wallet.
 	 * @param {string} accountPublicKey public key of an account
@@ -1861,6 +1870,40 @@ class WalletAPI {
 	 */
 	getBtcDepositScript(btcDepositAddress) {
 		return this.wsProvider.call([0, 'get_btc_deposit_script', [btcDepositAddress]]);
+	}
+
+	/**
+	 * @method createBtcStakeAddress
+	 * @param {string} account
+	 * @param {string} userPubkey
+	 * @param {bool} broadcast
+	 * @returns {Promise<any>}
+	 */
+	createBtcStakeAddress(accountNameOrId, userPubkey, broadcast) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+
+		return this.wsProvider.call([0, 'create_btc_stake_address', [
+			string.toRaw(accountNameOrId),
+			string.toRaw(userPubkey),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * @method getBtcStakeAddress
+	 * @param {string} accountNameOrId
+	 * @returns {Promise<any>}
+	 */
+	getBtcStakeAddress(accountNameOrId) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+
+		return this.wsProvider.call([0, 'get_btc_stake_address', [
+			string.toRaw(accountNameOrId),
+		]]);
 	}
 
 	/**

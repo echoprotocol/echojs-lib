@@ -1,7 +1,7 @@
-import { asset, extensions, sha256 } from "../../chain";
+import { asset, extensions, sha256, ripemd160 } from "../../chain";
 import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId, btcAggregatingId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
-import { StringSerializer, integers } from "../../basic";
+import { StringSerializer, integers, bool } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import btcPublicKey from "../btcPublicKey";
 import { uint8, uint64 } from "../../basic/integers";
@@ -68,6 +68,22 @@ export const sidechainBtcApproveAggregateOperationPropsSerializer: StructSeriali
 	committee_member_id: typeof accountId,
 	transaction_id: typeof sha256,
 	block_number: typeof integers.uint32,
+	extensions: typeof extensions,
+}>;
+
+export const sidechainBtcCreateStakeScriptOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	user_pubkey_hash: typeof ripemd160,
+	extensions: typeof extensions,
+}>;
+
+export const sidechainStakeBtcUpdateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	owner: typeof accountId,
+	btc_tx_info: typeof BtcTransactionDetailsSerializer,
+	is_vin: typeof bool,
 	extensions: typeof extensions,
 }>;
 

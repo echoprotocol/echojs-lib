@@ -46,3 +46,8 @@ export declare const sidechainERC20ConfigSerializer: StructSerializer<{
 	burn_method: typeof ethMethodSerializer,
 	issue_method: typeof ethMethodSerializer,
 }>;
+
+export declare const sidechainStakeConfigSerializer: StructSerializer<{
+	eth_address_type: typeof ethAddress,
+	eth_topic_type: typeof ethTopicSerializer,
+}>;

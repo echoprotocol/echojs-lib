@@ -1,4 +1,4 @@
-import { asset, extensions, sha256 } from '../../chain';
+import { asset, extensions, sha256, ripemd160 } from '../../chain';
 import {
 	accountId,
 	btcAddressId,
@@ -9,7 +9,7 @@ import {
 } from '../../chain/id/protocol';
 import { btcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import { struct, set, map, optional } from '../../collections';
-import { string as stringSerializer, integers } from '../../basic';
+import { string as stringSerializer, integers, bool } from '../../basic';
 import btcPublicKey from '../btcPublicKey';
 import { uint8, uint32 } from '../../basic/integers';
 
@@ -78,3 +78,18 @@ export const sidechainBtcApproveAggregateOperationPropsSerializer = struct({
 	extensions,
 });
 
+export const sidechainBtcCreateStakeScriptOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	user_pubkey_hash: ripemd160,
+	extensions,
+});
+
+export const sidechainStakeBtcUpdateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	owner: accountId,
+	btc_tx_info: btcTransactionDetailsSerializer,
+	is_vin: bool,
+	extensions,
+});
