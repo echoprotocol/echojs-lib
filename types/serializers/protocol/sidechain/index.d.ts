@@ -41,6 +41,8 @@ export declare const eth: {
 	sendWithdraw: typeof _eth.sidechainEthSendWithdrawOperationPropsSerializer,
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 	updateContractAddress: typeof _eth.sidechainEthUpdateContractAddressOperationPropsSerializer,
+	stakeUpdate: typeof _eth.sidechainStakeEthUpdateOperationPropsSerializer,
+
 };
 
 export declare const btc: {
@@ -51,4 +53,6 @@ export declare const btc: {
 	withdraw: typeof _btc.sidechainBtcWithdrawOperationPropsSerializer
 	aggregate: typeof _btc.sidechainBtcAggregateOperationPropsSerializer,
 	approveAggregate: typeof _btc.sidechainBtcApproveAggregateOperationPropsSerializer,
+	createStakeScript: typeof _btc.sidechainBtcCreateStakeScriptOperationPropsSerializer,
+	stakeUpdate: typeof _btc.sidechainStakeBtcUpdateOperationPropsSerializer,
 };

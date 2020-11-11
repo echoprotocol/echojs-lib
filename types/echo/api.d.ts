@@ -202,7 +202,13 @@ export default class Api {
 	getObjects(objectIds: string, force?: boolean): Promise<Array<Object>>;
 	getPotentialSignatures(tr: Object): Promise<any>;
 	getProposedTransactions(accountNameOrId: string): Promise<any>;
-	getRecentTransactionById(transactionId: string): Promise<any>;
+	getTransactionById(transactionId: string): Promise<any>;
+	getBtcStakeAddress(accountNameOrId: string): Promise<{
+		id: string,
+		account: string,
+		stake_script: string,
+		p2sh_address: string,
+	}>;
 	getRelativeAccountHistory(accountId: string, stop: number, limit: number, start: number): Promise<AccountHistory[]>;
 	getRequiredFees(operations: Array<Object>, assetId: string): Promise<Array<{asset_id: string, amount: number}>>;
 	getRequiredSignatures(tr: Object, availableKey: Array<string>): Promise<any>;

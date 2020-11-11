@@ -2133,16 +2133,31 @@ class API {
 	}
 
 	/**
-	 *  @method getRecentTransactionById
+	 *  @method getTransactionById
 	 *
 	 *  @param  {String} transactionId
 	 *
 	 *  @return {Promise.<*>}
 	 */
-	async getRecentTransactionById(transactionId) {
+	async getTransactionById(transactionId) {
 		if (!isRipemd160(transactionId)) throw new Error('Transaction id should be a 20 bytes hex string');
 
-		return this.engine.database.getRecentTransactionById(transactionId);
+		return this.engine.database.getTransactionById(transactionId);
+	}
+
+	/**
+	 *  @method getBtcStakeAddress
+	 *
+	 *  @param  {String} account
+	 *
+	 *  @return {Promise.<*>}
+	 */
+	async getBtcStakeAddress(accountNameOrId) {
+		if (!(isAccountId(accountNameOrId) || isAccountName(accountNameOrId))) {
+			throw new Error('AccountNameOrId is invalid');
+		}
+
+		return this.engine.database.getBtcStakeAddress(accountNameOrId);
 	}
 
 	/**

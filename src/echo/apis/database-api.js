@@ -651,14 +651,25 @@ class DatabaseAPI extends BaseEchoApi {
 	}
 
 	/**
-	 *  @method getRecentTransactionById
+	 *  @method getTransactionById
 	 *
 	 *  @param  {String} transactionId
 	 *
 	 *  @return {Promise}
 	 */
-	getRecentTransactionById(transactionId) {
-		return this.exec('get_recent_transaction_by_id', [transactionId]);
+	getTransactionById(transactionId) {
+		return this.exec('get_transaction_by_id', [transactionId]);
+	}
+
+	/**
+	 *  @method getBtcStakeAddress
+	 *
+	 *  @param  {String} accountNameOrId
+	 *
+	 *  @return {Promise}
+	 */
+	getBtcStakeAddress(accountNameOrId) {
+		return this.exec('get_btc_stake_address', [accountNameOrId]);
 	}
 
 	/**
