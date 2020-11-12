@@ -81,7 +81,7 @@ export const sidechainBtcApproveAggregateOperationPropsSerializer = struct({
 export const sidechainBtcCreateStakeScriptOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
-	user_pubkey_hash: ripemd160,
+	pubkey_hash: ripemd160,
 	extensions,
 });
 
