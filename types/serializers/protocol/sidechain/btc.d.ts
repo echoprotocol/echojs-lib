@@ -74,7 +74,7 @@ export const sidechainBtcApproveAggregateOperationPropsSerializer: StructSeriali
 export const sidechainBtcCreateStakeScriptOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
-	user_pubkey_hash: typeof ripemd160,
+	pubkey_hash: typeof ripemd160,
 	extensions: typeof extensions,
 }>;
 
