@@ -2,7 +2,9 @@ import AccountListingSerializer from './account_listing';
 import authoritySerializer from '../authority';
 import { string as stringSerializer } from '../../basic';
 import { uint16, uint8 } from '../../basic/integers';
-import { asset, publicKey, extensions } from '../../chain';
+import {
+	asset, publicKey, extensions, accountCreateOperationExtensionsSerializer,
+} from '../../chain';
 import { accountId } from '../../chain/id/protocol';
 import { struct, optional } from '../../collections';
 import ethAddress from '../ethAddress';
@@ -26,7 +28,7 @@ export const accountCreateOperationPropsSerializer = struct({
 	evm_address: optional(ethAddress),
 	options: accountOptionsSerializer,
 	// TODO: extensions serializer
-	extensions,
+	extensions: accountCreateOperationExtensionsSerializer,
 });
 
 export const accountUpdateOperationPropsSerializer = struct({
