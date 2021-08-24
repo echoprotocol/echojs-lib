@@ -40,8 +40,8 @@ export function checkAbiFormat(abi) {
 	for (const abiMethod of abi) {
 		// typeof is uncovered. see https://github.com/gotwarlost/istanbul/issues/582
 		if (typeof abiMethod !== 'object' || abiMethod === null) throw new Error('abi method is not an object');
-		if (abiMethod.type === 'fallback') {
-			ok(abiMethod.payable === true && abiMethod.stateMutability === 'payable', 'abi method is not payable');
+		if (abiMethod.type === 'fallback' || abiMethod.type === 'receive') {
+			ok(abiMethod.payable === true || abiMethod.stateMutability === 'payable', 'abi method is not payable');
 			ok(abiMethod.inputs === undefined, 'unexpected inputs array of fallback-function');
 			ok(abiMethod.outputs === undefined, 'unexpected outputs array of fallback-function');
 		} else {

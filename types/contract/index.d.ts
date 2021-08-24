@@ -5,6 +5,7 @@ import  Transaction  from '../echo/transaction';
 import ApiContractResult from '../interfaces/ContractResult';
 import { BroadcastingResult } from '../echo/transaction';
 import { Abi } from '../interfaces/Abi';
+import Contract from "./Contract";
 
 declare class ContractResult<T, TEvents> {
 	readonly transactionResult: BroadcastingResult;
@@ -50,56 +51,6 @@ declare class Method<T = any, TEvents = { [eventName: string]: { [field: string]
 		value?: { amount?: number | string | BigNumber, asset_id?: string },
 	}): Promise<ContractResult<T, TEvents>>;
 
-}
-
-declare class Contract<TDeployArgs = Array<any>> {
-
-	__TDeployArgs__: TDeployArgs;
-
-	static deploy(
-		code: Buffer | string,
-		echo: Echo,
-		privateKey: PrivateKey,
-		options?: {
-			ethAccuracy?: boolean,
-			supportedAssetId?: string,
-			value?: { amount?: number | string | BigNumber, asset_id?: string },
-		},
-	): Promise<string>;
-
-	static deploy<T = Array<any>>(
-		code: Buffer | string,
-		echo: Echo,
-		privateKey: PrivateKey,
-		options: {
-			abi: Abi,
-			ethAccuracy?: boolean,
-			supportedAssetId?: string,
-			value?: { amount?: number | string | BigNumber, asset_id?: string },
-			args?: any,
-		},
-	): Promise<Contract>;
-
-	readonly namesDublications: Set<string>;
-	readonly methods: { [nameOrHashOrSignature: string]: (...args: Array<any>) => Method };
-	constructor(abi: Abi, options?: { echo?: Echo, contractId?: string });
-	abi: Abi;
-	echo: Echo;
-	address?: string;
-	deploy(code: Buffer | string, privateKey: PrivateKey, options?: {
-		ethAccuracy?: boolean,
-		supportedAssetId?: string,
-		value?: { amount?: number | string | BigNumber, asset_id?: string },
-		args?: TDeployArgs,
-	}): Promise<Contract<TDeployArgs>>;
-	parseLogs(logs: Array<{ address?: string, log: [string], data: string }>): {
-		[event: string]: { [field: string]: any },
-	};
-	fallback(
-		privateKey: PrivateKey,
-		value: number | string | BigNumber,
-		assetId?: string,
-	): Promise<ContractResult<null, any>>;
 }
 
 declare function generateInterface(contractName: string, abi: Abi, indent?: string): string;
