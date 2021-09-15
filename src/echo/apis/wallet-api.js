@@ -947,19 +947,27 @@ class WalletAPI {
 
 	/**
 	 * Returns information about generated eth address, if then exist and approved, for the given account id.
-	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {string} accountIdOrName the id or name of the account to provide information about
 	 * @returns {Promise<string | undefined>} the public eth address data stored in the blockchain
 	 */
-	getEthAddress(idOfAccount) { return this.wsProvider.call([0, 'get_eth_address', [accountId.toRaw(idOfAccount)]]); }
+	getEthAddress(accountIdOrName) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'get_eth_address', [string.toRaw(accountIdOrName)]]);
+	}
 
 	/**
 	 * Returns all approved deposits, for the given account id.
-	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {string} accountIdOrName the id or name of the account to provide information about
 	 * @param {"" | "eth" | "bts"} type the type of the deposits may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public deposits data stored in the blockchain
 	 */
-	getAccountDeposits(idOfAccount, type) {
-		return this.wsProvider.call([0, 'get_account_deposits', [accountId.toRaw(idOfAccount), type]]);
+	getAccountDeposits(accountIdOrName, type) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'get_account_deposits', [string.toRaw(accountIdOrName), type]]);
 	}
 
 	/**
@@ -1019,20 +1027,26 @@ class WalletAPI {
 
 	/**
 	 * Returns all approved deposits, for the given account id.
-	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {string} accountIdOrName the id or name of the account to provide information about
 	 * @returns {Promise<any[]>} the all public erc20 deposits data stored in the blockchain
 	 */
-	getErc20AccountDeposits(idOfAccount) {
-		return this.wsProvider.call([0, 'get_erc20_account_deposits', [accountId.toRaw(idOfAccount)]]);
+	getErc20AccountDeposits(accountIdOrName) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'get_erc20_account_deposits', [string.toRaw(accountIdOrName)]]);
 	}
 
 	/**
 	 * Returns all approved withdrawals, for the given account id.
-	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {string} accountIdOrName the id or name of the account to provide information about
 	 * @returns {Promise<any[]>} the all public erc20 withdrawals data stored in the blockchain
 	 */
-	getErc20AccountWithdrawals(idOfAccount) {
-		return this.wsProvider.call([0, 'get_erc20_account_withdrawals', [accountId.toRaw(idOfAccount)]]);
+	getErc20AccountWithdrawals(accountIdOrName) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'get_erc20_account_withdrawals', [string.toRaw(accountIdOrName)]]);
 	}
 
 	/**
@@ -1054,6 +1068,45 @@ class WalletAPI {
 			erc20TokenId.toRaw(idOferc20Token),
 			uint256.toRaw(withdrawAmount),
 			bool.toRaw(shouldDoBroadcastToNetwork),
+		]]);
+	}
+
+	/**
+   * Creates a transaction to transfer assets to Ethereum erc20_token.
+   * @param {string} proposingAccount the account who make proposal.
+   * @param {number} expirationTime timestamp specifying when the proposal will either take effect or expire.
+   * @param {string} erc20Data object of data for erc20 contract.
+   * 	Should have fields code, args, address,name,symbol,decimals. Filed eth_accuracy is optional.
+   * @param {boolean} broadcast true if you want to broadcast the transaction.
+   * @returns {Promise<SignedTransaction>} the signed version of the transaction
+   */
+	proposeRegisterAssetInSidechain(proposingAccount, expirationTime, erc20Data, broadcast) {
+		if (!isAccountId(proposingAccount)) throw new Error('Account is invalid');
+		return this.wsProvider.call([0, 'propose_register_asset_in_sidechain', [
+			accountId.toRaw(proposingAccount),
+			timePointSec.toRaw(expirationTime),
+			string.toRaw(erc20Data),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
+	/**
+	 * Creates a transaction to transfer assets to Ethereum erc20_token.
+	 * @param {string} account the account who withdraw erc20 token.
+	 * @param {string} to the Ethereum address where transfer erc20 token.
+	 * @param {string} amount the amount transfer.
+	 * @param {string} assetSymbol the asset symbol.
+	 * @param {boolean} broadcast true if you want to broadcast the transaction.
+	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
+	 */
+	transferToEthERC20(account, to, amount, assetSymbol, broadcast) {
+		if (!isAccountId(account)) throw new Error('Account is invalid');
+		return this.wsProvider.call([0, 'transfer_to_eth_erc20', [
+			accountId.toRaw(account),
+			string.toRaw(to),
+			string.toRaw(amount),
+			string.toRaw(assetSymbol),
+			bool.toRaw(broadcast),
 		]]);
 	}
 
@@ -1184,12 +1237,15 @@ class WalletAPI {
 
 	/**
 	 * Returns all approved withdrawals, for the given account id.
-	 * @param {string} idOfAccount the id of the account to provide information about
+	 * @param {string} accountIdOrName the id or name of the account to provide information about
 	 * @param {"" | "eth" | "bts"} type the type of the withdrawals may be "", "eth" or "bts"
 	 * @returns {Promise<any[]>} the all public withdrawals data stored in the blockchain
 	 */
-	getAccountWithdrawals(idOfAccount, type) {
-		return this.wsProvider.call([0, 'get_account_withdrawals', [accountId.toRaw(idOfAccount), type]]);
+	getAccountWithdrawals(accountIdOrName, type) {
+		if (!isAccountIdOrName(accountIdOrName)) {
+			return Promise.reject(new Error('Accounts id or name should be string and valid'));
+		}
+		return this.wsProvider.call([0, 'get_account_withdrawals', [string.toRaw(accountIdOrName), type]]);
 	}
 
 	/**

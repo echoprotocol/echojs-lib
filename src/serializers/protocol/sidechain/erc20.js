@@ -5,6 +5,17 @@ import { asset, extensions, sha256 } from '../../chain';
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from '../../chain/id/protocol';
 import { struct, vector } from '../../collections';
 
+export const sidechainERC20RegisterContractOperationPropsSerializer = struct({
+	fee: asset,
+	code: stringSerializer,
+	args: stringSerializer,
+	address: ethAddress,
+	name: stringSerializer,
+	symbol: stringSerializer,
+	decimals: uint8,
+	extensions,
+});
+
 export const sidechainERC20RegisterTokenOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
@@ -72,5 +83,13 @@ export const sidechainERC20BurnOperationPropsSerializer = struct({
 	account: accountId,
 	token: erc20TokenId,
 	amount: stringSerializer,
+	extensions,
+});
+
+export const sidechainERC20TransferAssetOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	to: ethAddress,
+	value: asset,
 	extensions,
 });

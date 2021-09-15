@@ -39,7 +39,6 @@ export declare const sidechainConfigSerializer: StructSerializer<{
 }>;
 
 export declare const sidechainERC20ConfigSerializer: StructSerializer<{
-	contract_code: StringSerializer,
 	create_token_fee: typeof uint64,
 	transfer_topic: typeof ethTopicSerializer,
 	check_balance_method: typeof ethMethodSerializer,

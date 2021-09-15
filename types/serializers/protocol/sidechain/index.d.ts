@@ -22,6 +22,7 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 }>;
 
 export declare const erc20: {
+	registerContractOperation: typeof _erc20.sidechainERC20RegisterContractOperationPropsSerializer,
 	registerToken: typeof _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
 	depositToken: typeof _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	sendDepositToken: typeof _erc20.sidechainERC20SendDepositTokenOperationPropsSerializer,
@@ -30,6 +31,7 @@ export declare const erc20: {
 	approveTokenWithdraw: typeof _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: typeof _erc20.sidechainERC20IssueOperationPropsSerializer,
 	burn: typeof _erc20.sidechainERC20BurnOperationPropsSerializer,
+	transferAsset: typeof _erc20.sidechainERC20TransferAssetOperationPropsSerializer,
 };
 
 export declare const eth: {

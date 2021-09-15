@@ -458,7 +458,6 @@ console.log(s.serialize(input).toString('hex'));
 
 |field|type|
 |-|-|
-|contract_code|[`string`](#string)|
 |create_token_fee|[`uint64`](#integers)|
 |transfer_topic|[`eth topic`](#eth-topic)|
 |check_balance_method|[`eth method`](#eth-method)|
