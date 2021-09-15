@@ -53,6 +53,7 @@ console.log(constants.CHAIN_TYPES) // information about ids
         CONTRACT_POOL: 15,
         MALICIOUS_COMMITTEEMEN: 16,
         INCENTIVES_POOL: 17,
+        VERIFIERS: 18,
     },
     VOTE_TYPE_ID: {
         COMMITTEE: 0,
@@ -83,9 +84,9 @@ console.log(constants.CHAIN_CONFIG) // Generai information about chain
 }
 */
 ```
- 
+
 #### WS constants
- 
+
 ```javascript
 console.log(constants.WS_CONSTANTS) // websocket constants
 

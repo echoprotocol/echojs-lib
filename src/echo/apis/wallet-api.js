@@ -2061,6 +2061,7 @@ class WalletAPI {
 	 * @param {String} ownerName name of the owner
 	 * @param {string} amount the amount of vesting
 	 * @param {string} assetName the symbol of the asset
+	 * @param {string} expirationTime begin timestamp
 	 * @param {number} vestingCliffSeconds vesting cliff in seconds
 	 * @param {number} vestingDurationSeconds vesting duration in seconds
 	 * @param {Boolean} broadcast
@@ -2071,6 +2072,7 @@ class WalletAPI {
 		ownerName,
 		amount,
 		assetName,
+		expirationTime,
 		vestingCliffSeconds,
 		vestingDurationSeconds,
 		broadcast = false,
@@ -2093,6 +2095,7 @@ class WalletAPI {
 			string.toRaw(ownerName),
 			string.toRaw(amount),
 			string.toRaw(assetName),
+			timePointSec.toRaw(expirationTime),
 			uint32.toRaw(vestingCliffSeconds),
 			uint32.toRaw(vestingDurationSeconds),
 			bool.toRaw(broadcast),

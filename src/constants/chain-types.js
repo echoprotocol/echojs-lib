@@ -34,6 +34,7 @@ export const RESERVED_SPACE_ID = {
  * @property {15} CONTRACT_POOL
  * @property {16} MALICIOUS_COMMITTEEMEN
  * @property {17} INCENTIVES_POOL
+ * @property {18} VERIFIERS
  */
 
 /** @typedef {IMPLEMENTATION_OBJECT_TYPE_t[keyof IMPLEMENTATION_OBJECT_TYPE_t]} ImplementationObjectTypeId */
@@ -58,6 +59,7 @@ export const IMPLEMENTATION_OBJECT_TYPE_ID = {
 	CONTRACT_POOL: 15,
 	MALICIOUS_COMMITTEEMEN: 16,
 	INCENTIVES_POOL: 17,
+	VERIFIERS: 18,
 };
 
 /** @typedef {0} VoteType */
