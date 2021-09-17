@@ -100,14 +100,14 @@
 			"_round_attempts": 3
 		},
 		"sidechain_config": {
-			"eth_contract_address": "c2fd70f5a10099aff8f19d3b496e6b4d547d1347",
+			"eth_contract_address": "cd8a072122aeb5fa749c0c5ce817bbe58111a03d",
 			"eth_committee_update_method": { "method": "f1e3eb60", "gas": 1000000 },
 			"eth_gen_address_method": { "method": "ffcc34fd", "gas": 1000000 },
 			"eth_withdraw_method": { "method": "e21bd1ce", "gas": 1000000 },
 			"eth_update_addr_method": { "method": "7ff203ab", "gas": 1000000 },
+			"eth_update_contract_address": { "method": "3659cfe6", "gas": 1000000 },
 			"eth_withdraw_token_method": { "method": "1c69c0e2", "gas": 1000000 },
 			"eth_collect_tokens_method": { "method": "5940a240", "gas": 1000000 },
-			"eth_update_contract_address": { "method": "3659cfe6", "gas": 1000000 },
 			"eth_committee_updated_topic": "514bf7702a7d2aca90dcf3d947158aad29563a17c1dbdc76d2eae84c22420142",
 			"eth_gen_address_topic": "1855f12530a368418f19b2b15227f19225915b8113c7e17d4c276e2a10225039",
 			"eth_deposit_topic": "77227a376c41a7533c952ebde8d7b44ee36c7a6cec0d3448f1a1e4231398356f",
@@ -116,10 +116,17 @@
 			"erc20_withdraw_topic": "ec7288d868c54d049bda9254803b6ddaaf0317b76e81601c0af91a480592b272",
 			"ETH_asset_id": "1.3.1",
 			"BTC_asset_id": "1.3.2",
-			"fines": { "create_eth_address": -10 },
-			"gas_price": 10000000000,
-			"satoshis_per_byte": 23,
-			"coefficient_waiting_blocks": 100
+			"fines": { "create_eth_address": 0 },
+			"gas_price": 0,
+			"satoshis_per_byte": 1,
+			"send_spv_echo_block_delay": 0,
+			"aggregation_delay": 0,
+			"btc_blocks_lag": 0,
+			"btc_deposit_withdrawal_min_size": 0,
+			"btc_deposit_withdrawal_fee": 0,
+			"eth_blocks_lag": 0,
+			"eth_withdrawal_fee": 0,
+			"eth_withdrawal_min": 0
 		},
 		"erc20_config": {
 			"create_token_fee": 1000,
@@ -127,6 +134,17 @@
 			"check_balance_method": { "method": "70a08231", "gas": 1000000 },
 			"burn_method": { "method": "42966c68", "gas": 1000000 },
 			"issue_method": { "method": "40c10f19", "gas": 1000000 }
+		},
+		"spv_config": {
+			"missed_gen_address_penalty": 0,
+			"missed_deposit_penalty": 0,
+			"missed_withdraw_penalty": 0,
+			"missed_balance_update_penalty": 0,
+			"missed_erc20_deposit_penalty": 0,
+			"missed_erc20_withdraw_penalty": 0,
+			"missed_erc20_transfer_penalty": 0,
+			"excess_withdraw_penalty": 0,
+			"penalty_multiplier": 0
 		},
 		"gas_price": { "price": 1, "gas_amount": 1000 },
 		"committee_freeze_duration_seconds": 2592000,

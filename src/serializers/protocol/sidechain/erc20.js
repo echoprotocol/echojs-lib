@@ -3,7 +3,7 @@ import { string as stringSerializer } from '../../basic';
 import { uint8, uint64 } from '../../basic/integers';
 import { asset, extensions, sha256 } from '../../chain';
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from '../../chain/id/protocol';
-import { struct, vector } from '../../collections';
+import { struct } from '../../collections';
 
 export const sidechainERC20RegisterContractOperationPropsSerializer = struct({
 	fee: asset,
@@ -29,7 +29,6 @@ export const sidechainERC20RegisterTokenOperationPropsSerializer = struct({
 export const sidechainERC20DepositTokenOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,
-	malicious_committeemen: vector(accountId),
 	account: accountId,
 	erc20_token_addr: ethAddress,
 	value: stringSerializer,

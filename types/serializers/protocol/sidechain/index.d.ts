@@ -21,6 +21,13 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 	extensions: typeof extensions,
 }>;
 
+export declare const sidechainSpvExchangeExcessFundsOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	amount: typeof asset,
+	extensions: typeof extensions,
+}>;
+
 export declare const erc20: {
 	registerContractOperation: typeof _erc20.sidechainERC20RegisterContractOperationPropsSerializer,
 	registerToken: typeof _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
@@ -35,6 +42,8 @@ export declare const erc20: {
 };
 
 export declare const eth: {
+	spvCreate: typeof _eth.sidechainEthSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: typeof _eth.sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer,
 	createAddress: typeof _eth.sidechainEthCreateAddressOperationPropsSerializer,
 	approveAddress: typeof _eth.sidechainEthApproveAddressOperationPropsSerializer,
 	deposit: typeof _eth.sidechainEthDepositOperationPropsSerializer,
@@ -44,17 +53,16 @@ export declare const eth: {
 	approveWithdraw: typeof _eth.sidechainEthApproveWithdrawOperationPropsSerializer,
 	updateContractAddress: typeof _eth.sidechainEthUpdateContractAddressOperationPropsSerializer,
 	stakeUpdate: typeof _eth.sidechainStakeEthUpdateOperationPropsSerializer,
-
 };
 
 export declare const btc: {
 	createAddress: typeof _btc.sidechainBtcCreateAddressOperationPropsSerializer,
-	intermediateDeposit: typeof _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
-	createIntermediateDeposit: typeof _btc.sidechainBtcCreateIntermediateDepositOperationPropsSerializer,
 	deposit: typeof _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: typeof _btc.sidechainBtcWithdrawOperationPropsSerializer
 	aggregate: typeof _btc.sidechainBtcAggregateOperationPropsSerializer,
 	approveAggregate: typeof _btc.sidechainBtcApproveAggregateOperationPropsSerializer,
+	spvCreate: typeof _btc.sidechainBtcSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: typeof _btc.sidechainBtcSpvAddMissedTxReceiptOperationPropsSerializer,
 	createStakeScript: typeof _btc.sidechainBtcCreateStakeScriptOperationPropsSerializer,
 	stakeUpdate: typeof _btc.sidechainStakeBtcUpdateOperationPropsSerializer,
 };

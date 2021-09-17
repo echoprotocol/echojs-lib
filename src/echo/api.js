@@ -264,11 +264,13 @@ const { operationHistoryId } = chain.ids;
 *  		time:String,
 *  		next_maintenance_time:String,
 *  		last_maintenance_time:String,
-*  		accounts_registered_this_interval:Number,
-*  		recently_missed_count:Number,
-*  		current_aslot:Number,
-*  		recent_slots_filled:String,
 *  		last_irreversible_block_num:Number,
+*  		last_block_of_previous_interval:Number,
+*  		payed_blocks_in_interval:String,
+*  		last_processed_btc_block:Number|String,
+*  		last_retarget_time:Number|String,
+*  		last_processed_eth_block:Number|String,
+*  		extensions:Array,
 *  	}
 *  	} DynamicGlobalProperties */
 

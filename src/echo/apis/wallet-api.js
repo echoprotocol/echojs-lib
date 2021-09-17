@@ -1205,6 +1205,23 @@ class WalletAPI {
 		]]);
 	}
 
+	/**
+	 * @param {string} owner the id or name of the account to register address for
+	 * @param {string} evmAddress address that will be associated with owner account id
+	 * @param {boolean} broadcast true to broadcast the transaction on the netwo
+	 * @returns {Promise<any[]>}
+	 */
+	async registerEvmAddress(accountNameOrId, evmAddress, broadcast) {
+		if (!isAccountIdOrName(accountNameOrId)) {
+			throw new Error('Accounts id or name should be string and valid');
+		}
+		return this.wsProvider.call([0, 'get_account_addresses', [
+			string.toRaw(accountNameOrId),
+			ethAddress.toRaw(evmAddress),
+			bool.toRaw(broadcast),
+		]]);
+	}
+
 	getCurrentIncentivesInfo() {
 		return this.wsProvider.call([0, 'get_current_incentives_info', []]);
 	}

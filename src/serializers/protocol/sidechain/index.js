@@ -13,12 +13,18 @@ export const sidechainIssueOperationPropsSerializer = struct({
 	extensions,
 });
 
-
 export const sidechainBurnOperationPropsSerializer = struct({
 	fee: asset,
 	value: asset,
 	account: accountId,
 	withdraw_id: ethWithdrawId,
+	extensions,
+});
+
+export const sidechainSpvExchangeExcessFundsOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	amount: asset,
 	extensions,
 });
 
@@ -36,6 +42,8 @@ export const erc20 = {
 };
 
 export const eth = {
+	spvCreate: _eth.sidechainEthSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: _eth.sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer,
 	createAddress: _eth.sidechainEthCreateAddressOperationPropsSerializer,
 	approveAddress: _eth.sidechainEthApproveAddressOperationPropsSerializer,
 	deposit: _eth.sidechainEthDepositOperationPropsSerializer,
@@ -49,12 +57,12 @@ export const eth = {
 
 export const btc = {
 	createAddress: _btc.sidechainBtcCreateAddressOperationPropsSerializer,
-	intermediateDeposit: _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
-	createIntermediateDeposit: _btc.sidechainBtcCreateIntermediateDepositOperationPropsSerializer,
 	deposit: _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: _btc.sidechainBtcWithdrawOperationPropsSerializer,
 	aggregate: _btc.sidechainBtcAggregateOperationPropsSerializer,
 	approveAggregate: _btc.sidechainBtcApproveAggregateOperationPropsSerializer,
+	spvCreate: _btc.sidechainBtcSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: _btc.sidechainBtcSpvAddMissedTxReceiptOperationPropsSerializer,
 	createStakeScript: _btc.sidechainBtcCreateStakeScriptOperationPropsSerializer,
 	stakeUpdate: _btc.sidechainStakeBtcUpdateOperationPropsSerializer,
 };

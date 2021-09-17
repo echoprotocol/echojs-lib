@@ -10,7 +10,7 @@ describe('sidechain btc', () => {
 
 	after(() => echo.disconnect());
 
-	let btcAddressId;	
+	let btcAddressId;
 
 	describe.skip('when we broadcast SIDECHAIN_BTC_CREATE_ADDRESS operation', () => {
 		it('should create address', async () => {
@@ -19,14 +19,13 @@ describe('sidechain btc', () => {
 
 			transaction.addOperation(constants.OPERATIONS_IDS.SIDECHAIN_BTC_CREATE_ADDRESS, {
             	account: accountId,
-            	backup_address: 'msrvud1myzB5gpFds8riorVR87kpr1Ga7k',
 			});
 
 			transaction.addSigner(privateKey);
 
             const result = await transaction.broadcast();
 			btcAddressId = result[0].trx.operation_results[0][1];
-			
+
 		}).timeout(50000);
 	});
 
@@ -34,7 +33,7 @@ describe('sidechain btc', () => {
 
 		it('should create intermediate deposit', async () => {
 			const txInfo = {
-				block_number: 10,				
+				block_number: 10,
 				out: {
 					tx_id: '4ce18f49ba153a51bcda9bb80d7f978e3de6e81b5fc326f00465464530c052f4',
 					index: 10,

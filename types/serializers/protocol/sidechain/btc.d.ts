@@ -1,33 +1,72 @@
 import { asset, extensions, sha256, ripemd160 } from "../../chain";
 import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId, btcAggregatingId } from "../../chain/id/protocol";
-import { StructSerializer, SetSerializer, MapSerializer } from "../../collections";
+import { StructSerializer, SetSerializer, MapSerializer, VectorSerializer } from "../../collections";
 import { StringSerializer, integers, bool } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import btcPublicKey from "../btcPublicKey";
-import { uint8, uint64 } from "../../basic/integers";
+import { uint8, uint64, uint32, int32 } from "../../basic/integers";
 import { types } from "../../../interfaces/vm";
+
+declare const spvHeaderBlockSerializer: StructSerializer < {
+	version: typeof int32,
+	prevBlockHash: typeof sha256,
+	merkleRoot: typeof sha256,
+	timestamp: typeof uint32,
+	bits: typeof uint32,
+	nonce: typeof uint32,
+	height: typeof uint32,
+}>;
+
+declare const proofSerializer: StructSerializer<{
+	tx: StructSerializer<{
+		version: typeof uint32,
+		marker: typeof uint8,
+		flag: typeof uint8,
+		inputs: VectorSerializer< StructSerializer<{
+			outpoint: StructSerializer<{
+				txId: typeof sha256,
+				index: typeof uint32,
+				amount: typeof uint64,
+			}>,
+			unlockScript: VectorSerializer<typeof uint8>,
+			witness: VectorSerializer<VectorSerializer<typeof uint8>>,
+			sequence: typeof uint32,
+		}>>,
+		outputs: VectorSerializer<StructSerializer<{
+			amount: typeof uint64,
+			index: typeof uint32,
+			lockScript: VectorSerializer<typeof uint8>,
+			p2shP2wsh: typeof btcAddressId,
+		}>>,
+		nlocktime: typeof uint32,
+	}>,
+	merklePath: StructSerializer<{
+		leafs: VectorSerializer<StructSerializer<{
+			leaf: typeof sha256,
+			isLeft: typeof bool,
+		}>>,
+	}>,
+}>;
+
+export declare const sidechainBtcSpvCreateOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	committee_member_id: typeof accountId,
+	header: typeof spvHeaderBlockSerializer,
+	proofs: VectorSerializer<typeof proofSerializer>,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainBtcSpvAddMissedTxReceiptOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	reporter: typeof accountId,
+	block_hash: typeof sha256,
+	proofs: VectorSerializer<typeof proofSerializer>,
+	extensions: typeof extensions,
+}>;
 
 export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
-	backup_address: StringSerializer,
-	extensions: typeof extensions,
-}>;
-
-export declare const sidechainBtcCreateIntermediateDepositOperationPropsSerializer: StructSerializer<{
-	fee: typeof asset,
-	committee_member_id: typeof accountId,
-	account: typeof accountId,
-	btc_address_id: typeof btcAddressId,
-	tx_info: typeof BtcTransactionDetailsSerializer,
-	extensions: typeof extensions,
-}>;
-
-export declare const sidechainBtcIntermediateDepositOperationPropsSerializer: StructSerializer<{
-	fee: typeof asset,
-	committee_member_id: typeof accountId,
-	intermediate_address_id: typeof btcIntermediateDepositId,
-	signature: StringSerializer,
 	extensions: typeof extensions,
 }>;
 
@@ -37,6 +76,7 @@ export declare const sidechainBtcDepositOperationPropsSerializer: StructSerializ
 	account: typeof accountId,
 	intermediate_deposit_id: typeof btcIntermediateDepositId,
 	tx_info: typeof BtcTransactionDetailsSerializer,
+	extensions: typeof extensions,
 }>;
 
 export declare const sidechainBtcWithdrawOperationPropsSerializer: StructSerializer<{
@@ -60,7 +100,7 @@ export declare const sidechainBtcAggregateOperationPropsSerializer: StructSerial
 	previous_aggregation: typeof btcAggregatingId,
 	cpfp_depth: typeof uint8,
 	signatures: MapSerializer<typeof integers.uint32, StringSerializer>,
-	extensions: typeof extensions,	
+	extensions: typeof extensions,
 }>;
 
 export const sidechainBtcApproveAggregateOperationPropsSerializer: StructSerializer<{
@@ -86,4 +126,3 @@ export const sidechainStakeBtcUpdateOperationPropsSerializer: StructSerializer<{
 	is_vin: typeof bool,
 	extensions: typeof extensions,
 }>;
-
