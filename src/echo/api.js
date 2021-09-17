@@ -267,9 +267,9 @@ const { operationHistoryId } = chain.ids;
 *  		last_irreversible_block_num:Number,
 *  		last_block_of_previous_interval:Number,
 *  		payed_blocks_in_interval:String,
-*  		last_processed_btc_block:Number|String,
-*  		last_retarget_time:Number|String,
-*  		last_processed_eth_block:Number|String,
+*  		last_processed_btc_block:Number,
+*  		last_retarget_time:Number,
+*  		last_processed_eth_block:Number,
 *  		extensions:Array,
 *  	}
 *  	} DynamicGlobalProperties */

@@ -15,8 +15,8 @@ import { uint8, uint32, int32, uint64 } from '../../basic/integers';
 
 const spvHeaderBlockSerializer = struct({
 	version: int32,
-	prevBlockHash: sha256,
-	merkleRoot: sha256,
+	prev_block_hash: sha256,
+	merkle_root: sha256,
 	timestamp: uint32,
 	bits: uint32,
 	nonce: uint32,
@@ -30,26 +30,26 @@ const proofSerializer = ({
 		flag: uint8,
 		inputs: vector(struct({
 			outpoint: struct({
-				txId: sha256,
+				tx_id: sha256,
 				index: uint32,
 				amount: uint64,
 			}),
-			unlockScript: vector(uint8),
+			unlock_script: vector(uint8),
 			witness: vector(vector(uint8)),
 			sequence: uint32,
 		})),
 		outputs: vector(struct({
 			amount: uint64,
 			index: uint32,
-			lockScript: vector(uint8),
-			p2shP2wsh: btcAddressId,
+			lock_script: vector(uint8),
+			p2sh_p2wsh: btcAddressId,
 		})),
 		nlocktime: uint32,
 	}),
-	merklePath: struct({
+	merkle_path: struct({
 		leafs: vector(struct({
 			leaf: sha256,
-			isLeft: bool,
+			is_left: bool,
 		})),
 	}),
 });

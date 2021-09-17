@@ -8,20 +8,20 @@ import { BytesSerializer, StringSerializer, VariantObjectSerializer } from "../.
 import PairSerializer from "../../collections/Pair";
 
 declare const spvHeaderBlockSerializer: StructSerializer<{
-	parentHash: typeof sha256,
-	sha3Uncles: typeof sha256,
+	parent_hash: typeof sha256,
+	sha3_uncles: typeof sha256,
 	miner: BytesSerializer,
-	stateRoot: typeof sha256,
-	transactionsRoot: typeof sha256,
-	receiptsRoot: typeof sha256,
-	logsBloom: BytesSerializer,
+	state_root: typeof sha256,
+	transactions_root: typeof sha256,
+	receipts_root: typeof sha256,
+	logs_bloom: BytesSerializer,
 	difficulty: typeof uint256,
 	height: typeof uint64,
-	gasLimit: typeof uint256,
-	gasUsed: typeof uint256,
+	gas_limit: typeof uint256,
+	gas_used: typeof uint256,
 	timestamp: typeof uint64,
-	extraData: BytesSerializer,
-	mixHash: typeof sha256,
+	extra_data: BytesSerializer,
+	mix_hash: typeof sha256,
 	nonce: BytesSerializer,
 	base_fee: OptionalSerializer<typeof uint256>,
 }>;
@@ -29,19 +29,19 @@ declare const spvHeaderBlockSerializer: StructSerializer<{
 declare const proofSerializer: StructSerializer<{
 	receipt: StructSerializer<{
 		type: typeof uint8,
-		transactionHash: typeof sha256,
-		transactionIndex: typeof uint64,
-		cumulativeGaUsed: typeof uint256,
+		transaction_hash: typeof sha256,
+		transaction_index: typeof uint64,
+		cumulative_gas_used: typeof uint256,
 		logs: VectorSerializer<StructSerializer<{
-			logIndex: StringSerializer,
+			log_index: StringSerializer,
 			address: BytesSerializer,
 			data: BytesSerializer,
 			topics: VectorSerializer<typeof sha256>,
 		}>>,
-		logsBloom: BytesSerializer
-		statusOrRoot: VariantObjectSerializer,
+		logs_bloom: BytesSerializer
+		status_or_root: VariantObjectSerializer,
 	}>;
-	pathData: VectorSerializer<PairSerializer<VectorSerializer<OptionalSerializer<BytesSerializer>>, OptionalSerializer<StringSerializer>>>,
+	path_data: VectorSerializer<PairSerializer<VectorSerializer<OptionalSerializer<BytesSerializer>>, OptionalSerializer<StringSerializer>>>,
 }>;
 
 export const sidechainEthSpvCreateOperationPropsSerializer: StructSerializer<{

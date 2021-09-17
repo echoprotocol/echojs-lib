@@ -9,8 +9,8 @@ import { types } from "../../../interfaces/vm";
 
 declare const spvHeaderBlockSerializer: StructSerializer < {
 	version: typeof int32,
-	prevBlockHash: typeof sha256,
-	merkleRoot: typeof sha256,
+	prev_block_hash: typeof sha256,
+	merkle_root: typeof sha256,
 	timestamp: typeof uint32,
 	bits: typeof uint32,
 	nonce: typeof uint32,
@@ -24,26 +24,26 @@ declare const proofSerializer: StructSerializer<{
 		flag: typeof uint8,
 		inputs: VectorSerializer< StructSerializer<{
 			outpoint: StructSerializer<{
-				txId: typeof sha256,
+				tx_id: typeof sha256,
 				index: typeof uint32,
 				amount: typeof uint64,
 			}>,
-			unlockScript: VectorSerializer<typeof uint8>,
+			unlock_script: VectorSerializer<typeof uint8>,
 			witness: VectorSerializer<VectorSerializer<typeof uint8>>,
 			sequence: typeof uint32,
 		}>>,
 		outputs: VectorSerializer<StructSerializer<{
 			amount: typeof uint64,
 			index: typeof uint32,
-			lockScript: VectorSerializer<typeof uint8>,
-			p2shP2wsh: typeof btcAddressId,
+			lock_script: VectorSerializer<typeof uint8>,
+			p2sh_p2wsh: typeof btcAddressId,
 		}>>,
 		nlocktime: typeof uint32,
 	}>,
-	merklePath: StructSerializer<{
+	merkle_path: StructSerializer<{
 		leafs: VectorSerializer<StructSerializer<{
 			leaf: typeof sha256,
-			isLeft: typeof bool,
+			is_left: typeof bool,
 		}>>,
 	}>,
 }>;

@@ -6,20 +6,20 @@ import { struct, vector, optional, pair } from '../../collections';
 import { bytes, variantObject, string } from '../../basic';
 
 const spvHeaderBlockSerializer = struct({
-	parentHash: sha256,
-	sha3Uncles: sha256,
+	parent_hash: sha256,
+	sha3_uncles: sha256,
 	miner: bytes(),
-	stateRoot: sha256,
-	transactionsRoot: sha256,
-	receiptsRoot: sha256,
-	logsBloom: bytes(),
+	state_root: sha256,
+	transactions_root: sha256,
+	receipts_root: sha256,
+	logs_bloom: bytes(),
 	difficulty: uint256,
 	height: uint64,
-	gasLimit: uint256,
-	gasUsed: uint256,
+	gas_limit: uint256,
+	gas_used: uint256,
 	timestamp: uint64,
-	extraData: bytes(),
-	mixHash: sha256,
+	extra_data: bytes(),
+	mix_hash: sha256,
 	nonce: bytes(),
 	base_fee: optional(uint256),
 });
@@ -27,19 +27,19 @@ const spvHeaderBlockSerializer = struct({
 const proofSerializer = ({
 	receipt: struct({
 		type: uint8,
-		transactionHash: sha256,
-		transactionIndex: uint64,
-		cumulativeGaUsed: uint256,
+		transaction_hash: sha256,
+		transaction_index: uint64,
+		cumulative_gas_used: uint256,
 		logs: vector(struct({
-			logIndex: string,
+			log_index: string,
 			address: bytes(),
 			data: bytes(),
 			topics: vector(sha256),
 		})),
-		logsBloom: bytes(),
-		statusOrRoot: variantObject(uint8, sha256),
+		logs_bloom: bytes(),
+		status_or_root: variantObject(uint8, sha256),
 	}),
-	pathData: vector(pair(vector(optional(bytes())), optional(string))),
+	path_data: vector(pair(vector(optional(bytes())), optional(string))),
 });
 
 export const sidechainEthSpvCreateOperationPropsSerializer = struct({

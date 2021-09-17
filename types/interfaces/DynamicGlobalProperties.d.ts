@@ -10,9 +10,9 @@ export default interface DynamicGlobalProperties {
 	last_block_of_previous_interval: number,
 	payed_blocks_in_interval: string,
 
-	last_processed_btc_block: number | string,
-	last_retarget_time: number | string,
-	last_processed_eth_block: number | string,
+	last_processed_btc_block: number,
+	last_retarget_time: number,
+	last_processed_eth_block: number,
 
 	extensions: unknown[],
 }
