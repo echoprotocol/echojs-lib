@@ -119,7 +119,6 @@
 			"fines": { "create_eth_address": 0 },
 			"gas_price": 0,
 			"satoshis_per_byte": 1,
-			"send_spv_echo_block_delay": 0,
 			"aggregation_delay": 0,
 			"btc_blocks_lag": 0,
 			"btc_deposit_withdrawal_min_size": 0,

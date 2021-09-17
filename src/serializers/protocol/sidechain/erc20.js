@@ -28,7 +28,6 @@ export const sidechainERC20RegisterTokenOperationPropsSerializer = struct({
 
 export const sidechainERC20DepositTokenOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	account: accountId,
 	erc20_token_addr: ethAddress,
 	value: stringSerializer,
@@ -61,7 +60,6 @@ export const sidechainERC20SendWithdrawTokenOperationPropsSerializer = struct({
 
 export const sidechainERC20ApproveTokenWithdrawOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	withdraw_id: uint64,
 	transaction_hash: sha256,
 	extensions,

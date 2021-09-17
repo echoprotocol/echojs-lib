@@ -66,8 +66,6 @@ export const sidechainEthCreateAddressOperationPropsSerializer = struct({
 
 export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
-	malicious_committeemen: vector(accountId),
 	account: accountId,
 	eth_addr: ethAddress,
 	transaction_hash: sha256,
@@ -76,7 +74,6 @@ export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 
 export const sidechainEthDepositOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	deposit_id: uint64,
 	account: accountId,
 	value: uint64,
@@ -108,7 +105,6 @@ export const sidechainEthSendWithdrawOperationPropsSerializer = struct({
 
 export const sidechainEthApproveWithdrawOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	withdraw_id: uint64,
 	transaction_hash: sha256,
 	extensions,
@@ -122,7 +118,6 @@ export const sidechainEthUpdateContractAddressOperationPropsSerializer = struct(
 
 export const sidechainStakeEthUpdateOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	asset_id: assetId,
 	current_balance: uint64,
 	account: accountId,
