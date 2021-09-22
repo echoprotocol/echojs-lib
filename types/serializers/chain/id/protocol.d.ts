@@ -24,6 +24,6 @@ export declare const didObjectId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>
 export declare const stakeBtcScriptId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const stakeBtcVoutId: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const btcBlock: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
-export declare const btcTranasction: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
+export declare const btcTransaction: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const ethBlock: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;
 export declare const ethTransactionReceipt: ObjectIdSerializer<RESERVED_SPACE_ID.PROTOCOL>;

@@ -4,6 +4,7 @@ import feeScheduleSerializer from './fee_schedule';
 import { uint8, uint32, uint16, uint64 } from '../basic/integers';
 import { echorand, sidechain } from '../plugins';
 import { extensions } from '../chain';
+import { spvPenaltiesConfig } from '../spv/penalties';
 
 import * as economy from './economy';
 
@@ -32,6 +33,7 @@ const chainParametersSerializer = struct({
 	gas_price: struct({ price: uint64, gas_amount: uint64 }),
 	valid_fee_asset: set(assetId),
 	economy_config: economy.config,
+	spv_penalties_config: spvPenaltiesConfig,
 	extensions,
 });
 

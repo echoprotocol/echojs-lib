@@ -1210,14 +1210,12 @@ class WalletAPI {
 	 * @param {string} owner the id or name of the account to register address for
 	 * @param {string} evmAddress address that will be associated with owner account id
 	 * @param {boolean} broadcast true to broadcast the transaction on the netwo
-	 * @returns {Promise<any[]>}
+	 * @returns {Promise<[SignedTransaction, TransactionIdType]>}
 	 */
-	async registerEvmAddress(accountNameOrId, evmAddress, broadcast) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		return this.wsProvider.call([0, 'get_account_addresses', [
-			string.toRaw(accountNameOrId),
+	async registerEvmAddress(owner, evmAddress, broadcast) {
+		if (!isAccountIdOrName(owner)) throw new Error('Owner id or name should be string and valid');
+		return this.wsProvider.call([0, 'register_evm_address', [
+			string.toRaw(owner),
 			ethAddress.toRaw(evmAddress),
 			bool.toRaw(broadcast),
 		]]);

@@ -21,6 +21,7 @@ export declare const sidechainBurnOperationPropsSerializer: StructSerializer<{
 	extensions: typeof extensions,
 }>;
 
+// sidechain_spv_exchange_excess_funds_operation
 export declare const sidechainSpvExchangeExcessFundsOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,

@@ -1,60 +1,25 @@
 import ethAddress from '../ethAddress';
-import { uint64, uint256, uint8 } from '../../basic/integers';
+import { uint64 } from '../../basic/integers';
 import { asset, extensions, sha256 } from '../../chain';
 import { accountId, ethDepositId, ethWithdrawId, assetId } from '../../chain/id/protocol';
-import { struct, vector, optional, pair } from '../../collections';
-import { bytes, variantObject, string } from '../../basic';
+import { struct, vector } from '../../collections';
+import { spvEthBlockHeader, spvEthMerkleProof } from '../../spv/eth';
 
-const spvHeaderBlockSerializer = struct({
-	parent_hash: sha256,
-	sha3_uncles: sha256,
-	miner: bytes(),
-	state_root: sha256,
-	transactions_root: sha256,
-	receipts_root: sha256,
-	logs_bloom: bytes(),
-	difficulty: uint256,
-	height: uint64,
-	gas_limit: uint256,
-	gas_used: uint256,
-	timestamp: uint64,
-	extra_data: bytes(),
-	mix_hash: sha256,
-	nonce: bytes(),
-	base_fee: optional(uint256),
-});
-
-const proofSerializer = ({
-	receipt: struct({
-		type: uint8,
-		transaction_hash: sha256,
-		transaction_index: uint64,
-		cumulative_gas_used: uint256,
-		logs: vector(struct({
-			log_index: string,
-			address: bytes(),
-			data: bytes(),
-			topics: vector(sha256),
-		})),
-		logs_bloom: bytes(),
-		status_or_root: variantObject(uint8, sha256),
-	}),
-	path_data: vector(pair(vector(optional(bytes())), optional(string))),
-});
-
+// sidechain_eth_spv_create_operation
 export const sidechainEthSpvCreateOperationPropsSerializer = struct({
 	fee: asset,
 	committee_member_id: accountId,
-	header: spvHeaderBlockSerializer,
-	proofs: vector(proofSerializer),
+	header: spvEthBlockHeader,
+	proofs: vector(spvEthMerkleProof),
 	extensions,
 });
 
+// sidechain_eth_spv_add_missed_tx_receipt_operation
 export const sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer = struct({
 	fee: asset,
 	reporter: accountId,
 	block_hash: sha256,
-	proofs: vector(proofSerializer),
+	proofs: vector(spvEthMerkleProof),
 	extensions,
 });
 
