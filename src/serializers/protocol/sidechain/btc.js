@@ -11,7 +11,7 @@ import { struct, set, map, optional, vector } from '../../collections';
 import { string as stringSerializer, integers, bool } from '../../basic';
 import btcPublicKey from '../btcPublicKey';
 import { uint8, uint32 } from '../../basic/integers';
-import { spvBtcMerkleProofSerializer } from '../../spv/btc';
+import { spvBtcBlockHeaderSerializer, spvBtcMerkleProofSerializer } from '../../spv/btc';
 
 // sidechain_btc_spv_create_operation
 export const sidechainBtcSpvCreateOperationPropsSerializer = struct({

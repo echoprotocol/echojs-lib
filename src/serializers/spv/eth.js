@@ -1,9 +1,9 @@
-import { bytes } from "../basic";
-import { uint256, uint64 } from "../basic/integers";
-import { sha256 } from "../chain";
-import { optional, struct } from "../collections";
-import { evmTransactionReceipt } from "../evm";
-import { spvPmTrieNodesRlpData } from "./pmTrie";
+import { bytes } from '../basic';
+import { uint256, uint64 } from '../basic/integers';
+import { sha256 } from '../chain';
+import { optional, struct } from '../collections';
+import { evmTransactionReceipt } from '../evm';
+import { spvPmTrieNodesRlpData } from './pmTrie';
 
 export const spvEthBlockHeader = struct({
 	parent_hash: sha256,

@@ -1,6 +1,6 @@
-import { string } from "./basic";
-import { uint32, uint8 } from "./basic/integers";
-import { struct, vector } from "./collections";
+import { string } from './basic';
+import { uint32, uint64, uint8 } from './basic/integers';
+import { struct, vector } from './collections';
 
 const logEntry = struct({
 	address: string,
@@ -17,3 +17,5 @@ export const evmTransactionReceipt = struct({
 	bloom: string,
 	log: vector(logEntry),
 });
+
+export default { evmTransactionReceipt };

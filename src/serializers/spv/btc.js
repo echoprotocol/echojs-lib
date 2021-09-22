@@ -1,8 +1,8 @@
-import { bool } from "../basic";
-import { int32, uint32 } from "../basic/integers";
-import { sha256 } from "../chain";
-import { sidechainBtcTransaction } from "../chain/sidechain/btc";
-import { struct, vector } from "../collections";
+import { bool } from '../basic';
+import { int32, uint32 } from '../basic/integers';
+import { sha256 } from '../chain';
+import { sidechainBtcTransaction } from '../chain/sidechain/btc';
+import { struct, vector } from '../collections';
 
 const merkleLeaf = struct({
 	leaf: sha256,

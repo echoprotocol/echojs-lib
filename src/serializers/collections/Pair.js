@@ -30,6 +30,7 @@ import ISerializer from '../ISerializer';
  * @augments {ISerializer<TInput<TFirst, TSecond>, TOutput<TFirst, TSecond>>}
  */
 export default class PairSerializer extends ISerializer {
+
 	get firstSerializer() { return this._firstSerializer; }
 	get secondSerializer() { return this._secondSerializer; }
 
@@ -83,13 +84,15 @@ export default class PairSerializer extends ISerializer {
 	}
 
 	/**
-	 * 
 	 * @param {Buffer} buffer
 	 * @param {number} [offset]
 	 * @returns {{ res: TOutput<TFirst, TSecond>, newOffset: number }}
 	 */
 	readFromBuffer(buffer, offset = 0) {
-		const { res: firstElement, newOffset: intermediateOffset } = this.firstSerializer.readFromBuffer(buffer, offset);
+		const {
+			res: firstElement,
+			newOffset: intermediateOffset,
+		} = this.firstSerializer.readFromBuffer(buffer, offset);
 		const { res: secondElement, newOffset } = this.secondSerializer.readFromBuffer(buffer, intermediateOffset);
 		return { res: [firstElement, secondElement], newOffset };
 	}
