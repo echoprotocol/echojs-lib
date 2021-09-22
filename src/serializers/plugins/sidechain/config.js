@@ -1,6 +1,6 @@
 import { struct } from '../../collections';
 import { string as stringSerializer, bytes } from '../../basic';
-import { uint64, int64, uint32 } from '../../basic/integers';
+import { uint64, int64, uint32, uint256 } from '../../basic/integers';
 import ethAddress from '../../protocol/ethAddress';
 import { assetId } from '../../chain/id/protocol';
 
@@ -36,6 +36,17 @@ export const sidechainConfigSerializer = struct({
 	coefficient_waiting_blocks: uint32,
 	btc_deposit_withdrawal_min: uint64,
 	btc_deposit_withdrawal_fee: uint64,
+	eth_blocks_lag: uint32,
+	eth_withdrawal_fee: uint64,
+	eth_withdrawal_min: uint64,
+	london_fork_block: uint256,
+	muir_glacier_fork_block: uint256,
+	constantinople_fork_block: uint256,
+	byzantium_fork_block: uint256,
+	homestead_fork_block: uint256,
+	difficulty_duration_limit: uint256,
+	difficulty_bound_divisor: uint256,
+	minimum_difficulty: uint256,
 });
 
 export const sidechainERC20ConfigSerializer = struct({

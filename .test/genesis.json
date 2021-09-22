@@ -125,7 +125,15 @@
 			"btc_deposit_withdrawal_fee": 0,
 			"eth_blocks_lag": 0,
 			"eth_withdrawal_fee": 0,
-			"eth_withdrawal_min": 0
+			"eth_withdrawal_min": 0,
+			"london_fork_block": 12965000,
+			"muir_glacier_fork_block": 9200000,
+			"constantinople_fork_block": 7280000,
+			"byzantium_fork_block": 4370000,
+			"homestead_fork_block": 1150000,
+			"difficulty_duration_limit": 13,
+			"difficulty_bound_divisor": 2048,
+			"minimum_difficulty": 131072
 		},
 		"erc20_config": {
 			"create_token_fee": 1000,

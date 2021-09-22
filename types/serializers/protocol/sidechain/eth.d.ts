@@ -29,6 +29,7 @@ export declare const sidechainEthCreateAddressOperationPropsSerializer: StructSe
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_approve_address_operation
 export declare const sidechainEthApproveAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
@@ -37,6 +38,7 @@ export declare const sidechainEthApproveAddressOperationPropsSerializer: StructS
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_deposit_operation
 export declare const sidechainEthDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	deposit_id: typeof uint64,
@@ -68,6 +70,7 @@ export declare const sidechainEthSendWithdrawOperationPropsSerializer: StructSer
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_approve_withdraw_operation
 export declare const sidechainEthApproveWithdrawOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	withdraw_id: typeof uint64,
@@ -81,6 +84,7 @@ export declare const sidechainEthUpdateContractAddressOperationPropsSerializer: 
 	extensions: typeof extensions,
 }>;
 
+// sidechain_stake_eth_update_operation
 export declare const sidechainStakeEthUpdateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	asset_id: typeof assetId,

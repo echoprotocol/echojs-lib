@@ -29,6 +29,7 @@ export const sidechainEthCreateAddressOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_eth_approve_address_operation
 export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
@@ -37,6 +38,7 @@ export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_eth_deposit_operation
 export const sidechainEthDepositOperationPropsSerializer = struct({
 	fee: asset,
 	deposit_id: uint64,
@@ -68,6 +70,7 @@ export const sidechainEthSendWithdrawOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_eth_approve_withdraw_operation
 export const sidechainEthApproveWithdrawOperationPropsSerializer = struct({
 	fee: asset,
 	withdraw_id: uint64,
@@ -81,6 +84,7 @@ export const sidechainEthUpdateContractAddressOperationPropsSerializer = struct(
 	extensions,
 });
 
+// sidechain_stake_eth_update_operation
 export const sidechainStakeEthUpdateOperationPropsSerializer = struct({
 	fee: asset,
 	asset_id: assetId,
