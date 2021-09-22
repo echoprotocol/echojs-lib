@@ -5,5 +5,5 @@ export default interface GlobalProperties {
 	parameters: object,
 	pending_parameters?: object,
 	active_committee_members: Array<Array<string>>,
-	consensus_assets_prices: Array<{base: Price, quote: Price}>
+	consensus_assets_prices: Array<Price>
 }
