@@ -1,11 +1,10 @@
 import { asset, extensions, sha256, ripemd160 } from "../../chain";
-import { accountId, btcAddressId, btcIntermediateDepositId, btcDepositId, btcWithdrawId, btcAggregatingId } from "../../chain/id/protocol";
+import { accountId, btcAddressId, btcDepositId, btcWithdrawId, btcAggregatingId } from "../../chain/id/protocol";
 import { StructSerializer, SetSerializer, MapSerializer, VectorSerializer } from "../../collections";
 import { StringSerializer, integers, bool } from "../../basic";
 import { BtcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
 import btcPublicKey from "../btcPublicKey";
 import { uint8, uint64, uint32, int32 } from "../../basic/integers";
-import { types } from "../../../interfaces/vm";
 
 declare const spvHeaderBlockSerializer: StructSerializer < {
 	version: typeof int32,
@@ -72,9 +71,8 @@ export declare const sidechainBtcCreateAddressOperationPropsSerializer: StructSe
 
 export declare const sidechainBtcDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
-	committee_member_id: typeof accountId,
 	account: typeof accountId,
-	intermediate_deposit_id: typeof btcIntermediateDepositId,
+	btc_address_id: StringSerializer,
 	tx_info: typeof BtcTransactionDetailsSerializer,
 	extensions: typeof extensions,
 }>;

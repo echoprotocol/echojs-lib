@@ -2,7 +2,6 @@ import { asset, extensions, sha256, ripemd160 } from '../../chain';
 import {
 	accountId,
 	btcAddressId,
-	btcIntermediateDepositId,
 	btcDepositId,
 	btcWithdrawId,
 	btcAggregatingId,
@@ -78,9 +77,8 @@ export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
 
 export const sidechainBtcDepositOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	account: accountId,
-	intermediate_deposit_id: btcIntermediateDepositId,
+	btc_address_id: stringSerializer,
 	tx_info: btcTransactionDetailsSerializer,
 	extensions,
 });
