@@ -1,5 +1,5 @@
 import ethAddress from '../ethAddress';
-import { string as stringSerializer } from '../../basic';
+import { bool, string as stringSerializer } from '../../basic';
 import { uint8, uint64 } from '../../basic/integers';
 import { asset, extensions, sha256 } from '../../chain';
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from '../../chain/id/protocol';
@@ -13,6 +13,7 @@ export const sidechainERC20RegisterContractOperationPropsSerializer = struct({
 	name: stringSerializer,
 	symbol: stringSerializer,
 	decimals: uint8,
+	eth_accuracy: bool,
 	extensions,
 });
 

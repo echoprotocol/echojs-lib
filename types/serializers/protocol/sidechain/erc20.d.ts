@@ -1,5 +1,5 @@
 import ethAddress from "../ethAddress";
-import { StringSerializer } from "../../basic";
+import { BoolSerializer, StringSerializer } from "../../basic";
 import { uint8, uint64 } from "../../basic/integers";
 import { asset, extensions, sha256 } from "../../chain";
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from "../../chain/id/protocol";
@@ -13,6 +13,7 @@ export declare const sidechainERC20RegisterContractOperationPropsSerializer: Str
 	name: StringSerializer,
 	symbol: StringSerializer,
 	decimals: typeof uint8,
+	eth_accuracy: BoolSerializer,
 	extensions: typeof extensions,
 }>;
 

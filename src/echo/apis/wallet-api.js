@@ -1074,8 +1074,9 @@ class WalletAPI {
 	/**
    * Creates a transaction to transfer assets to Ethereum erc20_token.
    * @param {string} proposingAccount the account who make proposal.
-   * @param {number} expirationTime timestamp specifying when the proposal will either take effect or expire.
-   * @param {string} erc20Data object of data for erc20 contract.
+   * @param {typeof timePointSec["__TOutput__"]} expirationTime
+	 * timestamp specifying when the proposal will either take effect or expire.
+   * @param {unknown} erc20Data object of data for erc20 contract.
    * 	Should have fields code, args, address,name,symbol,decimals. Filed eth_accuracy is optional.
    * @param {boolean} broadcast true if you want to broadcast the transaction.
    * @returns {Promise<SignedTransaction>} the signed version of the transaction
@@ -1099,10 +1100,10 @@ class WalletAPI {
 	 * @param {boolean} broadcast true if you want to broadcast the transaction.
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	transferToEthERC20(account, to, amount, assetSymbol, broadcast) {
-		if (!isAccountId(account)) throw new Error('Account is invalid');
+	async transferToEthERC20(account, to, amount, assetSymbol, broadcast) {
+		if (!isAccountIdOrName(account)) throw new Error('Account is invalid');
 		return this.wsProvider.call([0, 'transfer_to_eth_erc20', [
-			accountId.toRaw(account),
+			string.toRaw(account),
 			string.toRaw(to),
 			string.toRaw(amount),
 			string.toRaw(assetSymbol),
