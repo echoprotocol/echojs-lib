@@ -37,6 +37,7 @@ export default class BytesSerializer extends ISerializer {
 	 */
 	toRaw(value) {
 		if (typeof value === 'string') {
+			value = value.replace('0x', '');
 			if (!/^([\da-fA-F]{2})*$/.test(value)) throw new Error('invalid hex format');
 			value = Buffer.from(value.toLowerCase(), 'hex');
 		} else if (!Buffer.isBuffer(value)) throw new Error('invalid bytes type');
