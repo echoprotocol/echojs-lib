@@ -20,8 +20,8 @@ export const map = (keySerializer, valueSerializer) => new MapSerializer(keySeri
 /**
  * @template {ISerializer} TKey
  * @template {ISerializer} TValue
- * @param {TKey} keySerializer
- * @param {TValue} valueSerializer
+ * @param {TKey} firstSerializer
+ * @param {TValue} secondSerializer
  * @returns {MapSerializer<TKey, TValue>}
  */
 export const pair = (firstSerializer, secondSerializer) => new PairSerializer(firstSerializer, secondSerializer);

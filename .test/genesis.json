@@ -125,7 +125,15 @@
 			"btc_deposit_withdrawal_fee": 0,
 			"eth_blocks_lag": 0,
 			"eth_withdrawal_fee": 0,
-			"eth_withdrawal_min": 0
+			"eth_withdrawal_min": 0,
+			"london_fork_block": 12965000,
+			"muir_glacier_fork_block": 9200000,
+			"constantinople_fork_block": 7280000,
+			"byzantium_fork_block": 4370000,
+			"homestead_fork_block": 1150000,
+			"difficulty_duration_limit": 13,
+			"difficulty_bound_divisor": 2048,
+			"minimum_difficulty": 131072
 		},
 		"erc20_config": {
 			"create_token_fee": 1000,
@@ -215,24 +223,30 @@
 	"initial_vesting_balances": [],
 	"initial_committee_candidates": [{
 		"owner_name": "init0",
+		"frozen_balance_amount": 0,
 		"eth_address": "9BDC67627acA07aD0DAB8C6678765862b7d5F5C0",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}, {
 		"owner_name": "init1",
+		"frozen_balance_amount": 0,
 		"eth_address": "2B1f2bDdEf68914106F72e7Ee9A43D95F180A397",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}, {
 		"owner_name": "init2",
+		"frozen_balance_amount": 0,
 		"eth_address": "d9f4C5de35d3218ADC2854796De4eDA529AB1E02",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}, {
 		"owner_name": "init3",
+		"frozen_balance_amount": 0,
 		"eth_address": "7234F8149411B8F275373DC470011e18126489B6",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}, {
 		"owner_name": "init4",
+		"frozen_balance_amount": 0,
 		"eth_address": "298915A83Bd8a0D536aDBe300F12cA1e4388C3BA",
 		"btc_public_key": "02c16e97132e72738c9c0163656348cd1be03521de17efeb07e496e742ac84512e"
 	}],
+	"initial_sidechain_asset_config": [],
 	"initial_chain_id": "aa34045518f1469a28fa4578240d5f039afa9959c0b95ce3b39674efa691fb21"
 }

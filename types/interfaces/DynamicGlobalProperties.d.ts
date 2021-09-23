@@ -12,7 +12,7 @@ export default interface DynamicGlobalProperties {
 
 	last_processed_btc_block: number,
 	last_retarget_time: number,
-	last_processed_eth_block: number,
+	last_processed_eth_block: number | string,
 
 	extensions: unknown[],
 }

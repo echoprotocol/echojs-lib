@@ -65,7 +65,7 @@ export const btcBlock = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.BTC_BLOCK,
 );
-export const btcTranasction = new ObjectIdSerializer(
+export const btcTransaction = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.BTC_TX,
 );

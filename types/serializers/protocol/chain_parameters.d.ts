@@ -5,6 +5,7 @@ import { assetId } from '../chain/id/protocol';
 import { StructSerializer, SetSerializer } from '../collections';
 import { MapSerializer } from '../collections';
 import { echorand, sidechain } from '../plugins';
+import { spvPenaltiesConfig } from '../spv/penalties';
 
 import * as economy from './economy';
 
@@ -35,6 +36,7 @@ declare const chainParametersSerializer: StructSerializer<{
 	consensus_assets: SetSerializer<typeof asset>,
 	valid_fee_asset: SetSerializer<typeof assetId>,
 	economy_config: typeof economy.config,
+	spv_penalties_config: typeof spvPenaltiesConfig,
 	extensions: typeof extensions,
 }>;
 

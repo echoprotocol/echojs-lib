@@ -1,5 +1,5 @@
 import ethAddress from '../ethAddress';
-import { string as stringSerializer } from '../../basic';
+import { bool, string as stringSerializer } from '../../basic';
 import { uint8, uint64 } from '../../basic/integers';
 import { asset, extensions, sha256 } from '../../chain';
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from '../../chain/id/protocol';
@@ -13,6 +13,7 @@ export const sidechainERC20RegisterContractOperationPropsSerializer = struct({
 	name: stringSerializer,
 	symbol: stringSerializer,
 	decimals: uint8,
+	eth_accuracy: bool,
 	extensions,
 });
 
@@ -26,6 +27,7 @@ export const sidechainERC20RegisterTokenOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_erc20_deposit_token_operation
 export const sidechainERC20DepositTokenOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
@@ -58,6 +60,7 @@ export const sidechainERC20SendWithdrawTokenOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_erc20_approve_token_withdraw_operation
 export const sidechainERC20ApproveTokenWithdrawOperationPropsSerializer = struct({
 	fee: asset,
 	withdraw_id: uint64,

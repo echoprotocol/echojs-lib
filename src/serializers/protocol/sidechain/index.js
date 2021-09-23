@@ -21,6 +21,7 @@ export const sidechainBurnOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_spv_exchange_excess_funds_operation
 export const sidechainSpvExchangeExcessFundsOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,

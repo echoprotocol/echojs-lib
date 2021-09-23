@@ -1074,8 +1074,9 @@ class WalletAPI {
 	/**
    * Creates a transaction to transfer assets to Ethereum erc20_token.
    * @param {string} proposingAccount the account who make proposal.
-   * @param {number} expirationTime timestamp specifying when the proposal will either take effect or expire.
-   * @param {string} erc20Data object of data for erc20 contract.
+   * @param {typeof timePointSec["__TOutput__"]} expirationTime
+	 * timestamp specifying when the proposal will either take effect or expire.
+   * @param {unknown} erc20Data object of data for erc20 contract.
    * 	Should have fields code, args, address,name,symbol,decimals. Filed eth_accuracy is optional.
    * @param {boolean} broadcast true if you want to broadcast the transaction.
    * @returns {Promise<SignedTransaction>} the signed version of the transaction
@@ -1099,10 +1100,10 @@ class WalletAPI {
 	 * @param {boolean} broadcast true if you want to broadcast the transaction.
 	 * @returns {Promise<SignedTransaction>} the signed version of the transaction
 	 */
-	transferToEthERC20(account, to, amount, assetSymbol, broadcast) {
-		if (!isAccountId(account)) throw new Error('Account is invalid');
+	async transferToEthERC20(account, to, amount, assetSymbol, broadcast) {
+		if (!isAccountIdOrName(account)) throw new Error('Account is invalid');
 		return this.wsProvider.call([0, 'transfer_to_eth_erc20', [
-			accountId.toRaw(account),
+			string.toRaw(account),
 			string.toRaw(to),
 			string.toRaw(amount),
 			string.toRaw(assetSymbol),
@@ -1209,14 +1210,12 @@ class WalletAPI {
 	 * @param {string} owner the id or name of the account to register address for
 	 * @param {string} evmAddress address that will be associated with owner account id
 	 * @param {boolean} broadcast true to broadcast the transaction on the netwo
-	 * @returns {Promise<any[]>}
+	 * @returns {Promise<[SignedTransaction, TransactionIdType]>}
 	 */
-	async registerEvmAddress(accountNameOrId, evmAddress, broadcast) {
-		if (!isAccountIdOrName(accountNameOrId)) {
-			throw new Error('Accounts id or name should be string and valid');
-		}
-		return this.wsProvider.call([0, 'get_account_addresses', [
-			string.toRaw(accountNameOrId),
+	async registerEvmAddress(owner, evmAddress, broadcast) {
+		if (!isAccountIdOrName(owner)) throw new Error('Owner id or name should be string and valid');
+		return this.wsProvider.call([0, 'register_evm_address', [
+			string.toRaw(owner),
 			ethAddress.toRaw(evmAddress),
 			bool.toRaw(broadcast),
 		]]);
@@ -2134,7 +2133,7 @@ class WalletAPI {
 	 * @param {String} ownerName name of the owner
 	 * @param {string} amount the amount of vesting
 	 * @param {string} assetName the symbol of the asset
-	 * @param {string} expirationTime begin timestamp
+	 * @param {import('../../serializers/basic/TimePointSec').TInput} beginTime
 	 * @param {number} vestingCliffSeconds vesting cliff in seconds
 	 * @param {number} vestingDurationSeconds vesting duration in seconds
 	 * @param {Boolean} broadcast
@@ -2145,7 +2144,7 @@ class WalletAPI {
 		ownerName,
 		amount,
 		assetName,
-		expirationTime,
+		beginTime,
 		vestingCliffSeconds,
 		vestingDurationSeconds,
 		broadcast = false,
@@ -2168,7 +2167,7 @@ class WalletAPI {
 			string.toRaw(ownerName),
 			string.toRaw(amount),
 			string.toRaw(assetName),
-			timePointSec.toRaw(expirationTime),
+			timePointSec.toRaw(beginTime),
 			uint32.toRaw(vestingCliffSeconds),
 			uint32.toRaw(vestingDurationSeconds),
 			bool.toRaw(broadcast),

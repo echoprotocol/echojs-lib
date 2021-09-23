@@ -1,4 +1,6 @@
+import { asset } from "../serializers/chain";
+
 export default interface Price {
-  amount: number;
-  asset_id: string;
+	base: typeof asset["__TOutput__"];
+	quote: typeof asset["__TOutput__"];
 }

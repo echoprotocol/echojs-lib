@@ -1,62 +1,25 @@
 import ethAddress from "../ethAddress";
-import { uint64, uint256, uint8 } from "../../basic/integers";
+import { uint64 } from "../../basic/integers";
 import { asset, extensions, sha256 } from "../../chain";
-
 import { accountId, ethDepositId, ethWithdrawId, assetId } from "../../chain/id/protocol";
-import { VectorSerializer, StructSerializer, OptionalSerializer } from "../../collections";
-import { BytesSerializer, StringSerializer, VariantObjectSerializer } from "../../basic";
-import PairSerializer from "../../collections/Pair";
+import { VectorSerializer, StructSerializer } from "../../collections";
+import { spvEthBlockHeader, spvEthMerkleProof } from "../../spv/eth";
 
-declare const spvHeaderBlockSerializer: StructSerializer<{
-	parent_hash: typeof sha256,
-	sha3_uncles: typeof sha256,
-	miner: BytesSerializer,
-	state_root: typeof sha256,
-	transactions_root: typeof sha256,
-	receipts_root: typeof sha256,
-	logs_bloom: BytesSerializer,
-	difficulty: typeof uint256,
-	height: typeof uint64,
-	gas_limit: typeof uint256,
-	gas_used: typeof uint256,
-	timestamp: typeof uint64,
-	extra_data: BytesSerializer,
-	mix_hash: typeof sha256,
-	nonce: BytesSerializer,
-	base_fee: OptionalSerializer<typeof uint256>,
-}>;
-
-declare const proofSerializer: StructSerializer<{
-	receipt: StructSerializer<{
-		type: typeof uint8,
-		transaction_hash: typeof sha256,
-		transaction_index: typeof uint64,
-		cumulative_gas_used: typeof uint256,
-		logs: VectorSerializer<StructSerializer<{
-			log_index: StringSerializer,
-			address: BytesSerializer,
-			data: BytesSerializer,
-			topics: VectorSerializer<typeof sha256>,
-		}>>,
-		logs_bloom: BytesSerializer
-		status_or_root: VariantObjectSerializer,
-	}>;
-	path_data: VectorSerializer<PairSerializer<VectorSerializer<OptionalSerializer<BytesSerializer>>, OptionalSerializer<StringSerializer>>>,
-}>;
-
+// sidechain_eth_spv_create_operation
 export const sidechainEthSpvCreateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	committee_member_id: typeof accountId,
-	header: typeof spvHeaderBlockSerializer,
-	proofs: VectorSerializer<typeof proofSerializer>,
+	header: typeof spvEthBlockHeader,
+	proofs: VectorSerializer<typeof spvEthMerkleProof>,
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_spv_add_missed_tx_receipt_operation
 export const sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	reporter: typeof accountId,
 	block_hash: typeof sha256,
-	proofs: VectorSerializer<typeof proofSerializer>
+	proofs: VectorSerializer<typeof spvEthMerkleProof>
 	extensions: typeof extensions,
 }>;
 
@@ -66,6 +29,7 @@ export declare const sidechainEthCreateAddressOperationPropsSerializer: StructSe
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_approve_address_operation
 export declare const sidechainEthApproveAddressOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	account: typeof accountId,
@@ -74,6 +38,7 @@ export declare const sidechainEthApproveAddressOperationPropsSerializer: StructS
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_deposit_operation
 export declare const sidechainEthDepositOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	deposit_id: typeof uint64,
@@ -105,6 +70,7 @@ export declare const sidechainEthSendWithdrawOperationPropsSerializer: StructSer
 	extensions: typeof extensions,
 }>;
 
+// sidechain_eth_approve_withdraw_operation
 export declare const sidechainEthApproveWithdrawOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	withdraw_id: typeof uint64,
@@ -118,6 +84,7 @@ export declare const sidechainEthUpdateContractAddressOperationPropsSerializer: 
 	extensions: typeof extensions,
 }>;
 
+// sidechain_stake_eth_update_operation
 export declare const sidechainStakeEthUpdateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	asset_id: typeof assetId,
