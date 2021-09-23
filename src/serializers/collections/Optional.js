@@ -50,7 +50,7 @@ export default class OptionalSerializer extends ISerializer {
 	 * @param {TProvided extends true ? SerializerInput<T> : undefined} value
 	 */
 	toRaw(value) {
-		if (value === undefined) return undefined;
+		if (value === undefined || value === null) return undefined;
 		try {
 			return this.serializer.toRaw(value);
 		} catch (error) {

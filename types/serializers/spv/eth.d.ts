@@ -6,22 +6,22 @@ import { evmTransactionReceipt } from "../evm";
 import { spvPmTrieNodesRlpData } from "./pmTrie";
 
 export const spvEthBlockHeader: StructSerializer<{
-	parent_hash: typeof sha256,
-	sha3_uncles: typeof sha256,
+	parentHash: typeof sha256,
+	sha3Uncles: typeof sha256,
 	miner: BytesSerializer,
-	state_root: typeof sha256,
-	transactions_root: typeof sha256,
-	receipts_root: typeof sha256,
-	logs_bloom: BytesSerializer,
+	stateRoot: typeof sha256,
+	transactionsRoot: typeof sha256,
+	receiptsRoot: typeof sha256,
+	logsBloom: BytesSerializer,
 	difficulty: typeof uint256,
-	height: typeof uint64,
-	gas_limit: typeof uint256,
-	gas_used: typeof uint256,
+	number: typeof uint64,
+	gasLimit: typeof uint256,
+	gasUsed: typeof uint256,
 	timestamp: typeof uint64,
-	extra_data: BytesSerializer,
-	mix_hash: typeof sha256,
+	extraData: BytesSerializer,
+	mixHash: typeof sha256,
 	nonce: BytesSerializer,
-	base_fee: OptionalSerializer<typeof uint256>,
+	baseFeePerGas: OptionalSerializer<typeof uint256>,
 }>;
 
 export const spvEthMerkleProof: StructSerializer<{
