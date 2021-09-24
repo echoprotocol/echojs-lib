@@ -1,6 +1,6 @@
 import { StringSerializer, BytesSerializer } from "./basic";
 import { uint8, uint64, uint256 } from "./basic/integers";
-import { StructSerializer, VectorSerializer, staticVariant, StaticVariantSerializer } from "./collections";
+import { StructSerializer, VectorSerializer, StaticVariantSerializer } from "./collections";
 import { sha256 } from "./chain";
 
 declare const logEntry: StructSerializer<{
