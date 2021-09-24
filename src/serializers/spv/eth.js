@@ -6,22 +6,22 @@ import { evmTransactionReceipt } from '../evm';
 import { spvPmTrieNodesRlpData } from './pmTrie';
 
 export const spvEthBlockHeader = struct({
-	parentHash: sha256,
-	sha3Uncles: sha256,
+	parent_hash: sha256,
+	sha3_uncles: sha256,
 	miner: bytes(),
-	stateRoot: sha256,
-	transactionsRoot: sha256,
-	receiptsRoot: sha256,
-	logsBloom: bytes(),
+	state_root: sha256,
+	transactions_root: sha256,
+	receipts_root: sha256,
+	logs_bloom: bytes(),
 	difficulty: uint256,
-	number: uint64,
-	gasLimit: uint256,
-	gasUsed: uint256,
+	height: uint64,
+	gas_limit: uint256,
+	gas_used: uint256,
 	timestamp: uint64,
-	extraData: bytes(),
-	mixHash: sha256,
+	extra_data: bytes(),
+	mix_hash: sha256,
 	nonce: bytes(),
-	baseFeePerGas: optional(uint256),
+	base_fee: optional(uint256),
 });
 
 export const spvEthMerkleProof = struct({
