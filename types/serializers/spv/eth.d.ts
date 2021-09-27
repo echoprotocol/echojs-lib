@@ -1,9 +1,26 @@
-import { BytesSerializer } from "../basic";
-import { uint256, uint64 } from "../basic/integers";
+import { BytesSerializer, StringSerializer } from "../basic";
+import { uint256, uint64, uint8 } from "../basic/integers";
 import { sha256 } from "../chain";
-import { OptionalSerializer, StructSerializer } from "../collections";
-import { evmTransactionReceipt } from "../evm";
+import { OptionalSerializer, StructSerializer, StaticVariantSerializer, VectorSerializer } from "../collections";
 import { spvPmTrieNodesRlpData } from "./pmTrie";
+
+
+declare const logEntry: StructSerializer<{
+	log_index: StringSerializer,
+	address: BytesSerializer,
+	data: BytesSerializer,
+	topics: VectorSerializer<typeof sha256>,
+}>;
+
+export const spvTransactionReceipt: StructSerializer<{
+	type: typeof uint8,
+	transaction_hash: typeof sha256,
+	transaction_index: typeof uint64,
+	cumulative_gas_used: typeof uint256,
+	logs: VectorSerializer<typeof logEntry>,
+	logs_bloom: BytesSerializer,
+	status_or_root: StaticVariantSerializer<[typeof uint8, typeof sha256]>,
+}>;
 
 export const spvEthBlockHeader: StructSerializer<{
 	parent_hash: typeof sha256,
@@ -25,6 +42,6 @@ export const spvEthBlockHeader: StructSerializer<{
 }>;
 
 export const spvEthMerkleProof: StructSerializer<{
-	receipt: typeof evmTransactionReceipt,
+	receipt: typeof spvTransactionReceipt,
 	path_data: typeof spvPmTrieNodesRlpData,
 }>;

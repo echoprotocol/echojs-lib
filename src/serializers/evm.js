@@ -1,23 +1,21 @@
-import { string, bytes } from './basic';
-import { uint64, uint8, uint256 } from './basic/integers';
-import { struct, vector, staticVariant } from './collections';
-import { sha256 } from './chain';
+import { string } from './basic';
+import { uint64, uint8, uint32 } from './basic/integers';
+import { struct, vector } from './collections';
 
 const logEntry = struct({
-	log_index: string,
-	address: bytes(),
-	data: bytes(),
-	topics: vector(sha256),
+	address: string,
+	log: vector(string),
+	data: string,
+	block_num: uint32,
+	trx_num: uint32,
+	op_num: uint32,
 });
 
 export const evmTransactionReceipt = struct({
-	type: uint8,
-	transaction_hash: sha256,
-	transaction_index: uint64,
-	cumulative_gas_used: uint256,
-	logs: vector(logEntry),
-	logs_bloom: bytes(),
-	status_or_root: staticVariant([uint8, sha256]),
+	status_code: uint8,
+	gas_used: uint64,
+	bloom: string,
+	log: vector(logEntry),
 });
 
 export default { evmTransactionReceipt };
