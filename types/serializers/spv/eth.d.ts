@@ -1,4 +1,4 @@
-import { BytesSerializer, StringSerializer } from "../basic";
+import { BytesSerializer } from "../basic";
 import { uint256, uint64, uint8 } from "../basic/integers";
 import { sha256 } from "../chain";
 import { OptionalSerializer, StructSerializer, StaticVariantSerializer, VectorSerializer } from "../collections";
@@ -6,7 +6,6 @@ import { spvPmTrieNodesRlpData } from "./pmTrie";
 
 
 declare const logEntry: StructSerializer<{
-	log_index: StringSerializer,
 	address: BytesSerializer,
 	data: BytesSerializer,
 	topics: VectorSerializer<typeof sha256>,

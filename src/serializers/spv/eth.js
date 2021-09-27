@@ -1,11 +1,10 @@
-import { bytes, string } from '../basic';
+import { bytes } from '../basic';
 import { uint256, uint64, uint8 } from '../basic/integers';
 import { sha256 } from '../chain';
 import { optional, struct, vector, staticVariant } from '../collections';
 import { spvPmTrieNodesRlpData } from './pmTrie';
 
 const logEntry = struct({
-	log_index: string,
 	address: bytes(),
 	data: bytes(),
 	topics: vector(sha256),
