@@ -8,8 +8,8 @@ import opWrapper from './opWrapper';
 export const proposalCreateOperationPropsSerializer = struct({
 	fee: asset,
 	fee_paying_account: accountId,
-	proposed_ops: vector(opWrapper),
 	expiration_time: timePointSec,
+	proposed_ops: vector(opWrapper),
 	review_period_seconds: optional(uint32),
 	extensions,
 });

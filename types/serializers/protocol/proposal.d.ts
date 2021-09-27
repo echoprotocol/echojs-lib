@@ -9,8 +9,8 @@ import OperationSerializer from "../operation";
 export declare const proposalCreateOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
 	fee_paying_account: typeof accountId,
-	proposed_ops: VectorSerializer<OperationSerializer>,
 	expiration_time: typeof timePointSec,
+	proposed_ops: VectorSerializer<OperationSerializer>,
 	review_period_seconds: OptionalSerializer<typeof uint32>,
 	extensions: typeof extensions,
 }>;
