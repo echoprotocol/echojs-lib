@@ -13,6 +13,7 @@ export const privateKey = new PrivateKeySerializer();
 export const weight = uint16;
 export const ripemd160 = bytes(20);
 export const sha256 = bytes(32);
+export const sha256With0xPrefix = bytes(32, true);
 export const checksum = ripemd160;
 
 export { ids, PublicKeySerializer, PrivateKeySerializer };

@@ -14,9 +14,17 @@ export default class BytesSerializer extends ISerializer {
 	 */
 	get bytesCount() { return this._bytesCount; }
 
+	/**
+ * @readonly
+ * @type {boolean}
+ */
+	get isNeed0xPrefix() { return this._isNeed0xPrefix; }
+
 	/** @param {number} [bytesCount] */
-	constructor(bytesCount) {
+	/** @param {boolean} [isNeed0xPrefix] */
+	constructor(bytesCount, isNeed0xPrefix = false) {
 		super();
+		this._isNeed0xPrefix = isNeed0xPrefix;
 		if (bytesCount !== undefined) {
 			try {
 				if (bytesCount < 0) throw new Error('bytes serializer size is negative');
@@ -42,7 +50,7 @@ export default class BytesSerializer extends ISerializer {
 			value = Buffer.from(value.toLowerCase(), 'hex');
 		} else if (!Buffer.isBuffer(value)) throw new Error('invalid bytes type');
 		if (this.bytesCount !== undefined && value.length !== this.bytesCount) throw new Error('invalid bytes count');
-		return value.toString('hex');
+		return `${this.isNeed0xPrefix ? '0x' : ''}${value.toString('hex')}`;
 	}
 
 	/**

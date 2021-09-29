@@ -9,9 +9,10 @@ export const bool = new BoolSerializer();
 
 /**
  * @param {number} bytesCount
+ * @param {boolean} isNeed0xPrefix
  * @returns {BytesSerializer}
  */
-export const bytes = (bytesCount) => new BytesSerializer(bytesCount);
+export const bytes = (bytesCount, isNeed0xPrefix) => new BytesSerializer(bytesCount, isNeed0xPrefix);
 
 export const string = new StringSerializer();
 export const timePointSec = new TimePointSecSerializer();

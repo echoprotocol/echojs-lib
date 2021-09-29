@@ -6,7 +6,7 @@ import TimePointSecSerializer from './TimePointSec';
 import VariantObjectSerializer from './VariantObject';
 
 export declare const bool: BoolSerializer;
-export function bytes(bytesCount: number): BytesSerializer;
+export function bytes(bytesCount: number, isNeed0xPrefix: boolean): BytesSerializer;
 export declare const timePointSec: TimePointSecSerializer;
 export declare const string: StringSerializer;
 export declare const variantObject: VariantObjectSerializer;
