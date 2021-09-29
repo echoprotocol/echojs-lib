@@ -1,4 +1,4 @@
-import { BytesSerializer, StringSerializer } from "../basic";
+import { BytesSerializer } from "../basic";
 import { uint256, uint64, uint8 } from "../basic/integers";
 import { sha256With0xPrefix } from "../chain";
 import { OptionalSerializer, StructSerializer, StaticVariantSerializer, VectorSerializer } from "../collections";

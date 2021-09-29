@@ -1,4 +1,4 @@
-import { bytes, string } from '../basic';
+import { bytes } from '../basic';
 import { uint256, uint64, uint8 } from '../basic/integers';
 import { sha256With0xPrefix } from '../chain';
 import { optional, struct, vector, staticVariant } from '../collections';
