@@ -1873,22 +1873,6 @@ class API {
 	 *  @return {Promise.<*>}
 	 */
 	async getTransactionHex(tr) {
-		try {
-			const raw = transaction.toRaw(tr);
-		} catch (e) {
-			console.log('e', e)
-			for (let i = 0; i < tr.operations.length; i += 1) {
-				console.log('tr1', tr)
-				console.log('tr2', tr.operations)
-				console.log('tr3', tr.operations[i][1])
-				console.log('tr4', tr.operations[i][1].proofs)
-				console.log('tr7', tr.operations[i][1].proofs[0] && tr.operations[i][1].proofs[0].path_data)
-				console.log('tr6', tr.operations[i][1].proofs[0] && tr.operations[i][1].proofs[0].receipt)
-				console.log('tr6', tr.operations[i][1].proofs[0] && tr.operations[i][1].proofs[0].receipt && tr.operations[i][1].proofs[0].receipt.logs)
-				console.log('tr6', tr.operations[i][1].proofs[0] && tr.operations[i][1].proofs[0].receipt && tr.operations[i][1].proofs[0].receipt.logs && tr.operations[i][1].proofs[0].receipt.logs[0])
-			// console.log('tr6', tr.operations[i][1].proofs[0] && tr.operations[i][1].proofs[0].receipt && tr.operations[i][1].proofs[0].receipt.logs[0] && tr.operations[i][1].proofs[0].receipt.logs[0].topics)
-			}
-		}
 		const raw = transaction.toRaw(tr);
 		// transaction is signed
 		return this.engine.database.getTransactionHex(raw);
