@@ -167,6 +167,7 @@ export declare const proposal: {
 export declare const sidechain: {
 	issue: typeof _sidechain.sidechainIssueOperationPropsSerializer,
 	burn: typeof _sidechain.sidechainBurnOperationPropsSerializer,
+	spvExchangeExcessFunds: typeof _sidechain.sidechainSpvExchangeExcessFundsOperationPropsSerializer,
 	eth: typeof _sidechain.eth,
 	erc20: typeof _sidechain.erc20,
 	btc: typeof _sidechain.btc,

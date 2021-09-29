@@ -41,10 +41,6 @@ export const withdrawErc20TokenId = new ObjectIdSerializer(
 	PROTOCOL_OBJECT_TYPE_ID.ERC20_WITHDRAW_TOKEN,
 );
 export const btcAddressId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_ADDRESS);
-export const btcIntermediateDepositId = new ObjectIdSerializer(
-	RESERVED_SPACE_ID.PROTOCOL,
-	PROTOCOL_OBJECT_TYPE_ID.BTC_INTERMEDIATE_DEPOSIT,
-);
 export const btcDepositId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_DEPOSIT);
 export const btcWithdrawId = new ObjectIdSerializer(RESERVED_SPACE_ID.PROTOCOL, PROTOCOL_OBJECT_TYPE_ID.BTC_WITHDRAW);
 export const btcAggregatingId = new ObjectIdSerializer(
@@ -61,7 +57,19 @@ export const stakeBtcVoutId = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
 	PROTOCOL_OBJECT_TYPE_ID.STAKE_BTC_VOUT,
 );
-export const stakeEthUpdateId = new ObjectIdSerializer(
+export const btcBlock = new ObjectIdSerializer(
 	RESERVED_SPACE_ID.PROTOCOL,
-	PROTOCOL_OBJECT_TYPE_ID.STAKE_ETH_UPDATE,
+	PROTOCOL_OBJECT_TYPE_ID.BTC_BLOCK,
+);
+export const btcTransaction = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.BTC_TX,
+);
+export const ethBlock = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.ETH_BLOCK,
+);
+export const ethTransactionReceipt = new ObjectIdSerializer(
+	RESERVED_SPACE_ID.PROTOCOL,
+	PROTOCOL_OBJECT_TYPE_ID.ETH_TX_RECEIPT,
 );

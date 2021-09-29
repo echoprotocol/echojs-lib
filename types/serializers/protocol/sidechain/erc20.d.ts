@@ -1,9 +1,21 @@
 import ethAddress from "../ethAddress";
-import { StringSerializer } from "../../basic";
+import { BoolSerializer, StringSerializer } from "../../basic";
 import { uint8, uint64 } from "../../basic/integers";
 import { asset, extensions, sha256 } from "../../chain";
 import { accountId, erc20TokenId, depositErc20TokenId, withdrawErc20TokenId } from "../../chain/id/protocol";
-import { StructSerializer, VectorSerializer } from "../../collections";
+import { StructSerializer } from "../../collections";
+
+export declare const sidechainERC20RegisterContractOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	code: StringSerializer,
+	args: StringSerializer,
+	address: typeof ethAddress,
+	name: StringSerializer,
+	symbol: StringSerializer,
+	decimals: typeof uint8,
+	eth_accuracy: BoolSerializer,
+	extensions: typeof extensions,
+}>;
 
 export declare const sidechainERC20RegisterTokenOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
@@ -15,10 +27,9 @@ export declare const sidechainERC20RegisterTokenOperationPropsSerializer: Struct
 	extensions: typeof extensions,
 }>;
 
+// sidechain_erc20_deposit_token_operation
 export declare const sidechainERC20DepositTokenOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
-	committee_member_id: typeof accountId,
-	malicious_committeemen: VectorSerializer<typeof accountId>,
 	account: typeof accountId,
 	erc20_token_addr: typeof ethAddress,
 	value: StringSerializer,
@@ -49,9 +60,9 @@ export declare const sidechainERC20SendWithdrawTokenOperationPropsSerializer: St
 	extensions: typeof extensions,
 }>;
 
+// sidechain_erc20_approve_token_withdraw_operation
 export declare const sidechainERC20ApproveTokenWithdrawOperationPropsSerializer: StructSerializer<{
 	fee: typeof asset,
-	committee_member_id: typeof accountId,
 	withdraw_id: typeof uint64,
 	transaction_hash: typeof sha256,
 	extensions: typeof extensions,
@@ -72,5 +83,13 @@ export declare const sidechainERC20BurnOperationPropsSerializer: StructSerialize
 	account: typeof accountId,
 	token: typeof erc20TokenId,
 	amount: StringSerializer,
+	extensions: typeof extensions,
+}>;
+
+export declare const sidechainERC20TransferAssetOperationPropsSerializer: StructSerializer<{
+	fee: typeof asset,
+	account: typeof accountId,
+	to: typeof ethAddress,
+	value: typeof asset,
 	extensions: typeof extensions,
 }>;

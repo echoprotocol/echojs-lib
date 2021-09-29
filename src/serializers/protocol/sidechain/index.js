@@ -13,7 +13,6 @@ export const sidechainIssueOperationPropsSerializer = struct({
 	extensions,
 });
 
-
 export const sidechainBurnOperationPropsSerializer = struct({
 	fee: asset,
 	value: asset,
@@ -22,7 +21,16 @@ export const sidechainBurnOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_spv_exchange_excess_funds_operation
+export const sidechainSpvExchangeExcessFundsOperationPropsSerializer = struct({
+	fee: asset,
+	account: accountId,
+	amount: asset,
+	extensions,
+});
+
 export const erc20 = {
+	registerContractOperation: _erc20.sidechainERC20RegisterContractOperationPropsSerializer,
 	registerToken: _erc20.sidechainERC20RegisterTokenOperationPropsSerializer,
 	depositToken: _erc20.sidechainERC20DepositTokenOperationPropsSerializer,
 	sendDepositToken: _erc20.sidechainERC20SendDepositTokenOperationPropsSerializer,
@@ -31,9 +39,12 @@ export const erc20 = {
 	approveTokenWithdraw: _erc20.sidechainERC20ApproveTokenWithdrawOperationPropsSerializer,
 	issue: _erc20.sidechainERC20IssueOperationPropsSerializer,
 	burn: _erc20.sidechainERC20BurnOperationPropsSerializer,
+	transferAsset: _erc20.sidechainERC20TransferAssetOperationPropsSerializer,
 };
 
 export const eth = {
+	spvCreate: _eth.sidechainEthSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: _eth.sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer,
 	createAddress: _eth.sidechainEthCreateAddressOperationPropsSerializer,
 	approveAddress: _eth.sidechainEthApproveAddressOperationPropsSerializer,
 	deposit: _eth.sidechainEthDepositOperationPropsSerializer,
@@ -47,12 +58,12 @@ export const eth = {
 
 export const btc = {
 	createAddress: _btc.sidechainBtcCreateAddressOperationPropsSerializer,
-	intermediateDeposit: _btc.sidechainBtcIntermediateDepositOperationPropsSerializer,
-	createIntermediateDeposit: _btc.sidechainBtcCreateIntermediateDepositOperationPropsSerializer,
 	deposit: _btc.sidechainBtcDepositOperationPropsSerializer,
 	withdraw: _btc.sidechainBtcWithdrawOperationPropsSerializer,
 	aggregate: _btc.sidechainBtcAggregateOperationPropsSerializer,
 	approveAggregate: _btc.sidechainBtcApproveAggregateOperationPropsSerializer,
+	spvCreate: _btc.sidechainBtcSpvCreateOperationPropsSerializer,
+	spvAddMissedTxReceipt: _btc.sidechainBtcSpvAddMissedTxReceiptOperationPropsSerializer,
 	createStakeScript: _btc.sidechainBtcCreateStakeScriptOperationPropsSerializer,
 	stakeUpdate: _btc.sidechainStakeBtcUpdateOperationPropsSerializer,
 };

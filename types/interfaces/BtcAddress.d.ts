@@ -6,6 +6,6 @@ export default interface BtcAddress {
     account: string,
     deposit_address: { address: string },
     committee_member_ids_in_script: [typeof accountId["__TOutput__"], typeof btcPublicKey["__TOutput__"]],
-    backup_address: string,
+		is_relevant: boolean,
     extensions: Array<any>,
 }

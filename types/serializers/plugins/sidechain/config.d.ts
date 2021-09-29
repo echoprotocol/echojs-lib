@@ -1,6 +1,6 @@
 import { StructSerializer } from '../../collections';
 import { StringSerializer, BytesSerializer } from '../../basic';
-import { uint64, int64, uint32 } from '../../basic/integers';
+import { uint64, int64, uint32, uint256 } from '../../basic/integers';
 import ethAddress from '../../protocol/ethAddress';
 import { assetId } from '../../chain/id/protocol';
 
@@ -36,10 +36,20 @@ export declare const sidechainConfigSerializer: StructSerializer<{
 	coefficient_waiting_blocks: typeof uint32,
 	btc_deposit_withdrawal_min: typeof uint64,
 	btc_deposit_withdrawal_fee: typeof uint64,
+	eth_blocks_lag: typeof uint32,
+	eth_withdrawal_fee: typeof uint64,
+	eth_withdrawal_min: typeof uint64,
+	london_fork_block: typeof uint256,
+	muir_glacier_fork_block: typeof uint256,
+	constantinople_fork_block: typeof uint256,
+	byzantium_fork_block: typeof uint256,
+	homestead_fork_block: typeof uint256,
+	difficulty_duration_limit: typeof uint256,
+	difficulty_bound_divisor: typeof uint256,
+	minimum_difficulty: typeof uint256,
 }>;
 
 export declare const sidechainERC20ConfigSerializer: StructSerializer<{
-	contract_code: StringSerializer,
 	create_token_fee: typeof uint64,
 	transfer_topic: typeof ethTopicSerializer,
 	check_balance_method: typeof ethMethodSerializer,

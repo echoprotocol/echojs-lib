@@ -100,6 +100,8 @@ const walletAPIMethodsArray = [
 	'get_contract_pool_balance',
 	'register_erc20_token',
 	'withdraw_erc20_token',
+	'propose_register_asset_in_sidechain',
+	'transfer_to_eth_erc20',
 	'get_committee_frozen_balance',
 	'committee_freeze_balance',
 	'create_activate_committee_member_proposal',

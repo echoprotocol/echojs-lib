@@ -2,48 +2,47 @@ import { asset, extensions, sha256, ripemd160 } from '../../chain';
 import {
 	accountId,
 	btcAddressId,
-	btcIntermediateDepositId,
 	btcDepositId,
 	btcWithdrawId,
 	btcAggregatingId,
 } from '../../chain/id/protocol';
 import { btcTransactionDetailsSerializer } from '../../chain/sidechain/btc';
-import { struct, set, map, optional } from '../../collections';
+import { struct, set, map, optional, vector } from '../../collections';
 import { string as stringSerializer, integers, bool } from '../../basic';
 import btcPublicKey from '../btcPublicKey';
 import { uint8, uint32 } from '../../basic/integers';
+import { spvBtcBlockHeaderSerializer, spvBtcMerkleProofSerializer } from '../../spv/btc';
+
+// sidechain_btc_spv_create_operation
+export const sidechainBtcSpvCreateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	header: spvBtcBlockHeaderSerializer,
+	proofs: vector(spvBtcMerkleProofSerializer),
+	extensions,
+});
+
+// sidechain_btc_spv_add_missed_tx_operation
+export const sidechainBtcSpvAddMissedTxReceiptOperationPropsSerializer = struct({
+	fee: asset,
+	reporter: accountId,
+	block_hash: sha256,
+	proofs: vector(spvBtcMerkleProofSerializer),
+	extensions,
+});
 
 export const sidechainBtcCreateAddressOperationPropsSerializer = struct({
 	fee: asset,
 	account: accountId,
-	backup_address: stringSerializer,
-	extensions,
-});
-
-
-export const sidechainBtcCreateIntermediateDepositOperationPropsSerializer = struct({
-	fee: asset,
-	committee_member_id: accountId,
-	account: accountId,
-	btc_address_id: btcAddressId,
-	tx_info: btcTransactionDetailsSerializer,
-	extensions,
-});
-
-export const sidechainBtcIntermediateDepositOperationPropsSerializer = struct({
-	fee: asset,
-	committee_member_id: accountId,
-	intermediate_address_id: btcIntermediateDepositId,
-	signature: stringSerializer,
 	extensions,
 });
 
 export const sidechainBtcDepositOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	account: accountId,
-	intermediate_deposit_id: btcIntermediateDepositId,
+	btc_address_id: btcAddressId,
 	tx_info: btcTransactionDetailsSerializer,
+	extensions,
 });
 
 export const sidechainBtcWithdrawOperationPropsSerializer = struct({

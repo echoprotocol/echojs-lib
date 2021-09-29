@@ -3,6 +3,25 @@ import { uint64 } from '../../basic/integers';
 import { asset, extensions, sha256 } from '../../chain';
 import { accountId, ethDepositId, ethWithdrawId, assetId } from '../../chain/id/protocol';
 import { struct, vector } from '../../collections';
+import { spvEthBlockHeader, spvEthMerkleProof } from '../../spv/eth';
+
+// sidechain_eth_spv_create_operation
+export const sidechainEthSpvCreateOperationPropsSerializer = struct({
+	fee: asset,
+	committee_member_id: accountId,
+	header: spvEthBlockHeader,
+	proofs: vector(spvEthMerkleProof),
+	extensions,
+});
+
+// sidechain_eth_spv_add_missed_tx_receipt_operation
+export const sidechainEthSpvAddMissedTxReceiptOperationPropsSerializer = struct({
+	fee: asset,
+	reporter: accountId,
+	block_hash: sha256,
+	proofs: vector(spvEthMerkleProof),
+	extensions,
+});
 
 export const sidechainEthCreateAddressOperationPropsSerializer = struct({
 	fee: asset,
@@ -10,19 +29,18 @@ export const sidechainEthCreateAddressOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_eth_approve_address_operation
 export const sidechainEthApproveAddressOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
-	malicious_committeemen: vector(accountId),
 	account: accountId,
 	eth_addr: ethAddress,
 	transaction_hash: sha256,
 	extensions,
 });
 
+// sidechain_eth_deposit_operation
 export const sidechainEthDepositOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	deposit_id: uint64,
 	account: accountId,
 	value: uint64,
@@ -52,9 +70,9 @@ export const sidechainEthSendWithdrawOperationPropsSerializer = struct({
 	extensions,
 });
 
+// sidechain_eth_approve_withdraw_operation
 export const sidechainEthApproveWithdrawOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	withdraw_id: uint64,
 	transaction_hash: sha256,
 	extensions,
@@ -66,9 +84,9 @@ export const sidechainEthUpdateContractAddressOperationPropsSerializer = struct(
 	extensions,
 });
 
+// sidechain_stake_eth_update_operation
 export const sidechainStakeEthUpdateOperationPropsSerializer = struct({
 	fee: asset,
-	committee_member_id: accountId,
 	asset_id: assetId,
 	current_balance: uint64,
 	account: accountId,

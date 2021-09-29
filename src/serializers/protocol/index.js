@@ -161,6 +161,7 @@ export const proposal = {
 export const sidechain = {
 	issue: _sidechain.sidechainIssueOperationPropsSerializer,
 	burn: _sidechain.sidechainBurnOperationPropsSerializer,
+	spvExchangeExcessFunds: _sidechain.sidechainSpvExchangeExcessFundsOperationPropsSerializer,
 	erc20: _sidechain.erc20,
 	eth: _sidechain.eth,
 	btc: _sidechain.btc,
