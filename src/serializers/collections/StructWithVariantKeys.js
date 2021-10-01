@@ -20,19 +20,29 @@ import { staticVariant } from '.';
 /** @typedef {{
  * 	keyIndexInStructure: number,
  * 	serializersData: [string, ISerializer][],
- * }[]} ExtraSerializers
+ * }} ExtraSerializer
+ */
+
+/** @typedef {ExtraSerializer[]} ExtraSerializers
+
+/** @typedef {ExtraSerializer['serializersData'][number][0]} ExtraSerializerKey
+
+/**
+ * @template {SerializersMap} T
+ * @template {ExtraSerializers} V
+ * @typedef {{
+ * 	[key in keyof T]: SerializerInput<T[key]
+ *  & { [key in ExtraSerializerKey]: SerializerInput<V[number]['serializersData'][number][1]>>
+ * }} TInput
  */
 
 /**
  * @template {SerializersMap} T
  * @template {ExtraSerializers} V
- * @typedef {{ [key in keyof T]: SerializerInput<T[key], V> }} TInput
- */
-
-/**
- * @template {SerializersMap} T
- * @template {ExtraSerializers} V
- * @typedef {{ [key in keyof T]: SerializerOutput<T[key], V> }} TOutput
+ * @typedef {{
+ * 	[key in keyof T]: SerializerOutput<T[key]
+ * 	& { [key in ExtraSerializerKey]: SerializerInput<V[number]['serializersData'][number][1]>>
+ * }} TOutput
  */
 
 /**
