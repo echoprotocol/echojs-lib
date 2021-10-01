@@ -1,7 +1,7 @@
 import { bytes } from '../basic';
 import { uint256, uint64, uint8 } from '../basic/integers';
 import { sha256With0xPrefix } from '../chain';
-import { optional, struct, vector, staticVariant } from '../collections';
+import { optional, struct, vector, structWithVariantKeys } from '../collections';
 import { spvPmTrieNodesRlpData } from './pmTrie';
 
 const logEntry = struct({
@@ -11,17 +11,17 @@ const logEntry = struct({
 	topics: vector(sha256With0xPrefix),
 });
 
-export const spvTransactionReceipt = struct({
+export const spvTransactionReceipt = structWithVariantKeys({
 	type: uint8,
 	transactionHash: sha256With0xPrefix,
 	transactionIndex: uint64,
 	cumulativeGasUsed: uint256,
 	logs: vector(logEntry),
 	logsBloom: bytes(),
-	statusOrRoot: optional(staticVariant([uint8, sha256With0xPrefix])),
-	status: optional(uint8),
-	root: optional(sha256With0xPrefix),
-});
+}, [{
+	keyIndexInStructure: 6,
+	serializersData: [['status', uint8], ['root', sha256With0xPrefix]],
+}]);
 
 export const spvEthBlockHeader = struct({
 	parentHash: sha256With0xPrefix,

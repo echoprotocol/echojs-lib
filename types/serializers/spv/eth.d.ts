@@ -3,6 +3,7 @@ import { uint256, uint64, uint8 } from "../basic/integers";
 import { sha256With0xPrefix } from "../chain";
 import { OptionalSerializer, StructSerializer, StaticVariantSerializer, VectorSerializer } from "../collections";
 import { spvPmTrieNodesRlpData } from "./pmTrie";
+import StructWithVariantKeysSerializer from "../collections/StructWithVariantKeys";
 
 
 declare const logEntry: StructSerializer<{
@@ -12,17 +13,17 @@ declare const logEntry: StructSerializer<{
 	topics: VectorSerializer<typeof sha256With0xPrefix>,
 }>;
 
-export const spvTransactionReceipt: StructSerializer<{
+export const spvTransactionReceipt: StructWithVariantKeysSerializer<{
 	type: typeof uint8,
 	transactionHash: typeof sha256With0xPrefix,
 	transactionIndex: typeof uint64,
 	cumulativeGasUsed: typeof uint256,
 	logs: VectorSerializer<typeof logEntry>,
 	logsBloom: BytesSerializer,
-	statusOrRoot: StaticVariantSerializer<[typeof uint8, typeof sha256With0xPrefix]>,
-	status: OptionalSerializer<typeof uint8>,
-	root: OptionalSerializer<typeof sha256With0xPrefix>,
-}>;
+}, [{
+		keyIndexInStructure: number,
+		serializersData: [[string, typeof uint8], [string, typeof sha256With0xPrefix]],
+}]>;
 
 export const spvEthBlockHeader: StructSerializer<{
 	parentHash: typeof sha256With0xPrefix,
