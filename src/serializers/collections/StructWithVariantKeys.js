@@ -116,18 +116,26 @@ export default class StructWithVariantKeysSerializer extends ISerializer {
 		/** @type {TOutput<T>} */
 		const result = {};
 		let iterator = 0;
-		for (const key in this.serializers) {
-			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
+		const serializersKeys = Object.keys(this.serializers);
+		for (let i = 0; i < serializersKeys.length + this.extraSerializers.length; i += 1) {
 			// eslint-disable-next-line no-loop-func
 			const variantKeySerializer = this.extraSerializers.find((el) => el.keyIndexInStructure === iterator);
 			if (variantKeySerializer) {
 				const { serializersData } = variantKeySerializer;
 				const [variantKey, index] = this.findSerializerKeyInVariant(value, serializersData);
-				staticVariant(variantKeySerializer.serializersData.map((el) => el[1]))
+				const [rawKey, rawValue] = staticVariant(variantKeySerializer.serializersData.map((el) => el[1]))
 					.toRaw([index, value[variantKey]]);
+				const resultKey = variantKeySerializer.serializersData[rawKey][0];
+				result[resultKey] = rawValue;
 				iterator += 1;
 			}
 
+			if (i >= serializersKeys.length) {
+				iterator += 1;
+				continue;
+			}
+			const key = serializersKeys[i];
+			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
 			const serializer = this.serializers[key];
 			try {
 				result[key] = serializer.toRaw(value[key]);
@@ -146,8 +154,8 @@ export default class StructWithVariantKeysSerializer extends ISerializer {
 	appendToByteBuffer(value, bytebuffer) {
 		const raw = this.toRaw(value);
 		let iterator = 0;
-		for (const key in this.serializers) {
-			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
+		const serializersKeys = Object.keys(this.serializers);
+		for (let i = 0; i < serializersKeys.length + this.extraSerializers.length; i += 1) {
 			// eslint-disable-next-line no-loop-func
 			const variantKeySerializer = this.extraSerializers.find((el) => el.keyIndexInStructure === iterator);
 			if (variantKeySerializer) {
@@ -157,6 +165,13 @@ export default class StructWithVariantKeysSerializer extends ISerializer {
 					.appendToByteBuffer([index, value[variantKey]], bytebuffer);
 				iterator += 1;
 			}
+
+			if (i >= serializersKeys.length) {
+				iterator += 1;
+				continue;
+			}
+			const key = serializersKeys[i];
+			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
 			const serializer = this.tserializers[key];
 			serializer.appendToByteBuffer(raw[key], bytebuffer);
 			iterator += 1;
@@ -172,26 +187,32 @@ export default class StructWithVariantKeysSerializer extends ISerializer {
 		const result = {};
 		let it = offset;
 		let iterator = 0;
-		for (const key in this.serializers) {
-			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
+		const serializersKeys = Object.keys(this.serializers);
+		for (let i = 0; i < serializersKeys.length + this.extraSerializers.length; i += 1) {
 
 			// eslint-disable-next-line no-loop-func
 			const variantKeySerializer = this.extraSerializers.find((el) => el.keyIndexInStructure === iterator);
-			const serializer = this.serializers[key];
 			if (variantKeySerializer) {
 				const { res, newOffset } = staticVariant(variantKeySerializer.serializersData.map((el) => el[1]))
 					.readFromBuffer(buffer, it);
 				it = newOffset;
-				const [resultKey, variant] = res;
+				const [rawKey, variant] = res;
+				const resultKey = variantKeySerializer.serializersData[rawKey][0];
 				result[resultKey] = variant;
 				iterator += 1;
 			}
-
+			if (i >= serializersKeys.length) {
+				iterator += 1;
+				continue;
+			}
+			const key = serializersKeys[i];
+			const serializer = this.serializers[key];
+			if (!Object.prototype.hasOwnProperty.call(this.serializers, key)) continue;
 			const { res: element, newOffset } = serializer.readFromBuffer(buffer, it);
 			it = newOffset;
 			result[key] = element;
+			iterator += 1;
 		}
-		iterator += 1;
 		return { res: result, newOffset: it };
 	}
 
