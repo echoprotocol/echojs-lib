@@ -7,6 +7,10 @@ module.exports = {
 	"plugins": [
 		"import"
 	],
+	"parserOptions": {
+		"ecmaVersion": 2020,
+	},
+	"ignorePatterns": [".eslintrc.js"],
 	"rules": {
 		"arrow-parens": [
 			"error",
