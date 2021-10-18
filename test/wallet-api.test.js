@@ -55,7 +55,7 @@ describe('WALLET API', () => {
 	before(async () => {
 		await echo.connect(url,
 			{
-				connectionTimeout: 1000,
+				connectionTimeout: 5000,
                 apis: constants.WS_CONSTANTS.CHAIN_APIS,
 				wallet: walletURL,
 			}
@@ -431,7 +431,7 @@ describe('WALLET API', () => {
 			expect(result[0].amount)
 				.to
 				.be
-				.an('string');
+				.an('string')
 			expect(result[0].asset_id)
 				.to
 				.be
@@ -507,7 +507,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -570,7 +570,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -602,7 +602,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -643,7 +643,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(10000);
 	});
 
@@ -767,7 +767,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -855,7 +855,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -928,7 +928,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1001,7 +1001,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1018,7 +1018,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1081,7 +1081,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1155,7 +1155,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1174,7 +1174,7 @@ describe('WALLET API', () => {
 				expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('array').that.is.not.empty;
 			}).timeout(5000);
 		});
 
@@ -1199,7 +1199,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1235,7 +1235,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object');
+						.an('array');
 				} catch (e) {
 					throw e;
 				}
@@ -1280,7 +1280,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1295,7 +1295,7 @@ describe('WALLET API', () => {
 			expect(result)
 			.to
 			.be
-			.an('object').that.is.not.empty;
+			.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1330,7 +1330,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1394,7 +1394,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1410,7 +1410,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1459,7 +1459,7 @@ describe('WALLET API', () => {
 			expect(result)
 				.to
 				.be
-				.an('object').that.is.not.empty;
+				.an('array').that.is.not.empty;
 		}).timeout(5000);
 	});
 
@@ -1569,28 +1569,6 @@ describe('WALLET API', () => {
 		}).timeout(5000);
 	});
 
-	describe('#committeeFreezeBalance()', () => {
-		it('should freeze commitee balance', async () => {
-
-			const result = await echo.walletApi.committeeFreezeBalance('1.2.10', '1', true);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
-	describe('#committeeFreezeBalance()', () => {
-		it('should freeze commitee balance', async () => {
-
-			const result = await echo.walletApi.committeeFreezeBalance('1.2.10', '1', true);
-			expect(result)
-				.to
-				.be
-				.an('object').that.is.not.empty;
-		}).timeout(5000);
-	});
-
 	describe('#getCommitteeFrozenBalance()', () => {
 		it('should returns the 0 for ECHO asset', async () => {
 			const result = await echo.walletApi.getCommitteeFrozenBalance('1.2.10');
@@ -1607,7 +1585,28 @@ describe('WALLET API', () => {
 				.be
 				.equal('1.3.0');
 		}).timeout(5000);
+	});
 
+	describe('#committeeFreezeBalance()', () => {
+		it('should freeze commitee balance', async () => {
+
+			const result = await echo.walletApi.committeeFreezeBalance('1.2.10', '1', true);
+			expect(result)
+				.to
+				.be
+				.an('array').that.is.not.empty;
+		}).timeout(5000);
+	});
+
+	describe('#committeeFreezeBalance()', () => {
+		it('should freeze commitee balance', async () => {
+
+			const result = await echo.walletApi.committeeFreezeBalance('1.2.10', '1', true);
+			expect(result)
+				.to
+				.be
+				.an('array').that.is.not.empty;
+		}).timeout(5000);
 	});
 
 
@@ -1617,7 +1616,7 @@ describe('WALLET API', () => {
 			expect(result)
 			.to
 			.be
-			.an('object').that.is.not.empty;
+			.an('array').that.is.not.empty;
 		}).timeout(5000);
 
 	});
@@ -2071,7 +2070,7 @@ describe('WALLET API', () => {
 					expect(result)
 						.to
 						.be
-						.an('object').that.is.not.empty;
+						.an('array').that.is.not.empty;
 				} catch (e) {
 					console.log(e);
 					throw e;
@@ -2156,7 +2155,7 @@ describe('WALLET API', () => {
 					expect(result)
 					.to
 					.be
-					.an('object').that.is.not.empty;
+					.an('array').that.is.not.empty;
 				} catch (e) {
 					console.log(e);
 					throw e;
