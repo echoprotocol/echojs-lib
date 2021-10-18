@@ -431,7 +431,7 @@ describe('WALLET API', () => {
 			expect(result[0].amount)
 				.to
 				.be
-				.an('string')
+				.an('string');
 			expect(result[0].asset_id)
 				.to
 				.be
