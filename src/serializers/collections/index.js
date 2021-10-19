@@ -5,6 +5,7 @@ import StaticVariantSerializer from './StaticVariant';
 import StructSerializer from './Struct';
 import VectorSerializer from './Vector';
 import PairSerializer from './Pair';
+import StructWithVariantKeysSerializer from './StructWithVariantKeys';
 
 /** @typedef {import("../ISerializer").default} ISerializer */
 
@@ -56,6 +57,19 @@ export const staticVariant = (serializers) => new StaticVariantSerializer(serial
  * @returns {StructSerializer<T>}
  */
 export const struct = (serializers) => new StructSerializer(serializers);
+
+/**
+ * @template {SerializersMap} T
+ * @template { {
+ * 	keyIndexInStructure: number,
+ * 	serializersData: [string, ISerializer][],
+ * }[] } V
+ * @param {T} serializers
+ * @param {V} extraSerializers
+ * @returns {StructWithVariantKeysSerializer<T, V>}
+ */
+export const structWithVariantKeys = (serializers, extraSerializers) =>
+	new StructWithVariantKeysSerializer(serializers, extraSerializers);
 
 /**
  * @template {ISerializer} T

@@ -1,43 +1,47 @@
 import { BytesSerializer } from "../basic";
 import { uint256, uint64, uint8 } from "../basic/integers";
-import { sha256 } from "../chain";
+import { sha256With0xPrefix } from "../chain";
 import { OptionalSerializer, StructSerializer, StaticVariantSerializer, VectorSerializer } from "../collections";
 import { spvPmTrieNodesRlpData } from "./pmTrie";
+import StructWithVariantKeysSerializer from "../collections/StructWithVariantKeys";
 
 
 declare const logEntry: StructSerializer<{
+	logIndex: BytesSerializer,
 	address: BytesSerializer,
 	data: BytesSerializer,
-	topics: VectorSerializer<typeof sha256>,
+	topics: VectorSerializer<typeof sha256With0xPrefix>,
 }>;
 
-export const spvTransactionReceipt: StructSerializer<{
+export const spvTransactionReceipt: StructWithVariantKeysSerializer<{
 	type: typeof uint8,
-	transaction_hash: typeof sha256,
-	transaction_index: typeof uint64,
-	cumulative_gas_used: typeof uint256,
+	transactionHash: typeof sha256With0xPrefix,
+	transactionIndex: typeof uint64,
+	cumulativeGasUsed: typeof uint256,
 	logs: VectorSerializer<typeof logEntry>,
-	logs_bloom: BytesSerializer,
-	status_or_root: StaticVariantSerializer<[typeof uint8, typeof sha256]>,
-}>;
+	logsBloom: BytesSerializer,
+}, [{
+		keyIndexInStructure: number,
+		serializersData: [[string, typeof uint8], [string, typeof sha256With0xPrefix]],
+}]>;
 
 export const spvEthBlockHeader: StructSerializer<{
-	parent_hash: typeof sha256,
-	sha3_uncles: typeof sha256,
+	parentHash: typeof sha256With0xPrefix,
+	sha3Uncles: typeof sha256With0xPrefix,
 	miner: BytesSerializer,
-	state_root: typeof sha256,
-	transactions_root: typeof sha256,
-	receipts_root: typeof sha256,
-	logs_bloom: BytesSerializer,
+	stateRoot: typeof sha256With0xPrefix,
+	transactionsRoot: typeof sha256With0xPrefix,
+	receiptsRoot: typeof sha256With0xPrefix,
+	logsBloom: BytesSerializer,
 	difficulty: typeof uint256,
-	height: typeof uint64,
-	gas_limit: typeof uint256,
-	gas_used: typeof uint256,
+	number: typeof uint64,
+	gasLimit: typeof uint256,
+	gasUsed: typeof uint256,
 	timestamp: typeof uint64,
-	extra_data: BytesSerializer,
-	mix_hash: typeof sha256,
+	extraData: BytesSerializer,
+	mixHash: typeof sha256With0xPrefix,
 	nonce: BytesSerializer,
-	base_fee: OptionalSerializer<typeof uint256>,
+	baseFeePerGas: OptionalSerializer<typeof uint256>,
 }>;
 
 export const spvEthMerkleProof: StructSerializer<{

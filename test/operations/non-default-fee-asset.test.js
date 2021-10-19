@@ -19,8 +19,8 @@ describe("Non default fee asset", () => {
 			common_options: {
 				blacklist_authorities: [],
 				core_exchange_rate: {
-					base: { asset_id: "1.3.0", amount: 10 },
-					quote: { asset_id: "1.3.1", amount: 1 },
+					base: { asset_id: "1.3.1", amount: 10 },
+					quote: { asset_id: "1.3.0", amount: 1 },
 				},
 				description: "",
 				extensions: [],

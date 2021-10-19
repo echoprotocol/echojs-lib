@@ -5,7 +5,7 @@ type TInput = Buffer | string;
 
 export default class BytesSerializer extends ISerializer<TInput, string> {
 	readonly bytesCount?: number;
-	constructor(bytesCount?: number);
+	constructor(bytesCount?: number, isNeed0xPrefix?: boolean);
 	toRaw(value: TInput): string;
 	appendToByteBuffer(value: TInput, bytebuffer: ByteBuffer): void;
 	readFromBuffer(buffer: Buffer, offset?: number): { res: string, newOffset: number };

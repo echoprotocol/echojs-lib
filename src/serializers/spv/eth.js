@@ -1,42 +1,45 @@
 import { bytes } from '../basic';
 import { uint256, uint64, uint8 } from '../basic/integers';
-import { sha256 } from '../chain';
-import { optional, struct, vector, staticVariant } from '../collections';
+import { sha256With0xPrefix } from '../chain';
+import { optional, struct, vector, structWithVariantKeys } from '../collections';
 import { spvPmTrieNodesRlpData } from './pmTrie';
 
 const logEntry = struct({
-	address: bytes(),
-	data: bytes(),
-	topics: vector(sha256),
+	logIndex: bytes(undefined, true),
+	address: bytes(undefined, true),
+	data: bytes(undefined, true),
+	topics: vector(sha256With0xPrefix),
 });
 
-export const spvTransactionReceipt = struct({
+export const spvTransactionReceipt = structWithVariantKeys({
 	type: uint8,
-	transaction_hash: sha256,
-	transaction_index: uint64,
-	cumulative_gas_used: uint256,
+	transactionHash: sha256With0xPrefix,
+	transactionIndex: uint64,
+	cumulativeGasUsed: uint256,
 	logs: vector(logEntry),
-	logs_bloom: bytes(),
-	status_or_root: staticVariant([uint8, sha256]),
-});
+	logsBloom: bytes(),
+}, [{
+	keyIndexInStructure: 6,
+	serializersData: [['status', uint8], ['root', sha256With0xPrefix]],
+}]);
 
 export const spvEthBlockHeader = struct({
-	parent_hash: sha256,
-	sha3_uncles: sha256,
-	miner: bytes(),
-	state_root: sha256,
-	transactions_root: sha256,
-	receipts_root: sha256,
-	logs_bloom: bytes(),
+	parentHash: sha256With0xPrefix,
+	sha3Uncles: sha256With0xPrefix,
+	miner: bytes(undefined, true),
+	stateRoot: sha256With0xPrefix,
+	transactionsRoot: sha256With0xPrefix,
+	receiptsRoot: sha256With0xPrefix,
+	logsBloom: bytes(undefined, true),
 	difficulty: uint256,
-	height: uint64,
-	gas_limit: uint256,
-	gas_used: uint256,
+	number: uint64,
+	gasLimit: uint256,
+	gasUsed: uint256,
 	timestamp: uint64,
-	extra_data: bytes(),
-	mix_hash: sha256,
-	nonce: bytes(),
-	base_fee: optional(uint256),
+	extraData: bytes(undefined, true),
+	mixHash: sha256With0xPrefix,
+	nonce: bytes(undefined, true),
+	baseFeePerGas: optional(uint256),
 });
 
 export const spvEthMerkleProof = struct({

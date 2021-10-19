@@ -1,6 +1,6 @@
 {
 	"name": "echojs-lib",
-	"version": "1.13.4",
+	"version": "1.13.5",
 	"description": "Pure JavaScript ECHO library for node.js",
 	"main": "./dist/index.js",
 	"types": "./types/index.d.ts",
@@ -35,7 +35,7 @@
 		"@types/crypto-js": "^3.1.43",
 		"@types/node": "^12.0.10",
 		"assert": "^1.4.1",
-		"axios": "^0.19.2",
+		"axios": "^0.22.0",
 		"bigi": "^1.4.2",
 		"bignumber.js": "^8.0.1",
 		"bs58": "^4.0.1",
@@ -52,11 +52,11 @@
 		"immutable": "^3.8.1",
 		"isomorphic-ws": "^4.0.1",
 		"js-sha3": "^0.8.0",
-		"lodash": "^4.17.11",
-		"ws": "^7.1.1"
+		"lodash": "^4.17.21",
+		"ws": "^7.5.5"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.2.3",
+		"@babel/cli": "^7.15.7",
 		"@babel/core": "^7.2.2",
 		"@babel/node": "^7.5.5",
 		"@babel/plugin-transform-runtime": "^7.6.0",
@@ -64,17 +64,17 @@
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
 		"@types/bytebuffer": "^5.0.40",
-		"audit-ci": "^2.2.0",
+		"audit-ci": "^4.1.0",
 		"chai": "^4.2.0",
 		"chai-spies": "^1.0.0",
-		"eslint": "^5.16.0",
+		"eslint": "^7.32.0",
 		"eslint-config-airbnb": "^16.1.0",
 		"eslint-plugin-import": "^2.9.0",
 		"eslint-plugin-jsx-a11y": "^6.1.2",
 		"eslint-plugin-react": "7.13.0",
 		"fs-extra": "^7.0.1",
 		"husky": "^2.7.0",
-		"mocha": "^7.1.1",
+		"mocha": "^9.1.2",
 		"redux": "^4.0.1",
 		"typescript": "^3.5.3"
 	}
