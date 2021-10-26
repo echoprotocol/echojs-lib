@@ -3,7 +3,7 @@ import authoritySerializer from '../authority';
 import { string as stringSerializer } from '../../basic';
 import { uint16, uint8 } from '../../basic/integers';
 import {
-	asset, publicKey, extensions, accountCreateOperationExtensionsSerializer,
+	asset, publicKey, extensions, accountOperationsExtensionsSerializer,
 } from '../../chain';
 import { accountId } from '../../chain/id/protocol';
 import { struct, optional } from '../../collections';
@@ -28,7 +28,7 @@ export const accountCreateOperationPropsSerializer = struct({
 	evm_address: optional(ethAddress),
 	options: accountOptionsSerializer,
 	// TODO: extensions serializer
-	extensions: accountCreateOperationExtensionsSerializer,
+	extensions: accountOperationsExtensionsSerializer,
 });
 
 export const accountUpdateOperationPropsSerializer = struct({
@@ -38,7 +38,7 @@ export const accountUpdateOperationPropsSerializer = struct({
 	echorand_key: optional(publicKey),
 	new_options: optional(accountOptionsSerializer),
 	// TODO: extensions serializer
-	extensions,
+	extensions: accountOperationsExtensionsSerializer,
 });
 
 export const accountWhitelistOperationPropsSerializer = struct({
